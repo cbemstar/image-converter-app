@@ -297,9 +297,44 @@ export async function processImages(files, maxW, maxH, quality, format) {
   // Create download link for all files
   if (processed > 0) {
     const zipBlob = await zip.generateAsync({ type: 'blob' });
-    downloadLink.href = URL.createObjectURL(zipBlob);
-    downloadLink.classList.remove('hidden');
-    downloadLink.style.display = 'inline-block';
+    const downloadLink = document.getElementById('download-link');
+    const downloadSelected = document.getElementById('download-selected');
+    const bulkRenameLink = document.getElementById('show-bulk-rename');
+    
+    if (downloadLink) {
+      downloadLink.href = URL.createObjectURL(zipBlob);
+      downloadLink.classList.remove('hidden');
+      downloadLink.style.display = 'inline-block';
+      
+      // Make the ZIP download more prominent
+      downloadLink.style.fontWeight = 'bold';
+      downloadLink.style.padding = '0.75rem 1.5rem';
+      
+      // Animate to draw attention
+      setTimeout(() => {
+        downloadLink.style.transition = 'transform 0.3s ease, box-shadow 0.3s ease';
+        downloadLink.style.transform = 'scale(1.05)';
+        downloadLink.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+        
+        setTimeout(() => {
+          downloadLink.style.transform = 'scale(1)';
+        }, 300);
+      }, 500);
+      
+      // Show notification about the ZIP
+      showNotification(`${processed} images processed! You can download them individually or as a ZIP archive.`, 'success');
+    }
+    
+    // Also show the "Download Selected" button
+    if (downloadSelected) {
+      downloadSelected.classList.remove('hidden');
+      downloadSelected.style.display = 'inline-block';
+    }
+    
+    // Show the "Bulk Rename Tool" link
+    if (bulkRenameLink) {
+      bulkRenameLink.classList.remove('hidden');
+    }
   }
   
   // Fix download buttons display
