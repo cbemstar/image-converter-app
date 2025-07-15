@@ -52,6 +52,17 @@ let bulkRenameControls;
 let upgradeBtn;
 let downloadSelectedBtn;
 
+// Navigation and modal elements
+let navLoginBtn;
+let navLogoutBtn;
+let mobileMenuButton;
+let mobileMenu;
+let loginModal;
+let closeLoginModal;
+let modalSignupBtn;
+let modalLoginBtn;
+let forgotPasswordLink;
+
 // Modal elements for image preview (Lightbox Gallery) - These will be initialized when DOM is loaded
 let imageModal;
 let modalImg;
@@ -72,9 +83,48 @@ function initSupabase() {
   if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
     const { createClient } = window.supabase;
     supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+    // Listen for auth state changes
+    if (supabase && supabase.auth) {
+      supabase.auth.onAuthStateChange((event, session) => {
+        updateAuthUI(!!session);
+        
+        if (session) {
+          // Reset quota for logged in users
+          localStorage.setItem('imgQuota', JSON.stringify({ start: Date.now(), used: 0 }));
+          updateQuotaStatus();
+          
+          // Close login modal if open
+          if (loginModal) {
+            loginModal.style.display = 'none';
+          }
+        }
+      });
+      
+      // Check the current session state
+      supabase.auth.getSession().then(({ data }) => {
+        updateAuthUI(!!data.session);
+      });
+    }
+    
     return true;
   }
   return false;
+}
+
+// Update UI based on authentication state
+function updateAuthUI(isLoggedIn) {
+  // Update navigation buttons
+  if (navLoginBtn && navLogoutBtn) {
+    navLoginBtn.style.display = isLoggedIn ? 'none' : 'inline-flex';
+    navLogoutBtn.style.display = isLoggedIn ? 'inline-flex' : 'none';
+  }
+  
+  // Update legacy auth controls for backwards compatibility
+  const legacyLogoutBtn = document.querySelector('#auth-controls button.bg-red-500');
+  if (legacyLogoutBtn) {
+    legacyLogoutBtn.style.display = isLoggedIn ? 'inline-block' : 'none';
+  }
 }
 
 // Debug mode: auto-reset quota when URL contains '?debug'
@@ -90,7 +140,7 @@ async function handleFiles(files) {
   if (!files.length) return;
   const imageFiles = Array.from(files).filter(f => f.type.startsWith('image/') || isRaw(f) || isHeic(f));
   if (!imageFiles.length) {
-    alert('Please select image files only.');
+    showNotification('Please select image files only.', 'error');
     return;
   }
   
@@ -156,10 +206,10 @@ async function handleFiles(files) {
   const validFiles = imageFiles.filter(f => f.size <= 100*1024*1024); // allow up to 100MB for pro, but hybrid logic will route
   let canProcess = Math.min(validFiles.length, 10 - quota.used);
   if (imageFiles.length > 10 || validFiles.length > 10 || canProcess < validFiles.length) {
-    alert('You selected more than 10 images. Only the first 10 within your quota will be processed.');
+    showNotification('You selected more than 10 images. Only the first 10 within your quota will be processed.', 'warning');
   }
   if (canProcess === 0) {
-    alert('No images can be processed (quota or size limit).');
+    showNotification('No images can be processed (quota or size limit).', 'error');
     updateQuotaStatus();
     return;
   }
@@ -170,7 +220,7 @@ async function handleFiles(files) {
   // Clear and show table
   if (previewTbody) {
     previewTbody.innerHTML = '';
-  
+
     _selectedFiles.forEach((file, i) => {
       const reader = new FileReader();
       reader.onload = e => {
@@ -195,7 +245,7 @@ async function handleFiles(files) {
           <a class="download-btn hidden ml-2" data-index="${i+1}">Download</a>
         </td>`;
         previewTbody.appendChild(tr);
-  
+
         // Add magnify icon click handler
         const magnifyIcon = tr.querySelector('.magnify-icon');
         if (magnifyIcon) {
@@ -228,7 +278,7 @@ async function handleFiles(files) {
             checkbox.dispatchEvent(event);
           }
         });
-  
+
         // Add rename button handler
         const renameBtn = tr.querySelector('.rename-btn');
         if (renameBtn) {
@@ -247,26 +297,25 @@ async function handleFiles(files) {
             cell.appendChild(input);
             input.focus();
             
-            input.addEventListener('blur', function() {
+            function saveRename() {
               const newName = input.value.trim();
-              cell.textContent = newName || currentName;
               if (newName && newName !== currentName) {
                 _selectedFiles[i].filename = newName;
+                cell.textContent = newName;
+              } else {
+                cell.textContent = currentName;
               }
-            });
+            }
             
-            input.addEventListener('keydown', function(e) {
+            input.addEventListener('blur', saveRename);
+            input.addEventListener('keypress', function(e) {
               if (e.key === 'Enter') {
-                input.blur();
-              }
-              if (e.key === 'Escape') {
-                input.value = currentName;
-                input.blur();
+                saveRename();
               }
             });
           });
         }
-  
+
         // Add convert single button handler
         const convertSingleBtn = tr.querySelector('.convert-single-btn');
         if (convertSingleBtn) {
@@ -701,11 +750,102 @@ function setupUpgradeButton() {
   });
 }
 
+// Navigation functionality
+function setupNavigation() {
+  // Mobile menu toggle
+  if (mobileMenuButton && mobileMenu) {
+    mobileMenuButton.addEventListener('click', function() {
+      mobileMenu.classList.toggle('hidden');
+    });
+  }
+  
+  // Navigation login button
+  if (navLoginBtn && loginModal) {
+    navLoginBtn.addEventListener('click', function() {
+      loginModal.style.display = 'block';
+    });
+  }
+  
+  // Navigation logout button
+  if (navLogoutBtn) {
+    navLogoutBtn.addEventListener('click', function() {
+      if (typeof window.signOut === 'function') {
+        window.signOut();
+      }
+    });
+  }
+}
+
+// Login modal functionality
+function setupLoginModal() {
+  if (!loginModal) return;
+  
+  // Close modal handlers
+  if (closeLoginModal) {
+    closeLoginModal.addEventListener('click', function() {
+      loginModal.style.display = 'none';
+    });
+  }
+  
+  // Close modal when clicking outside
+  window.addEventListener('click', function(event) {
+    if (event.target === loginModal) {
+      loginModal.style.display = 'none';
+    }
+  });
+  
+  // Modal signup button
+  if (modalSignupBtn) {
+    modalSignupBtn.addEventListener('click', function() {
+      const email = document.getElementById('modal-email').value;
+      const password = document.getElementById('modal-password').value;
+      
+      if (!email || !password) {
+        showNotification('Please enter both email and password', 'error');
+        return;
+      }
+      
+      if (typeof window.signUp === 'function') {
+        window.signUp(email, password);
+      } else {
+        showNotification('Sign up functionality not available. Please refresh the page.', 'error');
+      }
+    });
+  }
+  
+  // Modal login button
+  if (modalLoginBtn) {
+    modalLoginBtn.addEventListener('click', function() {
+      const email = document.getElementById('modal-email').value;
+      const password = document.getElementById('modal-password').value;
+      
+      if (!email || !password) {
+        showNotification('Please enter both email and password', 'error');
+        return;
+      }
+      
+      if (typeof window.signIn === 'function') {
+        window.signIn(email, password);
+      } else {
+        showNotification('Login functionality not available. Please refresh the page.', 'error');
+      }
+    });
+  }
+  
+  // Forgot password link (placeholder for now)
+  if (forgotPasswordLink) {
+    forgotPasswordLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      showNotification('Password reset functionality coming soon!', 'info');
+    });
+  }
+}
+
 // Authentication functionality
 function setupAuth() {
   window.signUp = async function(email, password) {
     if (!supabase) {
-      alert('Authentication service not available');
+      showNotification('Authentication service not available', 'error');
       return;
     }
     
@@ -717,15 +857,23 @@ function setupAuth() {
       
       if (error) throw error;
       
-      alert('Sign up successful! Please check your email for verification.');
+      showNotification('Sign up successful! Please check your email for verification.', 'success');
+      
+      // Clear form and close modal
+      const emailField = document.getElementById('modal-email');
+      const passwordField = document.getElementById('modal-password');
+      if (emailField) emailField.value = '';
+      if (passwordField) passwordField.value = '';
+      if (loginModal) loginModal.style.display = 'none';
+      
     } catch (err) {
-      alert('Sign up failed: ' + err.message);
+      showNotification('Sign up failed: ' + err.message, 'error');
     }
   };
   
   window.signIn = async function(email, password) {
     if (!supabase) {
-      alert('Authentication service not available');
+      showNotification('Authentication service not available', 'error');
       return;
     }
     
@@ -737,43 +885,31 @@ function setupAuth() {
       
       if (error) throw error;
       
-      alert('Logged in successfully!');
+      showNotification('Logged in successfully!', 'success');
       
-      // Update UI for logged in state
-      document.getElementById('auth-email').style.display = 'none';
-      document.getElementById('auth-password').style.display = 'none';
-      document.querySelector('button.bg-blue-500').style.display = 'none';
-      document.querySelector('button.bg-green-500').style.display = 'none';
-      document.querySelector('button.bg-red-500').style.display = 'inline-block';
-      
-      // Reset quota for logged in users
-      localStorage.setItem('imgQuota', JSON.stringify({ start: Date.now(), used: 0 }));
-      updateQuotaStatus();
+      // Clear form and close modal
+      const emailField = document.getElementById('modal-email');
+      const passwordField = document.getElementById('modal-password');
+      if (emailField) emailField.value = '';
+      if (passwordField) passwordField.value = '';
+      if (loginModal) loginModal.style.display = 'none';
       
     } catch (err) {
-      alert('Login failed: ' + err.message);
+      showNotification('Login failed: ' + err.message, 'error');
     }
   };
   
   window.signOut = async function() {
     if (!supabase) {
-      alert('Authentication service not available');
+      showNotification('Authentication service not available', 'error');
       return;
     }
     
     try {
       await supabase.auth.signOut();
-      
-      // Update UI for logged out state
-      document.getElementById('auth-email').style.display = 'inline-block';
-      document.getElementById('auth-password').style.display = 'inline-block';
-      document.querySelector('button.bg-blue-500').style.display = 'inline-block';
-      document.querySelector('button.bg-green-500').style.display = 'inline-block';
-      document.querySelector('button.bg-red-500').style.display = 'none';
-      
-      alert('Logged out successfully');
+      showNotification('Logged out successfully', 'success');
     } catch (err) {
-      alert('Logout failed: ' + err.message);
+      showNotification('Logout failed: ' + err.message, 'error');
     }
   };
 }
@@ -904,6 +1040,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   upgradeBtn = document.getElementById('upgrade-btn');
   downloadSelectedBtn = document.getElementById('download-selected');
   
+  // Initialize navigation and modal references
+  navLoginBtn = document.getElementById('nav-login-btn');
+  navLogoutBtn = document.getElementById('nav-logout-btn');
+  mobileMenuButton = document.getElementById('mobile-menu-button');
+  mobileMenu = document.getElementById('mobile-menu');
+  loginModal = document.getElementById('login-modal');
+  closeLoginModal = document.getElementById('close-login-modal');
+  modalSignupBtn = document.getElementById('modal-signup-btn');
+  modalLoginBtn = document.getElementById('modal-login-btn');
+  forgotPasswordLink = document.getElementById('forgot-password-link');
+  
   // Initialize modal references
   imageModal = document.getElementById('image-modal');
   if (imageModal) {
@@ -926,6 +1073,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupSelectAll();
   setupInfoPopups();
   setupUpgradeButton();
+  setupNavigation();
+  setupLoginModal();
   setupAuth();
   
   console.log('Image conversion app initialized');
