@@ -26,7 +26,7 @@ label, th, .font-medium, .text-blue-900, .text-gray-500, .text-lg, .text-sm, .te
 }
 
 /* Select Images button and all main buttons modernized */
-#drop-area button, #convert-images-btn, #bulk-rename-btn, #download-link, #download-selected, .download-btn {
+#drop-area button, #convert-images-btn, #bulk-rename-btn, .download-btn {
   background-color: #cde5da !important;
   color: #172f37 !important;
   border: 2px solid #cde5da !important;
@@ -37,10 +37,58 @@ label, th, .font-medium, .text-blue-900, .text-gray-500, .text-lg, .text-sm, .te
   transition: background 0.2s, color 0.2s, border-color 0.2s;
 }
 
-#drop-area button:hover, #convert-images-btn:hover, #bulk-rename-btn:hover, #download-link:hover, #download-selected:hover, .download-btn:hover {
+#drop-area button:hover, #convert-images-btn:hover, #bulk-rename-btn:hover, .download-btn:hover {
   background: transparent !important;
   color: #cde5da !important;
   border: 2px solid #cde5da !important;
+}
+
+/* Custom styles for the download buttons */
+.bg-cde5da {
+  background-color: #cde5da !important;
+}
+
+.text-172f37 {
+  color: #172f37 !important;
+}
+
+.hover\:bg-transparent:hover {
+  background-color: transparent !important;
+}
+
+.hover\:text-cde5da:hover {
+  color: #cde5da !important;
+}
+
+.border-cde5da {
+  border-color: #cde5da !important;
+}
+
+#download-link, #download-selected {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  margin: 0.5rem;
+  min-width: 200px;
+  text-align: center;
+  background-color: #cde5da !important;
+  color: #172f37 !important;
+  border: 2px solid #cde5da !important;
+}
+
+#download-link:hover, #download-selected:hover {
+  background-color: transparent !important;
+  color: #cde5da !important;
+}
+
+#download-link svg, #download-selected svg {
+  transition: transform 0.3s ease;
+}
+
+#download-link:hover svg, #download-selected:hover svg {
+  transform: translateY(2px);
 }
 
 .bg-blue-500, .bg-green-500, .bg-blue-600, .bg-green-600 {
@@ -235,28 +283,13 @@ img.preview { max-width: clamp(80px, 10vw, 120px); max-height: clamp(80px, 10vw,
 }
 
 /* Download All as ZIP and Download Selected buttons */
-#download-link, #download-selected {
-  border: 2px solid #cde5da !important;
-  background: transparent !important;
-  color: #cde5da !important;
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
-  margin: 0.5rem;
-  min-width: 180px;
-  text-align: center;
-  border-radius: 0.375rem !important;
-}
-
-#download-link:hover, #download-selected:hover {
-  background: #cde5da !important;
-  color: #172f37 !important;
-}
-
-/* Responsive button container */
 .download-btns-responsive {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 @media (max-width: 600px) {
@@ -269,6 +302,16 @@ img.preview { max-width: clamp(80px, 10vw, 120px); max-height: clamp(80px, 10vw,
     min-width: unset;
     width: 100%;
   }
+}
+
+/* Make rows clickable with a subtle hover effect */
+#preview-tbody tr {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#preview-tbody tr:hover {
+  background-color: rgba(125, 215, 196, 0.05) !important;
 }
 
 .preview-img-container {

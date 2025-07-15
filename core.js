@@ -94,6 +94,25 @@ async function handleFiles(files) {
     return;
   }
   
+  // Hide download buttons and bulk rename tool when new files are loaded
+  const downloadLink = document.getElementById('download-link');
+  const downloadSelected = document.getElementById('download-selected');
+  const bulkRenameLink = document.getElementById('show-bulk-rename');
+  
+  if (downloadLink) {
+    downloadLink.classList.add('hidden');
+    downloadLink.style.display = 'none';
+  }
+  
+  if (downloadSelected) {
+    downloadSelected.classList.add('hidden');
+    downloadSelected.style.display = 'none';
+  }
+  
+  if (bulkRenameLink) {
+    bulkRenameLink.classList.add('hidden');
+  }
+  
   // Check for HEIC files and show browser compatibility warning if needed
   const hasHeicFiles = imageFiles.some(file => isHeic(file));
   if (hasHeicFiles) {
@@ -184,6 +203,31 @@ async function handleFiles(files) {
             openImageModal(e.target.result, file.name, i);
           });
         }
+
+        // Make row clickable to toggle checkbox
+        tr.style.cursor = 'pointer';
+        tr.addEventListener('click', function(e) {
+          // Don't toggle if clicking on interactive elements
+          if (e.target.tagName === 'BUTTON' || 
+              e.target.tagName === 'A' || 
+              e.target.tagName === 'INPUT' ||
+              e.target.closest('.magnify-icon') ||
+              e.target.tagName === 'SVG' ||
+              e.target.tagName === 'CIRCLE' ||
+              e.target.tagName === 'LINE') {
+            return;
+          }
+          
+          // Toggle checkbox
+          const checkbox = this.querySelector('.select-image');
+          if (checkbox) {
+            checkbox.checked = !checkbox.checked;
+            
+            // Trigger change event to update UI
+            const event = new Event('change', { bubbles: true });
+            checkbox.dispatchEvent(event);
+          }
+        });
   
         // Add rename button handler
         const renameBtn = tr.querySelector('.rename-btn');
@@ -290,6 +334,54 @@ async function processSingleImage(index) {
     
     // Update convert button
     if (convertBtn) convertBtn.textContent = 'Convert';
+    
+    // Show the Bulk Rename Tool link and Download All as ZIP button
+    const bulkRenameLink = document.getElementById('show-bulk-rename');
+    const downloadLink = document.getElementById('download-link');
+    const downloadSelected = document.getElementById('download-selected');
+    
+    if (bulkRenameLink && bulkRenameLink.classList.contains('hidden')) {
+      bulkRenameLink.classList.remove('hidden');
+    }
+    
+    // Check if there's at least one converted image with download button visible
+    const hasConverted = document.querySelector('.download-btn:not(.hidden)');
+    
+    if (hasConverted) {
+      // Generate a ZIP file with all converted images
+      const zip = new JSZip();
+      let addedFiles = 0;
+      
+      // Find all download buttons and add their blobs to ZIP
+      document.querySelectorAll('a.download-btn:not(.hidden)').forEach(async (btn) => {
+        if (btn.href && btn.href.startsWith('blob:')) {
+          try {
+            const response = await fetch(btn.href);
+            const blob = await response.blob();
+            const filename = btn.download || `image_${addedFiles}.${format}`;
+            zip.file(filename, blob);
+            addedFiles++;
+          } catch (err) {
+            console.error('Error adding file to ZIP:', err);
+          }
+        }
+      });
+      
+      // Create download link for all files if there's at least one
+      if (downloadLink && downloadLink.classList.contains('hidden')) {
+        zip.generateAsync({ type: 'blob' }).then(zipBlob => {
+          downloadLink.href = URL.createObjectURL(zipBlob);
+          downloadLink.classList.remove('hidden');
+          downloadLink.style.display = 'inline-block';
+        });
+      }
+      
+      // Show the Download Selected button
+      if (downloadSelected && downloadSelected.classList.contains('hidden')) {
+        downloadSelected.classList.remove('hidden');
+        downloadSelected.style.display = 'inline-block';
+      }
+    }
     
     // Update quota
     const quota = getQuotaInfo();
@@ -426,6 +518,17 @@ function setupDownloadSelected() {
     const zip = new JSZip();
     let addedFiles = 0;
     
+    // Show loading indicator
+    downloadSelectedBtn.innerHTML = `
+      <span style="display: inline-flex; align-items: center; gap: 8px;">
+        <svg class="animate-spin" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+        </svg>
+        Creating ZIP...
+      </span>
+    `;
+    downloadSelectedBtn.disabled = true;
+    
     // Find all download buttons for selected rows and add their blobs to ZIP
     for (const checkbox of checkedRows) {
       const index = parseInt(checkbox.getAttribute('data-index'), 10);
@@ -451,6 +554,18 @@ function setupDownloadSelected() {
     
     if (addedFiles === 0) {
       showNotification('No converted images to download. Convert images first.', 'error');
+      
+      // Reset button
+      downloadSelectedBtn.innerHTML = `
+        <span style="display: inline-flex; align-items: center; gap: 8px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 2v16h-8l-4 4-4-4H2V2z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+          Download Selected
+        </span>
+      `;
+      downloadSelectedBtn.disabled = false;
       return;
     }
     
@@ -469,9 +584,33 @@ function setupDownloadSelected() {
       URL.revokeObjectURL(zipUrl);
       
       showNotification(`Downloaded ${addedFiles} images as ZIP`, 'success');
+      
+      // Reset button
+      downloadSelectedBtn.innerHTML = `
+        <span style="display: inline-flex; align-items: center; gap: 8px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 2v16h-8l-4 4-4-4H2V2z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+          Download Selected
+        </span>
+      `;
+      downloadSelectedBtn.disabled = false;
     } catch (err) {
       showNotification('Error creating ZIP file', 'error');
       console.error('ZIP generation error:', err);
+      
+      // Reset button on error
+      downloadSelectedBtn.innerHTML = `
+        <span style="display: inline-flex; align-items: center; gap: 8px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 2v16h-8l-4 4-4-4H2V2z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+          Download Selected
+        </span>
+      `;
+      downloadSelectedBtn.disabled = false;
     }
   });
 }
