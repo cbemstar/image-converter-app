@@ -2,11 +2,95 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Modern Typography System with Hanken Grotesk */
+:root {
+  --font-primary: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+}
+
+/* Base Typography */
+* {
+  font-family: var(--font-primary);
+}
+
 body {
-  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  font-family: var(--font-primary);
+  font-weight: 400;
+  line-height: 1.5;
   background-color:#172f37 !important; 
 }
 
+/* Typography Hierarchy */
+h1, .text-4xl, .text-5xl, .text-6xl {
+  font-family: var(--font-primary);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+h2, .text-3xl {
+  font-family: var(--font-primary);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+h3, .text-2xl {
+  font-family: var(--font-primary);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+h4, .text-xl {
+  font-family: var(--font-primary);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+h5, .text-lg {
+  font-family: var(--font-primary);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* Body text with improved readability */
+p, .text-base, body {
+  font-family: var(--font-primary);
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+/* Small text */
+.text-sm {
+  font-family: var(--font-primary);
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.text-xs {
+  font-family: var(--font-primary);
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+/* UI Elements */
+button, .btn {
+  font-family: var(--font-primary);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+/* Labels and form elements */
+label, input, select, textarea {
+  font-family: var(--font-primary);
+}
+
+/* Navigation and UI text */
+nav, .nav {
+  font-family: var(--font-primary);
+  font-weight: 500;
+}
+
+/* Maintain existing color scheme */
 label, th, .font-medium, .text-blue-900, .text-gray-500, .text-lg, .text-sm, .text-base, .break-words, .whitespace-normal, .max-w-xs, .max-w-5xl, .text-center, .font-bold {
   color: #cde5da !important;
 }
@@ -17,7 +101,8 @@ label, th, .font-medium, .text-blue-900, .text-gray-500, .text-lg, .text-sm, .te
   color: #cde5da !important;
   border: 1.5px solid #cde5da !important;
   border-radius: 0.75rem !important;
-  font-weight: 500;
+  font-weight: 400;
+  font-family: var(--font-primary);
 }
 
 #max-width:focus, #max-height:focus, #quality:focus {
@@ -33,7 +118,9 @@ label, th, .font-medium, .text-blue-900, .text-gray-500, .text-lg, .text-sm, .te
   box-sizing: border-box;
   padding: 0.75rem 1.5rem;
   border-radius: 0.75rem !important;
-  font-weight: 600;
+  font-weight: 500;
+  font-family: var(--font-primary);
+  letter-spacing: 0.01em;
   transition: background 0.2s, color 0.2s, border-color 0.2s;
 }
 
