@@ -48,3 +48,8 @@ To enable email/password and Google sign in you need a Supabase project. Update
 Ensure Google OAuth is configured in your Supabase dashboard and that your
 `users` table includes a `full_name` column (stored in the `auth.users` metadata)
 so the sign up form can save the user's name.
+
+The login modal hides the **Full Name** field until you select **Sign Up**. If a
+user tries to sign up with an existing email address they'll see an error with a
+prompt to use the **Forgot your password** link which triggers the Supabase
+password reset flow.
