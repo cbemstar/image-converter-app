@@ -46,10 +46,10 @@
         
         <!-- Authentication buttons -->
         <div class="flex items-center space-x-2">
-          <button id="nav-login-btn" class="inline-flex items-center px-4 py-2 border border-[#cde5da] rounded-md shadow-sm text-sm font-medium text-[#cde5da] bg-transparent hover:bg-[#cde5da] hover:!text-[#172f37] transition-colors">
+          <button id="nav-login-btn" class="shad-btn text-sm">
             <i class="fas fa-sign-in-alt mr-2"></i> Login
           </button>
-          <button id="nav-logout-btn" class="hidden inline-flex items-center px-4 py-2 border border-[#cde5da] rounded-md shadow-sm text-sm font-medium text-[#cde5da] bg-transparent hover:bg-[#cde5da] hover:!text-[#172f37] transition-colors">
+          <button id="nav-logout-btn" class="hidden shad-btn text-sm">
             <i class="fas fa-sign-out-alt mr-2"></i> Logout
           </button>
           
@@ -211,17 +211,29 @@
         
         <div class="mb-4">
           <label for="modal-email" style="color:#cde5da; display:block; margin-bottom:6px;">Email:</label>
-          <input id="modal-email" type="email" placeholder="your@email.com" class="w-full border rounded px-3 py-2" style="background-color:#172f37; color:#cde5da; border:1.5px solid #cde5da;" />
+          <input id="modal-email" type="email" placeholder="your@email.com" class="shad-input" />
+        </div>
+
+        <div id="full-name-field" class="mb-4" style="display:none;">
+          <label for="modal-full-name" style="color:#cde5da; display:block; margin-bottom:6px;">Full Name:</label>
+          <input id="modal-full-name" type="text" placeholder="Your full name" class="shad-input" />
         </div>
         
         <div id="password-field" class="mb-4">
           <label for="modal-password" style="color:#cde5da; display:block; margin-bottom:6px;">Password:</label>
-          <input id="modal-password" type="password" placeholder="Your password" class="w-full border rounded px-3 py-2" style="background-color:#172f37; color:#cde5da; border:1.5px solid #cde5da;" />
+          <input id="modal-password" type="password" placeholder="Your password" class="shad-input" />
         </div>
         
-        <div id="auth-actions" class="flex justify-between mt-6">
-          <button id="modal-signup-btn" class="px-4 py-2 rounded" style="background-color:#cde5da; color:#172f37; font-weight:600;">Sign Up</button>
-          <button id="modal-login-btn" class="px-4 py-2 rounded" style="background-color:#cde5da; color:#172f37; font-weight:600;">Login</button>
+        <div id="auth-actions" class="flex justify-between mt-6 gap-2">
+          <button id="modal-signup-btn" class="shad-btn flex-1">Sign Up</button>
+          <button id="modal-login-btn" class="shad-btn flex-1">Login</button>
+        </div>
+
+        <div class="mt-4 flex justify-center">
+          <button id="google-login-btn" class="shad-btn w-full flex items-center justify-center gap-2">
+            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5">
+            Continue with Google
+          </button>
         </div>
         
         <div class="text-center mt-4">

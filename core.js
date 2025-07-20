@@ -794,31 +794,49 @@ function setupLoginModal() {
     }
   });
   
+  let signUpMode = false;
+  const fullNameField = document.getElementById('full-name-field');
+  if (fullNameField) {
+    fullNameField.style.display = 'none';
+  }
+
   // Modal signup button
   if (modalSignupBtn) {
     modalSignupBtn.addEventListener('click', function() {
       const email = document.getElementById('modal-email').value;
       const password = document.getElementById('modal-password').value;
-      
-      if (!email || !password) {
-        showNotification('Please enter both email and password', 'error');
+      const fullName = document.getElementById('modal-full-name').value;
+
+      if (!signUpMode) {
+        signUpMode = true;
+        if (fullNameField) fullNameField.style.display = 'block';
         return;
       }
-      
+
+      if (!email || !password || !fullName) {
+        showNotification('Please fill out all fields', 'error');
+        return;
+      }
+
       if (typeof window.signUp === 'function') {
-        window.signUp(email, password);
+        window.signUp(email, password, fullName);
       } else {
         showNotification('Sign up functionality not available. Please refresh the page.', 'error');
       }
     });
   }
-  
+
   // Modal login button
   if (modalLoginBtn) {
     modalLoginBtn.addEventListener('click', function() {
       const email = document.getElementById('modal-email').value;
       const password = document.getElementById('modal-password').value;
-      
+
+      if (fullNameField) {
+        fullNameField.style.display = 'none';
+      }
+      signUpMode = false;
+
       if (!email || !password) {
         showNotification('Please enter both email and password', 'error');
         return;
@@ -831,40 +849,71 @@ function setupLoginModal() {
       }
     });
   }
+
+  const googleBtn = document.getElementById('google-login-btn');
+  if (googleBtn) {
+    googleBtn.addEventListener('click', function() {
+      if (typeof window.signInWithGoogle === 'function') {
+        window.signInWithGoogle();
+      } else {
+        showNotification('Google sign in unavailable. Please refresh the page.', 'error');
+      }
+    });
+  }
   
-  // Forgot password link (placeholder for now)
+  // Forgot password link
   if (forgotPasswordLink) {
     forgotPasswordLink.addEventListener('click', function(e) {
       e.preventDefault();
-      showNotification('Password reset functionality coming soon!', 'info');
+      const email = document.getElementById('modal-email').value;
+      if (!email) {
+        showNotification('Enter your email above to reset your password', 'error');
+        return;
+      }
+      if (typeof window.resetPassword === 'function') {
+        window.resetPassword(email);
+      }
     });
   }
 }
 
 // Authentication functionality
 function setupAuth() {
-  window.signUp = async function(email, password) {
+  window.signUp = async function(email, password, fullName) {
     if (!supabase) {
       showNotification('Authentication service not available', 'error');
       return;
     }
-    
+
     try {
       const { data, error } = await supabase.auth.signUp({
         email: email,
         password: password,
+        options: { data: { full_name: fullName || '' } }
       });
-      
-      if (error) throw error;
+
+      if (error) {
+        if (/exists|registered/i.test(error.message)) {
+          showNotification('This email is already registered. Please sign in or use "Forgot your password".', 'error');
+          return;
+        }
+        throw error;
+      }
       
       showNotification('Sign up successful! Please check your email for verification.', 'success');
-      
+
       // Clear form and close modal
       const emailField = document.getElementById('modal-email');
       const passwordField = document.getElementById('modal-password');
+      const nameField = document.getElementById('modal-full-name');
       if (emailField) emailField.value = '';
       if (passwordField) passwordField.value = '';
+      if (nameField) nameField.value = '';
       if (loginModal) loginModal.style.display = 'none';
+      if (typeof fullNameField !== 'undefined') {
+        fullNameField.style.display = 'none';
+      }
+      signUpMode = false;
       
     } catch (err) {
       showNotification('Sign up failed: ' + err.message, 'error');
@@ -890,15 +939,46 @@ function setupAuth() {
       // Clear form and close modal
       const emailField = document.getElementById('modal-email');
       const passwordField = document.getElementById('modal-password');
+      const nameField = document.getElementById('modal-full-name');
       if (emailField) emailField.value = '';
       if (passwordField) passwordField.value = '';
+      if (nameField) nameField.value = '';
       if (loginModal) loginModal.style.display = 'none';
       
     } catch (err) {
       showNotification('Login failed: ' + err.message, 'error');
     }
   };
-  
+
+  window.signInWithGoogle = async function() {
+    if (!supabase) {
+      showNotification('Authentication service not available', 'error');
+      return;
+    }
+
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
+      if (error) throw error;
+    } catch (err) {
+      showNotification('Google sign in failed: ' + err.message, 'error');
+    }
+  };
+
+  window.resetPassword = async function(email) {
+    if (!supabase) {
+      showNotification('Authentication service not available', 'error');
+      return;
+    }
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email);
+      if (error) throw error;
+      showNotification('Password reset email sent', 'success');
+    } catch (err) {
+      showNotification('Password reset failed: ' + err.message, 'error');
+    }
+  };
+
   window.signOut = async function() {
     if (!supabase) {
       showNotification('Authentication service not available', 'error');
