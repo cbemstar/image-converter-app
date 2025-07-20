@@ -194,7 +194,7 @@ async function handleFiles(files) {
   }
   
   const quota = getQuotaInfo();
-  if (quota.used >= 10) {
+  if (quota.used >= 100) {
     if (progressStatus) progressStatus.textContent = '';
     if (progressBar) progressBar.style.width = '0';
     updateQuotaStatus();
@@ -204,9 +204,9 @@ async function handleFiles(files) {
   
   // Allow up to 25MB for in-browser, >25MB for Supabase
   const validFiles = imageFiles.filter(f => f.size <= 100*1024*1024); // allow up to 100MB for pro, but hybrid logic will route
-  let canProcess = Math.min(validFiles.length, 10 - quota.used);
-  if (imageFiles.length > 10 || validFiles.length > 10 || canProcess < validFiles.length) {
-    showNotification('You selected more than 10 images. Only the first 10 within your quota will be processed.', 'warning');
+  let canProcess = Math.min(validFiles.length, 100 - quota.used);
+  if (imageFiles.length > 100 || validFiles.length > 100 || canProcess < validFiles.length) {
+    showNotification('You selected more than 100 images. Only the first 100 within your quota will be processed.', 'warning');
   }
   if (canProcess === 0) {
     showNotification('No images can be processed (quota or size limit).', 'error');

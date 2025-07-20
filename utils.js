@@ -108,12 +108,12 @@ export function setQuotaInfo(quota) {
 
 export function updateQuotaStatus() {
   const quota = getQuotaInfo();
-  const left = Math.max(0, 10 - quota.used);
+  const left = Math.max(0, 100 - quota.used);
   const quotaStatus = document.getElementById('quota-status');
   const upgradeBtn = document.getElementById('upgrade-btn');
   
   if (quotaStatus) {
-    quotaStatus.textContent = `Free quota: ${left} of 10 images left (resets in ${Math.ceil((24*60*60*1000 - (Date.now() - quota.start))/3600000)}h)`;
+    quotaStatus.textContent = `Free quota: ${left} of 100 images left (resets in ${Math.ceil((24*60*60*1000 - (Date.now() - quota.start))/3600000)}h)`;
   }
   
   // Show upgrade button if quota is low or zero
@@ -124,12 +124,12 @@ export function updateQuotaStatus() {
 
 export function canProcessImages(num, files) {
   const quota = getQuotaInfo();
-  if (quota.used >= 10) return false;
+  if (quota.used >= 100) return false;
   let valid = 0;
   for (let i = 0; i < files.length; i++) {
     if (files[i].size <= 5*1024*1024) valid++;
   }
-  return Math.min(valid, 10 - quota.used);
+  return Math.min(valid, 100 - quota.used);
 }
 
 // Format detectors
