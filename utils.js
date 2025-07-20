@@ -214,8 +214,7 @@ export function toggleStripeAccordion(show = false) {
 export function fixDownloadButtonDisplay() {
   const downloadButtons = document.querySelectorAll('.download-btn');
   downloadButtons.forEach(button => {
-    if (!button.classList.contains('hidden')) {
-      button.style.display = 'inline-block';
+    if (button.style.display === 'inline-block') {
       button.style.width = '100%';
       button.style.boxSizing = 'border-box';
     }

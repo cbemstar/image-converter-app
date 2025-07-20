@@ -269,7 +269,6 @@ export async function processImages(files, maxW, maxH, quality, format) {
       // Enable download button
       const downloadBtn = document.querySelector(`#preview-tbody tr:nth-child(${i+1}) .download-btn`);
       if (downloadBtn) {
-        downloadBtn.classList.remove('hidden');
         downloadBtn.style.display = 'inline-block';
         downloadBtn.href = URL.createObjectURL(blob);
         downloadBtn.download = filename;
@@ -301,10 +300,14 @@ export async function processImages(files, maxW, maxH, quality, format) {
     const downloadSelected = document.getElementById('download-selected');
     const bulkRenameLink = document.getElementById('show-bulk-rename');
     
+    // Show the download buttons container
+    const downloadButtonsContainer = document.querySelector('.download-btns-responsive');
+    if (downloadButtonsContainer) {
+      downloadButtonsContainer.style.display = 'flex';
+    }
+    
     if (downloadLink) {
       downloadLink.href = URL.createObjectURL(zipBlob);
-      downloadLink.classList.remove('hidden');
-      downloadLink.style.display = 'inline-block';
       
       // Make the ZIP download more prominent
       downloadLink.style.fontWeight = 'bold';
@@ -323,12 +326,6 @@ export async function processImages(files, maxW, maxH, quality, format) {
       
       // Show notification about the ZIP
       showNotification(`${processed} images processed! You can download them individually or as a ZIP archive.`, 'success');
-    }
-    
-    // Also show the "Download Selected" button
-    if (downloadSelected) {
-      downloadSelected.classList.remove('hidden');
-      downloadSelected.style.display = 'inline-block';
     }
     
     // Show the "Bulk Rename Tool" link

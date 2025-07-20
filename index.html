@@ -36,24 +36,24 @@
           </a>
         </div>
         
-        <!-- Navigation links -->
+        <!-- Navigation links 
         <div class="hidden md:flex items-center space-x-4">
           <a href="index.html" class="text-[#cde5da] hover:text-[#7fd7c4] px-3 py-2 rounded-md font-medium">Home</a>
           <a href="#" class="text-[#cde5da] hover:text-[#7fd7c4] px-3 py-2 rounded-md font-medium">Features</a>
           <a href="#" class="text-[#cde5da] hover:text-[#7fd7c4] px-3 py-2 rounded-md font-medium">Pricing</a>
           <a href="#" class="text-[#cde5da] hover:text-[#7fd7c4] px-3 py-2 rounded-md font-medium">Support</a>
-        </div>
+        </div> -->
         
-        <!-- Authentication buttons -->
+        <!-- Authentication buttons -
         <div class="flex items-center space-x-2">
           <button id="nav-login-btn" class="shad-btn text-sm" style="display: none;">
             <i class="fas fa-sign-in-alt mr-2"></i> Login
           </button>
           <button id="nav-logout-btn" class="hidden shad-btn text-sm">
             <i class="fas fa-sign-out-alt mr-2"></i> Logout
-          </button>
+          </button> ->
           
-          <!-- Mobile menu button -->
+           Mobile menu button 
           <div class="md:hidden flex items-center">
             <button id="mobile-menu-button" class="text-[#cde5da] hover:text-[#7fd7c4] focus:outline-none">
               <i class="fas fa-bars text-xl"></i>
@@ -63,7 +63,7 @@
       </div>
     </div>
     
-    <!-- Mobile menu -->
+     Mobile menu -->
     <div id="mobile-menu" class="hidden md:hidden border-t border-[#cde5da]/20">
       <div class="px-2 pt-2 pb-3 space-y-1">
         <a href="index.html" class="block text-[#cde5da] hover:bg-[#cde5da]/10 px-3 py-2 rounded-md text-base font-medium">Home</a>
@@ -243,24 +243,26 @@
     </div>
     
     <!-- Download buttons -->
-    <div class="download-btns-responsive mb-6 flex justify-center gap-4 flex-wrap">
-      <a id="download-link" href="#" download="converted_images.zip" class="hidden bg-cde5da text-172f37 hover:bg-transparent hover:text-cde5da border-2 border-cde5da rounded-lg py-3 px-6 font-semibold transition-all">
-        <span style="display: inline-flex; align-items: center; gap: 8px;">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <div class="download-btns-responsive mb-6 flex justify-center gap-2 sm:gap-4 flex-wrap" style="display: none;">
+      <a id="download-link" href="#" download="converted_images.zip" class="bg-cde5da text-172f37 hover:bg-transparent hover:text-cde5da border-2 border-cde5da rounded-lg py-2 px-3 sm:py-3 sm:px-6 text-sm sm:text-base font-semibold transition-all">
+        <span style="display: inline-flex; align-items: center; gap: 4px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
             <polyline points="7 10 12 15 17 10"></polyline>
             <line x1="12" y1="15" x2="12" y2="3"></line>
           </svg>
-          Download All as ZIP
+          <span class="hidden sm:inline">Download All as ZIP</span>
+          <span class="sm:hidden">Download All</span>
         </span>
       </a>
-      <button id="download-selected" class="hidden bg-cde5da text-172f37 hover:bg-transparent hover:text-cde5da border-2 border-cde5da rounded-lg py-3 px-6 font-semibold transition-all">
-        <span style="display: inline-flex; align-items: center; gap: 8px;">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <button id="download-selected" class="bg-cde5da text-172f37 hover:bg-transparent hover:text-cde5da border-2 border-cde5da rounded-lg py-2 px-3 sm:py-3 sm:px-6 text-sm sm:text-base font-semibold transition-all">
+        <span style="display: inline-flex; align-items: center; gap: 4px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M22 2v16h-8l-4 4-4-4H2V2z"></path>
             <circle cx="12" cy="10" r="3"></circle>
           </svg>
-          Download Selected
+          <span class="hidden sm:inline">Download Selected</span>
+          <span class="sm:hidden">Selected</span>
         </span>
       </button>
     </div>
@@ -311,56 +313,10 @@
 
   <!-- Footer -->
   <footer class="bg-[#172f37] border-t border-[#cde5da]/30 mt-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <!-- Company info -->
-        <div>
-          <h3 class="text-[#cde5da] text-lg font-semibold mb-4">ImageConverter</h3>
-          <p class="text-[#cde5da]/80 mb-4">Convert your images between formats with speed and precision. Try our tool for free today.</p>
-          <div class="flex space-x-4">
-            <a href="#" class="text-[#cde5da] hover:text-[#7fd7c4]"><i class="fab fa-twitter"></i></a>
-            <a href="#" class="text-[#cde5da] hover:text-[#7fd7c4]"><i class="fab fa-facebook"></i></a>
-            <a href="#" class="text-[#cde5da] hover:text-[#7fd7c4]"><i class="fab fa-instagram"></i></a>
-            <a href="#" class="text-[#cde5da] hover:text-[#7fd7c4]"><i class="fab fa-github"></i></a>
-          </div>
-        </div>
-        
-        <!-- Quick links -->
-        <div>
-          <h3 class="text-[#cde5da] text-lg font-semibold mb-4">Quick Links</h3>
-          <ul class="space-y-2">
-            <li><a href="#" class="text-[#cde5da]/80 hover:text-[#7fd7c4]">Home</a></li>
-            <li><a href="#" class="text-[#cde5da]/80 hover:text-[#7fd7c4]">Features</a></li>
-            <li><a href="#" class="text-[#cde5da]/80 hover:text-[#7fd7c4]">Pricing</a></li>
-            <li><a href="#" class="text-[#cde5da]/80 hover:text-[#7fd7c4]">Support</a></li>
-          </ul>
-        </div>
-        
-        <!-- Contact -->
-        <div>
-          <h3 class="text-[#cde5da] text-lg font-semibold mb-4">Contact</h3>
-          <ul class="space-y-2">
-            <li class="flex items-center text-[#cde5da]/80">
-              <i class="fas fa-envelope mr-2 text-[#7fd7c4]"></i> support@imageconverter.com
-            </li>
-            <li class="flex items-center text-[#cde5da]/80">
-              <i class="fas fa-phone mr-2 text-[#7fd7c4]"></i> +1 (555) 123-4567
-            </li>
-            <li class="flex items-center text-[#cde5da]/80">
-              <i class="fas fa-map-marker-alt mr-2 text-[#7fd7c4]"></i> 123 Conversion St, Digital City
-            </li>
-          </ul>
-        </div>
-      </div>
-      
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <!-- Copyright -->
-      <div class="border-t border-[#cde5da]/20 mt-8 pt-6 text-center">
+      <div class="text-center">
         <p class="text-[#cde5da]/70">&copy; 2024 ImageConverter. All rights reserved.</p>
-        <div class="mt-2 flex justify-center space-x-6">
-          <a href="#" class="text-[#cde5da]/70 hover:text-[#7fd7c4] text-sm">Privacy Policy</a>
-          <a href="#" class="text-[#cde5da]/70 hover:text-[#7fd7c4] text-sm">Terms of Service</a>
-          <a href="#" class="text-[#cde5da]/70 hover:text-[#7fd7c4] text-sm">Cookie Policy</a>
-        </div>
       </div>
     </div>
   </footer>
