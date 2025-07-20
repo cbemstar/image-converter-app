@@ -145,18 +145,11 @@ async function handleFiles(files) {
   }
   
   // Hide download buttons and bulk rename tool when new files are loaded
-  const downloadLink = document.getElementById('download-link');
-  const downloadSelected = document.getElementById('download-selected');
+  const downloadButtonsContainer = document.querySelector('.download-btns-responsive');
   const bulkRenameLink = document.getElementById('show-bulk-rename');
   
-  if (downloadLink) {
-    downloadLink.classList.add('hidden');
-    downloadLink.style.display = 'none';
-  }
-  
-  if (downloadSelected) {
-    downloadSelected.classList.add('hidden');
-    downloadSelected.style.display = 'none';
+  if (downloadButtonsContainer) {
+    downloadButtonsContainer.style.display = 'none';
   }
   
   if (bulkRenameLink) {
@@ -242,7 +235,7 @@ async function handleFiles(files) {
         <td data-label="Size" class="size-cell">-</td>
         <td data-label="Actions">
           <button class="convert-single-btn" data-index="${i+1}">Convert</button>
-          <a class="download-btn hidden ml-2" data-index="${i+1}">Download</a>
+          <a class="download-btn ml-2" data-index="${i+1}" style="display: none;">Download</a>
         </td>`;
         previewTbody.appendChild(tr);
 
@@ -334,6 +327,7 @@ async function handleFiles(files) {
   // Show Convert All button and update label
   if (convertImagesBtn) {
     convertImagesBtn.classList.remove('hidden');
+    convertImagesBtn.style.display = 'block';
     updateButtonText();
   }
   
@@ -394,7 +388,7 @@ async function processSingleImage(index) {
     }
     
     // Check if there's at least one converted image with download button visible
-    const hasConverted = document.querySelector('.download-btn:not(.hidden)');
+    const hasConverted = document.querySelector('.download-btn[style*="inline-block"]');
     
     if (hasConverted) {
       // Generate a ZIP file with all converted images
@@ -402,7 +396,7 @@ async function processSingleImage(index) {
       let addedFiles = 0;
       
       // Find all download buttons and add their blobs to ZIP
-      document.querySelectorAll('a.download-btn:not(.hidden)').forEach(async (btn) => {
+      document.querySelectorAll('a.download-btn[style*="inline-block"]').forEach(async (btn) => {
         if (btn.href && btn.href.startsWith('blob:')) {
           try {
             const response = await fetch(btn.href);
@@ -416,19 +410,16 @@ async function processSingleImage(index) {
         }
       });
       
-      // Create download link for all files if there's at least one
-      if (downloadLink && downloadLink.classList.contains('hidden')) {
-        zip.generateAsync({ type: 'blob' }).then(zipBlob => {
-          downloadLink.href = URL.createObjectURL(zipBlob);
-          downloadLink.classList.remove('hidden');
-          downloadLink.style.display = 'inline-block';
-        });
+      // Show the download buttons container
+      const downloadButtonsContainer = document.querySelector('.download-btns-responsive');
+      if (downloadButtonsContainer) {
+        downloadButtonsContainer.style.display = 'flex';
       }
       
-      // Show the Download Selected button
-      if (downloadSelected && downloadSelected.classList.contains('hidden')) {
-        downloadSelected.classList.remove('hidden');
-        downloadSelected.style.display = 'inline-block';
+      if (downloadLink) {
+        zip.generateAsync({ type: 'blob' }).then(zipBlob => {
+          downloadLink.href = URL.createObjectURL(zipBlob);
+        });
       }
     }
     
@@ -450,10 +441,18 @@ function updateButtonText() {
   if (!convertImagesBtn) return;
   
   const selectedCount = document.querySelectorAll('.select-image:checked').length;
-  convertImagesBtn.textContent = `Convert ${selectedCount} Image${selectedCount !== 1 ? 's' : ''}`;
+  const totalImages = _selectedFiles ? _selectedFiles.length : 0;
   
-  // Show or hide the button based on selection
-  convertImagesBtn.style.display = selectedCount > 0 ? 'block' : 'none';
+  // If no images are selected, show "Convert All Images"
+  // If specific images are selected, show "Convert X Images"
+  if (selectedCount === 0 || selectedCount === totalImages) {
+    convertImagesBtn.textContent = `Convert All Images`;
+  } else {
+    convertImagesBtn.textContent = `Convert ${selectedCount} Image${selectedCount !== 1 ? 's' : ''}`;
+  }
+  
+  // Always show the button if there are images uploaded
+  convertImagesBtn.style.display = totalImages > 0 ? 'block' : 'none';
 }
 
 // Lightbox functionality
@@ -581,7 +580,7 @@ function setupDownloadSelected() {
     // Find all download buttons for selected rows and add their blobs to ZIP
     for (const checkbox of checkedRows) {
       const index = parseInt(checkbox.getAttribute('data-index'), 10);
-      const downloadBtn = document.querySelector(`a.download-btn[data-index="${index}"]:not(.hidden)`);
+      const downloadBtn = document.querySelector(`a.download-btn[data-index="${index}"][style*="inline-block"]`);
       
       if (downloadBtn && downloadBtn.href && downloadBtn.href.startsWith('blob:')) {
         try {
@@ -1040,13 +1039,21 @@ function setupEventListeners() {
           }
         });
         
-        if (!selectedIndices.length) {
-          showNotification('No images selected for conversion', 'error');
-          return;
+        // If no specific images are selected, process all images
+        // If specific images are selected, process only those
+        let filesToProcess;
+        if (selectedIndices.length === 0) {
+          // Process all images
+          filesToProcess = _selectedFiles;
+        } else {
+          // Process only selected images
+          filesToProcess = selectedIndices.map(i => _selectedFiles[i]);
         }
         
-        // Get files to process
-        const filesToProcess = selectedIndices.map(i => _selectedFiles[i]);
+        if (!filesToProcess.length) {
+          showNotification('No images to convert', 'error');
+          return;
+        }
         
         // Get conversion parameters
         const maxW = parseInt(maxWidthInput.value, 10) || 99999;
@@ -1119,6 +1126,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   bulkRenameControls = document.getElementById('bulk-rename-controls');
   upgradeBtn = document.getElementById('upgrade-btn');
   downloadSelectedBtn = document.getElementById('download-selected');
+  
+  // Ensure download buttons are hidden on page load
+  const downloadButtonsContainer = document.querySelector('.download-btns-responsive');
+  if (downloadButtonsContainer) {
+    downloadButtonsContainer.style.display = 'none';
+  }
   
   // Initialize navigation and modal references
   navLoginBtn = document.getElementById('nav-login-btn');
