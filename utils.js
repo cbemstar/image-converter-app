@@ -132,6 +132,15 @@ export function canProcessImages(num, files) {
   return Math.min(valid, 100 - quota.used);
 }
 
+// Format file size in KB or MB for readability
+export function formatFileSize(bytes) {
+  const kb = bytes / 1024;
+  if (kb >= 1024) {
+    return `${(kb / 1024).toFixed(1)} MB`;
+  }
+  return `${kb.toFixed(1)} KB`;
+}
+
 // Format detectors
 export function isAvif(file) {
   return file.type === 'image/avif' || file.name.toLowerCase().endsWith('.avif');
