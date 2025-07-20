@@ -512,8 +512,8 @@ tr.error-row td { color:#ffb4b4 !important; }
   border: 1px solid var(--border);
   padding: 0.5rem 1rem;
   font-weight: 600;
-  background-color: var(--foreground);
-  color: var(--background);
+  background-color: var(--background);
+  color: var(--foreground);
   transition: background-color 0.2s, color 0.2s;
 }
 
