@@ -13,7 +13,8 @@ import {
   getQuotaInfo, 
   setQuotaInfo, 
   updateQuotaStatus,
-  fixDownloadButtonDisplay
+  fixDownloadButtonDisplay,
+  formatFileSize
 } from './utils.js';
 
 import { 
@@ -260,10 +261,9 @@ export async function processImages(files, maxW, maxH, quality, format) {
       // Update table with file size
       const sizeCell = document.querySelector(`#preview-tbody tr:nth-child(${i+1}) .size-cell`);
       if (sizeCell) {
-        const size = (blob.size / 1024).toFixed(1);
-        const originalSize = (file.size / 1024).toFixed(1);
+        const size = formatFileSize(blob.size);
         const reduction = (100 - (blob.size / file.size * 100)).toFixed(1);
-        sizeCell.innerHTML = `${size} KB<br><span style="color:#7fd7c4;font-size:0.85em;">${reduction}% smaller</span>`;
+        sizeCell.innerHTML = `${size}<br><span style="color:#7fd7c4;font-size:0.85em;">${reduction}% smaller</span>`;
       }
       
       // Enable download button

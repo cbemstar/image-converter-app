@@ -76,6 +76,7 @@ label, th, .font-medium, .text-blue-900, .text-gray-500, .text-lg, .text-sm, .te
   background-color: #cde5da !important;
   color: #172f37 !important;
   border: 2px solid #cde5da !important;
+  white-space: nowrap;
 }
 
 #download-link:hover, #download-selected:hover {
@@ -139,7 +140,29 @@ input:focus, select:focus, textarea:focus {
   border-radius: 1.25rem !important;
 }
 
-img.preview { max-width: clamp(80px, 10vw, 120px); max-height: clamp(80px, 10vw, 120px); border-radius: 0.75rem; }
+/* Progress bar styling */
+#progress-bar-container {
+  height: 18px;
+  padding: 0.25rem;
+  border: 2px solid #cde5da;
+  border-radius: 0.75rem;
+  background: none;
+  box-sizing: border-box;
+}
+
+#progress-bar {
+  height: 100%;
+  width: 0;
+  background: #cde5da;
+  border-radius: 0.5rem;
+  transition: width 0.3s;
+}
+
+img.preview {
+  max-width: clamp(100px, 12vw, 160px);
+  max-height: clamp(100px, 12vw, 160px);
+  border-radius: 0.75rem;
+}
 
 @media (max-width: 768px) {
   .max-w-xs {
@@ -186,8 +209,8 @@ img.preview { max-width: clamp(80px, 10vw, 120px); max-height: clamp(80px, 10vw,
     margin: 0 0.5rem;
   }
   img.preview {
-    max-width: clamp(70px, 20vw, 100px);
-    max-height: clamp(70px, 20vw, 100px);
+    max-width: clamp(90px, 30vw, 140px);
+    max-height: clamp(90px, 30vw, 140px);
   }
   .break-words {
     word-break: break-all;
@@ -292,15 +315,16 @@ img.preview { max-width: clamp(80px, 10vw, 120px); max-height: clamp(80px, 10vw,
   margin-bottom: 1.5rem;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .download-btns-responsive {
     flex-direction: column;
     gap: 0.5rem;
-    align-items: stretch;
+    align-items: center;
   }
   #download-link, #download-selected {
     min-width: unset;
     width: 100%;
+    max-width: 250px;
   }
 }
 
@@ -406,8 +430,8 @@ img.preview { max-width: clamp(80px, 10vw, 120px); max-height: clamp(80px, 10vw,
 }
 
 .preview-card img.preview {
-  max-width: 120px;
-  max-height: 120px;
+  max-width: 160px;
+  max-height: 160px;
   border-radius: 0.5rem;
 }
 
