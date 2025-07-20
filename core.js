@@ -13,7 +13,8 @@ import {
   checkHeicSupport, 
   checkWasmSupport,
   toggleStripeAccordion,
-  initImageProcessingLibraries
+  initImageProcessingLibraries,
+  formatFileSize
 } from './utils.js';
 
 import { 
@@ -360,9 +361,9 @@ async function processSingleImage(index) {
     
     // Update file size display
     if (sizeCell) {
-      const size = (blob.size / 1024).toFixed(1);
+      const size = formatFileSize(blob.size);
       const reduction = (100 - (blob.size / file.size * 100)).toFixed(1);
-      sizeCell.innerHTML = `${size} KB<br><span style="color:#7fd7c4;font-size:0.85em;">${reduction}% smaller</span>`;
+      sizeCell.innerHTML = `${size}<br><span style="color:#7fd7c4;font-size:0.85em;">${reduction}% smaller</span>`;
     }
     
     // Enable download button

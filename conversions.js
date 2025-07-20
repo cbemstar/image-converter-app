@@ -13,7 +13,8 @@ import {
   getQuotaInfo, 
   setQuotaInfo, 
   updateQuotaStatus,
-  fixDownloadButtonDisplay
+  fixDownloadButtonDisplay,
+  formatFileSize
 } from './utils.js';
 
 import { 
@@ -240,8 +241,10 @@ export async function processImages(files, maxW, maxH, quality, format) {
   // Show progress bar and status
   const progressStatus = document.getElementById('progress-status');
   const progressBar = document.getElementById('progress-bar');
-  
-  if (progressStatus) progressStatus.textContent = `Processing ${files.length} images...`;
+  const progressContainer = document.getElementById('progress-bar-container');
+
+  if (progressContainer) progressContainer.style.display = 'block';
+  if (progressStatus) progressStatus.textContent = `Converting 1 of ${files.length}`;
   if (progressBar) progressBar.style.width = '0%';
   
   for (let i = 0; i < files.length; i++) {
@@ -257,13 +260,15 @@ export async function processImages(files, maxW, maxH, quality, format) {
       // Add to ZIP
       zip.file(filename, blob);
       
+      // Update status and table
+      if (progressStatus) progressStatus.textContent = `Converting ${i + 1} of ${files.length}`;
+
       // Update table with file size
       const sizeCell = document.querySelector(`#preview-tbody tr:nth-child(${i+1}) .size-cell`);
       if (sizeCell) {
-        const size = (blob.size / 1024).toFixed(1);
-        const originalSize = (file.size / 1024).toFixed(1);
+        const size = formatFileSize(blob.size);
         const reduction = (100 - (blob.size / file.size * 100)).toFixed(1);
-        sizeCell.innerHTML = `${size} KB<br><span style="color:#7fd7c4;font-size:0.85em;">${reduction}% smaller</span>`;
+        sizeCell.innerHTML = `${size}<br><span style="color:#7fd7c4;font-size:0.85em;">${reduction}% smaller</span>`;
       }
       
       // Enable download button
@@ -288,10 +293,12 @@ export async function processImages(files, maxW, maxH, quality, format) {
   
   // Update progress status
   if (progressStatus) {
-    progressStatus.textContent = processed === files.length ? 
-      `Successfully converted ${processed} of ${files.length} images!` : 
+    progressStatus.textContent = processed === files.length ?
+      `Successfully converted ${processed} of ${files.length} images!` :
       `Converted ${processed} of ${files.length} images. Check errors above.`;
   }
+  if (progressContainer) progressContainer.style.display = 'none';
+  if (progressBar) progressBar.style.width = '0%';
   
   // Create download link for all files
   if (processed > 0) {
