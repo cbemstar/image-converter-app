@@ -76,6 +76,7 @@ label, th, .font-medium, .text-blue-900, .text-gray-500, .text-lg, .text-sm, .te
   background-color: #cde5da !important;
   color: #172f37 !important;
   border: 2px solid #cde5da !important;
+  white-space: nowrap;
 }
 
 #download-link:hover, #download-selected:hover {
@@ -292,7 +293,7 @@ img.preview { max-width: clamp(80px, 10vw, 120px); max-height: clamp(80px, 10vw,
   margin-bottom: 1.5rem;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .download-btns-responsive {
     flex-direction: column;
     gap: 0.5rem;
@@ -301,6 +302,7 @@ img.preview { max-width: clamp(80px, 10vw, 120px); max-height: clamp(80px, 10vw,
   #download-link, #download-selected {
     min-width: unset;
     width: 100%;
+    max-width: 250px;
   }
 }
 
