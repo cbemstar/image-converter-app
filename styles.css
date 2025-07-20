@@ -529,7 +529,7 @@ tr.error-row td { color:#ffb4b4 !important; }
 
 #nav-login-btn.shad-btn:hover,
 #nav-logout-btn.shad-btn:hover {
-  color: var(--foreground);
+  color: #cde5da;
   background-color: transparent;
 }
 
