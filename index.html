@@ -32,8 +32,7 @@
         <!-- Logo and site name -->
         <div class="flex items-center">
           <a href="index.html" class="flex items-center gap-2">
-            <img src="https://img.icons8.com/fluency/48/image.png" alt="Image Converter Logo" class="h-10 w-10">
-            <span class="text-[var(--foreground)] text-xl font-bold">ImageConverter</span>
+            <span class="text-[var(--foreground)] text-xl font-bold">reformately</span>
           </a>
         </div>
         
@@ -75,8 +74,17 @@
     </div>
   </nav>
 
-  <!-- Main Content Area -->
-  <div class="flex-grow">
+  <!-- Page Layout -->
+  <div class="flex flex-grow">
+    <aside class="hidden md:block w-64 border-r border-[var(--foreground)]/20 p-4">
+      <h2 class="text-lg font-bold mb-4" style="color:var(--foreground);">Tools</h2>
+      <ul class="space-y-2">
+        <li><a href="index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Image Converter</a></li>
+        <li><a href="#" class="text-[var(--foreground)] hover:text-[var(--primary)]">More coming soon</a></li>
+      </ul>
+    </aside>
+    <main class="flex-grow">
+      <!-- Main Content Area -->
     <h1 class="text-3xl font-bold text-center my-8" style="color: var(--foreground);">Image Conversion Tool</h1>
     <div id="controls" class="flex flex-wrap justify-center gap-4 mb-8">
       <div class="bg-white rounded shadow px-3 py-2 flex items-center gap-2">
@@ -200,7 +208,6 @@
           <li>Try converting the image on your device first using built-in tools</li>
           <li>For iPhone users: When sharing photos, choose "Most Compatible" instead of "High Efficiency"</li>
           <li>Some HEIC variants may not be supported by current browser libraries</li>
-          <li>If all else fails, try online HEIC converters such as heictojpg.com</li>
         </ul>
       </div>
     </div>
@@ -300,6 +307,28 @@
 
     <!-- Hide card grid -->
     <div id="preview-grid" style="display:none;"></div>
+
+    <section id="faqs" class="max-w-5xl mx-auto px-4 py-8">
+      <h2 class="text-2xl font-bold mb-4" style="color:var(--foreground);">Image Converter FAQs</h2>
+      <div class="space-y-4">
+        <div>
+          <h3 class="font-semibold" style="color:var(--foreground);">How do I convert images to WebP?</h3>
+          <p style="color:var(--foreground);">Upload your files, choose WebP as the output format and click convert. Our free online image converter will handle the rest.</p>
+        </div>
+        <div>
+          <h3 class="font-semibold" style="color:var(--foreground);">Can I convert HEIC photos from my iPhone?</h3>
+          <p style="color:var(--foreground);">Yes, the tool converts HEIC images to popular formats like JPEG or PNG so you can easily share them.</p>
+        </div>
+        <div>
+          <h3 class="font-semibold" style="color:var(--foreground);">Does the converter work for large batches?</h3>
+          <p style="color:var(--foreground);">You can upload multiple pictures at once and download everything as a ZIP after the conversion finishes.</p>
+        </div>
+        <div>
+          <h3 class="font-semibold" style="color:var(--foreground);">Is this image converter free?</h3>
+          <p style="color:var(--foreground);">The basic conversion features are free and run directly in your browser.</p>
+        </div>
+      </div>
+    </section>
     
     <!-- Image Modal for preview -->
     <div id="image-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:10000;background:rgba(0,0,0,0.92);align-items:center;justify-content:center;flex-direction:column;">
@@ -311,6 +340,7 @@
       <button id="modal-next" aria-label="Next" style="position:absolute;right:32px;top:50%;transform:translateY(-50%);font-size:2.5rem;color:var(--foreground);background:rgba(0,0,0,0.7);border:none;cursor:pointer;width:48px;height:48px;display:flex;align-items:center;justify-content:center;z-index:2;">&#8594;</button>
       <div id="modal-caption" style="margin-top:1.5rem;color:var(--foreground);font-size:1.15rem;text-align:center;max-width:90vw;word-break:break-all;"></div>
     </div>
+    </main>
   </div>
 
   <!-- Footer -->
@@ -318,7 +348,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <!-- Copyright -->
       <div class="text-center">
-        <p class="text-[var(--foreground)]/70">&copy; 2024 ImageConverter. All rights reserved.</p>
+        <p class="text-[var(--foreground)]/70">&copy; 2024 reformately. All rights reserved.</p>
       </div>
     </div>
   </footer>
