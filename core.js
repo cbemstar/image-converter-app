@@ -63,6 +63,11 @@ let closeLoginModal;
 let modalSignupBtn;
 let modalLoginBtn;
 let forgotPasswordLink;
+let sidebar;
+let sidebarToggle;
+let sidebarOverlay;
+let toolSearch;
+let toolList;
 
 // Modal elements for image preview (Lightbox Gallery) - These will be initialized when DOM is loaded
 let imageModal;
@@ -144,6 +149,8 @@ async function handleFiles(files) {
     showNotification('Please select image files only.', 'error');
     return;
   }
+
+  toggleTableHeader(false);
   
   // Hide download buttons and bulk rename tool when new files are loaded
   const downloadButtonsContainer = document.querySelector('.download-btns-responsive');
@@ -331,9 +338,10 @@ async function handleFiles(files) {
     convertImagesBtn.style.display = 'block';
     updateButtonText();
   }
-  
+
   // Setup magnify icon click handlers for lightbox
   setupMagnifyHandlers();
+  toggleTableHeader(true);
 }
 
 // Process a single image
@@ -454,6 +462,14 @@ function updateButtonText() {
   
   // Always show the button if there are images uploaded
   convertImagesBtn.style.display = totalImages > 0 ? 'block' : 'none';
+}
+
+// Show or hide table header
+function toggleTableHeader(show) {
+  const thead = document.querySelector('#preview-table thead');
+  if (thead) {
+    thead.style.display = show ? 'table-header-group' : 'none';
+  }
 }
 
 // Lightbox functionality
@@ -774,6 +790,62 @@ function setupNavigation() {
       }
     });
   }
+}
+
+// Sidebar toggle functionality
+function setupSidebar() {
+  if (!sidebar || !sidebarToggle) return;
+
+  sidebarToggle.addEventListener('click', () => {
+    const isOpen = !sidebar.classList.contains('-translate-x-full');
+    if (isOpen) {
+      sidebar.classList.add('-translate-x-full');
+      sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>';
+      if (sidebarOverlay) sidebarOverlay.classList.add('hidden');
+    } else {
+      sidebar.classList.remove('-translate-x-full');
+      sidebarToggle.innerHTML = '<i class="fas fa-times"></i>';
+      if (sidebarOverlay) sidebarOverlay.classList.remove('hidden');
+    }
+  });
+
+  if (sidebarOverlay) {
+    sidebarOverlay.addEventListener('click', () => {
+      sidebar.classList.add('-translate-x-full');
+      sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>';
+      sidebarOverlay.classList.add('hidden');
+    });
+  }
+}
+
+// Tool search functionality
+function setupToolSearch() {
+  if (!toolSearch || !toolList) return;
+
+  toolSearch.addEventListener('input', () => {
+    const term = toolSearch.value.toLowerCase();
+    toolList.querySelectorAll('li').forEach(li => {
+      const text = li.textContent.toLowerCase();
+      li.style.display = text.includes(term) ? '' : 'none';
+    });
+  });
+}
+
+// FAQ accordion functionality
+function setupFaqs() {
+  document.querySelectorAll('#faqs .faq-question').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!expanded));
+      const answer = btn.nextElementSibling;
+      if (answer) answer.classList.toggle('hidden', expanded);
+      const icon = btn.querySelector('i');
+      if (icon) {
+        icon.classList.toggle('fa-chevron-down', expanded);
+        icon.classList.toggle('fa-chevron-up', !expanded);
+      }
+    });
+  });
 }
 
 // Login modal functionality
@@ -1144,6 +1216,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   modalSignupBtn = document.getElementById('modal-signup-btn');
   modalLoginBtn = document.getElementById('modal-login-btn');
   forgotPasswordLink = document.getElementById('forgot-password-link');
+  sidebar = document.getElementById('sidebar');
+  sidebarToggle = document.getElementById('sidebar-toggle');
+  sidebarOverlay = document.getElementById('sidebar-overlay');
+  toolSearch = document.getElementById('tool-search');
+  toolList = document.getElementById('tool-list');
   
   // Initialize modal references
   imageModal = document.getElementById('image-modal');
@@ -1168,6 +1245,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupInfoPopups();
   setupUpgradeButton();
   setupNavigation();
+  setupSidebar();
+  setupToolSearch();
+  setupFaqs();
   setupLoginModal();
   setupAuth();
   
