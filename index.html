@@ -26,23 +26,23 @@
 </head>
 <body class="bg-transparent min-h-screen flex flex-col">
   <!-- Navigation Bar -->
-  <nav class="bg-[#172f37] shadow-md border-b border-[#cde5da]/30">
+  <nav class="bg-[var(--background)] shadow-md border-b border-[var(--foreground)]/30">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
         <!-- Logo and site name -->
         <div class="flex items-center">
           <a href="index.html" class="flex items-center gap-2">
             <img src="https://img.icons8.com/fluency/48/image.png" alt="Image Converter Logo" class="h-10 w-10">
-            <span class="text-[#cde5da] text-xl font-bold">ImageConverter</span>
+            <span class="text-[var(--foreground)] text-xl font-bold">ImageConverter</span>
           </a>
         </div>
         
         <!-- Navigation links 
         <div class="hidden md:flex items-center space-x-4">
-          <a href="index.html" class="text-[#cde5da] hover:text-[#7fd7c4] px-3 py-2 rounded-md font-medium">Home</a>
-          <a href="#" class="text-[#cde5da] hover:text-[#7fd7c4] px-3 py-2 rounded-md font-medium">Features</a>
-          <a href="#" class="text-[#cde5da] hover:text-[#7fd7c4] px-3 py-2 rounded-md font-medium">Pricing</a>
-          <a href="#" class="text-[#cde5da] hover:text-[#7fd7c4] px-3 py-2 rounded-md font-medium">Support</a>
+          <a href="index.html" class="text-[var(--foreground)] hover:text-[var(--primary)] px-3 py-2 rounded-md font-medium">Home</a>
+          <a href="#" class="text-[var(--foreground)] hover:text-[var(--primary)] px-3 py-2 rounded-md font-medium">Features</a>
+          <a href="#" class="text-[var(--foreground)] hover:text-[var(--primary)] px-3 py-2 rounded-md font-medium">Pricing</a>
+          <a href="#" class="text-[var(--foreground)] hover:text-[var(--primary)] px-3 py-2 rounded-md font-medium">Support</a>
         </div> -->
         
         <!-- Authentication buttons -
@@ -56,7 +56,7 @@
           
            Mobile menu button 
           <div class="md:hidden flex items-center">
-            <button id="mobile-menu-button" class="text-[#cde5da] hover:text-[#7fd7c4] focus:outline-none">
+            <button id="mobile-menu-button" class="text-[var(--foreground)] hover:text-[var(--primary)] focus:outline-none">
               <i class="fas fa-bars text-xl"></i>
             </button>
           </div>
@@ -65,19 +65,19 @@
     </div>
     
      Mobile menu -->
-    <div id="mobile-menu" class="hidden md:hidden border-t border-[#cde5da]/20">
+    <div id="mobile-menu" class="hidden md:hidden border-t border-[var(--foreground)]/20">
       <div class="px-2 pt-2 pb-3 space-y-1">
-        <a href="index.html" class="block text-[#cde5da] hover:bg-[#cde5da]/10 px-3 py-2 rounded-md text-base font-medium">Home</a>
-        <a href="#" class="block text-[#cde5da] hover:bg-[#cde5da]/10 px-3 py-2 rounded-md text-base font-medium">Features</a>
-        <a href="#" class="block text-[#cde5da] hover:bg-[#cde5da]/10 px-3 py-2 rounded-md text-base font-medium">Pricing</a>
-        <a href="#" class="block text-[#cde5da] hover:bg-[#cde5da]/10 px-3 py-2 rounded-md text-base font-medium">Support</a>
+        <a href="index.html" class="block text-[var(--foreground)] hover:bg-[var(--foreground)]/10 px-3 py-2 rounded-md text-base font-medium">Home</a>
+        <a href="#" class="block text-[var(--foreground)] hover:bg-[var(--foreground)]/10 px-3 py-2 rounded-md text-base font-medium">Features</a>
+        <a href="#" class="block text-[var(--foreground)] hover:bg-[var(--foreground)]/10 px-3 py-2 rounded-md text-base font-medium">Pricing</a>
+        <a href="#" class="block text-[var(--foreground)] hover:bg-[var(--foreground)]/10 px-3 py-2 rounded-md text-base font-medium">Support</a>
       </div>
     </div>
   </nav>
 
   <!-- Main Content Area -->
   <div class="flex-grow">
-    <h1 class="text-3xl font-bold text-center my-8" style="color: #cde5da;">Image Conversion Tool</h1>
+    <h1 class="text-3xl font-bold text-center my-8" style="color: var(--foreground);">Image Conversion Tool</h1>
     <div id="controls" class="flex flex-wrap justify-center gap-4 mb-8">
       <div class="bg-white rounded shadow px-3 py-2 flex items-center gap-2">
         <label for="max-width" class="font-medium">Max Width:</label>
@@ -97,7 +97,7 @@
     </div>
     <div id="format-controls" class="flex justify-center mb-4">
       <label for="output-format" class="font-medium mr-2">Output Format:</label>
-      <select id="output-format" class="border rounded px-2 py-1" style="background-color:#172f37;color:#cde5da;border:1.5px solid #cde5da;">
+      <select id="output-format" class="border rounded px-2 py-1" style="background-color:var(--background);color:var(--foreground);border:1.5px solid var(--foreground);">
         <option value="webp">WebP</option>
         <option value="jpeg">JPEG</option>
         <option value="png">PNG</option>
@@ -109,6 +109,7 @@
       </select>
     </div>
     <div id="format-options" class="flex justify-center gap-4 mb-4" style="display:none;"></div>
+    <div id="progress-status" class="text-center text-lg font-medium mb-2" style="color:var(--foreground);"></div>
     <div id="progress-status" class="text-center text-lg font-medium mb-2" style="color:#cde5da;"></div>
     <div id="progress-bar-container" class="w-full max-w-2xl mx-auto mb-4">
       <div id="progress-bar"></div>
@@ -127,8 +128,8 @@
     <div class="flex flex-col items-center mb-4">
       <button id="upgrade-btn" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded shadow transition-colors mb-0">Upgrade</button>
       <!-- Stripe Pricing Table Accordion -->
-      <div id="stripe-accordion" style="display:none;width:100%;max-width:900px;min-width:320px;overflow-x:auto;background:#172f37;border-radius:14px;box-shadow:0 4px 24px rgba(0,0,0,0.18);padding:1.5rem 1rem 1rem 1rem;">
-        <div style="margin-bottom:1rem;text-align:center;color:#cde5da;font-size:1.2rem;font-weight:600;">Upgrade to Pro</div>
+      <div id="stripe-accordion" style="display:none;width:100%;max-width:900px;min-width:320px;overflow-x:auto;background:var(--background);border-radius:14px;box-shadow:0 4px 24px rgba(0,0,0,0.18);padding:1.5rem 1rem 1rem 1rem;">
+        <div style="margin-bottom:1rem;text-align:center;color:var(--foreground);font-size:1.2rem;font-weight:600;">Upgrade to Pro</div>
         <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
         <stripe-pricing-table pricing-table-id="prctbl_1QwytqBcmaVSn6Z156zYdTHl"
           publishable-key="pk_live_51LTgh8BcmaVSn6Z1nQkl0Xc2lFlcaFvaBabebmyJr4fWmZqVk37uI2JBUoY9otwUVqmN2Xol9ZOdcjOdcy8MqHbS00QLT2xZxw">
@@ -139,10 +140,10 @@
     <!-- File Drop Area -->
     <div id="drop-area" class="border-2 border-dashed border-blue-400 rounded-lg p-8 text-center text-blue-500 mb-8 bg-white shadow hover:shadow-lg transition-shadow cursor-pointer max-w-2xl mx-auto px-4">
       <p class="mb-4">Drag & drop your image files here</p>
-      <p class="mb-4" style="color: #7fd7c4; font-size: 0.9rem;">Supports JPEG, PNG, WebP, GIF, AVIF, BMP, TIFF, ICO, HEIC/HEIF and RAW formats (CR2, NEF, ARW, etc)</p>
+      <p class="mb-4" style="color: var(--primary); font-size: 0.9rem;">Supports JPEG, PNG, WebP, GIF, AVIF, BMP, TIFF, ICO, HEIC/HEIF and RAW formats (CR2, NEF, ARW, etc)</p>
       <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 10px;">
-        <a href="#" id="show-raw-info" style="color:#7fd7c4; text-decoration:underline; font-size:0.8rem;">What RAW formats are supported?</a>
-        <a href="#" id="show-heic-info" style="color:#7fd7c4; text-decoration:underline; font-size:0.8rem;">About HEIC/HEIF formats</a>
+        <a href="#" id="show-raw-info" style="color:var(--primary); text-decoration:underline; font-size:0.8rem;">What RAW formats are supported?</a>
+        <a href="#" id="show-heic-info" style="color:var(--primary); text-decoration:underline; font-size:0.8rem;">About HEIC/HEIF formats</a>
       </div>
       <input type="file" id="fileElem" accept="image/*" multiple style="display:none">
       <button onclick="fileElem.click()" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-2 rounded shadow transition-colors">Select Images</button>
@@ -150,11 +151,11 @@
     
     <!-- Info Modals -->
     <div id="raw-info-modal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; overflow:auto; background-color:rgba(0,0,0,0.7);">
-      <div style="background-color:#172f37; margin:10% auto; padding:20px; border:2px solid #cde5da; border-radius:12px; width:80%; max-width:600px;">
-        <span id="close-raw-info" style="color:#cde5da; float:right; font-size:28px; font-weight:bold; cursor:pointer;">&times;</span>
-        <h3 style="color:#cde5da; margin-bottom:10px;">Supported RAW Formats</h3>
-        <p style="color:#cde5da; margin-bottom:15px;">This tool can convert the following RAW formats:</p>
-        <ul style="color:#cde5da; margin-left:20px; list-style-type:disc;">
+      <div style="background-color:var(--background); margin:10% auto; padding:20px; border:2px solid var(--foreground); border-radius:12px; width:80%; max-width:600px;">
+        <span id="close-raw-info" style="color:var(--foreground); float:right; font-size:28px; font-weight:bold; cursor:pointer;">&times;</span>
+        <h3 style="color:var(--foreground); margin-bottom:10px;">Supported RAW Formats</h3>
+        <p style="color:var(--foreground); margin-bottom:15px;">This tool can convert the following RAW formats:</p>
+        <ul style="color:var(--foreground); margin-left:20px; list-style-type:disc;">
           <li><strong>CR2</strong> - Canon Raw Format</li>
           <li><strong>NEF</strong> - Nikon Electronic Format</li>
           <li><strong>ARW</strong> - Sony Alpha Raw</li>
@@ -165,36 +166,36 @@
           <li><strong>PEF</strong> - Pentax Electronic Format</li>
           <li><strong>SRW</strong> - Samsung Raw Format</li>
         </ul>
-        <p style="color:#cde5da; margin-top:15px;">Note: RAW conversion may take longer than other formats due to the complex nature of the files.</p>
+        <p style="color:var(--foreground); margin-top:15px;">Note: RAW conversion may take longer than other formats due to the complex nature of the files.</p>
       </div>
     </div>
     
     <div id="heic-info-modal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; overflow:auto; background-color:rgba(0,0,0,0.7);">
-      <div style="background-color:#172f37; margin:10% auto; padding:20px; border:2px solid #cde5da; border-radius:12px; width:80%; max-width:600px;">
-        <span id="close-heic-info" style="color:#cde5da; float:right; font-size:28px; font-weight:bold; cursor:pointer;">&times;</span>
-        <h3 style="color:#cde5da; margin-bottom:10px;">About HEIC/HEIF Formats</h3>
-        <p style="color:#cde5da; margin-bottom:15px;">HEIC/HEIF is a modern image format used by Apple devices:</p>
-        <ul style="color:#cde5da; margin-left:20px; list-style-type:disc;">
+      <div style="background-color:var(--background); margin:10% auto; padding:20px; border:2px solid var(--foreground); border-radius:12px; width:80%; max-width:600px;">
+        <span id="close-heic-info" style="color:var(--foreground); float:right; font-size:28px; font-weight:bold; cursor:pointer;">&times;</span>
+        <h3 style="color:var(--foreground); margin-bottom:10px;">About HEIC/HEIF Formats</h3>
+        <p style="color:var(--foreground); margin-bottom:15px;">HEIC/HEIF is a modern image format used by Apple devices:</p>
+        <ul style="color:var(--foreground); margin-left:20px; list-style-type:disc;">
           <li><strong>HEIC</strong> - High Efficiency Image Container, used on iPhone/iPad (iOS 11+)</li>
           <li><strong>HEIF</strong> - High Efficiency Image Format, the underlying format standard</li>
         </ul>
-        <p style="color:#cde5da; margin-top:15px;">Benefits include:</p>
-        <ul style="color:#cde5da; margin-left:20px; list-style-type:disc;">
+        <p style="color:var(--foreground); margin-top:15px;">Benefits include:</p>
+        <ul style="color:var(--foreground); margin-left:20px; list-style-type:disc;">
           <li>Smaller file sizes compared to JPEG (up to 50% smaller)</li>
           <li>Better image quality at the same file size</li>
           <li>Support for transparency</li>
         </ul>
-        <p style="color:#cde5da; margin-top:15px;">This tool can convert these formats to more widely supported formats like JPEG, PNG, or WebP.</p>
+        <p style="color:var(--foreground); margin-top:15px;">This tool can convert these formats to more widely supported formats like JPEG, PNG, or WebP.</p>
         
-        <h4 style="color:#cde5da; margin-top:20px; margin-bottom:10px;">Browser Compatibility:</h4>
-        <ul style="color:#cde5da; margin-left:20px; list-style-type:disc;">
+        <h4 style="color:var(--foreground); margin-top:20px; margin-bottom:10px;">Browser Compatibility:</h4>
+        <ul style="color:var(--foreground); margin-left:20px; list-style-type:disc;">
           <li><strong>Safari 17+</strong>: Native HEIC support</li>
           <li><strong>Chrome/Edge</strong>: Good support via JavaScript libraries</li>
           <li><strong>Firefox</strong>: Limited support, may have issues with some HEIC variants</li>
         </ul>
         
-        <h4 style="color:#cde5da; margin-top:20px; margin-bottom:10px;">If You Encounter Errors:</h4>
-        <ul style="color:#cde5da; margin-left:20px; list-style-type:disc;">
+        <h4 style="color:var(--foreground); margin-top:20px; margin-bottom:10px;">If You Encounter Errors:</h4>
+        <ul style="color:var(--foreground); margin-left:20px; list-style-type:disc;">
           <li>Try a different browser (Chrome or Edge recommended)</li>
           <li>Try converting the image on your device first using built-in tools</li>
           <li>For iPhone users: When sharing photos, choose "Most Compatible" instead of "High Efficiency"</li>
@@ -206,22 +207,22 @@
     
     <!-- Login Modal -->
     <div id="login-modal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; overflow:auto; background-color:rgba(0,0,0,0.7);">
-      <div style="background-color:#172f37; margin:10% auto; padding:20px; border:2px solid #cde5da; border-radius:12px; width:90%; max-width:400px;">
-        <span id="close-login-modal" style="color:#cde5da; float:right; font-size:28px; font-weight:bold; cursor:pointer;">&times;</span>
-        <h3 style="color:#cde5da; margin-bottom:20px; text-align:center;">Login / Sign Up</h3>
+      <div style="background-color:var(--background); margin:10% auto; padding:20px; border:2px solid var(--foreground); border-radius:12px; width:90%; max-width:400px;">
+        <span id="close-login-modal" style="color:var(--foreground); float:right; font-size:28px; font-weight:bold; cursor:pointer;">&times;</span>
+        <h3 style="color:var(--foreground); margin-bottom:20px; text-align:center;">Login / Sign Up</h3>
         
         <div class="mb-4">
-          <label for="modal-email" style="color:#cde5da; display:block; margin-bottom:6px;">Email:</label>
+          <label for="modal-email" style="color:var(--foreground); display:block; margin-bottom:6px;">Email:</label>
           <input id="modal-email" type="email" placeholder="your@email.com" class="shad-input" />
         </div>
 
         <div id="full-name-field" class="mb-4" style="display:none;">
-          <label for="modal-full-name" style="color:#cde5da; display:block; margin-bottom:6px;">Full Name:</label>
+          <label for="modal-full-name" style="color:var(--foreground); display:block; margin-bottom:6px;">Full Name:</label>
           <input id="modal-full-name" type="text" placeholder="Your full name" class="shad-input" />
         </div>
         
         <div id="password-field" class="mb-4">
-          <label for="modal-password" style="color:#cde5da; display:block; margin-bottom:6px;">Password:</label>
+          <label for="modal-password" style="color:var(--foreground); display:block; margin-bottom:6px;">Password:</label>
           <input id="modal-password" type="password" placeholder="Your password" class="shad-input" />
         </div>
         
@@ -238,7 +239,7 @@
         </div>
         
         <div class="text-center mt-4">
-          <a href="#" id="forgot-password-link" style="color:#7fd7c4; text-decoration:underline; font-size:0.9rem;">Forgot your password?</a>
+          <a href="#" id="forgot-password-link" style="color:var(--primary); text-decoration:underline; font-size:0.9rem;">Forgot your password?</a>
         </div>
       </div>
     </div>
@@ -268,12 +269,12 @@
       </button>
     </div>
     <div class="flex justify-center mb-2">
-      <a href="#" id="show-bulk-rename" style="color:#7fd7c4;text-decoration:underline;cursor:pointer;" class="hidden">Bulk Rename Tool</a>
+      <a href="#" id="show-bulk-rename" style="color:var(--primary);text-decoration:underline;cursor:pointer;" class="hidden">Bulk Rename Tool</a>
     </div>
     <div id="bulk-rename-controls" class="flex flex-wrap justify-center gap-2 mb-4" style="align-items:center; display:none;">
-      <input id="bulk-rename-base" type="text" placeholder="Base name (e.g. Image)" class="border rounded px-2 py-1" style="background-color:#172f37;color:#cde5da;border:1.5px solid #cde5da;" />
-      <input id="bulk-rename-start" type="number" min="1" value="1" class="border rounded px-2 py-1 w-20" style="background-color:#172f37;color:#cde5da;border:1.5px solid #cde5da;" />
-      <button id="bulk-rename-btn" style="background-color:#cde5da;color:#172f37;border-radius:0.375rem;padding:0.5rem 1.25rem;border:none;font-weight:600;">Bulk Rename</button>
+      <input id="bulk-rename-base" type="text" placeholder="Base name (e.g. Image)" class="border rounded px-2 py-1" style="background-color:var(--background);color:var(--foreground);border:1.5px solid var(--foreground);" />
+      <input id="bulk-rename-start" type="number" min="1" value="1" class="border rounded px-2 py-1 w-20" style="background-color:var(--background);color:var(--foreground);border:1.5px solid var(--foreground);" />
+      <button id="bulk-rename-btn" style="background-color:var(--foreground);color:var(--background);border-radius:0.375rem;padding:0.5rem 1.25rem;border:none;font-weight:600;">Bulk Rename</button>
     </div>
     <div class="flex justify-center mb-4">
       <button id="convert-images-btn" class="hidden">Convert All Images</button>
@@ -301,23 +302,23 @@
     <div id="preview-grid" style="display:none;"></div>
     
     <!-- Image Modal for preview -->
-    <div id="image-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:10000;background:rgba(23,47,55,0.92);align-items:center;justify-content:center;flex-direction:column;">
-      <button class="close-modal" aria-label="Close" style="position:absolute;top:32px;right:40px;font-size:2.5rem;color:#cde5da;background:rgba(23,47,55,0.7);border:none;cursor:pointer;width:48px;height:48px;display:flex;align-items:center;justify-content:center;z-index:2;">&times;</button>
-      <button id="modal-prev" aria-label="Previous" style="position:absolute;left:32px;top:50%;transform:translateY(-50%);font-size:2.5rem;color:#cde5da;background:rgba(23,47,55,0.7);border:none;cursor:pointer;width:48px;height:48px;display:flex;align-items:center;justify-content:center;z-index:2;">&#8592;</button>
+    <div id="image-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:10000;background:rgba(0,0,0,0.92);align-items:center;justify-content:center;flex-direction:column;">
+      <button class="close-modal" aria-label="Close" style="position:absolute;top:32px;right:40px;font-size:2.5rem;color:var(--foreground);background:rgba(0,0,0,0.7);border:none;cursor:pointer;width:48px;height:48px;display:flex;align-items:center;justify-content:center;z-index:2;">&times;</button>
+      <button id="modal-prev" aria-label="Previous" style="position:absolute;left:32px;top:50%;transform:translateY(-50%);font-size:2.5rem;color:var(--foreground);background:rgba(0,0,0,0.7);border:none;cursor:pointer;width:48px;height:48px;display:flex;align-items:center;justify-content:center;z-index:2;">&#8592;</button>
       <div style="max-width:90vw;max-height:80vh;display:flex;align-items:center;justify-content:center;">
         <img src="" alt="Preview" style="max-width:90vw;max-height:80vh;border-radius:1.25rem;box-shadow:0 8px 32px rgba(0,0,0,0.25);background:#fff;" />
       </div>
-      <button id="modal-next" aria-label="Next" style="position:absolute;right:32px;top:50%;transform:translateY(-50%);font-size:2.5rem;color:#cde5da;background:rgba(23,47,55,0.7);border:none;cursor:pointer;width:48px;height:48px;display:flex;align-items:center;justify-content:center;z-index:2;">&#8594;</button>
-      <div id="modal-caption" style="margin-top:1.5rem;color:#cde5da;font-size:1.15rem;text-align:center;max-width:90vw;word-break:break-all;"></div>
+      <button id="modal-next" aria-label="Next" style="position:absolute;right:32px;top:50%;transform:translateY(-50%);font-size:2.5rem;color:var(--foreground);background:rgba(0,0,0,0.7);border:none;cursor:pointer;width:48px;height:48px;display:flex;align-items:center;justify-content:center;z-index:2;">&#8594;</button>
+      <div id="modal-caption" style="margin-top:1.5rem;color:var(--foreground);font-size:1.15rem;text-align:center;max-width:90vw;word-break:break-all;"></div>
     </div>
   </div>
 
   <!-- Footer -->
-  <footer class="bg-[#172f37] border-t border-[#cde5da]/30 mt-8">
+  <footer class="bg-[var(--background)] border-t border-[var(--foreground)]/30 mt-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <!-- Copyright -->
       <div class="text-center">
-        <p class="text-[#cde5da]/70">&copy; 2024 ImageConverter. All rights reserved.</p>
+        <p class="text-[var(--foreground)]/70">&copy; 2024 ImageConverter. All rights reserved.</p>
       </div>
     </div>
   </footer>

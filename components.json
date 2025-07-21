@@ -1,0 +1,3 @@
+{
+  "components": ["button", "input", "label", "progress", "table", "modal", "notification"]
+}
