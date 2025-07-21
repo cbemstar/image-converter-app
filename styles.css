@@ -4,32 +4,32 @@
 
 body {
   font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-  background-color:#172f37 !important; 
+  background-color:var(--background) !important; 
 }
 
 label, th, .font-medium, .text-blue-900, .text-gray-500, .text-lg, .text-sm, .text-base, .break-words, .whitespace-normal, .max-w-xs, .max-w-5xl, .text-center, .font-bold {
-  color: #cde5da !important;
+  color: var(--foreground) !important;
 }
 
 /* Input fields for Max Width, Max Height, Quality */
 #max-width, #max-height, #quality {
-  background-color: #172f37 !important;
-  color: #cde5da !important;
-  border: 1.5px solid #cde5da !important;
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+  border: 1.5px solid var(--foreground) !important;
   border-radius: 0.75rem !important;
   font-weight: 500;
 }
 
 #max-width:focus, #max-height:focus, #quality:focus {
-  outline: 2px solid #cde5da !important;
-  box-shadow: 0 0 0 2px #cde5da !important;
+  outline: 2px solid var(--foreground) !important;
+  box-shadow: 0 0 0 2px var(--foreground) !important;
 }
 
 /* Select Images button and all main buttons modernized */
 #drop-area button, #convert-images-btn, #bulk-rename-btn, .download-btn {
-  background-color: #cde5da !important;
-  color: #172f37 !important;
-  border: 2px solid #cde5da !important;
+  background-color: var(--foreground) !important;
+  color: var(--background) !important;
+  border: 2px solid var(--foreground) !important;
   box-sizing: border-box;
   padding: 0.75rem 1.5rem;
   border-radius: 0.75rem !important;
@@ -39,17 +39,17 @@ label, th, .font-medium, .text-blue-900, .text-gray-500, .text-lg, .text-sm, .te
 
 #drop-area button:hover, #convert-images-btn:hover, #bulk-rename-btn:hover, .download-btn:hover {
   background: transparent !important;
-  color: #cde5da !important;
-  border: 2px solid #cde5da !important;
+  color: var(--foreground) !important;
+  border: 2px solid var(--foreground) !important;
 }
 
 /* Custom styles for the download buttons */
 .bg-cde5da {
-  background-color: #cde5da !important;
+  background-color: var(--foreground) !important;
 }
 
 .text-172f37 {
-  color: #172f37 !important;
+  color: var(--background) !important;
 }
 
 .hover\:bg-transparent:hover {
@@ -57,11 +57,11 @@ label, th, .font-medium, .text-blue-900, .text-gray-500, .text-lg, .text-sm, .te
 }
 
 .hover\:text-cde5da:hover {
-  color: #cde5da !important;
+  color: var(--foreground) !important;
 }
 
 .border-cde5da {
-  border-color: #cde5da !important;
+  border-color: var(--foreground) !important;
 }
 
 #download-link, #download-selected {
@@ -73,6 +73,9 @@ label, th, .font-medium, .text-blue-900, .text-gray-500, .text-lg, .text-sm, .te
   margin: 0.5rem;
   min-width: 200px;
   text-align: center;
+  background-color: var(--foreground) !important;
+  color: var(--background) !important;
+  border: 2px solid var(--foreground) !important;
   background-color: #cde5da !important;
   color: #172f37 !important;
   border: 2px solid #cde5da !important;
@@ -81,7 +84,7 @@ label, th, .font-medium, .text-blue-900, .text-gray-500, .text-lg, .text-sm, .te
 
 #download-link:hover, #download-selected:hover {
   background-color: transparent !important;
-  color: #cde5da !important;
+  color: var(--foreground) !important;
 }
 
 #download-link svg, #download-selected svg {
@@ -93,41 +96,41 @@ label, th, .font-medium, .text-blue-900, .text-gray-500, .text-lg, .text-sm, .te
 }
 
 .bg-blue-500, .bg-green-500, .bg-blue-600, .bg-green-600 {
-  background-color: #172f37 !important;
-  color: #cde5da !important;
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
   border: none;
 }
 
 .bg-blue-500:hover, .bg-green-500:hover, .bg-blue-600:hover, .bg-green-600:hover {
-  background-color: #cde5da !important;
-  color: #172f37 !important;
+  background-color: var(--foreground) !important;
+  color: var(--background) !important;
 }
 
 .text-blue-700, .text-blue-600, .text-blue-500, .text-blue-100 {
-  color: #cde5da !important;
+  color: var(--foreground) !important;
 }
 
 .shadow, .hover\:shadow-lg, .rounded, .border, .border-dashed, .border-blue-400 {
   box-shadow: none !important;
-  border-color: #cde5da !important;
+  border-color: var(--foreground) !important;
 }
 
 input, select, textarea {
-  color: #172f37 !important;
-  background-color: #cde5da !important;
-  border: 1px solid #cde5da !important;
+  color: var(--background) !important;
+  background-color: var(--foreground) !important;
+  border: 1px solid var(--foreground) !important;
 }
 
 input:focus, select:focus, textarea:focus {
-  outline: 2px solid #cde5da !important;
-  box-shadow: 0 0 0 2px #cde5da !important;
+  outline: 2px solid var(--foreground) !important;
+  box-shadow: 0 0 0 2px var(--foreground) !important;
 }
 
 /* Remove white background and add border for controls, modernized */
 #controls > div {
   background: none !important;
-  border: 1.5px solid #cde5da !important;
-  color: #cde5da !important;
+  border: 1.5px solid var(--foreground) !important;
+  color: var(--foreground) !important;
   border-radius: 0.75rem !important;
   font-weight: 500;
 }
@@ -135,8 +138,8 @@ input:focus, select:focus, textarea:focus {
 /* Remove white background and add border for drop area, modernized */
 #drop-area {
   background: none !important;
-  border: 2px dashed #cde5da !important;
-  color: #cde5da !important;
+  border: 2px dashed var(--foreground) !important;
+  color: var(--foreground) !important;
   border-radius: 1.25rem !important;
 }
 
@@ -145,6 +148,7 @@ input:focus, select:focus, textarea:focus {
   display: none;
   height: 12px;
   padding: 0.25rem;
+  border: 2px solid var(--foreground);
   border: 2px solid #cde5da;
   border-radius: 0.75rem;
   background: none;
@@ -154,6 +158,7 @@ input:focus, select:focus, textarea:focus {
 #progress-bar {
   height: 100%;
   width: 0;
+  background: var(--foreground);
   background: #cde5da;
   border-radius: 0.5rem;
   transition: width 0.3s;
@@ -228,10 +233,10 @@ img.preview {
     flex-direction: row;
     flex-wrap: nowrap;
     margin-bottom: clamp(1rem, 3vw, 1.5rem);
-    border: 1px solid #cde5da;
+    border: 1px solid var(--foreground);
     border-radius: 0.75rem;
     padding: clamp(0.75rem, 2vw, 1rem);
-    background: rgba(23,47,55,0.9);
+    background: rgba(0,0,0,0.9);
     gap: clamp(0.5rem, 2vw, 1rem);
   }
   #preview-table td {
@@ -272,7 +277,7 @@ img.preview {
   #preview-table td[data-label="Filename"]::before, #preview-table td[data-label="Rename"]::before, #preview-table td[data-label="Size"]::before {
     content: attr(data-label);
     font-weight: 600;
-    color: #7fd7c4;
+    color: var(--primary);
     margin-bottom: 0.25rem;
   }
   #preview-table td[data-label="Actions"] .convert-single-btn, #preview-table td[data-label="Actions"] .download-btn {
@@ -349,7 +354,7 @@ img.preview {
   position: absolute;
   right: 6px;
   bottom: 6px;
-  background: rgba(23,47,55,0.7);
+  background: rgba(0,0,0,0.7);
   border-radius: 50%;
   padding: 4px;
   cursor: pointer;
@@ -365,7 +370,7 @@ img.preview {
 .magnify-icon svg {
   width: 20px;
   height: 20px;
-  fill: #cde5da;
+  fill: var(--foreground);
   opacity: 0.8;
 }
 
@@ -384,9 +389,9 @@ img.preview {
 }
 
 #convert-images-btn {
-  background-color: #cde5da !important;
-  color: #172f37 !important;
-  border: 2px solid #cde5da !important;
+  background-color: var(--foreground) !important;
+  color: var(--background) !important;
+  border: 2px solid var(--foreground) !important;
   box-sizing: border-box;
   padding: 0.75rem 1.5rem;
   border-radius: 0.375rem !important;
@@ -396,8 +401,8 @@ img.preview {
 
 #convert-images-btn:hover {
   background: transparent !important;
-  color: #cde5da !important;
-  border: 2px solid #cde5da !important;
+  color: var(--foreground) !important;
+  border: 2px solid var(--foreground) !important;
 }
 
 /* Preview image hover effect */
@@ -408,8 +413,8 @@ img.preview {
 
 .preview-img-container:hover .preview {
   transform: scale(1.06);
-  border: 2px solid #7fd7c4;
-  box-shadow: 0 0 0 2px #7fd7c4;
+  border: 2px solid var(--primary);
+  box-shadow: 0 0 0 2px var(--primary);
 }
 
 /* Card grid layout for previews */
@@ -420,7 +425,7 @@ img.preview {
 }
 
 .preview-card {
-  border: 2px solid #cde5da;
+  border: 2px solid var(--foreground);
   border-radius: 0.75rem;
   padding: 1rem;
   display: flex;
@@ -447,8 +452,8 @@ img.preview {
 .download-btn.hidden { display: none; }
 
 /* Table header and cell color consistency */
-#preview-table th { background-color:#172f37 !important; color:#cde5da !important; border-bottom:2px solid #cde5da; font-weight:600; }
-#preview-table td { color:#cde5da !important; }
+#preview-table th { background-color:var(--background) !important; color:var(--foreground) !important; border-bottom:2px solid var(--foreground); font-weight:600; }
+#preview-table td { color:var(--foreground) !important; }
 #preview-table tbody tr:hover { background:rgba(125,255,220,0.08); }
 
 /* Error row styling */
@@ -488,8 +493,8 @@ tr.error-row td { color:#ffb4b4 !important; }
 }
 
 .notification {
-  background: #172f37;
-  color: #cde5da;
+  background: var(--background);
+  color: var(--foreground);
   padding: 1rem 1.5rem;
   border-radius: 8px;
   margin-bottom: 1rem;
@@ -500,7 +505,7 @@ tr.error-row td { color:#ffb4b4 !important; }
 }
 
 .notification.info {
-  border-left: 4px solid #7fd7c4;
+  border-left: 4px solid var(--primary);
 }
 
 .notification.warning {
@@ -517,16 +522,16 @@ tr.error-row td { color:#ffb4b4 !important; }
 
 .notification .close-btn {
   cursor: pointer;
-  color: #cde5da;
+  color: var(--foreground);
   font-size: 1.25rem;
 }
 
 /* Shadcn inspired component styles */
 :root {
-  --background: #172f37;
-  --foreground: #cde5da;
-  --primary: #7fd7c4;
-  --border: #cde5da;
+  --background: #111111;
+  --foreground: #f5f5f5;
+  --primary: #9ca3af;
+  --border: #4b5563;
 }
 
 .shad-btn {
@@ -544,7 +549,7 @@ tr.error-row td { color:#ffb4b4 !important; }
 
 .shad-btn:hover {
   background-color: transparent;
-  color: #cde5da !important;
+  color: var(--foreground) !important;
 }
 
 #nav-login-btn.shad-btn,
@@ -554,7 +559,7 @@ tr.error-row td { color:#ffb4b4 !important; }
 
 #nav-login-btn.shad-btn:hover,
 #nav-logout-btn.shad-btn:hover {
-  color: #cde5da;
+  color: var(--foreground);
   background-color: transparent;
 }
 
