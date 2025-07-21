@@ -41,6 +41,8 @@ let maxWidthInput;
 let maxHeightInput;
 let qualityInput;
 let outputFormatInput;
+let resolutionPreset;
+let verticalRatioToggle;
 let progressStatus;
 let progressBar;
 let convertImagesBtn;
@@ -1174,6 +1176,31 @@ function setupEventListeners() {
       }
     });
   }
+
+  // Resolution preset handling
+  if (resolutionPreset) {
+    resolutionPreset.addEventListener('change', () => {
+      const val = resolutionPreset.value;
+      if (val) {
+        const [w, h] = val.split('x').map(n => parseInt(n, 10));
+        if (!isNaN(w)) maxWidthInput.value = w;
+        if (!isNaN(h)) maxHeightInput.value = h;
+      }
+    });
+  }
+
+  // Vertical 2:1 toggle
+  if (verticalRatioToggle) {
+    const updateVerticalRatio = () => {
+      if (verticalRatioToggle.checked) {
+        const w = parseInt(maxWidthInput.value, 10) || 0;
+        maxHeightInput.value = w * 2;
+      }
+    };
+
+    verticalRatioToggle.addEventListener('change', updateVerticalRatio);
+    if (maxWidthInput) maxWidthInput.addEventListener('input', updateVerticalRatio);
+  }
 }
 
 // Initialize everything when DOM is loaded
@@ -1188,6 +1215,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   maxHeightInput = document.getElementById('max-height');
   qualityInput = document.getElementById('quality');
   outputFormatInput = document.getElementById('output-format');
+  resolutionPreset = document.getElementById('resolution-preset');
+  verticalRatioToggle = document.getElementById('toggle-vertical-2-1');
   progressStatus = document.getElementById('progress-status');
   progressBar = document.getElementById('progress-bar');
   convertImagesBtn = document.getElementById('convert-images-btn');
