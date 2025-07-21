@@ -76,6 +76,9 @@ label, th, .font-medium, .text-blue-900, .text-gray-500, .text-lg, .text-sm, .te
   background-color: var(--foreground) !important;
   color: var(--background) !important;
   border: 2px solid var(--foreground) !important;
+  background-color: #cde5da !important;
+  color: #172f37 !important;
+  border: 2px solid #cde5da !important;
   white-space: nowrap;
 }
 
@@ -146,6 +149,7 @@ input:focus, select:focus, textarea:focus {
   height: 12px;
   padding: 0.25rem;
   border: 2px solid var(--foreground);
+  border: 2px solid #cde5da;
   border-radius: 0.75rem;
   background: none;
   box-sizing: border-box;
@@ -155,6 +159,7 @@ input:focus, select:focus, textarea:focus {
   height: 100%;
   width: 0;
   background: var(--foreground);
+  background: #cde5da;
   border-radius: 0.5rem;
   transition: width 0.3s;
 }
