@@ -23,6 +23,7 @@
   
   <!-- JS files -->
   <script type="module" src="core.js"></script>
+  <script type="module" src="theme.js"></script>
 </head>
 <body class="bg-transparent min-h-screen flex flex-col">
   <!-- Navigation Bar -->
@@ -30,7 +31,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
         <!-- Logo and site name -->
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-4">
           <button id="sidebar-toggle" class="text-[var(--foreground)] hover:text-[var(--primary)] focus:outline-none">
             <i class="fas fa-bars"></i>
           </button>
@@ -57,8 +58,11 @@
           </button> ->
           
            Mobile menu button 
-          <div class="md:hidden flex items-center">
-            <button id="mobile-menu-button" class="text-[var(--foreground)] hover:text-[var(--primary)] focus:outline-none">
+          <div class="flex items-center gap-2">
+            <button id="theme-toggle" class="text-[var(--foreground)] hover:text-[var(--primary)] focus:outline-none" aria-label="Toggle theme">
+              <span id="theme-toggle-icon">🌙</span>
+            </button>
+            <button id="mobile-menu-button" class="md:hidden text-[var(--foreground)] hover:text-[var(--primary)] focus:outline-none">
               <i class="fas fa-bars text-xl"></i>
             </button>
           </div>
@@ -85,8 +89,12 @@
       <input id="tool-search" type="text" placeholder="Search" class="w-full mb-4 px-2 py-1 rounded border border-[var(--foreground)] bg-transparent" />
       <ul id="tool-list" class="space-y-2">
         <li><a href="index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Image Converter</a></li>
+        <li><a href="Google Ads RSA Preview.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Google Ads RSA Preview</a></li>
         <li><a href="#" class="text-[var(--foreground)] hover:text-[var(--primary)]">More coming soon</a></li>
       </ul>
+      <div class="mt-6 pt-6 border-t border-[var(--foreground)]/20">
+        <a href="request-tool.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Request a Tool</a>
+      </div>
     </aside>
     <main class="flex-grow">
       <!-- Main Content Area -->
