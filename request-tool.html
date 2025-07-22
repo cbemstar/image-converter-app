@@ -9,6 +9,7 @@
   <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script type="module" src="theme.js"></script>
+  <script type="module" src="layout.js"></script>
 </head>
 <body class="bg-transparent min-h-screen flex flex-col">
   <!-- Navigation Bar -->
@@ -35,6 +36,10 @@
 
   <!-- Page Layout -->
   <div class="flex flex-grow">
+
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
+    <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full transition-transform z-40 md:translate-x-0">
+
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30 md:hidden"></div>
     <aside id="sidebar" class="fixed md:static top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full md:translate-x-0 transition-transform z-40">
       <h2 class="text-lg font-bold mb-4" style="color:var(--foreground);">Tools</h2>
@@ -48,7 +53,10 @@
         <a href="request-tool.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Request a Tool</a>
       </div>
     </aside>
+    <main id="main-content" class="flex-grow p-4">
+
     <main class="flex-grow p-4">
+
       <h1 class="text-3xl font-bold mb-4" style="color:var(--foreground);">Request a Tool</h1>
       <p style="color:var(--foreground);">Let us know what tool you'd like us to build next.</p>
       <div id="request-tool-embed" class="my-8">
