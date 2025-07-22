@@ -24,6 +24,7 @@
   <!-- JS files -->
   <script type="module" src="core.js"></script>
   <script type="module" src="theme.js"></script>
+  <script type="module" src="layout.js"></script>
 </head>
 <body class="bg-transparent min-h-screen flex flex-col">
   <!-- Navigation Bar -->
@@ -59,8 +60,8 @@
 
   <!-- Page Layout -->
   <div class="flex flex-grow">
-    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30 md:hidden"></div>
-    <aside id="sidebar" class="fixed md:static top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full md:translate-x-0 transition-transform z-40">
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
+    <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full transition-transform z-40 md:translate-x-0">
       <h2 class="text-lg font-bold mb-4" style="color:var(--foreground);">Tools</h2>
       <input id="tool-search" type="text" placeholder="Search" class="w-full mb-4 px-2 py-1 rounded border border-[var(--foreground)] bg-transparent" />
       <ul id="tool-list" class="space-y-2">
@@ -72,7 +73,7 @@
         <a href="request-tool.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Request a Tool</a>
       </div>
     </aside>
-    <main class="flex-grow">
+    <main id="main-content" class="flex-grow">
       <!-- Main Content Area -->
     <h1 class="text-3xl font-bold text-center my-8" style="color: var(--foreground);">Image Conversion Tool</h1>
     <div id="controls" class="flex flex-wrap justify-center gap-4 mb-8">
