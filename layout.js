@@ -4,38 +4,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const sidebarOverlay = document.getElementById('sidebar-overlay');
   const toolSearch = document.getElementById('tool-search');
   const toolList = document.getElementById('tool-list');
-  const mainContent = document.getElementById('main-content');
-
-  function updateMainOffset() {
-    if (!mainContent) return;
-    const isOpen = !sidebar.classList.contains('-translate-x-full');
-    if (isOpen) {
-      mainContent.classList.add('md:pl-64');
-    } else {
-      mainContent.classList.remove('md:pl-64');
-    }
-  }
+  // Sidebar remains overlayed across breakpoints so no main content offset is
+  // needed.
 
   function openSidebar() {
     sidebar.classList.remove('-translate-x-full');
     sidebarToggle.innerHTML = '<i class="fas fa-times"></i>';
-    if (window.innerWidth < 768 && sidebarOverlay) sidebarOverlay.classList.remove('hidden');
-    updateMainOffset();
+    if (sidebarOverlay) sidebarOverlay.classList.remove('hidden');
   }
 
   function closeSidebar() {
     sidebar.classList.add('-translate-x-full');
     sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>';
     if (sidebarOverlay) sidebarOverlay.classList.add('hidden');
-    updateMainOffset();
   }
 
   if (sidebar && sidebarToggle) {
-    if (window.innerWidth >= 768) {
-      openSidebar();
-    } else {
-      closeSidebar();
-    }
+    // Start closed on all screen sizes for consistent behavior.
+    closeSidebar();
 
     sidebarToggle.addEventListener('click', () => {
       const isOpen = !sidebar.classList.contains('-translate-x-full');
