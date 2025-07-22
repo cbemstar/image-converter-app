@@ -93,6 +93,23 @@
         <input id="quality" type="number" min="0.1" max="1" step="0.01" value="0.95" class="w-20 border rounded px-2 py-1 text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300" />
         <span class="text-gray-500">(0.1 - 1)</span>
       </div>
+      <div class="bg-white rounded shadow px-3 py-2 flex items-center gap-2">
+        <label for="resolution-preset" class="font-medium">Preset:</label>
+        <select id="resolution-preset" class="border rounded px-2 py-1" style="background-color:var(--background);color:var(--foreground);border:1.5px solid var(--foreground);">
+          <option value="">Custom</option>
+          <option value="1920x1080">1920x1080</option>
+          <option value="1280x720">1280x720</option>
+          <option value="1080x1920">1080x1920</option>
+          <option value="1080x1080">1080x1080</option>
+          <option value="1080x2160">1080x2160 (2:1)</option>
+        </select>
+      </div>
+      <div class="bg-white rounded shadow px-3 py-2 flex items-center gap-2">
+        <label class="font-medium flex items-center gap-1" for="toggle-vertical-2-1">
+          <input type="checkbox" id="toggle-vertical-2-1" class="rounded">
+          Vertical 2:1
+        </label>
+      </div>
     </div>
     <div id="format-controls" class="flex justify-center mb-4">
       <label for="output-format" class="font-medium mr-2">Output Format:</label>
