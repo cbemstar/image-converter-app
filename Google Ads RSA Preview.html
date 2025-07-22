@@ -655,6 +655,8 @@
   <div class="flex flex-grow">
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
     <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full transition-transform z-40 md:translate-x-0">
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30 md:hidden"></div>
+    <aside id="sidebar" class="fixed md:static top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full md:translate-x-0 transition-transform z-40">
       <h2 class="text-lg font-bold mb-4" style="color:var(--foreground);">Tools</h2>
       <input id="tool-search" type="text" placeholder="Search" class="w-full mb-4 px-2 py-1 rounded border border-[var(--foreground)] bg-transparent" />
       <ul id="tool-list" class="space-y-2">
@@ -667,6 +669,7 @@
       </div>
     </aside>
 <main id="main-content" class="flex-grow p-4">
+<main class="flex-grow p-4">
 
 <div class="container">
     <div class="header">
@@ -740,6 +743,542 @@
     </div>
 </div>
 
+
+<script>
+// --- Constants ---
+const MAX_HEADLINES = 15;
+const MAX_DESCRIPTIONS = 4;
+const MAX_SITELINKS = 4;
+const MAX_CALLOUTS = 4;
+const MAX_SNIPPETS = 2;
+const MAX_SNIPPET_VALUES = 10;
+const HEADLINE_LIMIT = 30;
+const DESCRIPTION_LIMIT = 90;
+const SITELINK_LIMIT = 25;
+const CALLOUT_LIMIT = 25;
+const SNIPPET_HEADER_LIMIT = 25;
+const SNIPPET_VALUE_LIMIT = 25;
+
+// --- Utility Functions ---
+function createInput(type, value, placeholder, maxLength, className = '', onInput = null) {
+    const input = document.createElement(type === 'textarea' ? 'textarea' : 'input');
+    if (type !== 'textarea') input.type = type;
+    input.value = value || '';
+    input.placeholder = placeholder || '';
+    if (maxLength) input.maxLength = maxLength;
+    if (className) input.className = className;
+    if (onInput) input.addEventListener('input', onInput);
+    return input;
+}
+
+function createCharCounter(limit, id) {
+    const div = document.createElement('div');
+    div.className = 'char-counter';
+    if (id) div.id = id;
+    div.textContent = `0 / ${limit}`;
+    return div;
+}
+
+function updateCharCounter(input, counter, limit) {
+    counter.textContent = `${input.value.length} / ${limit}`;
+    if (input.value.length > limit) {
+        counter.style.color = 'var(--destructive)';
+    } else {
+        counter.style.color = 'var(--muted-foreground)';
+    }
+}
+
+function removeElement(btn, container) {
+    btn.addEventListener('click', () => container.remove());
+}
+
+// --- Dynamic Fields ---
+function addHeadline(value = '') {
+    const container = document.getElementById('headlines-container');
+    if (container.children.length >= MAX_HEADLINES) return;
+    const idx = container.children.length + 1;
+    const group = document.createElement('div');
+    group.className = 'form-group';
+    const label = document.createElement('label');
+    label.textContent = `Headline ${idx}`;
+    const input = createInput('text', value, `Enter headline ${idx}`, HEADLINE_LIMIT);
+    const counter = createCharCounter(HEADLINE_LIMIT);
+    input.addEventListener('input', () => {
+        updateCharCounter(input, counter, HEADLINE_LIMIT);
+        renderPreview();
+        renderValidation();
+    });
+    updateCharCounter(input, counter, HEADLINE_LIMIT);
+    group.appendChild(label);
+    group.appendChild(input);
+    group.appendChild(counter);
+    if (container.children.length > 2) {
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn btn-destructive btn-sm';
+        removeBtn.textContent = 'Remove';
+        removeElement(removeBtn, group);
+        group.appendChild(removeBtn);
+    }
+    container.appendChild(group);
+}
+
+function addDescription(value = '') {
+    const container = document.getElementById('descriptions-container');
+    if (container.children.length >= MAX_DESCRIPTIONS) return;
+    const idx = container.children.length + 1;
+    const group = document.createElement('div');
+    group.className = 'form-group';
+    const label = document.createElement('label');
+    label.textContent = `Description ${idx}`;
+    const input = createInput('textarea', value, `Enter description ${idx}`, DESCRIPTION_LIMIT);
+    input.rows = 2;
+    const counter = createCharCounter(DESCRIPTION_LIMIT);
+    input.addEventListener('input', () => {
+        updateCharCounter(input, counter, DESCRIPTION_LIMIT);
+        renderPreview();
+        renderValidation();
+    });
+    updateCharCounter(input, counter, DESCRIPTION_LIMIT);
+    group.appendChild(label);
+    group.appendChild(input);
+    group.appendChild(counter);
+    if (container.children.length > 1) {
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn btn-destructive btn-sm';
+        removeBtn.textContent = 'Remove';
+        removeElement(removeBtn, group);
+        group.appendChild(removeBtn);
+    }
+    container.appendChild(group);
+}
+
+function addSitelink(link = {text:'', url:'', desc1:'', desc2:''}) {
+    const container = document.getElementById('sitelinks-container');
+    if (container.children.length >= MAX_SITELINKS) return;
+    const idx = container.children.length + 1;
+    const group = document.createElement('div');
+    group.className = 'form-group';
+    const label = document.createElement('label');
+    label.textContent = `Sitelink ${idx}`;
+    const input = createInput('text', link.text, `Sitelink text`, SITELINK_LIMIT);
+    const urlInput = createInput('text', link.url, `Sitelink URL`, 1024);
+    const desc1 = createInput('text', link.desc1, `Description 1 (optional)`, SITELINK_LIMIT);
+    const desc2 = createInput('text', link.desc2, `Description 2 (optional)`, SITELINK_LIMIT);
+    const counter = createCharCounter(SITELINK_LIMIT);
+    input.addEventListener('input', () => {
+        updateCharCounter(input, counter, SITELINK_LIMIT);
+        renderPreview();
+        renderValidation();
+    });
+    updateCharCounter(input, counter, SITELINK_LIMIT);
+    group.appendChild(label);
+    group.appendChild(input);
+    group.appendChild(counter);
+    group.appendChild(urlInput);
+    group.appendChild(desc1);
+    group.appendChild(desc2);
+    if (container.children.length > 0) {
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn btn-destructive btn-sm';
+        removeBtn.textContent = 'Remove';
+        removeElement(removeBtn, group);
+        group.appendChild(removeBtn);
+    }
+    container.appendChild(group);
+}
+
+function addCallout(value = '') {
+    const container = document.getElementById('callouts-container');
+    if (container.children.length >= MAX_CALLOUTS) return;
+    const idx = container.children.length + 1;
+    const group = document.createElement('div');
+    group.className = 'form-group';
+    const label = document.createElement('label');
+    label.textContent = `Callout ${idx}`;
+    const input = createInput('text', value, `Callout text`, CALLOUT_LIMIT);
+    const counter = createCharCounter(CALLOUT_LIMIT);
+    input.addEventListener('input', () => {
+        updateCharCounter(input, counter, CALLOUT_LIMIT);
+        renderPreview();
+        renderValidation();
+    });
+    updateCharCounter(input, counter, CALLOUT_LIMIT);
+    group.appendChild(label);
+    group.appendChild(input);
+    group.appendChild(counter);
+    if (container.children.length > 0) {
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn btn-destructive btn-sm';
+        removeBtn.textContent = 'Remove';
+        removeElement(removeBtn, group);
+        group.appendChild(removeBtn);
+    }
+    container.appendChild(group);
+}
+
+function addSnippet(snippet = {header:'', values:[]}) {
+    const container = document.getElementById('snippets-container');
+    if (container.children.length >= MAX_SNIPPETS) return;
+    const idx = container.children.length + 1;
+    const group = document.createElement('div');
+    group.className = 'form-group';
+    const label = document.createElement('label');
+    label.textContent = `Structured Snippet ${idx} Header`;
+    const headerInput = createInput('text', snippet.header, `Header (e.g. Brands)`, SNIPPET_HEADER_LIMIT);
+    const headerCounter = createCharCounter(SNIPPET_HEADER_LIMIT);
+    headerInput.addEventListener('input', () => {
+        updateCharCounter(headerInput, headerCounter, SNIPPET_HEADER_LIMIT);
+        renderPreview();
+        renderValidation();
+    });
+    updateCharCounter(headerInput, headerCounter, SNIPPET_HEADER_LIMIT);
+    group.appendChild(label);
+    group.appendChild(headerInput);
+    group.appendChild(headerCounter);
+    
+    // Values
+    const valuesDiv = document.createElement('div');
+    valuesDiv.className = 'snippet-values';
+    for (let i = 0; i < (snippet.values.length || 1); i++) {
+        addSnippetValue(valuesDiv, snippet.values[i] || '');
+    }
+    
+    const addValueBtn = document.createElement('button');
+    addValueBtn.className = 'btn btn-secondary btn-sm';
+    addValueBtn.textContent = '+ Add Value';
+    addValueBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (valuesDiv.children.length < MAX_SNIPPET_VALUES) {
+            addSnippetValue(valuesDiv, '');
+            renderPreview();
+            renderValidation();
+        }
+    });
+    group.appendChild(valuesDiv);
+    group.appendChild(addValueBtn);
+    
+    if (container.children.length > 0) {
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn btn-destructive btn-sm';
+        removeBtn.textContent = 'Remove';
+        removeElement(removeBtn, group);
+        group.appendChild(removeBtn);
+    }
+    container.appendChild(group);
+}
+
+function addSnippetValue(valuesDiv, value) {
+    const valueGroup = document.createElement('div');
+    valueGroup.className = 'snippet-value-group';
+    const input = createInput('text', value, 'Value', SNIPPET_VALUE_LIMIT);
+    const counter = createCharCounter(SNIPPET_VALUE_LIMIT);
+    input.addEventListener('input', () => {
+        updateCharCounter(input, counter, SNIPPET_VALUE_LIMIT);
+        renderPreview();
+        renderValidation();
+    });
+    updateCharCounter(input, counter, SNIPPET_VALUE_LIMIT);
+    valueGroup.appendChild(input);
+    valueGroup.appendChild(counter);
+    if (valuesDiv.children.length > 0) {
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn btn-destructive btn-sm';
+        removeBtn.textContent = 'Remove';
+        removeElement(removeBtn, valueGroup);
+        valueGroup.appendChild(removeBtn);
+    }
+    valuesDiv.appendChild(valueGroup);
+}
+
+// --- Initial Fields ---
+document.addEventListener('DOMContentLoaded', () => {
+    // Headlines
+    for (let i = 0; i < 3; i++) addHeadline();
+    document.getElementById('add-headline').addEventListener('click', (e) => {
+        e.preventDefault();
+        addHeadline();
+        renderPreview();
+        renderValidation();
+    });
+    
+    // Descriptions
+    for (let i = 0; i < 2; i++) addDescription();
+    document.getElementById('add-description').addEventListener('click', (e) => {
+        e.preventDefault();
+        addDescription();
+        renderPreview();
+        renderValidation();
+    });
+    
+    // Sitelinks
+    addSitelink();
+    document.getElementById('add-sitelink').addEventListener('click', (e) => {
+        e.preventDefault();
+        addSitelink();
+        renderPreview();
+        renderValidation();
+    });
+    
+    // Callouts
+    addCallout();
+    document.getElementById('add-callout').addEventListener('click', (e) => {
+        e.preventDefault();
+        addCallout();
+        renderPreview();
+        renderValidation();
+    });
+    
+    // Snippets
+    addSnippet();
+    document.getElementById('add-snippet').addEventListener('click', (e) => {
+        e.preventDefault();
+        addSnippet();
+        renderPreview();
+        renderValidation();
+    });
+    
+    // Path fields
+    document.getElementById('path1').addEventListener('input', (e) => {
+        updateCharCounter(e.target, document.getElementById('path1-counter'), 15);
+        renderPreview();
+        renderValidation();
+    });
+    document.getElementById('path2').addEventListener('input', (e) => {
+        updateCharCounter(e.target, document.getElementById('path2-counter'), 15);
+        renderPreview();
+        renderValidation();
+    });
+    
+    // Final/Display URL
+    document.getElementById('finalUrl').addEventListener('input', () => { renderPreview(); renderValidation(); });
+    document.getElementById('displayUrl').addEventListener('input', () => { renderPreview(); renderValidation(); });
+    
+    // Call extension
+    document.getElementById('callExtension').addEventListener('input', () => { renderPreview(); renderValidation(); });
+    
+    // Image upload
+    const imageInput = document.getElementById('imageAsset');
+    const imageInfo = document.getElementById('imageAsset-info');
+    imageInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                imageAssetDataUrl = evt.target.result;
+                imageInfo.textContent = file.name + ' (' + Math.round(file.size/1024) + ' KB)';
+                renderPreview();
+            };
+            reader.readAsDataURL(file);
+        } else {
+            imageAssetDataUrl = '';
+            imageInfo.textContent = 'No image uploaded';
+            renderPreview();
+        }
+    });
+    
+    // Tabs
+    document.getElementById('desktop-tab').addEventListener('click', () => {
+        document.getElementById('desktop-tab').classList.add('active');
+        document.getElementById('mobile-tab').classList.remove('active');
+        renderPreview('desktop');
+    });
+    document.getElementById('mobile-tab').addEventListener('click', () => {
+        document.getElementById('mobile-tab').classList.add('active');
+        document.getElementById('desktop-tab').classList.remove('active');
+        renderPreview('mobile');
+    });
+    
+    // Initial render
+    renderPreview();
+    renderValidation();
+});
+
+// --- Preview Rendering ---
+function renderPreview(mode) {
+    const isMobile = (mode === 'mobile') || document.getElementById('mobile-tab').classList.contains('active');
+    
+    // Gather ad data
+    const finalUrl = document.getElementById('finalUrl').value || 'https://example.com';
+    const displayUrl = document.getElementById('displayUrl').value || 'example.com';
+    const path1 = document.getElementById('path1').value;
+    const path2 = document.getElementById('path2').value;
+    
+    // Headlines
+    const headlineInputs = document.querySelectorAll('#headlines-container input');
+    const headlines = Array.from(headlineInputs).map(i => i.value).filter(Boolean);
+    
+    // Descriptions
+    const descInputs = document.querySelectorAll('#descriptions-container textarea');
+    const descriptions = Array.from(descInputs).map(i => i.value).filter(Boolean);
+    
+    // Sitelinks
+    const sitelinkGroups = document.querySelectorAll('#sitelinks-container .form-group');
+    const sitelinks = Array.from(sitelinkGroups).map(g => {
+        const [text, url, desc1, desc2] = g.querySelectorAll('input');
+        return {
+            text: text.value,
+            url: url.value,
+            desc1: desc1.value,
+            desc2: desc2.value
+        };
+    }).filter(s => s.text);
+    
+    // Callouts
+    const calloutInputs = document.querySelectorAll('#callouts-container input');
+    const callouts = Array.from(calloutInputs).map(i => i.value).filter(Boolean);
+    
+    // Structured Snippets
+    const snippetGroups = document.querySelectorAll('#snippets-container .form-group');
+    const snippets = Array.from(snippetGroups).map(g => {
+        const header = g.querySelector('input').value;
+        const values = Array.from(g.querySelectorAll('.snippet-values input')).map(i => i.value).filter(Boolean);
+        return { header, values };
+    }).filter(s => s.header && s.values.length);
+    
+    // Call extension
+    const callExtension = document.getElementById('callExtension').value;
+    
+    // Compose preview
+    let html = '';
+    
+    // Sponsored label and URL row
+    html += `<div class="ad-sponsored-row"><span>Sponsored</span><span class="ad-sponsored-dot">•</span><span>${displayUrl}${path1 ? '/' + path1 : ''}${path2 ? '/' + path2 : ''}</span></div>`;
+    // Ad preview row (text + image absolutely positioned top right for desktop, image above for mobile)
+    html += '<div class="ad-preview-row">';
+    if (isMobile) {
+        // Mobile: image above
+        if (imageAssetDataUrl) {
+            html += `<img class="ad-image" src="${imageAssetDataUrl}" alt="Ad image">`;
+        } else {
+            html += `<div class="ad-image" style="display:flex;align-items:center;justify-content:center;color:var(--muted-foreground);font-size:2.5em;">🖼️</div>`;
+        }
+    }
+    html += '<div class="ad-preview-text">';
+    // Headlines (show up to 3, joined by ' | ')
+    html += `<div class="ad-title">${headlines.slice(0,3).join(' | ') || '<span style="color:var(--muted-foreground)">Your ad title will appear here</span>'}</div>`;
+    // Description (show up to 2, joined by ' ')
+    html += `<div class="ad-description">${descriptions.slice(0,2).join(' ') || '<span style="color:var(--muted-foreground)">Your ad description will appear here.</span>'}</div>`;
+    // Extensions
+    html += '<div class="ad-extensions">';
+    // Sitelinks
+    if (sitelinks.length) {
+        html += '<div class="sitelinks">';
+        sitelinks.forEach(s => {
+            html += `<div class="sitelink">${s.text}</div>`;
+        });
+        html += '</div>';
+    }
+    // Callouts
+    if (callouts.length) {
+        html += '<div class="callouts">';
+        callouts.forEach(c => {
+            html += `<span class="callout">${c}</span>`;
+        });
+        html += '</div>';
+    }
+    // Structured Snippets
+    if (snippets.length) {
+        html += '<div class="structured-snippets">';
+        snippets.forEach(sn => {
+            html += `<span class="structured-snippet"><b>${sn.header}:</b> ${sn.values.join(', ')}</span>`;
+        });
+        html += '</div>';
+    }
+    // Call extension
+    if (callExtension) {
+        html += `<div class="call-extension">Call: <a href="tel:${callExtension}">${callExtension}</a></div>`;
+    }
+    html += '</div>'; // end ad-preview-text
+    // Desktop: absolutely position image top right
+    if (!isMobile) {
+        if (imageAssetDataUrl) {
+            html += `<img class="ad-image" src="${imageAssetDataUrl}" alt="Ad image">`;
+        } else {
+            html += `<div class="ad-image" style="display:flex;align-items:center;justify-content:center;color:var(--muted-foreground);font-size:2.5em;">🖼️</div>`;
+        }
+    }
+    html += '</div>'; // end ad-preview-row
+    document.getElementById('ad-preview').innerHTML = html;
+}
+
+// --- Validation ---
+function renderValidation() {
+    const summary = document.getElementById('validation-summary');
+    let validations = [];
+    
+    // Headlines
+    const headlineInputs = document.querySelectorAll('#headlines-container input');
+    const headlines = Array.from(headlineInputs).map(i => i.value);
+    const filledHeadlines = headlines.filter(h => h.trim());
+    if (filledHeadlines.length < 3) {
+        validations.push({icon:'warning', text:'At least 3 headlines recommended (max 15).'});
+    } else {
+        validations.push({icon:'valid', text:`${filledHeadlines.length} headlines added.`});
+    }
+    headlines.forEach((h, i) => {
+        if (h.length > HEADLINE_LIMIT) validations.push({icon:'invalid', text:`Headline ${i+1} exceeds ${HEADLINE_LIMIT} characters.`});
+    });
+    
+    // Descriptions
+    const descInputs = document.querySelectorAll('#descriptions-container textarea');
+    const descriptions = Array.from(descInputs).map(i => i.value);
+    const filledDescs = descriptions.filter(d => d.trim());
+    if (filledDescs.length < 2) {
+        validations.push({icon:'warning', text:'At least 2 descriptions recommended (max 4).'});
+    } else {
+        validations.push({icon:'valid', text:`${filledDescs.length} descriptions added.`});
+    }
+    descriptions.forEach((d, i) => {
+        if (d.length > DESCRIPTION_LIMIT) validations.push({icon:'invalid', text:`Description ${i+1} exceeds ${DESCRIPTION_LIMIT} characters.`});
+    });
+    
+    // Sitelinks
+    const sitelinkGroups = document.querySelectorAll('#sitelinks-container .form-group');
+    Array.from(sitelinkGroups).forEach((g, i) => {
+        const [text] = g.querySelectorAll('input');
+        if (text.value.length > SITELINK_LIMIT) validations.push({icon:'invalid', text:`Sitelink ${i+1} exceeds ${SITELINK_LIMIT} characters.`});
+    });
+    
+    // Callouts
+    const calloutInputs = document.querySelectorAll('#callouts-container input');
+    Array.from(calloutInputs).forEach((c, i) => {
+        if (c.value.length > CALLOUT_LIMIT) validations.push({icon:'invalid', text:`Callout ${i+1} exceeds ${CALLOUT_LIMIT} characters.`});
+    });
+    
+    // Snippets
+    const snippetGroups = document.querySelectorAll('#snippets-container .form-group');
+    Array.from(snippetGroups).forEach((g, i) => {
+        const header = g.querySelector('input').value;
+        if (header.length > SNIPPET_HEADER_LIMIT) validations.push({icon:'invalid', text:`Snippet header ${i+1} exceeds ${SNIPPET_HEADER_LIMIT} characters.`});
+        const values = Array.from(g.querySelectorAll('.snippet-values input'));
+        values.forEach((v, j) => {
+            if (v.value.length > SNIPPET_VALUE_LIMIT) validations.push({icon:'invalid', text:`Snippet value ${j+1} in header ${i+1} exceeds ${SNIPPET_VALUE_LIMIT} characters.`});
+        });
+    });
+    
+    // Path fields
+    const path1 = document.getElementById('path1').value;
+    const path2 = document.getElementById('path2').value;
+    if (path1.length > 15) validations.push({icon:'invalid', text:'Path 1 exceeds 15 characters.'});
+    if (path2.length > 15) validations.push({icon:'invalid', text:'Path 2 exceeds 15 characters.'});
+    
+    // Final/Display URL
+    if (!document.getElementById('finalUrl').value) validations.push({icon:'invalid', text:'Final URL is required.'});
+    if (!document.getElementById('displayUrl').value) validations.push({icon:'invalid', text:'Display URL is required.'});
+    
+    // Call extension
+    const callExtension = document.getElementById('callExtension').value;
+    if (callExtension && !/^\+?[0-9\-\s()]+$/.test(callExtension)) validations.push({icon:'invalid', text:'Call extension phone number format is invalid.'});
+    
+    // Render
+    summary.innerHTML = validations.map(v =>
+        `<div class="validation-item"><span class="validation-icon ${v.icon}">${v.icon==='valid'?'✓':v.icon==='invalid'?'✗':'⚠'}</span>${v.text}</div>`
+    ).join('') || '<div class="validation-item"><span class="validation-icon valid">✓</span>Ready to preview</div>';
+}
+
+// --- Global image asset variable ---
+let imageAssetDataUrl = '';
+</script>
 </main>
 </div>
   <footer class="bg-[var(--background)] border-t border-[var(--foreground)]/30 mt-8">
@@ -749,6 +1288,49 @@
       </div>
     </div>
   </footer>
-
+      
   </body>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const sidebar = document.getElementById('sidebar');
+      const sidebarToggle = document.getElementById('sidebar-toggle');
+      const sidebarOverlay = document.getElementById('sidebar-overlay');
+      const toolSearch = document.getElementById('tool-search');
+      const toolList = document.getElementById('tool-list');
+
+      if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', () => {
+          const isOpen = !sidebar.classList.contains('-translate-x-full');
+          if (isOpen) {
+            sidebar.classList.add('-translate-x-full');
+            sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            if (sidebarOverlay) sidebarOverlay.classList.add('hidden');
+          } else {
+            sidebar.classList.remove('-translate-x-full');
+            sidebarToggle.innerHTML = '<i class="fas fa-times"></i>';
+            if (sidebarOverlay) sidebarOverlay.classList.remove('hidden');
+          }
+        });
+      }
+
+      if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', () => {
+          sidebar.classList.add('-translate-x-full');
+          sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>';
+          sidebarOverlay.classList.add('hidden');
+        });
+      }
+
+      if (toolSearch && toolList) {
+        toolSearch.addEventListener('input', () => {
+          const term = toolSearch.value.toLowerCase();
+          toolList.querySelectorAll('li').forEach(li => {
+            const text = li.textContent.toLowerCase();
+            li.style.display = text.includes(term) ? '' : 'none';
+          });
+        });
+      }
+    });
+  </script>
+</body>
 </html>
