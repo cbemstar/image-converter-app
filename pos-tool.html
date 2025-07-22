@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Request a Tool</title>
+  <title>Word to Parts of Speech</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script type="module" src="theme.js"></script>
   <script type="module" src="layout.js"></script>
+  <script type="module" src="pos-tool.js"></script>
 </head>
 <body class="bg-transparent min-h-screen flex flex-col">
   <!-- Navigation Bar -->
@@ -51,11 +52,23 @@
       </div>
     </aside>
     <main id="main-content" class="flex-grow p-4">
+      <h1 class="text-3xl font-bold mb-4" style="color:var(--foreground);">Word to Parts of Speech</h1>
+      <div class="space-y-4 max-w-md">
+        <div id="word-of-day" class="p-2 border rounded text-[var(--foreground)]"></div>
+        <input id="word-input" type="text" placeholder="Enter a word" class="shad-input" />
+        <div class="flex gap-2">
+          <button id="analyze-btn" class="shad-btn">Analyze</button>
+          <button id="shuffle-btn" class="shad-btn">Shuffle Word</button>
+        </div>
+        <div id="scoreboard" class="text-[var(--foreground)]">Stage: <span id="stage">Bronze</span> | Points: <span id="points">0</span></div>
+        <p class="text-sm text-[var(--foreground)]/80">Each correct quiz answer awards 10 points. Get 5 correct to reach Silver and 15 correct to reach Gold.</p>
+        <div id="result" class="mt-4 text-[var(--foreground)]"></div>
+      </div>
 
-      <h1 class="text-3xl font-bold mb-4" style="color:var(--foreground);">Request a Tool</h1>
-      <p style="color:var(--foreground);">Let us know what tool you'd like us to build next.</p>
-      <div id="request-tool-embed" class="my-8">
-        <!-- loops.so embed code will be inserted here -->
+      <div id="quiz-container" class="mt-8 hidden">
+        <h2 class="text-xl font-bold mb-2" style="color:var(--foreground);">Quiz Time!</h2>
+        <form id="quiz-form" class="space-y-4"></form>
+        <div id="quiz-result" class="mt-4 text-[var(--foreground)]"></div>
       </div>
     </main>
   </div>
