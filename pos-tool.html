@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Request a Tool</title>
+  <title>Word to Parts of Speech</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script type="module" src="theme.js"></script>
   <script type="module" src="layout.js"></script>
+  <script type="module" src="pos-tool.js"></script>
 </head>
 <body class="bg-transparent min-h-screen flex flex-col">
   <!-- Navigation Bar -->
@@ -51,11 +52,11 @@
       </div>
     </aside>
     <main id="main-content" class="flex-grow p-4">
-
-      <h1 class="text-3xl font-bold mb-4" style="color:var(--foreground);">Request a Tool</h1>
-      <p style="color:var(--foreground);">Let us know what tool you'd like us to build next.</p>
-      <div id="request-tool-embed" class="my-8">
-        <!-- loops.so embed code will be inserted here -->
+      <h1 class="text-3xl font-bold mb-4" style="color:var(--foreground);">Word to Parts of Speech</h1>
+      <div class="space-y-4 max-w-md">
+        <input id="word-input" type="text" placeholder="Enter a word" class="shad-input" />
+        <button id="analyze-btn" class="shad-btn">Analyze</button>
+        <div id="result" class="mt-4 text-[var(--foreground)]"></div>
       </div>
     </main>
   </div>
