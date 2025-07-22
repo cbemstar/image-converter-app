@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Request a Tool</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script type="module" src="theme.js"></script>
+  <script type="module" src="layout.js"></script>
+</head>
+<body class="bg-transparent min-h-screen flex flex-col">
+  <!-- Navigation Bar -->
+  <nav class="bg-[var(--background)] shadow-md border-b border-[var(--foreground)]/30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <!-- Logo and site name -->
+        <div class="flex items-center gap-4">
+          <button id="sidebar-toggle" class="text-[var(--foreground)] hover:text-[var(--primary)] focus:outline-none">
+            <i class="fas fa-bars"></i>
+          </button>
+          <a href="index.html" class="flex items-center gap-2">
+            <span class="text-[var(--foreground)] text-xl font-bold">reformately</span>
+          </a>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="theme-toggle" class="text-[var(--foreground)] hover:text-[var(--primary)] focus:outline-none" aria-label="Toggle theme">
+            <span id="theme-toggle-icon">🌙</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Layout -->
+  <div class="flex flex-grow">
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
+    <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full transition-transform z-40 md:translate-x-0">
+      <h2 class="text-lg font-bold mb-4" style="color:var(--foreground);">Tools</h2>
+      <input id="tool-search" type="text" placeholder="Search" class="w-full mb-4 px-2 py-1 rounded border border-[var(--foreground)] bg-transparent" />
+      <ul id="tool-list" class="space-y-2">
+        <li><a href="index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Image Converter</a></li>
+        <li><a href="Google Ads RSA Preview.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Google Ads RSA Preview</a></li>
+        <li><a href="#" class="text-[var(--foreground)] hover:text-[var(--primary)]">More coming soon</a></li>
+      </ul>
+      <div class="mt-6 pt-6 border-t border-[var(--foreground)]/20">
+        <a href="request-tool.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Request a Tool</a>
+      </div>
+    </aside>
+    <main id="main-content" class="flex-grow p-4">
+      <h1 class="text-3xl font-bold mb-4" style="color:var(--foreground);">Request a Tool</h1>
+      <p style="color:var(--foreground);">Let us know what tool you'd like us to build next.</p>
+      <div id="request-tool-embed" class="my-8">
+        <!-- loops.so embed code will be inserted here -->
+      </div>
+    </main>
+  </div>
+
+  <footer class="bg-[var(--background)] border-t border-[var(--foreground)]/30 mt-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="text-center">
+        <p class="text-[var(--foreground)]/70">&copy; 2024 reformately. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  
+
+</body>
+</html>
