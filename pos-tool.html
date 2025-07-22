@@ -3,19 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>reformately Tools</title>
+  <title>Word to Parts of Speech</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script type="module" src="theme.js"></script>
   <script type="module" src="layout.js"></script>
-  <script type="module" src="home.js"></script>
+  <script type="module" src="pos-tool.js"></script>
 </head>
 <body class="bg-transparent min-h-screen flex flex-col">
+  <!-- Navigation Bar -->
   <nav class="bg-[var(--background)] shadow-md border-b border-[var(--foreground)]/30">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
+        <!-- Logo and site name -->
         <div class="flex items-center gap-4">
           <button id="sidebar-toggle" class="text-[var(--foreground)] hover:text-[var(--primary)] focus:outline-none">
             <i class="fas fa-bars"></i>
@@ -33,6 +35,7 @@
     </div>
   </nav>
 
+  <!-- Page Layout -->
   <div class="flex flex-grow">
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
     <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full transition-transform z-40">
@@ -49,36 +52,36 @@
         <a href="request-tool.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Request a Tool</a>
       </div>
     </aside>
-
     <main id="main-content" class="flex-grow p-4">
-      <section class="text-center py-12">
-        <h1 class="text-4xl font-bold mb-2" style="color:var(--foreground);">Welcome to reformately</h1>
-        <p class="text-lg" style="color:var(--foreground);">A collection of handy online tools</p>
-      </section>
-
-      <div class="max-w-md mx-auto mb-8">
-        <input id="home-search" type="text" placeholder="Search tools" class="shad-input" />
+      <h1 class="text-3xl font-bold mb-4" style="color:var(--foreground);">Word to Parts of Speech</h1>
+      <div class="space-y-4 max-w-md">
+        <div id="word-of-day" class="p-2 border rounded text-[var(--foreground)]"></div>
+        <input id="word-input" type="text" placeholder="Enter a word" class="shad-input" />
+        <div class="flex gap-2">
+          <button id="analyze-btn" class="shad-btn">Analyze</button>
+          <button id="shuffle-btn" class="shad-btn">Shuffle Word</button>
+        </div>
+        <div id="scoreboard" class="text-[var(--foreground)]">Stage: <span id="stage">Bronze</span> | Points: <span id="points">0</span></div>
+        <p class="text-sm text-[var(--foreground)]/80">Each correct quiz answer awards 10 points. Get 5 correct to reach Silver and 15 correct to reach Gold.</p>
+        <div id="result" class="mt-4 text-[var(--foreground)]"></div>
       </div>
 
-      <div id="home-tools" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <a href="image-converter.html" class="tool-card border rounded p-4" data-name="Image Converter" data-category="Images">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Image Converter</h3>
-          <p class="text-sm" style="color:var(--foreground);">Convert images between formats.</p>
-        </a>
-        <a href="google-ads-rsa-preview.html" class="tool-card border rounded p-4" data-name="Google Ads RSA Preview" data-category="Marketing">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Google Ads RSA Preview</h3>
-          <p class="text-sm" style="color:var(--foreground);">Visualize responsive search ads.</p>
-        </a>
-        <a href="pos-tool.html" class="tool-card border rounded p-4" data-name="Word to Parts of Speech" data-category="Writing">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Word to Parts of Speech</h3>
-          <p class="text-sm" style="color:var(--foreground);">Identify a word's part of speech.</p>
-        </a>
-        <a href="campaign-structure.html" class="tool-card border rounded p-4" data-name="Campaign Structure" data-category="Marketing">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Campaign Structure</h3>
-          <p class="text-sm" style="color:var(--foreground);">Visualize ad campaign hierarchy.</p>
-        </a>
+      <div id="quiz-container" class="mt-8 hidden">
+        <h2 class="text-xl font-bold mb-2" style="color:var(--foreground);">Quiz Time!</h2>
+        <form id="quiz-form" class="space-y-4"></form>
+        <div id="quiz-result" class="mt-4 text-[var(--foreground)]"></div>
       </div>
     </main>
   </div>
+
+  <footer class="bg-[var(--background)] border-t border-[var(--foreground)]/30 mt-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="text-center">
+        <p class="text-[var(--foreground)]/70">&copy; 2024 reformately. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- layout.js handles sidebar functionality -->
 </body>
 </html>
