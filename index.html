@@ -3,35 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Image to WebP Converter</title>
+  <title>reformately Tools</title>
+  <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-  <!-- Updated AVIF library -->
-  <script src="https://cdn.jsdelivr.net/npm/@jsquash/avif@2.1.1/dist/full/avif-enc.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@jsquash/avif@2.1.1/dist/full/avif-dec.js"></script>
-  <!-- Updated HEIC library - using heic-to instead of heic2any -->
-  <script src="https://cdn.jsdelivr.net/npm/heic-to@1.2.1/dist/iife/heic-to.js"></script>
-  <!-- Fallback HEIC decoder -->
-  <script src="https://cdn.jsdelivr.net/npm/libheif-js@1.19.8/libheif/libheif.js"></script>
-  <!-- RAW image processing -->
-  <script src="https://cdn.jsdelivr.net/npm/raw-wasm@1.0.0/dist/raw-wasm.min.js"></script>
-  <!-- Supabase auth -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- JS files -->
-  <script type="module" src="core.js"></script>
   <script type="module" src="theme.js"></script>
   <script type="module" src="layout.js"></script>
+  <script type="module" src="home.js"></script>
 </head>
 <body class="bg-transparent min-h-screen flex flex-col">
-  <!-- Navigation Bar -->
   <nav class="bg-[var(--background)] shadow-md border-b border-[var(--foreground)]/30">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
-        <!-- Logo and site name -->
         <div class="flex items-center gap-4">
           <button id="sidebar-toggle" class="text-[var(--foreground)] hover:text-[var(--primary)] focus:outline-none">
             <i class="fas fa-bars"></i>
@@ -40,15 +25,6 @@
             <span class="text-[var(--foreground)] text-xl font-bold">reformately</span>
           </a>
         </div>
-        
-        <!-- Navigation links 
-        <div class="hidden md:flex items-center space-x-4">
-          <a href="index.html" class="text-[var(--foreground)] hover:text-[var(--primary)] px-3 py-2 rounded-md font-medium">Home</a>
-          <a href="#" class="text-[var(--foreground)] hover:text-[var(--primary)] px-3 py-2 rounded-md font-medium">Features</a>
-          <a href="#" class="text-[var(--foreground)] hover:text-[var(--primary)] px-3 py-2 rounded-md font-medium">Pricing</a>
-          <a href="#" class="text-[var(--foreground)] hover:text-[var(--primary)] px-3 py-2 rounded-md font-medium">Support</a>
-        </div> -->
-        
         <div class="flex items-center gap-2">
           <button id="theme-toggle" class="text-[var(--foreground)] hover:text-[var(--primary)] focus:outline-none" aria-label="Toggle theme">
             <span id="theme-toggle-icon">🌙</span>
@@ -58,309 +34,55 @@
     </div>
   </nav>
 
-  <!-- Page Layout -->
   <div class="flex flex-grow">
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
-    <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full transition-transform z-40">
+    <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full transition-transform z-40">
+      <a href="index.html" class="text-xl font-bold mb-4 block" style="color:var(--foreground);">reformately</a>
       <h2 class="text-lg font-bold mb-4" style="color:var(--foreground);">Tools</h2>
       <input id="tool-search" type="text" placeholder="Search" class="w-full mb-4 px-2 py-1 rounded border border-[var(--foreground)] bg-transparent" />
       <ul id="tool-list" class="space-y-2">
-        <li><a href="index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Image Converter</a></li>
+        <li><a href="image-converter.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Image Converter</a></li>
         <li><a href="google-ads-rsa-preview.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Google Ads RSA Preview</a></li>
+        <li><a href="pos-tool.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Word to Parts of Speech</a></li>
+        <li><a href="campaign-structure.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Campaign Structure</a></li>
         <li><a href="#" class="text-[var(--foreground)] hover:text-[var(--primary)]">More coming soon</a></li>
       </ul>
       <div class="mt-6 pt-6 border-t border-[var(--foreground)]/20">
         <a href="request-tool.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Request a Tool</a>
       </div>
     </aside>
-    <main id="main-content" class="flex-grow">
-      <!-- Main Content Area -->
-    <h1 class="text-3xl font-bold text-center my-8" style="color: var(--foreground);">Image Conversion Tool</h1>
-    <div id="controls" class="flex flex-wrap justify-center gap-4 mb-8">
-      <div class="bg-white rounded shadow px-3 py-2 flex items-center gap-2">
-        <label for="max-width" class="font-medium">Max Width:</label>
-        <input id="max-width" type="number" min="1" max="99999" value="99999" class="w-20 border rounded px-2 py-1 text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300" />
-        <span class="text-gray-500">px</span>
-      </div>
-      <div class="bg-white rounded shadow px-3 py-2 flex items-center gap-2">
-        <label for="max-height" class="font-medium">Max Height:</label>
-        <input id="max-height" type="number" min="1" max="99999" value="99999" class="w-20 border rounded px-2 py-1 text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300" />
-        <span class="text-gray-500">px</span>
-      </div>
-      <div class="bg-white rounded shadow px-3 py-2 flex items-center gap-2">
-        <label for="quality" class="font-medium">Quality:</label>
-        <input id="quality" type="number" min="0.1" max="1" step="0.01" value="0.95" class="w-20 border rounded px-2 py-1 text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300" />
-        <span class="text-gray-500">(0.1 - 1)</span>
-      </div>
-    </div>
-    <div id="format-controls" class="flex justify-center mb-4">
-      <label for="output-format" class="font-medium mr-2">Output Format:</label>
-      <select id="output-format" class="border rounded px-2 py-1" style="background-color:var(--background);color:var(--foreground);border:1.5px solid var(--foreground);">
-        <option value="webp">WebP</option>
-        <option value="jpeg">JPEG</option>
-        <option value="png">PNG</option>
-        <option value="avif">AVIF</option>
-        <option value="bmp">BMP</option>
-        <option value="tiff">TIFF</option>
-        <option value="gif">GIF</option>
-        <option value="ico">ICO</option>
-      </select>
-    </div>
-    <div id="format-options" class="flex justify-center gap-4 mb-4" style="display:none;"></div>
-    <div id="progress-status" class="text-center text-lg font-medium mb-2" style="color:var(--foreground);"></div>
-    <div id="progress-status" class="text-center text-lg font-medium mb-2" style="color:#cde5da;"></div>
-    <div id="progress-bar-container" class="w-full max-w-2xl mx-auto mb-4">
-      <div id="progress-bar"></div>
-    </div>
-    <div id="quota-status" class="text-center text-base font-medium mb-2" style="color:#ffb347;"></div>
-    
-    <!-- Hidden legacy auth controls for backwards compatibility -->
-    <div id="auth-controls" class="text-center mb-4" style="display: none;">
-      <input id="auth-email" type="email" placeholder="Email" class="border rounded px-2 py-1 mr-2" />
-      <input id="auth-password" type="password" placeholder="Password" class="border rounded px-2 py-1 mr-2" />
-      <button onclick="signUp(document.getElementById('auth-email').value, document.getElementById('auth-password').value)" class="bg-blue-500 text-white px-4 py-2 rounded">Sign Up</button>
-      <button onclick="signIn(document.getElementById('auth-email').value, document.getElementById('auth-password').value)" class="bg-green-500 text-white px-4 py-2 rounded">Login</button>
-      <button onclick="signOut()" class="bg-red-500 text-white px-4 py-2 rounded" style="display:none;">Logout</button>
-    </div>
-    
-    <div class="flex flex-col items-center mb-4">
-      <button id="upgrade-btn" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded shadow transition-colors mb-0">Upgrade</button>
-      <!-- Stripe Pricing Table Accordion -->
-      <div id="stripe-accordion" style="display:none;width:100%;max-width:900px;min-width:320px;overflow-x:auto;background:var(--background);border-radius:14px;box-shadow:0 4px 24px rgba(0,0,0,0.18);padding:1.5rem 1rem 1rem 1rem;">
-        <div style="margin-bottom:1rem;text-align:center;color:var(--foreground);font-size:1.2rem;font-weight:600;">Upgrade to Pro</div>
-        <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
-        <stripe-pricing-table pricing-table-id="prctbl_1QwytqBcmaVSn6Z156zYdTHl"
-          publishable-key="pk_live_51LTgh8BcmaVSn6Z1nQkl0Xc2lFlcaFvaBabebmyJr4fWmZqVk37uI2JBUoY9otwUVqmN2Xol9ZOdcjOdcy8MqHbS00QLT2xZxw">
-        </stripe-pricing-table>
-      </div>
-    </div>
 
-    <!-- File Drop Area -->
-    <div id="drop-area" class="border-2 border-dashed border-blue-400 rounded-lg p-8 text-center text-blue-500 mb-8 bg-white shadow hover:shadow-lg transition-shadow cursor-pointer max-w-2xl mx-auto px-4">
-      <p class="mb-4">Drag & drop your image files here</p>
-      <p class="mb-4" style="color: var(--primary); font-size: 0.9rem;">Supports JPEG, PNG, WebP, GIF, AVIF, BMP, TIFF, ICO, HEIC/HEIF and RAW formats (CR2, NEF, ARW, etc)</p>
-      <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 10px;">
-        <a href="#" id="show-raw-info" style="color:var(--primary); text-decoration:underline; font-size:0.8rem;">What RAW formats are supported?</a>
-        <a href="#" id="show-heic-info" style="color:var(--primary); text-decoration:underline; font-size:0.8rem;">About HEIC/HEIF formats</a>
-      </div>
-      <input type="file" id="fileElem" accept="image/*" multiple style="display:none">
-      <button onclick="fileElem.click()" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-2 rounded shadow transition-colors">Select Images</button>
-    </div>
-    
-    <!-- Info Modals -->
-    <div id="raw-info-modal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; overflow:auto; background-color:rgba(0,0,0,0.7);">
-      <div style="background-color:var(--background); margin:10% auto; padding:20px; border:2px solid var(--foreground); border-radius:12px; width:80%; max-width:600px;">
-        <span id="close-raw-info" style="color:var(--foreground); float:right; font-size:28px; font-weight:bold; cursor:pointer;">&times;</span>
-        <h3 style="color:var(--foreground); margin-bottom:10px;">Supported RAW Formats</h3>
-        <p style="color:var(--foreground); margin-bottom:15px;">This tool can convert the following RAW formats:</p>
-        <ul style="color:var(--foreground); margin-left:20px; list-style-type:disc;">
-          <li><strong>CR2</strong> - Canon Raw Format</li>
-          <li><strong>NEF</strong> - Nikon Electronic Format</li>
-          <li><strong>ARW</strong> - Sony Alpha Raw</li>
-          <li><strong>DNG</strong> - Adobe Digital Negative</li>
-          <li><strong>RAF</strong> - Fujifilm Raw Format</li>
-          <li><strong>ORF</strong> - Olympus Raw Format</li>
-          <li><strong>RW2</strong> - Panasonic Raw Format</li>
-          <li><strong>PEF</strong> - Pentax Electronic Format</li>
-          <li><strong>SRW</strong> - Samsung Raw Format</li>
-        </ul>
-        <p style="color:var(--foreground); margin-top:15px;">Note: RAW conversion may take longer than other formats due to the complex nature of the files.</p>
-      </div>
-    </div>
-    
-    <div id="heic-info-modal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; overflow:auto; background-color:rgba(0,0,0,0.7);">
-      <div style="background-color:var(--background); margin:10% auto; padding:20px; border:2px solid var(--foreground); border-radius:12px; width:80%; max-width:600px;">
-        <span id="close-heic-info" style="color:var(--foreground); float:right; font-size:28px; font-weight:bold; cursor:pointer;">&times;</span>
-        <h3 style="color:var(--foreground); margin-bottom:10px;">About HEIC/HEIF Formats</h3>
-        <p style="color:var(--foreground); margin-bottom:15px;">HEIC/HEIF is a modern image format used by Apple devices:</p>
-        <ul style="color:var(--foreground); margin-left:20px; list-style-type:disc;">
-          <li><strong>HEIC</strong> - High Efficiency Image Container, used on iPhone/iPad (iOS 11+)</li>
-          <li><strong>HEIF</strong> - High Efficiency Image Format, the underlying format standard</li>
-        </ul>
-        <p style="color:var(--foreground); margin-top:15px;">Benefits include:</p>
-        <ul style="color:var(--foreground); margin-left:20px; list-style-type:disc;">
-          <li>Smaller file sizes compared to JPEG (up to 50% smaller)</li>
-          <li>Better image quality at the same file size</li>
-          <li>Support for transparency</li>
-        </ul>
-        <p style="color:var(--foreground); margin-top:15px;">This tool can convert these formats to more widely supported formats like JPEG, PNG, or WebP.</p>
-        
-        <h4 style="color:var(--foreground); margin-top:20px; margin-bottom:10px;">Browser Compatibility:</h4>
-        <ul style="color:var(--foreground); margin-left:20px; list-style-type:disc;">
-          <li><strong>Safari 17+</strong>: Native HEIC support</li>
-          <li><strong>Chrome/Edge</strong>: Good support via JavaScript libraries</li>
-          <li><strong>Firefox</strong>: Limited support, may have issues with some HEIC variants</li>
-        </ul>
-        
-        <h4 style="color:var(--foreground); margin-top:20px; margin-bottom:10px;">If You Encounter Errors:</h4>
-        <ul style="color:var(--foreground); margin-left:20px; list-style-type:disc;">
-          <li>Try a different browser (Chrome or Edge recommended)</li>
-          <li>Try converting the image on your device first using built-in tools</li>
-          <li>For iPhone users: When sharing photos, choose "Most Compatible" instead of "High Efficiency"</li>
-          <li>Some HEIC variants may not be supported by current browser libraries</li>
-        </ul>
-      </div>
-    </div>
-    
-    <!-- Login Modal -->
-    <div id="login-modal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; overflow:auto; background-color:rgba(0,0,0,0.7);">
-      <div style="background-color:var(--background); margin:10% auto; padding:20px; border:2px solid var(--foreground); border-radius:12px; width:90%; max-width:400px;">
-        <span id="close-login-modal" style="color:var(--foreground); float:right; font-size:28px; font-weight:bold; cursor:pointer;">&times;</span>
-        <h3 style="color:var(--foreground); margin-bottom:20px; text-align:center;">Login / Sign Up</h3>
-        
-        <div class="mb-4">
-          <label for="modal-email" style="color:var(--foreground); display:block; margin-bottom:6px;">Email:</label>
-          <input id="modal-email" type="email" placeholder="your@email.com" class="shad-input" />
-        </div>
+    <main id="main-content" class="flex-grow p-4">
+      <div class="max-w-7xl mx-auto">
+      <section class="text-center py-12">
+        <h1 class="text-4xl font-bold mb-2" style="color:var(--foreground);">Welcome to reformately</h1>
+        <p class="text-lg" style="color:var(--foreground);">A collection of handy online tools</p>
+      </section>
 
-        <div id="full-name-field" class="mb-4" style="display:none;">
-          <label for="modal-full-name" style="color:var(--foreground); display:block; margin-bottom:6px;">Full Name:</label>
-          <input id="modal-full-name" type="text" placeholder="Your full name" class="shad-input" />
-        </div>
-        
-        <div id="password-field" class="mb-4">
-          <label for="modal-password" style="color:var(--foreground); display:block; margin-bottom:6px;">Password:</label>
-          <input id="modal-password" type="password" placeholder="Your password" class="shad-input" />
-        </div>
-        
-        <div id="auth-actions" class="flex justify-between mt-6 gap-2">
-          <button id="modal-signup-btn" class="shad-btn flex-1">Sign Up</button>
-          <button id="modal-login-btn" class="shad-btn flex-1">Login</button>
-        </div>
-
-        <div class="mt-4 flex justify-center">
-          <button id="google-login-btn" class="shad-btn w-full flex items-center justify-center gap-2">
-            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5">
-            Continue with Google
-          </button>
-        </div>
-        
-        <div class="text-center mt-4">
-          <a href="#" id="forgot-password-link" style="color:var(--primary); text-decoration:underline; font-size:0.9rem;">Forgot your password?</a>
-        </div>
+      <div class="max-w-md mx-auto mb-8">
+        <input id="home-search" type="text" placeholder="Search tools" class="shad-input" />
       </div>
-    </div>
-    
-    <!-- Download buttons -->
-    <div class="download-btns-responsive mb-6 flex justify-center gap-2 sm:gap-4 flex-wrap" style="display: none;">
-      <a id="download-link" href="#" download="converted_images.zip" class="bg-cde5da text-172f37 hover:bg-transparent hover:text-cde5da border-2 border-cde5da rounded-lg py-2 px-3 sm:py-3 sm:px-6 text-sm sm:text-base font-semibold transition-all">
-        <span style="display: inline-flex; align-items: center; gap: 4px;">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-            <polyline points="7 10 12 15 17 10"></polyline>
-            <line x1="12" y1="15" x2="12" y2="3"></line>
-          </svg>
-          <span class="hidden sm:inline">Download All as ZIP</span>
-          <span class="sm:hidden">Download All</span>
-        </span>
-      </a>
-      <button id="download-selected" class="bg-cde5da text-172f37 hover:bg-transparent hover:text-cde5da border-2 border-cde5da rounded-lg py-2 px-3 sm:py-3 sm:px-6 text-sm sm:text-base font-semibold transition-all">
-        <span style="display: inline-flex; align-items: center; gap: 4px;">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M22 2v16h-8l-4 4-4-4H2V2z"></path>
-            <circle cx="12" cy="10" r="3"></circle>
-          </svg>
-          <span class="hidden sm:inline">Download Selected</span>
-          <span class="sm:hidden">Selected</span>
-        </span>
-      </button>
-    </div>
-    <div class="flex justify-center mb-2">
-      <a href="#" id="show-bulk-rename" style="color:var(--primary);text-decoration:underline;cursor:pointer;" class="hidden">Bulk Rename Tool</a>
-    </div>
-    <div id="bulk-rename-controls" class="flex flex-wrap justify-center gap-2 mb-4" style="align-items:center; display:none;">
-      <input id="bulk-rename-base" type="text" placeholder="Base name (e.g. Image)" class="border rounded px-2 py-1" style="background-color:var(--background);color:var(--foreground);border:1.5px solid var(--foreground);" />
-      <input id="bulk-rename-start" type="number" min="1" value="1" class="border rounded px-2 py-1 w-20" style="background-color:var(--background);color:var(--foreground);border:1.5px solid var(--foreground);" />
-      <button id="bulk-rename-btn" style="background-color:var(--foreground);color:var(--background);border-radius:0.375rem;padding:0.5rem 1.25rem;border:none;font-weight:600;">Bulk Rename</button>
-    </div>
-    <div class="flex justify-center mb-4">
-      <button id="convert-images-btn" class="hidden">Convert All Images</button>
-    </div>
-    
-    <!-- Preview Table -->
-    <div class="overflow-x-auto max-w-5xl mx-auto px-2 sm:px-4 min-w-0">
-      <table id="preview-table" class="min-w-full w-full mb-8 text-sm sm:text-base table-auto" style="background: transparent;">
-        <thead>
-          <tr>
-            <th class="py-2 px-2 sm:px-4"><input type="checkbox" id="select-all"></th>
-            <th class="py-2 px-2 sm:px-4">#</th>
-            <th class="py-2 px-2 sm:px-4">Preview</th>
-            <th class="py-2 px-2 sm:px-4">Original Filename</th>
-            <th class="py-2 px-2 sm:px-4">Rename</th>
-            <th class="py-2 px-2 sm:px-4">Output Size</th>
-            <th class="py-2 px-2 sm:px-4">Actions</th>
-          </tr>
-        </thead>
-        <tbody id="preview-tbody"></tbody>
-      </table>
-    </div>
 
-    <!-- Hide card grid -->
-    <div id="preview-grid" style="display:none;"></div>
-
-    <section id="faqs" class="max-w-5xl mx-auto px-4 py-8">
-      <h2 class="text-2xl font-bold mb-4" style="color:var(--foreground);">Image Converter FAQs</h2>
-      <div class="space-y-2">
-        <div class="faq-item border-b border-[var(--foreground)]/20">
-          <button class="faq-question w-full text-left py-2 flex justify-between items-center" aria-expanded="false">
-            <span style="color:var(--foreground);">How do I convert images to WebP?</span>
-            <i class="fas fa-chevron-down text-[var(--foreground)]"></i>
-          </button>
-          <div class="faq-answer hidden pb-4" style="color:var(--foreground);">
-            Upload your files, choose WebP as the output format and click convert. Our free online image converter will handle the rest.
-          </div>
-        </div>
-        <div class="faq-item border-b border-[var(--foreground)]/20">
-          <button class="faq-question w-full text-left py-2 flex justify-between items-center" aria-expanded="false">
-            <span style="color:var(--foreground);">Can I convert HEIC photos from my iPhone?</span>
-            <i class="fas fa-chevron-down text-[var(--foreground)]"></i>
-          </button>
-          <div class="faq-answer hidden pb-4" style="color:var(--foreground);">
-            Yes, the tool converts HEIC images to popular formats like JPEG or PNG so you can easily share them.
-          </div>
-        </div>
-        <div class="faq-item border-b border-[var(--foreground)]/20">
-          <button class="faq-question w-full text-left py-2 flex justify-between items-center" aria-expanded="false">
-            <span style="color:var(--foreground);">Does the converter work for large batches?</span>
-            <i class="fas fa-chevron-down text-[var(--foreground)]"></i>
-          </button>
-          <div class="faq-answer hidden pb-4" style="color:var(--foreground);">
-            You can upload multiple pictures at once and download everything as a ZIP after the conversion finishes.
-          </div>
-        </div>
-        <div class="faq-item border-b border-[var(--foreground)]/20">
-          <button class="faq-question w-full text-left py-2 flex justify-between items-center" aria-expanded="false">
-            <span style="color:var(--foreground);">Is this image converter free?</span>
-            <i class="fas fa-chevron-down text-[var(--foreground)]"></i>
-          </button>
-          <div class="faq-answer hidden pb-4" style="color:var(--foreground);">
-            The basic conversion features are free and run directly in your browser.
-          </div>
-        </div>
+      <div id="home-tools" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="image-converter.html" class="tool-card border rounded p-4" data-name="Image Converter" data-category="Images">
+          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Image Converter</h3>
+          <p class="text-sm" style="color:var(--foreground);">Convert images between formats.</p>
+        </a>
+        <a href="google-ads-rsa-preview.html" class="tool-card border rounded p-4" data-name="Google Ads RSA Preview" data-category="Marketing">
+          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Google Ads RSA Preview</h3>
+          <p class="text-sm" style="color:var(--foreground);">Visualize responsive search ads.</p>
+        </a>
+        <a href="pos-tool.html" class="tool-card border rounded p-4" data-name="Word to Parts of Speech" data-category="Writing">
+          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Word to Parts of Speech</h3>
+          <p class="text-sm" style="color:var(--foreground);">Identify a word's part of speech.</p>
+        </a>
+        <a href="campaign-structure.html" class="tool-card border rounded p-4" data-name="Campaign Structure" data-category="Marketing">
+          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Campaign Structure</h3>
+          <p class="text-sm" style="color:var(--foreground);">Visualize ad campaign hierarchy.</p>
+        </a>
       </div>
-    </section>
-    
-    <!-- Image Modal for preview -->
-    <div id="image-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:10000;background:rgba(0,0,0,0.92);align-items:center;justify-content:center;flex-direction:column;">
-      <button class="close-modal" aria-label="Close" style="position:absolute;top:32px;right:40px;font-size:2.5rem;color:var(--foreground);background:rgba(0,0,0,0.7);border:none;cursor:pointer;width:48px;height:48px;display:flex;align-items:center;justify-content:center;z-index:2;">&times;</button>
-      <button id="modal-prev" aria-label="Previous" style="position:absolute;left:32px;top:50%;transform:translateY(-50%);font-size:2.5rem;color:var(--foreground);background:rgba(0,0,0,0.7);border:none;cursor:pointer;width:48px;height:48px;display:flex;align-items:center;justify-content:center;z-index:2;">&#8592;</button>
-      <div style="max-width:90vw;max-height:80vh;display:flex;align-items:center;justify-content:center;">
-        <img src="" alt="Preview" style="max-width:90vw;max-height:80vh;border-radius:1.25rem;box-shadow:0 8px 32px rgba(0,0,0,0.25);background:#fff;" />
       </div>
-      <button id="modal-next" aria-label="Next" style="position:absolute;right:32px;top:50%;transform:translateY(-50%);font-size:2.5rem;color:var(--foreground);background:rgba(0,0,0,0.7);border:none;cursor:pointer;width:48px;height:48px;display:flex;align-items:center;justify-content:center;z-index:2;">&#8594;</button>
-      <div id="modal-caption" style="margin-top:1.5rem;color:var(--foreground);font-size:1.15rem;text-align:center;max-width:90vw;word-break:break-all;"></div>
-    </div>
     </main>
   </div>
-
-  <!-- Footer -->
-  <footer class="bg-[var(--background)] border-t border-[var(--foreground)]/30 mt-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-      <!-- Copyright -->
-      <div class="text-center">
-        <p class="text-[var(--foreground)]/70">&copy; 2024 reformately. All rights reserved.</p>
-      </div>
-    </div>
-  </footer>
 </body>
-</html> 
+</html>
