@@ -1,5 +1,3 @@
-# Image Converter App
-
 A browser-based image conversion tool that allows you to convert images between various formats including WebP, JPEG, PNG, AVIF, BMP, TIFF, GIF, and ICO. The app also supports special formats like HEIC/HEIF and RAW camera formats.
 
 ## Features
@@ -61,3 +59,4 @@ This site loads Google Tag Manager (container `GTM-NFJTSQ3N`) on every page so v
 ## React redevelopment
 
 The current implementation uses vanilla HTML and JavaScript. To adopt ShadCN UI components, create a React or Next.js project and migrate these tools into React components. Package installation was attempted in this environment but was blocked by network restrictions, so only the plan is documented here.
+
