@@ -53,3 +53,11 @@ The login modal hides the **Full Name** field until you select **Sign Up**. If a
 user tries to sign up with an existing email address they'll see an error with a
 prompt to use the **Forgot your password** link which triggers the Supabase
 password reset flow.
+
+## Google Tag Manager
+
+This site loads Google Tag Manager (container `GTM-NFJTSQ3N`) on every page so visitor analytics can be configured centrally.
+
+## React redevelopment
+
+The current implementation uses vanilla HTML and JavaScript. To adopt ShadCN UI components, create a React or Next.js project and migrate these tools into React components. Package installation was attempted in this environment but was blocked by network restrictions, so only the plan is documented here.
