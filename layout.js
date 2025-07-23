@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const sidebar = document.getElementById('sidebar');
   const sidebarToggle = document.getElementById('sidebar-toggle');
+  const sidebarClose = document.getElementById('sidebar-close');
   const sidebarOverlay = document.getElementById('sidebar-overlay');
   const toolSearch = document.getElementById('tool-search');
   const toolList = document.getElementById('tool-list');
@@ -9,13 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function openSidebar() {
     sidebar.classList.remove('-translate-x-full');
-    sidebarToggle.innerHTML = '<i class="fas fa-times"></i>';
     if (sidebarOverlay) sidebarOverlay.classList.remove('hidden');
   }
 
   function closeSidebar() {
     sidebar.classList.add('-translate-x-full');
-    sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>';
     if (sidebarOverlay) sidebarOverlay.classList.add('hidden');
   }
 
@@ -31,6 +30,10 @@ document.addEventListener('DOMContentLoaded', () => {
         openSidebar();
       }
     });
+  }
+
+  if (sidebarClose) {
+    sidebarClose.addEventListener('click', closeSidebar);
   }
 
   if (sidebarOverlay) {
