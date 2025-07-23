@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Google Ads RSA Preview</title>
+  <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome for icons -->
@@ -655,11 +656,14 @@
   <div class="flex flex-grow">
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
     <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full transition-transform z-40">
+      <a href="index.html" class="text-xl font-bold mb-4 block" style="color:var(--foreground);">reformately</a>
       <h2 class="text-lg font-bold mb-4" style="color:var(--foreground);">Tools</h2>
       <input id="tool-search" type="text" placeholder="Search" class="w-full mb-4 px-2 py-1 rounded border border-[var(--foreground)] bg-transparent" />
       <ul id="tool-list" class="space-y-2">
-        <li><a href="index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Image Converter</a></li>
+        <li><a href="image-converter.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Image Converter</a></li>
         <li><a href="google-ads-rsa-preview.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Google Ads RSA Preview</a></li>
+        <li><a href="pos-tool.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Word to Parts of Speech</a></li>
+        <li><a href="campaign-structure.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Campaign Structure</a></li>
         <li><a href="#" class="text-[var(--foreground)] hover:text-[var(--primary)]">More coming soon</a></li>
       </ul>
       <div class="mt-6 pt-6 border-t border-[var(--foreground)]/20">
