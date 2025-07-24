@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-NFJTSQ3N');</script>
   <!-- End Google Tag Manager -->
@@ -9,11 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Word to Parts of Speech</title>
   <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Word to Parts of Speech</title>
-
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome for icons -->
@@ -22,12 +19,14 @@
   <script type="module" src="layout.js"></script>
   <script type="module" src="pos-tool.js"></script>
 </head>
-<body class="bg-transparent min-h-screen flex flex-col">
-
+<body data-slug="pos-tool" class="bg-transparent min-h-screen flex flex-col">
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
-
+<body class="bg-transparent min-h-screen flex flex-col">
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
   <!-- Navigation Bar -->
   <nav class="bg-[var(--background)] shadow-md border-b border-[var(--foreground)]/30">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -54,14 +53,12 @@
   <div class="flex flex-grow">
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
     <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full transition-transform z-40">
-
       <div class="flex justify-between items-center mb-4">
         <a href="index.html" class="text-xl font-bold" style="color:var(--foreground);">reformately</a>
         <button id="sidebar-close" class="text-[var(--foreground)] hover:text-[var(--primary)] focus:outline-none" aria-label="Close sidebar">
           <i class="fas fa-times"></i>
         </button>
       </div>
-
       <h2 class="text-lg font-bold mb-4" style="color:var(--foreground);">Tools</h2>
       <input id="tool-search" type="text" placeholder="Search" class="w-full mb-4 px-2 py-1 rounded border border-[var(--foreground)] bg-transparent" />
       <ul id="tool-list" class="space-y-2">
@@ -69,6 +66,7 @@
         <li><a href="google-ads-rsa-preview.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Google Ads RSA Preview</a></li>
         <li><a href="pos-tool.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Word to Parts of Speech</a></li>
         <li><a href="campaign-structure.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Campaign Structure</a></li>
+        <li><a href="bulk-match-editor.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Bulk Match Type Editor</a></li>
         <li><a href="index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Image Converter</a></li>
         <li><a href="google-ads-rsa-preview.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Google Ads RSA Preview</a></li>
         <li><a href="pos-tool.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Word to Parts of Speech</a></li>
@@ -98,7 +96,19 @@
           <form id="quiz-form" class="space-y-4"></form>
           <div id="quiz-result" class="mt-4 text-[var(--foreground)]"></div>
         </div>
-
+        <section class="mt-8 space-y-4">
+          <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this tool</h2>
+          <p style="color:var(--foreground);">Enter any English word to see its part of speech along with a definition and example sentence. After exploring a few words you can test yourself with the quiz.</p>
+          <h3 class="text-xl font-semibold" style="color:var(--foreground);">FAQs</h3>
+          <details class="border p-2 rounded">
+            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Where do the definitions come from?</summary>
+            <p class="mt-2" style="color:var(--foreground);">Definitions and sample sentences are fetched from dictionaryapi.dev whenever possible.</p>
+          </details>
+          <details class="border p-2 rounded">
+            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">What happens if a word isn&rsquo;t found?</summary>
+            <p class="mt-2" style="color:var(--foreground);">If the dictionary lacks an entry, the tool will note that no results were found and you won&rsquo;t receive quiz points.</p>
+          </details>
+        </section>
       <h1 class="text-3xl font-bold mb-4" style="color:var(--foreground);">Word to Parts of Speech</h1>
       <div class="space-y-4 max-w-md">
         <div id="word-of-day" class="p-2 border rounded text-[var(--foreground)]"></div>
@@ -111,7 +121,6 @@
         <p class="text-sm text-[var(--foreground)]/80">Each correct quiz answer awards 10 points. Get 5 correct to reach Silver and 15 correct to reach Gold.</p>
         <div id="result" class="mt-4 text-[var(--foreground)]"></div>
       </div>
-
       <div id="quiz-container" class="mt-8 hidden">
         <h2 class="text-xl font-bold mb-2" style="color:var(--foreground);">Quiz Time!</h2>
         <form id="quiz-form" class="space-y-4"></form>
