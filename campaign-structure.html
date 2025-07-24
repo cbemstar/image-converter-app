@@ -6,7 +6,7 @@
   <!-- End Google Tag Manager -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>reformately Tools</title>
+  <title>Google Ads Campaign Structure</title>
   <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script type="module" src="theme.js"></script>
   <script type="module" src="layout.js"></script>
-  <script type="module" src="home.js"></script>
+  <script type="module" src="campaign-structure.js"></script>
 </head>
 <body class="bg-transparent min-h-screen flex flex-col">
   <!-- Google Tag Manager (noscript) -->
@@ -65,40 +65,45 @@
     </aside>
 
     <main id="main-content" class="flex-grow p-4">
-      <div class="max-w-7xl mx-auto">
-      <section class="text-center py-12">
-        <h1 class="text-4xl font-bold mb-2" style="color:var(--foreground);">Welcome to reformately</h1>
-        <p class="text-lg" style="color:var(--foreground);">A collection of handy online tools</p>
-      </section>
+      <div class="max-w-xl mx-auto">
+        <h1 class="text-3xl font-bold mb-4" style="color:var(--foreground);">Google Ads Campaign Structure</h1>
+        <form id="structure-form" class="space-y-4">
+          <select id="campaign-type" class="shad-input">
+            <option value="Search">Search</option>
+            <option value="Performance Max">Performance Max</option>
+            <option value="Display">Display</option>
+            <option value="Video">Video</option>
+            <option value="Shopping">Shopping</option>
+          </select>
+          <input id="campaign-name" type="text" placeholder="Campaign Name" class="shad-input" />
+          <input id="ad-group-name" type="text" placeholder="Ad Group Name" class="shad-input" />
+          <input id="ad-name" type="text" placeholder="Ad Name" class="shad-input" />
+          <input id="keywords" type="text" placeholder="Keywords (comma separated)" class="shad-input" />
+          <button type="submit" class="shad-btn">Generate Structure</button>
+        </form>
 
-      <div class="max-w-md mx-auto mb-8">
-        <input id="home-search" type="text" placeholder="Search tools" class="shad-input" />
-      </div>
+        <div id="structure-output" class="mt-6 text-[var(--foreground)]"></div>
 
-      <div id="home-tools" class="grid gap-4 md:grid-cols-2">
-        <a href="image-converter.html" class="tool-card border rounded p-4" data-name="Image Converter" data-category="Images">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Image Converter</h3>
-          <p class="text-sm" style="color:var(--foreground);">Convert images between formats.</p>
-        </a>
-        <a href="google-ads-rsa-preview.html" class="tool-card border rounded p-4" data-name="Google Ads RSA Preview" data-category="Marketing">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Google Ads RSA Preview</h3>
-          <p class="text-sm" style="color:var(--foreground);">Visualize responsive search ads.</p>
-        </a>
-        <a href="pos-tool.html" class="tool-card border rounded p-4" data-name="Word to Parts of Speech" data-category="Writing">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Word to Parts of Speech</h3>
-          <p class="text-sm" style="color:var(--foreground);">Identify a word's part of speech.</p>
-        </a>
-        <a href="campaign-structure.html" class="tool-card border rounded p-4" data-name="Campaign Structure" data-category="Marketing">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Campaign Structure</h3>
-          <p class="text-sm" style="color:var(--foreground);">Visualize ad campaign hierarchy.</p>
-        </a>
-        <a href="bulk-match-editor.html" class="tool-card border rounded p-4" data-name="Bulk Match Type Editor" data-category="Marketing">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Bulk Match Type Editor</h3>
-          <p class="text-sm" style="color:var(--foreground);">Convert keywords to phrase and exact match.</p>
-        </a>
-      </div>
+        <div class="mt-8">
+          <h2 class="text-xl font-semibold mb-2" style="color:var(--foreground);">Naming Tips</h2>
+          <ul class="list-disc list-inside text-[var(--foreground)]">
+            <li>Include the campaign type and primary goal.</li>
+            <li>Add location or language targeting when relevant.</li>
+            <li>Keep names concise but descriptive.</li>
+            <li>Use consistent separators like dashes or pipes.</li>
+            <li>Avoid special characters to keep reporting clean.</li>
+          </ul>
+        </div>
       </div>
     </main>
   </div>
+
+  <footer class="bg-[var(--background)] border-t border-[var(--foreground)]/30 mt-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="text-center">
+        <p class="text-[var(--foreground)]/70">&copy; 2024 reformately. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
