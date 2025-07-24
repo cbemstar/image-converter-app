@@ -8,6 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>reformately Tools</title>
   <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
+  <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
+
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome for icons -->
@@ -20,6 +22,10 @@
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
   <nav class="bg-[var(--background)] shadow-md border-b border-[var(--foreground)]/30">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
@@ -63,19 +69,29 @@
         <a href="request-tool.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Request a Tool</a>
       </div>
     </aside>
-
     <main id="main-content" class="flex-grow p-4">
       <div class="max-w-7xl mx-auto">
       <section class="text-center py-12">
         <h1 class="text-4xl font-bold mb-2" style="color:var(--foreground);">Welcome to reformately</h1>
         <p class="text-lg" style="color:var(--foreground);">A collection of handy online tools</p>
       </section>
-
       <div class="max-w-md mx-auto mb-8">
         <input id="home-search" type="text" placeholder="Search tools" class="shad-input" />
       </div>
-
       <div id="home-tools" class="grid gap-4 md:grid-cols-2">
+    <main id="main-content" class="flex-grow p-4">
+
+      <div class="max-w-7xl mx-auto">
+
+      <section class="text-center py-12">
+        <h1 class="text-4xl font-bold mb-2" style="color:var(--foreground);">Welcome to reformately</h1>
+        <p class="text-lg" style="color:var(--foreground);">A collection of handy online tools</p>
+      </section>
+      <div class="max-w-md mx-auto mb-8">
+        <input id="home-search" type="text" placeholder="Search tools" class="shad-input" />
+      </div>
+      <div id="home-tools" class="grid gap-4 md:grid-cols-2">
+      <div id="home-tools" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <a href="image-converter.html" class="tool-card border rounded p-4" data-name="Image Converter" data-category="Images">
           <h3 class="font-semibold mb-1" style="color:var(--foreground);">Image Converter</h3>
           <p class="text-sm" style="color:var(--foreground);">Convert images between formats.</p>
@@ -96,6 +112,7 @@
           <h3 class="font-semibold mb-1" style="color:var(--foreground);">Bulk Match Type Editor</h3>
           <p class="text-sm" style="color:var(--foreground);">Convert keywords to phrase and exact match.</p>
         </a>
+      </div>
       </div>
       </div>
     </main>
