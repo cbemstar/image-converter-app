@@ -31,13 +31,4 @@ document.addEventListener('DOMContentLoaded', () => {
   if (category) category.addEventListener('change', render);
   if (sort) sort.addEventListener('change', render);
   render();
-  if (!search) return;
-  const cards = document.querySelectorAll('.tool-card');
-  search.addEventListener('input', () => {
-    const term = search.value.toLowerCase();
-    cards.forEach(card => {
-      const text = card.dataset.name.toLowerCase() + ' ' + card.dataset.category.toLowerCase();
-      card.style.display = text.includes(term) ? '' : 'none';
-    });
-  });
 });
