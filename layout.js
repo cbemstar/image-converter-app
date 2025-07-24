@@ -49,4 +49,11 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   }
+
+  const slug = document.body && document.body.dataset.slug;
+  if (slug) {
+    const key = `visits_${slug}`;
+    const count = parseInt(localStorage.getItem(key) || '0', 10) + 1;
+    localStorage.setItem(key, count);
+  }
 });
