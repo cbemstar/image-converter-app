@@ -8,9 +8,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Image to WebP Converter</title>
   <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Image to WebP Converter</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -33,10 +30,6 @@
   <script type="module" src="layout.js"></script>
 </head>
 <body data-slug="image-converter" class="bg-transparent min-h-screen flex flex-col">
-  <!-- Google Tag Manager (noscript) -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-  <!-- End Google Tag Manager (noscript) -->
-<body class="bg-transparent min-h-screen flex flex-col">
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
@@ -136,7 +129,6 @@
     </div>
     <div id="format-options" class="flex justify-center gap-4 mb-4" style="display:none;"></div>
     <div id="progress-status" class="text-center text-lg font-medium mb-2" style="color:var(--foreground);"></div>
-    <div id="progress-status" class="text-center text-lg font-medium mb-2" style="color:#cde5da;"></div>
     <div id="progress-bar-container" class="w-full max-w-2xl mx-auto mb-4">
       <div id="progress-bar"></div>
     </div>
@@ -306,7 +298,6 @@
     <div class="overflow-x-auto max-w-5xl mx-auto px-2 sm:px-4 min-w-0">
       <table id="preview-table" class="min-w-full w-full mb-8 text-sm sm:text-base table-auto" style="background: transparent;">
         <thead class="hidden md:table-header-group">
-        <thead>
           <tr>
             <th class="py-2 px-2 sm:px-4"><input type="checkbox" id="select-all"></th>
             <th class="py-2 px-2 sm:px-4">#</th>
@@ -323,32 +314,6 @@
 
     <!-- Hide card grid -->
     <div id="preview-grid" style="display:none;"></div>
-    <section id="faqs" class="mt-8 space-y-4 max-w-xl mx-auto">
-      <h2 class="text-2xl font-bold" style="color:var(--foreground);">Image Converter FAQs</h2>
-      <details class="border p-2 rounded">
-        <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">How do I convert images to WebP?</summary>
-        <p class="mt-2" style="color:var(--foreground);">Upload your files, choose WebP as the output format and click convert. Our free online image converter will handle the rest.</p>
-      </details>
-      <details class="border p-2 rounded">
-        <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Can I convert HEIC photos from my iPhone?</summary>
-        <p class="mt-2" style="color:var(--foreground);">Yes, the tool converts HEIC images to popular formats like JPEG or PNG so you can easily share them.</p>
-      </details>
-      <details class="border p-2 rounded">
-        <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Does the converter work for large batches?</summary>
-        <p class="mt-2" style="color:var(--foreground);">You can upload multiple pictures at once and download everything as a ZIP after the conversion finishes.</p>
-      </details>
-      <details class="border p-2 rounded">
-        <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Is this image converter free?</summary>
-        <p class="mt-2" style="color:var(--foreground);">The basic conversion features are free and run directly in your browser.</p>
-      </details>
-      <details class="border p-2 rounded">
-        <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Why convert to WebP or AVIF?</summary>
-        <p class="mt-2" style="color:var(--foreground);">Modern formats like WebP and AVIF offer better compression so your pages load faster with smaller file sizes.</p>
-      </details>
-      <details class="border p-2 rounded">
-        <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Does processing happen online?</summary>
-        <p class="mt-2" style="color:var(--foreground);">All conversion happens locally in your browser; images never leave your computer.</p>
-      </details>
     <section id="faqs" class="max-w-5xl mx-auto px-4 py-8">
       <h2 class="text-2xl font-bold mb-4" style="color:var(--foreground);">Image Converter FAQs</h2>
       <div class="space-y-2">
