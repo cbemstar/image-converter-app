@@ -6,7 +6,7 @@
   <!-- End Google Tag Manager -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>reformately Tools</title>
+  <title>Word to Parts of Speech</title>
   <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
@@ -14,15 +14,17 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script type="module" src="theme.js"></script>
   <script type="module" src="layout.js"></script>
-  <script type="module" src="home.js"></script>
+  <script type="module" src="pos-tool.js"></script>
 </head>
-<body class="bg-transparent min-h-screen flex flex-col">
+<body data-slug="pos-tool" class="bg-transparent min-h-screen flex flex-col">
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
+  <!-- Navigation Bar -->
   <nav class="bg-[var(--background)] shadow-md border-b border-[var(--foreground)]/30">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
+        <!-- Logo and site name -->
         <div class="flex items-center gap-4">
           <button id="sidebar-toggle" class="text-[var(--foreground)] hover:text-[var(--primary)] focus:outline-none">
             <i class="fas fa-bars"></i>
@@ -40,6 +42,7 @@
     </div>
   </nav>
 
+  <!-- Page Layout -->
   <div class="flex flex-grow">
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
     <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full transition-transform z-40">
@@ -63,54 +66,52 @@
         <a href="request-tool.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Request a Tool</a>
       </div>
     </aside>
-
     <main id="main-content" class="flex-grow p-4">
-      <div class="max-w-7xl mx-auto">
-      <section class="text-center py-12">
-        <h1 class="text-4xl font-bold mb-2" style="color:var(--foreground);">Welcome to reformately</h1>
-        <p class="text-lg" style="color:var(--foreground);">A collection of handy online tools</p>
-      </section>
-
-      <div class="max-w-md mx-auto mb-4 space-y-2">
-        <input id="home-search" type="text" placeholder="Search tools" class="shad-input w-full" />
-        <div class="flex gap-2">
-          <select id="category-filter" class="border rounded px-2 py-1 bg-transparent flex-grow">
-            <option value="All">All Categories</option>
-            <option value="Images">Images</option>
-            <option value="Marketing">Marketing</option>
-            <option value="Writing">Writing</option>
-          </select>
-          <select id="sort-select" class="border rounded px-2 py-1 bg-transparent">
-            <option value="az">A-Z</option>
-            <option value="visits">Most Visited</option>
-          </select>
+      <div class="max-w-xl mx-auto">
+        <h1 class="text-3xl font-bold mb-4" style="color:var(--foreground);">Word to Parts of Speech</h1>
+        <div class="space-y-4">
+          <div id="word-of-day" class="p-2 border rounded text-[var(--foreground)]"></div>
+          <input id="word-input" type="text" placeholder="Enter a word" class="shad-input" />
+          <div class="flex gap-2">
+            <button id="analyze-btn" class="shad-btn">Analyze</button>
+            <button id="shuffle-btn" class="shad-btn">Shuffle Word</button>
+          </div>
+          <div id="scoreboard" class="text-[var(--foreground)]">Stage: <span id="stage">Bronze</span> | Points: <span id="points">0</span></div>
+          <p class="text-sm text-[var(--foreground)]/80">Each correct quiz answer awards 10 points. Get 5 correct to reach Silver and 15 correct to reach Gold.</p>
+          <div id="result" class="mt-4 text-[var(--foreground)]"></div>
         </div>
-      </div>
 
-      <div id="home-tools" class="grid gap-4 md:grid-cols-2 max-w-2xl mx-auto">
-        <a href="image-converter.html" class="tool-card border rounded p-4" data-name="Image Converter" data-category="Images" data-slug="image-converter">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Image Converter</h3>
-          <p class="text-sm" style="color:var(--foreground);">Convert images between formats.</p>
-        </a>
-        <a href="google-ads-rsa-preview.html" class="tool-card border rounded p-4" data-name="Google Ads RSA Preview" data-category="Marketing" data-slug="google-ads-rsa-preview">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Google Ads RSA Preview</h3>
-          <p class="text-sm" style="color:var(--foreground);">Visualize responsive search ads.</p>
-        </a>
-        <a href="pos-tool.html" class="tool-card border rounded p-4" data-name="Word to Parts of Speech" data-category="Writing" data-slug="pos-tool">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Word to Parts of Speech</h3>
-          <p class="text-sm" style="color:var(--foreground);">Identify a word's part of speech.</p>
-        </a>
-        <a href="campaign-structure.html" class="tool-card border rounded p-4" data-name="Campaign Structure" data-category="Marketing" data-slug="campaign-structure">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Campaign Structure</h3>
-          <p class="text-sm" style="color:var(--foreground);">Visualize ad campaign hierarchy.</p>
-        </a>
-        <a href="bulk-match-editor.html" class="tool-card border rounded p-4" data-name="Bulk Match Type Editor" data-category="Marketing" data-slug="bulk-match-editor">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Bulk Match Type Editor</h3>
-          <p class="text-sm" style="color:var(--foreground);">Convert keywords to phrase and exact match.</p>
-        </a>
-      </div>
+        <div id="quiz-container" class="mt-8 hidden">
+          <h2 class="text-xl font-bold mb-2" style="color:var(--foreground);">Quiz Time!</h2>
+          <form id="quiz-form" class="space-y-4"></form>
+          <div id="quiz-result" class="mt-4 text-[var(--foreground)]"></div>
+        </div>
+
+        <section class="mt-8 space-y-4">
+          <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this tool</h2>
+          <p style="color:var(--foreground);">Enter any English word to see its part of speech along with a definition and example sentence. After exploring a few words you can test yourself with the quiz.</p>
+          <h3 class="text-xl font-semibold" style="color:var(--foreground);">FAQs</h3>
+          <details class="border p-2 rounded">
+            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Where do the definitions come from?</summary>
+            <p class="mt-2" style="color:var(--foreground);">Definitions and sample sentences are fetched from dictionaryapi.dev whenever possible.</p>
+          </details>
+          <details class="border p-2 rounded">
+            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">What happens if a word isn&rsquo;t found?</summary>
+            <p class="mt-2" style="color:var(--foreground);">If the dictionary lacks an entry, the tool will note that no results were found and you won&rsquo;t receive quiz points.</p>
+          </details>
+        </section>
       </div>
     </main>
   </div>
+
+  <footer class="bg-[var(--background)] border-t border-[var(--foreground)]/30 mt-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="text-center">
+        <p class="text-[var(--foreground)]/70">&copy; 2024 reformately. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- layout.js handles sidebar functionality -->
 </body>
 </html>
