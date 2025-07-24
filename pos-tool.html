@@ -8,6 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Word to Parts of Speech</title>
   <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Word to Parts of Speech</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome for icons -->
@@ -17,6 +20,10 @@
   <script type="module" src="pos-tool.js"></script>
 </head>
 <body data-slug="pos-tool" class="bg-transparent min-h-screen flex flex-col">
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+<body class="bg-transparent min-h-screen flex flex-col">
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
@@ -60,6 +67,9 @@
         <li><a href="pos-tool.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Word to Parts of Speech</a></li>
         <li><a href="campaign-structure.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Campaign Structure</a></li>
         <li><a href="bulk-match-editor.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Bulk Match Type Editor</a></li>
+        <li><a href="index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Image Converter</a></li>
+        <li><a href="google-ads-rsa-preview.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Google Ads RSA Preview</a></li>
+        <li><a href="pos-tool.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Word to Parts of Speech</a></li>
         <li><a href="#" class="text-[var(--foreground)] hover:text-[var(--primary)]">More coming soon</a></li>
       </ul>
       <div class="mt-6 pt-6 border-t border-[var(--foreground)]/20">
@@ -86,7 +96,6 @@
           <form id="quiz-form" class="space-y-4"></form>
           <div id="quiz-result" class="mt-4 text-[var(--foreground)]"></div>
         </div>
-
         <section class="mt-8 space-y-4">
           <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this tool</h2>
           <p style="color:var(--foreground);">Enter any English word to see its part of speech along with a definition and example sentence. After exploring a few words you can test yourself with the quiz.</p>
@@ -100,6 +109,22 @@
             <p class="mt-2" style="color:var(--foreground);">If the dictionary lacks an entry, the tool will note that no results were found and you won&rsquo;t receive quiz points.</p>
           </details>
         </section>
+      <h1 class="text-3xl font-bold mb-4" style="color:var(--foreground);">Word to Parts of Speech</h1>
+      <div class="space-y-4 max-w-md">
+        <div id="word-of-day" class="p-2 border rounded text-[var(--foreground)]"></div>
+        <input id="word-input" type="text" placeholder="Enter a word" class="shad-input" />
+        <div class="flex gap-2">
+          <button id="analyze-btn" class="shad-btn">Analyze</button>
+          <button id="shuffle-btn" class="shad-btn">Shuffle Word</button>
+        </div>
+        <div id="scoreboard" class="text-[var(--foreground)]">Stage: <span id="stage">Bronze</span> | Points: <span id="points">0</span></div>
+        <p class="text-sm text-[var(--foreground)]/80">Each correct quiz answer awards 10 points. Get 5 correct to reach Silver and 15 correct to reach Gold.</p>
+        <div id="result" class="mt-4 text-[var(--foreground)]"></div>
+      </div>
+      <div id="quiz-container" class="mt-8 hidden">
+        <h2 class="text-xl font-bold mb-2" style="color:var(--foreground);">Quiz Time!</h2>
+        <form id="quiz-form" class="space-y-4"></form>
+        <div id="quiz-result" class="mt-4 text-[var(--foreground)]"></div>
       </div>
     </main>
   </div>
@@ -111,7 +136,6 @@
       </div>
     </div>
   </footer>
-
   <!-- layout.js handles sidebar functionality -->
 </body>
 </html>

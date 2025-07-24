@@ -8,6 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Image to WebP Converter</title>
   <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image to WebP Converter</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -24,13 +27,16 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
   <!-- JS files -->
   <script type="module" src="core.js"></script>
   <script type="module" src="theme.js"></script>
   <script type="module" src="layout.js"></script>
 </head>
 <body data-slug="image-converter" class="bg-transparent min-h-screen flex flex-col">
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+<body class="bg-transparent min-h-screen flex flex-col">
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
@@ -47,7 +53,7 @@
             <span class="text-[var(--foreground)] text-xl font-bold">reformately</span>
           </a>
         </div>
-        
+       
         <!-- Navigation links 
         <div class="hidden md:flex items-center space-x-4">
           <a href="image-converter.html" class="text-[var(--foreground)] hover:text-[var(--primary)] px-3 py-2 rounded-md font-medium">Home</a>
@@ -95,6 +101,9 @@
   <section class="max-w-3xl mx-auto mb-8 space-y-2">
     <p style="color:var(--foreground);">Convert images right in your browser without installing software. Resize, change quality and export to formats like WebP, JPEG or AVIF.</p>
   </section>
+    <main id="main-content" class="flex-grow">
+      <!-- Main Content Area -->
+    <h1 class="text-3xl font-bold text-center my-8" style="color: var(--foreground);">Image Conversion Tool</h1>
     <div id="controls" class="flex flex-wrap justify-center gap-4 mb-8">
       <div class="bg-white rounded shadow px-3 py-2 flex items-center gap-2">
         <label for="max-width" class="font-medium">Max Width:</label>
@@ -141,7 +150,6 @@
       <button onclick="signIn(document.getElementById('auth-email').value, document.getElementById('auth-password').value)" class="bg-green-500 text-white px-4 py-2 rounded">Login</button>
       <button onclick="signOut()" class="bg-red-500 text-white px-4 py-2 rounded" style="display:none;">Logout</button>
     </div>
-    
     <div class="flex flex-col items-center mb-4">
       <button id="upgrade-btn" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded shadow transition-colors mb-0">Upgrade</button>
       <!-- Stripe Pricing Table Accordion -->
@@ -153,7 +161,6 @@
         </stripe-pricing-table>
       </div>
     </div>
-
     <!-- File Drop Area -->
     <div id="drop-area" class="border-2 border-dashed border-blue-400 rounded-lg p-8 text-center text-blue-500 mb-8 bg-white shadow hover:shadow-lg transition-shadow cursor-pointer max-w-2xl mx-auto px-4">
       <p class="mb-4">Drag & drop your image files here</p>
@@ -164,8 +171,7 @@
       </div>
       <input type="file" id="fileElem" accept="image/*" multiple style="display:none">
       <button onclick="fileElem.click()" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-2 rounded shadow transition-colors">Select Images</button>
-    </div>
-    
+    </div>  
     <!-- Info Modals -->
     <div id="raw-info-modal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; overflow:auto; background-color:rgba(0,0,0,0.7);">
       <div style="background-color:var(--background); margin:10% auto; padding:20px; border:2px solid var(--foreground); border-radius:12px; width:80%; max-width:600px;">
@@ -300,6 +306,7 @@
     <div class="overflow-x-auto max-w-5xl mx-auto px-2 sm:px-4 min-w-0">
       <table id="preview-table" class="min-w-full w-full mb-8 text-sm sm:text-base table-auto" style="background: transparent;">
         <thead class="hidden md:table-header-group">
+        <thead>
           <tr>
             <th class="py-2 px-2 sm:px-4"><input type="checkbox" id="select-all"></th>
             <th class="py-2 px-2 sm:px-4">#</th>
@@ -316,7 +323,6 @@
 
     <!-- Hide card grid -->
     <div id="preview-grid" style="display:none;"></div>
-
     <section id="faqs" class="mt-8 space-y-4 max-w-xl mx-auto">
       <h2 class="text-2xl font-bold" style="color:var(--foreground);">Image Converter FAQs</h2>
       <details class="border p-2 rounded">
@@ -343,8 +349,47 @@
         <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Does processing happen online?</summary>
         <p class="mt-2" style="color:var(--foreground);">All conversion happens locally in your browser; images never leave your computer.</p>
       </details>
+    <section id="faqs" class="max-w-5xl mx-auto px-4 py-8">
+      <h2 class="text-2xl font-bold mb-4" style="color:var(--foreground);">Image Converter FAQs</h2>
+      <div class="space-y-2">
+        <div class="faq-item border-b border-[var(--foreground)]/20">
+          <button class="faq-question w-full text-left py-2 flex justify-between items-center" aria-expanded="false">
+            <span style="color:var(--foreground);">How do I convert images to WebP?</span>
+            <i class="fas fa-chevron-down text-[var(--foreground)]"></i>
+          </button>
+          <div class="faq-answer hidden pb-4" style="color:var(--foreground);">
+            Upload your files, choose WebP as the output format and click convert. Our free online image converter will handle the rest.
+          </div>
+        </div>
+        <div class="faq-item border-b border-[var(--foreground)]/20">
+          <button class="faq-question w-full text-left py-2 flex justify-between items-center" aria-expanded="false">
+            <span style="color:var(--foreground);">Can I convert HEIC photos from my iPhone?</span>
+            <i class="fas fa-chevron-down text-[var(--foreground)]"></i>
+          </button>
+          <div class="faq-answer hidden pb-4" style="color:var(--foreground);">
+            Yes, the tool converts HEIC images to popular formats like JPEG or PNG so you can easily share them.
+          </div>
+        </div>
+        <div class="faq-item border-b border-[var(--foreground)]/20">
+          <button class="faq-question w-full text-left py-2 flex justify-between items-center" aria-expanded="false">
+            <span style="color:var(--foreground);">Does the converter work for large batches?</span>
+            <i class="fas fa-chevron-down text-[var(--foreground)]"></i>
+          </button>
+          <div class="faq-answer hidden pb-4" style="color:var(--foreground);">
+            You can upload multiple pictures at once and download everything as a ZIP after the conversion finishes.
+          </div>
+        </div>
+        <div class="faq-item border-b border-[var(--foreground)]/20">
+          <button class="faq-question w-full text-left py-2 flex justify-between items-center" aria-expanded="false">
+            <span style="color:var(--foreground);">Is this image converter free?</span>
+            <i class="fas fa-chevron-down text-[var(--foreground)]"></i>
+          </button>
+          <div class="faq-answer hidden pb-4" style="color:var(--foreground);">
+            The basic conversion features are free and run directly in your browser.
+          </div>
+        </div>
+      </div>
     </section>
-    
     <!-- Image Modal for preview -->
     <div id="image-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:10000;background:rgba(0,0,0,0.92);align-items:center;justify-content:center;flex-direction:column;">
       <button class="close-modal" aria-label="Close" style="position:absolute;top:32px;right:40px;font-size:2.5rem;color:var(--foreground);background:rgba(0,0,0,0.7);border:none;cursor:pointer;width:48px;height:48px;display:flex;align-items:center;justify-content:center;z-index:2;">&times;</button>
@@ -357,7 +402,6 @@
     </div>
     </main>
   </div>
-
   <!-- Footer -->
   <footer class="bg-[var(--background)] border-t border-[var(--foreground)]/30 mt-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
