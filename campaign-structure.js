@@ -4,9 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const downloadBtns = document.getElementById('download-buttons');
   const pngBtn = document.getElementById('download-png');
   const pdfBtn = document.getElementById('download-pdf');
-
   if (!form) return;
-
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const type = document.getElementById('campaign-type').value.trim();
@@ -20,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     output.innerHTML = `
       <pre id="tree" class="bg-[var(--background)] border rounded p-4 font-mono overflow-x-auto">
+      <pre class="bg-[var(--background)] border rounded p-4 font-mono overflow-x-auto">
 <span class="text-blue-400 font-semibold">${campaign}</span>/ <span class="text-sm">(${type})</span>
 ├── <span class="text-green-400 font-semibold">${adGroup}</span>/
 │   ├── <span class="text-yellow-300 font-semibold">${ad}</span>
@@ -27,7 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
 </pre>`;
     downloadBtns.style.display = 'flex';
   });
-
   if (pngBtn) {
     pngBtn.addEventListener('click', () => {
       const tree = document.getElementById('tree');
@@ -40,7 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   }
-
   if (pdfBtn) {
     pdfBtn.addEventListener('click', () => {
       const tree = document.getElementById('tree');
@@ -57,4 +54,5 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   }
+  });
 });

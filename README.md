@@ -1,5 +1,3 @@
-# Image Converter App
-
 A browser-based image conversion tool that allows you to convert images between various formats including WebP, JPEG, PNG, AVIF, BMP, TIFF, GIF, and ICO. The app also supports special formats like HEIC/HEIF and RAW camera formats.
 
 ## Features
