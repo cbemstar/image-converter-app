@@ -6,7 +6,7 @@
   <!-- End Google Tag Manager -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bulk Keywords Match Type Editor</title>
+  <title>JSON Formatter</title>
   <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
@@ -14,9 +14,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script type="module" src="theme.js"></script>
   <script type="module" src="layout.js"></script>
-  <script type="module" src="bulk-match-editor.js"></script>
+  <script type="module" src="json-formatter.js"></script>
 </head>
-<body data-slug="bulk-match-editor" class="bg-transparent min-h-screen flex flex-col">
+<body data-slug="json-formatter" class="bg-transparent min-h-screen flex flex-col">
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
@@ -65,54 +65,32 @@
     </aside>
 
     <main id="main-content" class="flex-grow p-4">
-      <div class="max-w-2xl mx-auto">
-        <h1 class="text-3xl font-bold mb-2" style="color:var(--foreground);">Bulk Keywords Match Type Editor</h1>
-        <p class="mb-4" style="color:var(--foreground);">Enter your keywords below and generate phrase and exact match versions. Select rows to copy specific terms or copy the entire list at once.</p>
-        <div class="space-y-4">
-          <textarea id="keywords-input" rows="5" class="shad-input" placeholder="Enter keywords, one per line"></textarea>
-          <button id="convert-btn" class="shad-btn">Convert</button>
-          <div id="results-section" class="hidden mt-6 space-y-4">
-            <div class="grid gap-4 md:grid-cols-2">
-              <div>
-                <h2 class="text-xl font-semibold mb-2" style="color:var(--foreground);">Phrase Match</h2>
-                <div class="flex justify-between items-center mb-2">
-                  <span id="phrase-count" class="text-sm" style="color:var(--foreground);">0 selected</span>
-                  <button id="copy-phrase-btn" class="shad-btn" disabled>Copy all</button>
-                </div>
-                <table class="min-w-full text-sm border border-[var(--foreground)]/20">
-                  <tbody id="phrase-body"></tbody>
-                </table>
-              </div>
-              <div>
-                <h2 class="text-xl font-semibold mb-2" style="color:var(--foreground);">Exact Match</h2>
-                <div class="flex justify-between items-center mb-2">
-                  <span id="exact-count" class="text-sm" style="color:var(--foreground);">0 selected</span>
-                  <button id="copy-exact-btn" class="shad-btn" disabled>Copy all</button>
-                </div>
-                <table class="min-w-full text-sm border border-[var(--foreground)]/20">
-                  <tbody id="exact-body"></tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-          <section class="mt-8 space-y-4">
-            <h2 class="text-2xl font-bold" style="color:var(--foreground);">Why use match types?</h2>
-            <p style="color:var(--foreground);">Google Ads match types control how closely a user's search needs to match your keywords to trigger your ad. Phrase match shows ads when the search includes the meaning of your keyword, while exact match only triggers ads for searches with the same intent. Using both lets you balance reach and relevance.</p>
-            <h3 class="text-xl font-semibold" style="color:var(--foreground);">FAQs</h3>
-            <details class="border p-2 rounded">
-              <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">What are Google Ads match types?</summary>
-              <p class="mt-2" style="color:var(--foreground);">Match types help you control which searches show your ads. They include broad, phrase, and exact match.</p>
-            </details>
-            <details class="border p-2 rounded">
-              <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">When should I use phrase match?</summary>
-              <p class="mt-2" style="color:var(--foreground);">Phrase match is ideal when you want to reach searches that contain the meaning of your keyword while still discovering new queries.</p>
-            </details>
-            <details class="border p-2 rounded">
-              <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">When should I use exact match?</summary>
-              <p class="mt-2" style="color:var(--foreground);">Use exact match when you need tight control over queries and want your ads shown only for searches with the same intent as your keyword.</p>
-            </details>
-          </section>
+      <div class="max-w-2xl mx-auto space-y-4">
+        <h1 class="text-3xl font-bold" style="color:var(--foreground);">JSON Formatter</h1>
+        <p style="color:var(--foreground);">Paste JSON below to validate, format or minify it. You can copy the result or download it as a file.</p>
+        <textarea id="json-input" rows="8" class="shad-input font-mono" placeholder="Paste JSON here"></textarea>
+        <div class="flex gap-2">
+          <button id="format-btn" class="shad-btn">Format</button>
+          <button id="minify-btn" class="shad-btn">Minify</button>
         </div>
+        <textarea id="json-output" rows="8" class="shad-input font-mono" placeholder="Output" readonly></textarea>
+        <div class="flex gap-2">
+          <button id="copy-btn" class="shad-btn">Copy</button>
+          <button id="download-btn" class="shad-btn">Download</button>
+        </div>
+        <section class="mt-8 space-y-4">
+          <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this tool</h2>
+          <p style="color:var(--foreground);">Use the JSON formatter to tidy raw JSON, making it easier to read or share. The minify option removes whitespace for compact storage.</p>
+          <h3 class="text-xl font-semibold" style="color:var(--foreground);">FAQs</h3>
+          <details class="border p-2 rounded">
+            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">What happens to my data?</summary>
+            <p class="mt-2" style="color:var(--foreground);">All formatting happens locally in your browser. No JSON is uploaded or stored.</p>
+          </details>
+          <details class="border p-2 rounded">
+            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Why would I minify JSON?</summary>
+            <p class="mt-2" style="color:var(--foreground);">Minified JSON removes spaces and line breaks so the file is smaller when transferring or storing.</p>
+          </details>
+        </section>
       </div>
     </main>
   </div>
