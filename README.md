@@ -53,3 +53,19 @@ The login modal hides the **Full Name** field until you select **Sign Up**. If a
 user tries to sign up with an existing email address they'll see an error with a
 prompt to use the **Forgot your password** link which triggers the Supabase
 password reset flow.
+
+## Google Tag Manager
+
+This site loads Google Tag Manager (container `GTM-NFJTSQ3N`) on every page so visitor analytics can be configured centrally.
+
+## Additional Tools
+
+Alongside the image converter, the site offers several marketing utilities like a Google Ads RSA previewer, a campaign structure visualizer, a parts-of-speech helper, and a **Bulk Match Type Editor** for quickly converting keyword lists to phrase and exact match formats. Enter keywords once and the tool shows both match types side by side with options to copy individual or all results.
+
+Every tool page includes a short "About" section and FAQs so you know when to use it and how it works.
+
+The homepage lists all tools in a searchable grid. You can filter by category or sort A-Z or by the most visited tools, with visit counts stored in your browser.
+
+## React redevelopment
+
+The current implementation uses vanilla HTML and JavaScript. To adopt ShadCN UI components, create a React or Next.js project and migrate these tools into React components. Package installation was attempted in this environment but was blocked by network restrictions, so only the plan is documented here.
