@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const sidebar = document.getElementById('sidebar');
   const sidebarToggle = document.getElementById('sidebar-toggle');
+  const sidebarClose = document.getElementById('sidebar-close');
   const sidebarOverlay = document.getElementById('sidebar-overlay');
   const toolSearch = document.getElementById('tool-search');
   const toolList = document.getElementById('tool-list');
@@ -9,13 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function openSidebar() {
     sidebar.classList.remove('-translate-x-full');
-    sidebarToggle.innerHTML = '<i class="fas fa-times"></i>';
     if (sidebarOverlay) sidebarOverlay.classList.remove('hidden');
   }
 
   function closeSidebar() {
     sidebar.classList.add('-translate-x-full');
-    sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>';
     if (sidebarOverlay) sidebarOverlay.classList.add('hidden');
   }
 
@@ -33,6 +32,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  if (sidebarClose) {
+    sidebarClose.addEventListener('click', closeSidebar);
+  }
+
   if (sidebarOverlay) {
     sidebarOverlay.addEventListener('click', closeSidebar);
   }
@@ -45,5 +48,12 @@ document.addEventListener('DOMContentLoaded', () => {
         li.style.display = text.includes(term) ? '' : 'none';
       });
     });
+  }
+
+  const slug = document.body && document.body.dataset.slug;
+  if (slug) {
+    const key = `visits_${slug}`;
+    const count = parseInt(localStorage.getItem(key) || '0', 10) + 1;
+    localStorage.setItem(key, count);
   }
 });
