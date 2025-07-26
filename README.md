@@ -58,11 +58,28 @@ This site loads Google Tag Manager (container `GTM-NFJTSQ3N`) on every page so v
 
 ## Additional Tools
 
-Alongside the image converter, the site offers several marketing utilities like a Google Ads RSA previewer, a campaign structure visualizer (now with PNG/PDF export), and a **Bulk Match Type Editor** for quickly converting keyword lists to phrase and exact match formats. Enter keywords once and the tool shows both match types side by side with options to copy individual or all results. A simple **Background Remover** uses MediaPipe Selfie Segmentation to strip backgrounds from PNG or JPG files directly in the browser.
+Alongside the image converter, the site offers several marketing utilities like a Google Ads RSA previewer, a campaign structure visualizer (now with PNG/PDF export), and a **Bulk Match Type Editor** for quickly converting keyword lists to phrase and exact match formats. Enter keywords once and the tool shows both match types side by side with options to copy individual or all results. A simple **Background Remover** is also included. It now uses a lightweight FastAPI service with the `transparent-background` library for high‑quality cutouts instead of browser‑based MediaPipe processing.
 
 Every tool page includes a short "About" section and FAQs so you know when to use it and how it works.
 
 The homepage lists all tools in a searchable grid. You can filter by category or sort A-Z or by the most visited tools, with visit counts stored in your browser.
+
+## Background remover backend
+
+The background remover relies on a small FastAPI service that uses the
+`transparent-background` library. Run it locally or deploy it on a provider that
+supports Python APIs (Render, Railway, Fly.io, AWS, Azure, etc.).
+
+### Local setup
+
+```bash
+pip install -r backend/requirements.txt
+uvicorn backend.main:app --host 0.0.0.0 --port 8000
+```
+
+The frontend fetches from `http://localhost:8000` by default. If you deploy the
+API elsewhere, update the `API_BASE` constant in `background-remover.js` to
+point to your service URL.
 
 ## React redevelopment
 
