@@ -6,17 +6,19 @@
   <!-- End Google Tag Manager -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>reformately Tools</title>
+  <title>Background Remover</title>
   <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- MediaPipe Selfie Segmentation -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation@0.1/selfie_segmentation.js"></script>
   <script type="module" src="theme.js"></script>
   <script type="module" src="layout.js"></script>
-  <script type="module" src="home.js"></script>
+  <script type="module" src="background-remover.js"></script>
 </head>
-<body class="bg-transparent min-h-screen flex flex-col">
+<body data-slug="background-remover" class="bg-transparent min-h-screen flex flex-col">
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
@@ -66,57 +68,28 @@
     </aside>
 
     <main id="main-content" class="flex-grow p-4">
-      <div class="max-w-7xl mx-auto">
-      <section class="text-center py-12">
-        <h1 class="text-4xl font-bold mb-2" style="color:var(--foreground);">Welcome to reformately</h1>
-        <p class="text-lg" style="color:var(--foreground);">A collection of handy online tools</p>
-      </section>
+      <div class="max-w-2xl mx-auto space-y-4">
+        <h1 class="text-3xl font-bold" style="color:var(--foreground);">Background Remover</h1>
+        <p style="color:var(--foreground);">Upload a PNG or JPG image to remove its background. The result will be a transparent PNG.</p>
+        <input id="image-input" type="file" accept="image/png,image/jpeg" class="shad-input" />
+        <img id="result-preview" class="mt-4 max-w-full rounded" alt="Result preview" />
+        <a id="download-btn" href="#" download="background.png" class="download-btn mt-2" style="display:none;">Download PNG</a>
 
-      <div class="max-w-md mx-auto mb-4 space-y-2">
-        <input id="home-search" type="text" placeholder="Search tools" class="shad-input w-full" />
-        <div class="flex gap-2">
-          <select id="category-filter" class="border rounded px-2 py-1 bg-transparent flex-grow">
-            <option value="All">All Categories</option>
-            <option value="Images">Images</option>
-            <option value="Marketing">Marketing</option>
-            <option value="Writing">Writing</option>
-            <option value="Utilities">Utilities</option>
-          </select>
-          <select id="sort-select" class="border rounded px-2 py-1 bg-transparent">
-            <option value="az">A-Z</option>
-            <option value="visits">Most Visited</option>
-          </select>
-        </div>
-      </div>
-
-      <div id="home-tools" class="grid gap-4 md:grid-cols-2 max-w-2xl mx-auto">
-        <a href="image-converter.html" class="tool-card border rounded p-4" data-name="Image Converter" data-category="Images" data-slug="image-converter">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Image Converter</h3>
-          <p class="text-sm" style="color:var(--foreground);">Convert images between formats.</p>
-        </a>
-        <a href="background-remover.html" class="tool-card border rounded p-4" data-name="Background Remover" data-category="Images" data-slug="background-remover">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Background Remover</h3>
-          <p class="text-sm" style="color:var(--foreground);">Remove the background from images.</p>
-        </a>
-        <a href="google-ads-rsa-preview.html" class="tool-card border rounded p-4" data-name="Google Ads RSA Preview" data-category="Marketing" data-slug="google-ads-rsa-preview">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Google Ads RSA Preview</h3>
-          <p class="text-sm" style="color:var(--foreground);">Visualize responsive search ads.</p>
-        </a>
-        <a href="campaign-structure.html" class="tool-card border rounded p-4" data-name="Campaign Structure" data-category="Marketing" data-slug="campaign-structure">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Campaign Structure</h3>
-          <p class="text-sm" style="color:var(--foreground);">Visualize ad campaign hierarchy.</p>
-        </a>
-        <a href="bulk-match-editor.html" class="tool-card border rounded p-4" data-name="Bulk Match Type Editor" data-category="Marketing" data-slug="bulk-match-editor">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Bulk Match Type Editor</h3>
-          <p class="text-sm" style="color:var(--foreground);">Convert keywords to phrase and exact match.</p>
-        </a>
-        <a href="json-formatter.html" class="tool-card border rounded p-4" data-name="JSON Formatter" data-category="Utilities" data-slug="json-formatter">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">JSON Formatter</h3>
-          <p class="text-sm" style="color:var(--foreground);">Format or minify JSON easily.</p>
-        </a>
-      </div>
+        <section class="mt-8 space-y-4">
+          <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this tool</h2>
+          <p style="color:var(--foreground);">This demo uses MediaPipe Selfie Segmentation to estimate the subject and make the rest transparent. Complex backgrounds may leave artifacts.</p>
+          <p style="color:var(--foreground);">For unsupported formats, first convert your image using the <a href="image-converter.html" class="underline text-[var(--primary)]">image converter</a>.</p>
+        </section>
       </div>
     </main>
   </div>
+
+  <footer class="bg-[var(--background)] border-t border-[var(--foreground)]/30 mt-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="text-center">
+        <p class="text-[var(--foreground)]/70">&copy; 2024 reformately. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
