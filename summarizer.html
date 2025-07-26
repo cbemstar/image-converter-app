@@ -4,26 +4,23 @@
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-NFJTSQ3N');</script>
   <!-- End Google Tag Manager -->
-  <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Google Ads Campaign Structure</title>
+  <title>Text Summarizer</title>
+  <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script type="module" src="theme.js"></script>
   <script type="module" src="layout.js"></script>
-  <script type="module" src="campaign-structure.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNa72fmVK5GA6db6+mT6ytC/DWe8npAQK/2FqW0u35o3svynIogoZmY7z/F8xR0wZE9Q/3fWP8uyvN7v7uC4nw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-FYavDG4SJo6P4iINafSCi6SMnF47QlvJwFSc1aHs+qlhK/SXxPxq8np5xpoE2mR7BncpsbR9f7D28iOQNp3Npg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+  <script type="module" src="summarizer.js"></script>
 </head>
-<body data-slug="campaign-structure" class="bg-transparent min-h-screen flex flex-col">
-
+<body data-slug="summarizer" class="bg-transparent min-h-screen flex flex-col">
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
+  <!-- Navigation Bar -->
   <nav class="bg-[var(--background)] shadow-md border-b border-[var(--foreground)]/30">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
@@ -43,7 +40,6 @@
       </div>
     </div>
   </nav>
-
   <div class="flex flex-grow">
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
     <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full transition-transform z-40">
@@ -70,60 +66,37 @@
       </div>
     </aside>
     <main id="main-content" class="flex-grow p-4">
-      <div class="max-w-xl mx-auto">
-        <h1 class="text-3xl font-bold mb-4" style="color:var(--foreground);">Google Ads Campaign Structure</h1>
-        <form id="structure-form" class="space-y-4">
-          <select id="campaign-type" class="shad-input">
-            <option value="Search">Search</option>
-            <option value="Performance Max">Performance Max</option>
-            <option value="Display">Display</option>
-            <option value="Video">Video</option>
-            <option value="Shopping">Shopping</option>
+      <div class="max-w-2xl mx-auto space-y-4">
+        <h1 class="text-3xl font-bold" style="color:var(--foreground);">Text Summarizer</h1>
+        <p style="color:var(--foreground);">Paste text below and choose a summary length.</p>
+        <textarea id="text-input" rows="8" class="shad-input" placeholder="Enter text"></textarea>
+        <div class="flex gap-2 items-center">
+          <label for="summary-length" class="text-sm" style="color:var(--foreground);">Length:</label>
+          <select id="summary-length" class="border rounded px-2 py-1 bg-transparent">
+            <option value="1">Short (1 sentence)</option>
+            <option value="3">Medium (3 sentences)</option>
+            <option value="5">Long (5 sentences)</option>
           </select>
-          <input id="campaign-name" type="text" placeholder="Campaign Name" class="shad-input" />
-          <input id="ad-group-name" type="text" placeholder="Ad Group Name" class="shad-input" />
-          <input id="ad-name" type="text" placeholder="Ad Name" class="shad-input" />
-          <input id="keywords" type="text" placeholder="Keywords (comma separated)" class="shad-input" />
-          <button type="submit" class="shad-btn">Generate Structure</button>
-        </form>
-
-          <div id="structure-output" class="mt-6 text-[var(--foreground)]">
-            <div id="tree" class="bg-[var(--background)] border rounded p-4"></div>
-          </div>
-          <div id="download-buttons" class="mt-4 flex gap-4 hidden">
-            <button id="download-png" class="shad-btn">Download PNG</button>
-            <button id="download-pdf" class="shad-btn">Download PDF</button>
-            <button id="download-csv" class="shad-btn">Download CSV</button>
-          </div>
-
-
-        <div class="mt-8">
-          <h2 class="text-xl font-semibold mb-2" style="color:var(--foreground);">Naming Tips</h2>
-          <ul class="list-disc list-inside text-[var(--foreground)]">
-            <li>Include the campaign type and primary goal.</li>
-            <li>Add location or language targeting when relevant.</li>
-            <li>Keep names concise but descriptive.</li>
-            <li>Use consistent separators like dashes or pipes.</li>
-            <li>Avoid special characters to keep reporting clean.</li>
-          </ul>
+          <button id="summarize-btn" class="shad-btn">Summarize</button>
         </div>
+        <textarea id="summary-output" rows="6" class="shad-input" placeholder="Summary" readonly></textarea>
+        <button id="copy-summary-btn" class="shad-btn">Copy Summary</button>
         <section class="mt-8 space-y-4">
           <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this tool</h2>
-          <p style="color:var(--foreground);">Visualise a simple campaign &gt; ad group &gt; ad hierarchy before building it in Google Ads. Enter names and keywords and the tree view updates instantly.</p>
+          <p style="color:var(--foreground);">This summarizer uses a basic frequency algorithm to extract key sentences directly in your browser.</p>
           <h3 class="text-xl font-semibold" style="color:var(--foreground);">FAQs</h3>
           <details class="border p-2 rounded">
-            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Why map the structure first?</summary>
-            <p class="mt-2" style="color:var(--foreground);">Planning your structure prevents duplicate or misaligned naming conventions when the campaign goes live.</p>
+            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Is my text sent anywhere?</summary>
+            <p class="mt-2" style="color:var(--foreground);">No. All processing happens locally. Your text never leaves your browser.</p>
           </details>
           <details class="border p-2 rounded">
-            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Can I save the tree?</summary>
-            <p class="mt-2" style="color:var(--foreground);">Yes. After generating the structure you can download it as a PNG image or PDF using the buttons below the preview.</p>
+            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Can I choose any length?</summary>
+            <p class="mt-2" style="color:var(--foreground);">Choose from short, medium, or long summaries. Each selects the top sentences by importance.</p>
           </details>
         </section>
       </div>
     </main>
   </div>
-
   <footer class="bg-[var(--background)] border-t border-[var(--foreground)]/30 mt-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <div class="text-center">
