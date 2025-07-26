@@ -141,6 +141,30 @@ export function formatFileSize(bytes) {
   return `${kb.toFixed(1)} KB`;
 }
 
+// Compress a canvas to roughly a target file size using binary search
+export async function compressToTargetSize(canvas, mime, targetBytes) {
+  if (!targetBytes || mime === 'image/png') {
+    return new Promise(res => canvas.toBlob(res, mime));
+  }
+  let minQ = 0.1;
+  let maxQ = 1.0;
+  let bestBlob = null;
+  for (let i = 0; i < 7; i++) {
+    const q = (minQ + maxQ) / 2;
+    const blob = await new Promise(r => canvas.toBlob(r, mime, q));
+    if (!blob) break;
+    if (blob.size > targetBytes) {
+      maxQ = q;
+    } else {
+      bestBlob = blob;
+      minQ = q;
+      if (targetBytes - blob.size < targetBytes * 0.05) break;
+    }
+  }
+  if (bestBlob) return bestBlob;
+  return new Promise(res => canvas.toBlob(res, mime, minQ));
+}
+
 // Format detectors
 export function isAvif(file) {
   return file.type === 'image/avif' || file.name.toLowerCase().endsWith('.avif');
