@@ -8,13 +8,19 @@ document.addEventListener('DOMContentLoaded', () => {
   // Sidebar remains overlayed across breakpoints so no main content offset is
   // needed.
 
+  if (sidebar) {
+    sidebar.style.transition = 'transform 0.2s';
+  }
+
   function openSidebar() {
     sidebar.classList.remove('-translate-x-full');
+    sidebar.style.transform = 'translateX(0)';
     if (sidebarOverlay) sidebarOverlay.classList.remove('hidden');
   }
 
   function closeSidebar() {
     sidebar.classList.add('-translate-x-full');
+    sidebar.style.transform = 'translateX(-100%)';
     if (sidebarOverlay) sidebarOverlay.classList.add('hidden');
   }
 
