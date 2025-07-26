@@ -39,7 +39,8 @@ let previewTable;
 let previewTbody;
 let maxWidthInput;
 let maxHeightInput;
-let qualityInput;
+let targetSizeInput;
+let sizeUnitSelect;
 let outputFormatInput;
 let progressStatus;
 let progressBar;
@@ -348,7 +349,8 @@ async function processSingleImage(index) {
   const format = outputFormatInput.value;
   const maxW = parseInt(maxWidthInput.value, 10) || 99999;
   const maxH = parseInt(maxHeightInput.value, 10) || 99999;
-  const quality = parseFloat(qualityInput.value) || 0.9;
+  const sizeVal = parseFloat(targetSizeInput.value) || 500;
+  const targetBytes = (sizeUnitSelect.value === 'MB' ? sizeVal * 1024 * 1024 : sizeVal * 1024);
   
   // Get row for this file
   const tr = document.querySelector(`#preview-tbody tr[data-row-index="${index + 1}"]`);
@@ -361,7 +363,7 @@ async function processSingleImage(index) {
   if (sizeCell) sizeCell.textContent = 'Processing...';
   
   try {
-    const { blob, filename } = await hybridConvert(file, maxW, maxH, quality, format);
+    const { blob, filename } = await hybridConvert(file, maxW, maxH, targetBytes, format);
     
     // Update file size display
     if (sizeCell) {
@@ -1091,11 +1093,12 @@ function setupEventListeners() {
         // Get conversion parameters
         const maxW = parseInt(maxWidthInput.value, 10) || 99999;
         const maxH = parseInt(maxHeightInput.value, 10) || 99999;
-        const quality = parseFloat(qualityInput.value) || 0.9;
+        const sizeVal = parseFloat(targetSizeInput.value) || 500;
+        const targetBytes = (sizeUnitSelect.value === 'MB' ? sizeVal * 1024 * 1024 : sizeVal * 1024);
         const format = outputFormatInput.value;
-        
+
         // Process images
-        await processImages(filesToProcess, maxW, maxH, quality, format);
+        await processImages(filesToProcess, maxW, maxH, targetBytes, format);
       });
     }
   }
@@ -1146,7 +1149,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   previewTbody = document.getElementById('preview-tbody');
   maxWidthInput = document.getElementById('max-width');
   maxHeightInput = document.getElementById('max-height');
-  qualityInput = document.getElementById('quality');
+  targetSizeInput = document.getElementById('target-size');
+  sizeUnitSelect = document.getElementById('size-unit');
   outputFormatInput = document.getElementById('output-format');
   progressStatus = document.getElementById('progress-status');
   progressBar = document.getElementById('progress-bar');
