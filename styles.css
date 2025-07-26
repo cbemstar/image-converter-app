@@ -636,3 +636,10 @@ tr.error-row td { color:#ffb4b4 !important; }
   outline: none;
   box-shadow: 0 0 0 2px var(--primary);
 }
+
+/* JSON syntax highlighting */
+.json-key { color: var(--primary); }
+.json-string { color: #65a30d; }
+.json-number { color: #d97706; }
+.json-boolean { color: #db2777; }
+.json-null { color: #737373; }
