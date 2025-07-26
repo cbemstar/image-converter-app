@@ -6,24 +6,23 @@
   <!-- End Google Tag Manager -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Request a Tool</title>
+  <title>QR Code Generator</title>
   <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script type="module" src="theme.js"></script>
   <script type="module" src="layout.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+  <script type="module" src="qr-code-generator.js"></script>
 </head>
-<body data-slug="request-tool" class="bg-transparent min-h-screen flex flex-col">
+<body data-slug="qr-code-generator" class="bg-transparent min-h-screen flex flex-col">
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
-  <!-- Navigation Bar -->
   <nav class="bg-[var(--background)] shadow-md border-b border-[var(--foreground)]/30">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
-        <!-- Logo and site name -->
         <div class="flex items-center gap-4">
           <button id="sidebar-toggle" class="text-[var(--foreground)] hover:text-[var(--primary)] focus:outline-none">
             <i class="fas fa-bars"></i>
@@ -40,7 +39,7 @@
       </div>
     </div>
   </nav>
-  <!-- Page Layout -->
+
   <div class="flex flex-grow">
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
     <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full transition-transform z-40">
@@ -66,25 +65,36 @@
         <a href="request-tool.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Request a Tool</a>
       </div>
     </aside>
+
     <main id="main-content" class="flex-grow p-4">
-      <div class="max-w-xl mx-auto">
-        <h1 class="text-3xl font-bold mb-4" style="color:var(--foreground);">Request a Tool</h1>
-        <p style="color:var(--foreground);">Let us know what tool you'd like us to build next.</p>
-        <div id="request-tool-embed" class="my-8">
-          <!-- loops.so embed code will be inserted here -->
+      <div class="max-w-md mx-auto space-y-4">
+        <h1 class="text-3xl font-bold" style="color:var(--foreground);">QR Code Generator</h1>
+        <p style="color:var(--foreground);">Turn any text or link into a scannable QR code.</p>
+        <textarea id="qr-input" rows="3" class="shad-input" placeholder="Enter text or URL"></textarea>
+        <div class="flex gap-2">
+          <label class="flex items-center gap-2 text-sm" style="color:var(--foreground);">
+            Size
+            <input id="qr-size" type="number" value="256" min="64" max="1024" class="shad-input w-24" />
+          </label>
+          <label class="flex items-center gap-2 text-sm" style="color:var(--foreground);">
+            Level
+            <select id="qr-level" class="border rounded px-2 py-1 bg-transparent">
+              <option value="L">L</option>
+              <option value="M" selected>M</option>
+              <option value="Q">Q</option>
+              <option value="H">H</option>
+            </select>
+          </label>
         </div>
-        <section class="space-y-4">
-          <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this page</h2>
-          <p style="color:var(--foreground);">Use this form to suggest new utilities that would help your marketing workflow. We review submissions regularly.</p>
-          <h3 class="text-xl font-semibold" style="color:var(--foreground);">FAQs</h3>
-          <details class="border p-2 rounded">
-            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">How soon will my idea be built?</summary>
-            <p class="mt-2" style="color:var(--foreground);">Ideas with the most interest get prioritised, but we can't guarantee timelines.</p>
-          </details>
-          <details class="border p-2 rounded">
-            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Will you notify me?</summary>
-            <p class="mt-2" style="color:var(--foreground);">Leave your email in the request and we'll let you know if we develop your suggestion.</p>
-          </details>
+        <button id="generate-btn" class="shad-btn">Generate</button>
+        <img id="qr-preview" class="mt-4 mx-auto" alt="QR code" style="display:none;max-width:100%;" />
+        <div class="flex gap-2 mt-2">
+          <a id="download-png" class="shad-btn" style="display:none;" download="qr-code.png">Download PNG</a>
+          <a id="download-svg" class="shad-btn" style="display:none;" download="qr-code.svg">Download SVG</a>
+        </div>
+        <section class="mt-8 space-y-4">
+          <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this tool</h2>
+          <p style="color:var(--foreground);">Enter text or a URL, choose your desired size and error correction level, then generate a QR code you can download as PNG or SVG.</p>
         </section>
       </div>
     </main>
@@ -97,6 +107,5 @@
       </div>
     </div>
   </footer>
-  <!-- layout.js handles sidebar functionality -->
 </body>
 </html>
