@@ -1,47 +1,16 @@
 import { showNotification } from './utils.js';
 
-let segmenter;
-
-async function loadModel() {
-  if (!segmenter) {
-    segmenter = new SelfieSegmentation({
-      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation@0.1/${file}`,
-    });
-    segmenter.setOptions({ modelSelection: 1 });
-    await segmenter.initialize();
-  }
-  return segmenter;
-}
-
-async function runSegmentation(image) {
-  await loadModel();
-  return new Promise((resolve, reject) => {
-    segmenter.onResults((results) => resolve(results.segmentationMask));
-    segmenter.send({ image }).catch(reject);
+async function removeBackground(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  const res = await fetch('/api/remove-background', {
+    method: 'POST',
+    body: formData,
   });
-}
-
-async function processImage(file) {
-  const img = new Image();
-  img.src = URL.createObjectURL(file);
-  await img.decode();
-
-  const mask = await runSegmentation(img);
-
-  const canvas = document.createElement('canvas');
-  canvas.width = img.naturalWidth;
-  canvas.height = img.naturalHeight;
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(img, 0, 0);
-
-  ctx.globalCompositeOperation = 'destination-in';
-  ctx.filter = 'blur(2px)';
-  ctx.drawImage(mask, 0, 0, canvas.width, canvas.height);
-  ctx.filter = 'none';
-  ctx.globalCompositeOperation = 'source-over';
-
-  URL.revokeObjectURL(img.src);
-  return canvas.toDataURL('image/png');
+  if (!res.ok) {
+    throw new Error('Server error');
+  }
+  return URL.createObjectURL(await res.blob());
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -63,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     downloadBtn.style.display = 'none';
     try {
       showNotification('Processing image...', 'info');
-      const url = await processImage(file);
+      const url = await removeBackground(file);
       preview.src = url;
       downloadBtn.href = url;
       downloadBtn.style.display = 'inline-flex';
