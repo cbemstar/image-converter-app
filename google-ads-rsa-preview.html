@@ -218,7 +218,8 @@
         }
 
         .form-group input,
-        .form-group textarea {
+        .form-group textarea,
+        .form-group select {
             width: 100%;
             padding: var(--space-3) var(--space-4);
             border: 1px solid var(--input);
@@ -231,7 +232,8 @@
         }
 
         .form-group input:focus,
-        .form-group textarea:focus {
+        .form-group textarea:focus,
+        .form-group select:focus {
             outline: none;
             border-color: var(--ring);
             box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
@@ -441,6 +443,15 @@
             border: 1px solid var(--border);
         }
 
+        .ad-strength {
+            margin-top: var(--space-4);
+            font-weight: 600;
+        }
+        .ad-strength.excellent { color: #10b981; }
+        .ad-strength.good { color: #84cc16; }
+        .ad-strength.average { color: #f59e0b; }
+        .ad-strength.poor { color: #ef4444; }
+
         .validation-item {
             display: flex;
             align-items: center;
@@ -549,7 +560,8 @@
         .btn:focus-visible,
         .preview-tab:focus-visible,
         .form-group input:focus-visible,
-        .form-group textarea:focus-visible {
+        .form-group textarea:focus-visible,
+        .form-group select:focus-visible {
             outline: 2px solid var(--ring);
             outline-offset: 2px;
         }
@@ -734,7 +746,7 @@
             <h2>Image Asset <span style="font-size:0.75rem;font-weight:400;color:var(--muted-foreground);">(1:1 or 1.91:1, JPG/PNG)</span></h2>
             <div class="form-group">
                 <label for="imageAsset">Upload Image</label>
-                <input type="file" id="imageAsset" accept="image/png, image/jpeg">
+                <input type="file" id="imageAsset" accept="image/png, image/jpeg" title="Upload an image to preview with Performance Max">
                 <div class="char-counter" id="imageAsset-info">No image uploaded</div>
             </div>
             <div class="section-divider"></div>
@@ -747,11 +759,12 @@
         <div class="preview-section">
             <h2>Ad Preview</h2>
             <div class="preview-tabs">
-                <button class="preview-tab active" id="desktop-tab">Desktop</button>
-                <button class="preview-tab" id="mobile-tab">Mobile</button>
+                <button class="preview-tab active" id="desktop-tab" title="Show desktop preview">Desktop</button>
+                <button class="preview-tab" id="mobile-tab" title="Show mobile preview">Mobile</button>
             </div>
             <div class="google-ad-preview" id="ad-preview"></div>
             <div class="validation-summary" id="validation-summary"></div>
+            <div class="ad-strength" id="ad-strength" title="How strong your ad may be based on diversity of assets"></div>
         </div>
     </div>
 </div>
@@ -776,6 +789,9 @@ function createInput(type, value, placeholder, maxLength, className = '', onInpu
     if (type !== 'textarea') input.type = type;
     input.value = value || '';
     input.placeholder = placeholder || '';
+    if (type === 'text' || type === 'textarea') {
+        input.title = 'Supports dynamic parameters like {Keyword:Default} and {Countdown(2024-12-31)}';
+    }
     if (maxLength) input.maxLength = maxLength;
     if (className) input.className = className;
     if (onInput) input.addEventListener('input', onInput);
@@ -803,6 +819,19 @@ function removeElement(btn, container) {
     btn.addEventListener('click', () => container.remove());
 }
 
+function applyDynamicParams(text) {
+    // Countdown replacement
+    text = text.replace(/\{Countdown\(([^)]+)\)\}/gi, (_, dateStr) => {
+        const target = new Date(dateStr);
+        if (isNaN(target)) return '';
+        const diff = Math.ceil((target - new Date()) / (1000 * 60 * 60 * 24));
+        return diff > 0 ? diff + ' days' : '0 days';
+    });
+    // Keyword insertion
+    text = text.replace(/\{Keyword:([^}]+)\}/gi, (_, def) => def);
+    return text;
+}
+
 // --- Dynamic Fields ---
 function addHeadline(value = '') {
     const container = document.getElementById('headlines-container');
@@ -822,6 +851,12 @@ function addHeadline(value = '') {
     updateCharCounter(input, counter, HEADLINE_LIMIT);
     group.appendChild(label);
     group.appendChild(input);
+    const pin = document.createElement('select');
+    pin.className = 'pin-select';
+    pin.title = 'Pin this headline to a specific position';
+    pin.innerHTML = '<option value="">Unpinned</option>' + Array.from({length: MAX_HEADLINES}, (_,i)=>`<option value="${i+1}">Position ${i+1}</option>`).join('');
+    pin.addEventListener('change', () => { renderPreview(); renderValidation(); });
+    group.appendChild(pin);
     group.appendChild(counter);
     if (container.children.length > 2) {
         const removeBtn = document.createElement('button');
@@ -852,6 +887,12 @@ function addDescription(value = '') {
     updateCharCounter(input, counter, DESCRIPTION_LIMIT);
     group.appendChild(label);
     group.appendChild(input);
+    const pin = document.createElement('select');
+    pin.className = 'pin-select';
+    pin.title = 'Pin this description to a specific position';
+    pin.innerHTML = '<option value="">Unpinned</option>' + Array.from({length: MAX_DESCRIPTIONS}, (_,i)=>`<option value="${i+1}">Position ${i+1}</option>`).join('');
+    pin.addEventListener('change', () => { renderPreview(); renderValidation(); });
+    group.appendChild(pin);
     group.appendChild(counter);
     if (container.children.length > 1) {
         const removeBtn = document.createElement('button');
@@ -1115,12 +1156,41 @@ function renderPreview(mode) {
     const path2 = document.getElementById('path2').value;
     
     // Headlines
-    const headlineInputs = document.querySelectorAll('#headlines-container input');
-    const headlines = Array.from(headlineInputs).map(i => i.value).filter(Boolean);
+    const headlineGroups = document.querySelectorAll('#headlines-container .form-group');
+    const orderedHeadlines = Array(MAX_HEADLINES).fill(null);
+    const unpinnedHeads = [];
+    Array.from(headlineGroups).forEach(g => {
+        const text = g.querySelector('input').value;
+        const pin = g.querySelector('.pin-select').value;
+        if (text.trim()) {
+            const processed = applyDynamicParams(text);
+            if (pin) orderedHeadlines[parseInt(pin)-1] = processed;
+            else unpinnedHeads.push(processed);
+        }
+    });
+    for (let i=0;i<orderedHeadlines.length;i++) {
+        if (!orderedHeadlines[i] && unpinnedHeads.length) orderedHeadlines[i] = unpinnedHeads.shift();
+    }
+    const headlines = orderedHeadlines.filter(Boolean);
     
     // Descriptions
-    const descInputs = document.querySelectorAll('#descriptions-container textarea');
-    const descriptions = Array.from(descInputs).map(i => i.value).filter(Boolean);
+    const descGroups = document.querySelectorAll('#descriptions-container .form-group');
+    const orderedDescs = Array(MAX_DESCRIPTIONS).fill(null);
+    const unpinnedDescs = [];
+    Array.from(descGroups).forEach(g => {
+        const textarea = g.querySelector('textarea');
+        const pin = g.querySelector('.pin-select').value;
+        const text = textarea.value;
+        if (text.trim()) {
+            const processed = applyDynamicParams(text);
+            if (pin) orderedDescs[parseInt(pin)-1] = processed;
+            else unpinnedDescs.push(processed);
+        }
+    });
+    for (let i=0;i<orderedDescs.length;i++) {
+        if (!orderedDescs[i] && unpinnedDescs.length) orderedDescs[i] = unpinnedDescs.shift();
+    }
+    const descriptions = orderedDescs.filter(Boolean);
     
     // Sitelinks
     const sitelinkGroups = document.querySelectorAll('#sitelinks-container .form-group');
@@ -1210,6 +1280,7 @@ function renderPreview(mode) {
     }
     html += '</div>'; // end ad-preview-row
     document.getElementById('ad-preview').innerHTML = html;
+    renderAdStrength(headlines, descriptions);
 }
 
 // --- Validation ---
@@ -1285,6 +1356,17 @@ function renderValidation() {
     summary.innerHTML = validations.map(v =>
         `<div class="validation-item"><span class="validation-icon ${v.icon}">${v.icon==='valid'?'✓':v.icon==='invalid'?'✗':'⚠'}</span>${v.text}</div>`
     ).join('') || '<div class="validation-item"><span class="validation-icon valid">✓</span>Ready to preview</div>';
+}
+
+function renderAdStrength(headlines, descriptions) {
+    const container = document.getElementById('ad-strength');
+    const unique = new Set([...headlines, ...descriptions].filter(Boolean)).size;
+    let rating = 'poor';
+    if (unique >= 15) rating = 'excellent';
+    else if (unique >= 10) rating = 'good';
+    else if (unique >= 5) rating = 'average';
+    container.textContent = `Ad Strength: ${rating.charAt(0).toUpperCase()+rating.slice(1)}`;
+    container.className = `ad-strength ${rating}`;
 }
 
 // --- Global image asset variable ---
