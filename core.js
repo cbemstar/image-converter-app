@@ -22,9 +22,9 @@ import {
   initAvifLibraries 
 } from './special-formats.js';
 
-import { 
-  hybridConvert, 
-  processImages 
+import {
+  hybridConvert,
+  postProcessBlob
 } from './conversions.js';
 
 // Global variables
@@ -52,6 +52,18 @@ let showBulkRenameLink;
 let bulkRenameControls;
 let upgradeBtn;
 let downloadSelectedBtn;
+let maintainAspectCheckbox;
+let qualityValueSpan;
+let watermarkTextInput;
+let watermarkImageInput;
+let addSuffixCheckbox;
+let cropModal;
+let cropImage;
+let cropCancelBtn;
+let cropApplyBtn;
+let watermarkImg = null;
+let cropper;
+let currentCropIndex = null;
 
 // Navigation and modal elements
 let navLoginBtn;
@@ -238,7 +250,8 @@ async function handleFiles(files) {
         <td data-label="Rename"><button class="rename-btn" data-index="${i+1}">Rename</button></td>
         <td data-label="Size" class="size-cell">-</td>
         <td data-label="Actions">
-          <button class="convert-single-btn" data-index="${i+1}">Convert</button>
+          <button class="crop-btn" data-index="${i+1}">Crop</button>
+          <button class="convert-single-btn ml-2" data-index="${i+1}">Convert</button>
           <a class="download-btn ml-2" data-index="${i+1}" style="display: none;">Download</a>
         </td>`;
         previewTbody.appendChild(tr);
@@ -313,6 +326,17 @@ async function handleFiles(files) {
           });
         }
 
+        // Add crop button handler
+        const cropBtn = tr.querySelector('.crop-btn');
+        if (cropBtn) {
+          cropBtn.addEventListener('click', function() {
+            const index = parseInt(this.getAttribute('data-index'), 10) - 1;
+            if (index >= 0 && index < _selectedFiles.length) {
+              openCropModal(index);
+            }
+          });
+        }
+
         // Add convert single button handler
         const convertSingleBtn = tr.querySelector('.convert-single-btn');
         if (convertSingleBtn) {
@@ -335,6 +359,8 @@ async function handleFiles(files) {
     updateButtonText();
   }
 
+  updateEstimates();
+
   // Setup magnify icon click handlers for lightbox
   setupMagnifyHandlers();
   toggleTableHeader(true);
@@ -348,7 +374,7 @@ async function processSingleImage(index) {
   const format = outputFormatInput.value;
   const maxW = parseInt(maxWidthInput.value, 10) || 99999;
   const maxH = parseInt(maxHeightInput.value, 10) || 99999;
-  const quality = parseFloat(qualityInput.value) || 0.9;
+  const quality = (parseInt(qualityInput.value, 10) || 95) / 100;
   
   // Get row for this file
   const tr = document.querySelector(`#preview-tbody tr[data-row-index="${index + 1}"]`);
@@ -361,13 +387,24 @@ async function processSingleImage(index) {
   if (sizeCell) sizeCell.textContent = 'Processing...';
   
   try {
-    const { blob, filename } = await hybridConvert(file, maxW, maxH, quality, format);
+    let { blob, filename } = await hybridConvert(file, maxW, maxH, quality, format);
+    blob = await applyPostProcess(blob, format, quality, {
+      crop: file.cropData,
+      watermark: { text: watermarkTextInput.value, image: watermarkImg },
+      maxW: maxW,
+      maxH: maxH,
+      maintainAspect: maintainAspectCheckbox.checked
+    });
+    if (addSuffixCheckbox.checked && !file.filename) {
+      filename = filename.replace(/\.[^.]+$/, match => `-converted${match}`);
+    }
     
     // Update file size display
     if (sizeCell) {
       const size = formatFileSize(blob.size);
       const reduction = (100 - (blob.size / file.size * 100)).toFixed(1);
       sizeCell.innerHTML = `${size}<br><span style="color:#7fd7c4;font-size:0.85em;">${reduction}% smaller</span>`;
+      sizeCell.dataset.final = 'true';
     }
     
     // Enable download button
@@ -468,6 +505,29 @@ function toggleTableHeader(show) {
   }
 }
 
+async function updateEstimates() {
+  if (!_selectedFiles || _selectedFiles.length === 0) return;
+  const maxW = parseInt(maxWidthInput.value, 10) || 99999;
+  const maxH = parseInt(maxHeightInput.value, 10) || 99999;
+  const quality = (parseInt(qualityInput.value, 10) || 95) / 100;
+  const format = outputFormatInput.value;
+  for (let i = 0; i < _selectedFiles.length; i++) {
+    const file = _selectedFiles[i];
+    let { blob } = await hybridConvert(file, maxW, maxH, quality, format);
+    blob = await postProcessBlob(blob, format, quality, {
+      crop: file.cropData,
+      watermark: { text: watermarkTextInput.value, image: watermarkImg },
+      maxW,
+      maxH,
+      maintainAspect: maintainAspectCheckbox.checked
+    });
+    const cell = document.querySelector(`#preview-tbody tr[data-row-index="${i+1}"] .size-cell`);
+    if (cell && !cell.dataset.final) {
+      cell.textContent = `Est. ${formatFileSize(blob.size)}`;
+    }
+  }
+}
+
 // Lightbox functionality
 function openImageModal(src, caption, index) {
   if (!imageModal) return;
@@ -514,6 +574,25 @@ function navigateModal(direction) {
 function closeModal() {
   imageModal.style.display = 'none';
   document.body.style.overflow = ''; // Restore scrolling
+}
+
+function openCropModal(index) {
+  if (!cropModal) return;
+  const file = _selectedFiles[index];
+  if (!file) return;
+  currentCropIndex = index;
+  const reader = new FileReader();
+  reader.onload = e => {
+    cropImage.src = e.target.result;
+    cropModal.style.display = 'flex';
+    if (cropper) cropper.destroy();
+    cropper = new Cropper(cropImage, { viewMode: 1 });
+  };
+  reader.readAsDataURL(file);
+}
+
+async function applyPostProcess(blob, format, quality, options = {}) {
+  return postProcessBlob(blob, format, quality, options);
 }
 
 function setupMagnifyHandlers() {
@@ -1091,11 +1170,15 @@ function setupEventListeners() {
         // Get conversion parameters
         const maxW = parseInt(maxWidthInput.value, 10) || 99999;
         const maxH = parseInt(maxHeightInput.value, 10) || 99999;
-        const quality = parseFloat(qualityInput.value) || 0.9;
+        const quality = (parseInt(qualityInput.value, 10) || 95) / 100;
         const format = outputFormatInput.value;
-        
-        // Process images
-        await processImages(filesToProcess, maxW, maxH, quality, format);
+
+        for (const f of filesToProcess) {
+          const idx = _selectedFiles.indexOf(f);
+          if (idx !== -1) {
+            await processSingleImage(idx);
+          }
+        }
       });
     }
   }
@@ -1132,6 +1215,46 @@ function setupEventListeners() {
       } else {
         formatOptions.style.display = 'none';
       }
+      updateEstimates();
+    });
+  }
+
+  if (qualityInput && qualityValueSpan) {
+    qualityInput.addEventListener('input', () => {
+      qualityValueSpan.textContent = qualityInput.value;
+      updateEstimates();
+    });
+  }
+
+  if (maxWidthInput) maxWidthInput.addEventListener('input', updateEstimates);
+  if (maxHeightInput) maxHeightInput.addEventListener('input', updateEstimates);
+  if (maintainAspectCheckbox) maintainAspectCheckbox.addEventListener('change', updateEstimates);
+  if (watermarkTextInput) watermarkTextInput.addEventListener('input', updateEstimates);
+  if (addSuffixCheckbox) addSuffixCheckbox.addEventListener('change', updateEstimates);
+
+  if (watermarkImageInput) {
+    watermarkImageInput.addEventListener('change', () => {
+      if (watermarkImageInput.files[0]) {
+        const img = new Image();
+        img.onload = () => { watermarkImg = img; updateEstimates(); };
+        img.src = URL.createObjectURL(watermarkImageInput.files[0]);
+      } else {
+        watermarkImg = null;
+        updateEstimates();
+      }
+    });
+  }
+
+  if (cropCancelBtn) cropCancelBtn.addEventListener('click', () => { if (cropper) cropper.destroy(); cropModal.style.display='none'; });
+  if (cropApplyBtn) {
+    cropApplyBtn.addEventListener('click', () => {
+      if (cropper && currentCropIndex !== null) {
+        const data = cropper.getData(true);
+        _selectedFiles[currentCropIndex].cropData = { x: data.x, y: data.y, width: data.width, height: data.height };
+        cropper.destroy();
+        cropModal.style.display = 'none';
+        updateEstimates();
+      }
     });
   }
 }
@@ -1159,6 +1282,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   bulkRenameControls = document.getElementById('bulk-rename-controls');
   upgradeBtn = document.getElementById('upgrade-btn');
   downloadSelectedBtn = document.getElementById('download-selected');
+  maintainAspectCheckbox = document.getElementById('maintain-aspect');
+  qualityValueSpan = document.getElementById('quality-value');
+  watermarkTextInput = document.getElementById('watermark-text');
+  watermarkImageInput = document.getElementById('watermark-image');
+  addSuffixCheckbox = document.getElementById('add-suffix');
+  cropModal = document.getElementById('crop-modal');
+  cropImage = document.getElementById('crop-image');
+  cropCancelBtn = document.getElementById('crop-cancel');
+  cropApplyBtn = document.getElementById('crop-apply');
   
   // Ensure download buttons are hidden on page load
   const downloadButtonsContainer = document.querySelector('.download-btns-responsive');
