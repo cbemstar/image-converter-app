@@ -17,6 +17,7 @@
   <script type="module" src="campaign-structure.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNa72fmVK5GA6db6+mT6ytC/DWe8npAQK/2FqW0u35o3svynIogoZmY7z/F8xR0wZE9Q/3fWP8uyvN7v7uC4nw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-FYavDG4SJo6P4iINafSCi6SMnF47QlvJwFSc1aHs+qlhK/SXxPxq8np5xpoE2mR7BncpsbR9f7D28iOQNp3Npg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 </head>
 <body data-slug="campaign-structure" class="bg-transparent min-h-screen flex flex-col">
 
@@ -84,11 +85,16 @@
           <button type="submit" class="shad-btn">Generate Structure</button>
         </form>
 
-        <div id="structure-output" class="mt-6 text-[var(--foreground)]"></div>
-        <div id="download-buttons" class="mt-4 flex gap-4" style="display:none;">
-          <button id="download-png" class="shad-btn">Download PNG</button>
-          <button id="download-pdf" class="shad-btn">Download PDF</button>
-        </div>
+          <div id="structure-output" class="mt-6 text-[var(--foreground)]">
+            <div id="tree" class="bg-[var(--background)] border rounded p-4"></div>
+          </div>
+          <div id="download-buttons" class="mt-4 flex gap-4 hidden">
+            <button id="download-png" class="shad-btn">Download PNG</button>
+            <button id="download-pdf" class="shad-btn">Download PDF</button>
+            <button id="download-csv" class="shad-btn">Download CSV</button>
+          </div>
+
+
         <div class="mt-8">
           <h2 class="text-xl font-semibold mb-2" style="color:var(--foreground);">Naming Tips</h2>
           <ul class="list-disc list-inside text-[var(--foreground)]">
