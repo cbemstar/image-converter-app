@@ -1,7 +1,8 @@
 // special-formats.js - Handlers for special image formats (HEIC/HEIF, RAW)
+import { showNotification, compressToTargetSize } from './utils.js';
 
 // HEIC/HEIF conversion (extracted from hybridConvert)
-export async function convertHeic(file, format, quality) {
+export async function convertHeic(file, format, targetBytes) {
   updateProcessingStatus('heic', 'start');
   try {
     // Use the new heic-to library instead of heic2any
@@ -20,12 +21,21 @@ export async function convertHeic(file, format, quality) {
     const isLossless = format === 'webp' && document.getElementById('webp-lossless')?.checked;
     
     // Convert using heic-to with appropriate settings
-    const blob = await HeicTo({
+    const initialBlob = await HeicTo({
       blob: file,
       type: outputType,
-      quality: isLossless ? undefined : quality
+      quality: isLossless ? undefined : 0.95
     });
-    
+
+    // Draw to canvas for target-size compression
+    const bitmap = await createImageBitmap(initialBlob);
+    const canvas = document.createElement('canvas');
+    canvas.width = bitmap.width;
+    canvas.height = bitmap.height;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(bitmap, 0, 0);
+
+    const blob = await compressToTargetSize(canvas, outputType, targetBytes);
     let ext = format === 'jpeg' ? 'jpg' : format;
     updateProcessingStatus('heic', 'end');
     return { blob, filename: file.name.replace(/\.[^.]+$/, '') + '.' + ext };
@@ -78,10 +88,8 @@ export async function convertHeic(file, format, quality) {
                 format === 'webp' ? 'image/webp' : 'image/avif';
       let ext = format === 'jpeg' ? 'jpg' : format;
       
-      // Convert canvas to blob
-      const blobFromCanvas = await new Promise(resolve => {
-        canvas.toBlob(resolve, mime, quality);
-      });
+      // Convert canvas to blob using target size
+      const blobFromCanvas = await compressToTargetSize(canvas, mime, targetBytes);
       
       updateProcessingStatus('heic', 'end');
       showNotification('Successfully converted HEIC image using fallback method', 'info');
@@ -95,7 +103,7 @@ export async function convertHeic(file, format, quality) {
 }
 
 // RAW conversion (extracted from hybridConvert)
-export async function convertRaw(file, format, quality) {
+export async function convertRaw(file, format, targetBytes) {
   updateProcessingStatus('raw', 'start');
   try {
     const arrayBuffer = await file.arrayBuffer();
@@ -157,12 +165,7 @@ export async function convertRaw(file, format, quality) {
     let ext = format === 'jpeg' ? 'jpg' : format;
     
     // Convert canvas to blob with specified format
-    const blob = await new Promise((resolve, reject) => {
-      canvas.toBlob(blob => {
-        if (!blob) reject(new Error('Failed to convert RAW image to requested format'));
-        else resolve(blob);
-      }, mime, quality);
-    });
+    const blob = await compressToTargetSize(canvas, mime, targetBytes);
     
     updateProcessingStatus('raw', 'end');
     return { blob, filename: file.name.replace(/\.[^.]+$/, '') + '.' + ext };
@@ -321,6 +324,3 @@ export async function initAvifLibraries() {
   
   return success;
 }
-
-// Import showNotification from utils.js
-import { showNotification } from './utils.js'; 

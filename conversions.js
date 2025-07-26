@@ -17,21 +17,22 @@ import {
   formatFileSize
 } from './utils.js';
 
-import { 
-  convertHeic, 
-  convertRaw, 
-  initSpecialFormatLibraries, 
-  initAvifLibraries 
+import {
+  convertHeic,
+  convertRaw,
+  initSpecialFormatLibraries,
+  initAvifLibraries
 } from './special-formats.js';
+import { compressToTargetSize } from './utils.js';
 
 // Main hybrid conversion function
-export async function hybridConvert(file, maxW, maxH, quality, format, onProgress) {
+export async function hybridConvert(file, maxW, maxH, targetBytes, format, onProgress) {
   if (isHeic(file)) {
-    return convertHeic(file, format, quality);
+    return convertHeic(file, format, targetBytes);
   }
-  
+
   if (isRaw(file)) {
-    return convertRaw(file, format, quality);
+    return convertRaw(file, format, targetBytes);
   }
   
   if (isAvif(file)) {
@@ -65,8 +66,8 @@ export async function hybridConvert(file, maxW, maxH, quality, format, onProgres
                 format === 'webp' ? 'image/webp' : 'image/gif';
       let ext = format === 'jpeg' ? 'jpg' : format;
       
-      // Convert canvas to blob
-      const blob = await new Promise(res => canvas.toBlob(res, mime, quality));
+      // Convert canvas to blob respecting target size
+      const blob = await compressToTargetSize(canvas, mime, targetBytes);
       return { blob, filename: file.name.replace(/\.[^.]+$/, '') + '.' + ext };
     } catch (err) {
       throw new Error('AVIF decoding failed: ' + err.message);
@@ -121,19 +122,27 @@ export async function hybridConvert(file, maxW, maxH, quality, format, onProgres
       
       // Encode to AVIF with error handling
       console.log('Starting AVIF encoding...');
-      const avifData = await avifEnc.encode(imageData, {
-        quality: Math.round(quality * 100),
-        speed: 5, // Medium speed (0-10, where 0 is slowest/best quality)
-        alpha_quality: 100 // Preserve alpha quality
-      });
-      
-      if (!avifData) {
-        throw new Error('AVIF encoding produced no data');
+      let minQ = 0.1;
+      let maxQ = 1.0;
+      let bestBlob = null;
+      for (let i = 0; i < 7; i++) {
+        const q = (minQ + maxQ) / 2;
+        const avifData = await avifEnc.encode(imageData, {
+          quality: Math.round(q * 100),
+          speed: 5,
+          alpha_quality: 100
+        });
+        const blobCandidate = new Blob([avifData], { type: 'image/avif' });
+        if (targetBytes && blobCandidate.size > targetBytes) {
+          maxQ = q;
+        } else {
+          bestBlob = blobCandidate;
+          minQ = q;
+          if (!targetBytes || targetBytes - blobCandidate.size < targetBytes * 0.05) break;
+        }
       }
-      
-      console.log('AVIF encoding successful, creating blob...');
-      const blob = new Blob([avifData], { type: 'image/avif' });
-      return { blob, filename: file.name.replace(/\.[^.]+$/, '') + '.avif' };
+      const finalBlob = bestBlob || new Blob([await avifEnc.encode(imageData,{quality:80})],{type:'image/avif'});
+      return { blob: finalBlob, filename: file.name.replace(/\.[^.]+$/, '') + '.avif' };
     } catch (err) {
       console.error('AVIF encoding error:', err);
       throw new Error('AVIF encoding failed: ' + err.message);
@@ -165,10 +174,10 @@ export async function hybridConvert(file, maxW, maxH, quality, format, onProgres
         ctx.drawImage(img, 0, 0, nw, nh);
         let mime = format === 'jpeg' ? 'image/jpeg' : format === 'png' ? 'image/png' : format === 'webp' ? 'image/webp' : format === 'avif' ? 'image/avif' : format === 'bmp' ? 'image/bmp' : format === 'tiff' ? 'image/tiff' : format === 'gif' ? 'image/gif' : 'image/x-icon';
         let ext = format === 'jpeg' ? 'jpg' : format;
-        canvas.toBlob(function(blob) {
+        compressToTargetSize(canvas, mime, targetBytes).then(blob => {
           if (!blob) reject(new Error('Conversion failed'));
           else resolve({ blob, filename: file.name.replace(/\.[^.]+$/, '') + '.' + ext });
-        }, mime, (format === 'png') ? undefined : quality);
+        });
       };
       img.onerror = function() { reject(new Error('Image load failed')); };
       img.src = URL.createObjectURL(file);
@@ -193,33 +202,21 @@ export async function hybridConvert(file, maxW, maxH, quality, format, onProgres
       // Apply format-specific options
       if (format === 'webp') {
         const isLossless = document.getElementById('webp-lossless')?.checked;
-        canvas.toBlob(blob => {
+        compressToTargetSize(canvas, mime, isLossless ? 0 : targetBytes).then(blob => {
           if (!blob) reject(new Error('Conversion failed'));
-          else {
-            // Check if we can optimize the WebP further
-            if (blob.size > 1024*1024 && !isLossless) {
-              // For large WebP files, try a lower quality setting
-              canvas.toBlob(optimizedBlob => {
-                if (!optimizedBlob) resolve({ blob, filename: file.name.replace(/\.[^.]+$/, '') + `.${ext}` });
-                else resolve({ blob: optimizedBlob, filename: file.name.replace(/\.[^.]+$/, '') + `.${ext}` });
-              }, mime, Math.max(0.7, quality - 0.15)); // Reduce quality slightly for better compression
-            } else {
-              resolve({ blob, filename: file.name.replace(/\.[^.]+$/, '') + `.${ext}` });
-            }
-          }
-        }, mime, isLossless ? undefined : quality);
+          else resolve({ blob, filename: file.name.replace(/\.[^.]+$/, '') + `.${ext}` });
+        });
       } else if (format === 'png') {
         // For PNG, we can't control compression directly with canvas API
-        // But we can use a different approach for better compression
         canvas.toBlob(blob => {
           if (!blob) reject(new Error('Conversion failed'));
           else resolve({ blob, filename: file.name.replace(/\.[^.]+$/, '') + `.${ext}` });
         }, mime);
       } else {
-        canvas.toBlob(blob => {
+        compressToTargetSize(canvas, mime, targetBytes).then(blob => {
           if (!blob) reject(new Error('Conversion failed'));
           else resolve({ blob, filename: file.name.replace(/\.[^.]+$/, '') + `.${ext}` });
-        }, mime, (format === 'png' ? undefined : quality));
+        });
       }
     };
     img.onerror = () => reject(new Error('Image load failed'));
@@ -228,7 +225,7 @@ export async function hybridConvert(file, maxW, maxH, quality, format, onProgres
 }
 
 // Batch processing function (extracted from main script)
-export async function processImages(files, maxW, maxH, quality, format) {
+export async function processImages(files, maxW, maxH, targetBytes, format) {
   if (!files || !Array.isArray(files) || files.length === 0) {
     showNotification('No valid files to process', 'error');
     return;
@@ -255,7 +252,7 @@ export async function processImages(files, maxW, maxH, quality, format) {
     }
     
     try {
-      const { blob, filename } = await hybridConvert(file, maxW, maxH, quality, format);
+      const { blob, filename } = await hybridConvert(file, maxW, maxH, targetBytes, format);
       
       // Add to ZIP
       zip.file(filename, blob);
