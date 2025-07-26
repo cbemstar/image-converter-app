@@ -58,11 +58,15 @@ This site loads Google Tag Manager (container `GTM-NFJTSQ3N`) on every page so v
 
 ## Additional Tools
 
-Alongside the image converter, the site offers several marketing utilities like a Google Ads RSA previewer, a campaign structure visualizer (now with PNG/PDF export), and a **Bulk Match Type Editor** for quickly converting keyword lists to phrase and exact match formats. Enter keywords once and the tool shows both match types side by side with options to copy individual or all results.
+Alongside the image converter, the site offers several marketing utilities like a Google Ads RSA previewer, a campaign structure visualizer (now with PNG/PDF export), and a **Bulk Match Type Editor** for quickly converting keyword lists to phrase and exact match formats. Enter keywords once and the tool shows both match types side by side with options to copy individual or all results. A simple **Background Remover** sends images to a small FastAPI backend that uses the InSPyReNet powered [transparent-background](https://github.com/plemeri/transparent-background) library to produce a clean PNG.
 
 Every tool page includes a short "About" section and FAQs so you know when to use it and how it works.
 
 The homepage lists all tools in a searchable grid. You can filter by category or sort A-Z or by the most visited tools, with visit counts stored in your browser.
+
+## Running the background remover server
+
+Install Python 3.8+ and run `pip install fastapi uvicorn transparent-background pillow`. Then execute `uvicorn main:app --host 0.0.0.0 --port 8000` to start the API.
 
 ## React redevelopment
 
