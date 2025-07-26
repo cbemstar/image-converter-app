@@ -70,9 +70,39 @@
         <p class="mb-4" style="color:var(--foreground);">Enter your keywords below and generate phrase and exact match versions. Select rows to copy specific terms or copy the entire list at once.</p>
         <div class="space-y-4">
           <textarea id="keywords-input" rows="5" class="shad-input" placeholder="Enter keywords, one per line"></textarea>
-          <button id="convert-btn" class="shad-btn">Convert</button>
+          <div class="flex flex-wrap gap-4 items-center">
+            <label class="inline-flex items-center" style="color:var(--foreground);">
+              <input id="mb-option" type="checkbox" class="mr-2">
+              Modified broad match
+            </label>
+            <label class="inline-flex items-center" style="color:var(--foreground);">
+              <input id="neg-option" type="checkbox" class="mr-2">
+              Generate negatives
+            </label>
+            <button id="convert-btn" class="shad-btn ml-auto">Convert</button>
+          </div>
           <div id="results-section" class="hidden mt-6 space-y-4">
-            <div class="grid gap-4 md:grid-cols-2">
+            <div id="positive-grid" class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <div id="broad-col" class="hidden">
+                <h2 class="text-xl font-semibold mb-2" style="color:var(--foreground);">Broad Match</h2>
+                <div class="flex justify-between items-center mb-2">
+                  <span id="broad-count" class="text-sm" style="color:var(--foreground);">0 selected</span>
+                  <button id="copy-broad-btn" class="shad-btn" disabled>Copy all</button>
+                </div>
+                <table class="min-w-full text-sm border border-[var(--foreground)]/20">
+                  <tbody id="broad-body"></tbody>
+                </table>
+              </div>
+              <div id="mb-col" class="hidden">
+                <h2 class="text-xl font-semibold mb-2" style="color:var(--foreground);">Modified Broad</h2>
+                <div class="flex justify-between items-center mb-2">
+                  <span id="mb-count" class="text-sm" style="color:var(--foreground);">0 selected</span>
+                  <button id="copy-mb-btn" class="shad-btn" disabled>Copy all</button>
+                </div>
+                <table class="min-w-full text-sm border border-[var(--foreground)]/20">
+                  <tbody id="mb-body"></tbody>
+                </table>
+              </div>
               <div>
                 <h2 class="text-xl font-semibold mb-2" style="color:var(--foreground);">Phrase Match</h2>
                 <div class="flex justify-between items-center mb-2">
@@ -93,6 +123,54 @@
                   <tbody id="exact-body"></tbody>
                 </table>
               </div>
+            </div>
+            <div id="negative-wrapper" class="hidden space-y-4">
+              <h2 class="text-xl font-semibold" style="color:var(--foreground);">Negative Keywords</h2>
+              <div id="negative-grid" class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <div id="nbroad-col" class="hidden">
+                  <h3 class="font-semibold mb-2" style="color:var(--foreground);">Broad</h3>
+                  <div class="flex justify-between items-center mb-2">
+                    <span id="nbroad-count" class="text-sm" style="color:var(--foreground);">0 selected</span>
+                    <button id="copy-nbroad-btn" class="shad-btn" disabled>Copy all</button>
+                  </div>
+                  <table class="min-w-full text-sm border border-[var(--foreground)]/20">
+                    <tbody id="nbroad-body"></tbody>
+                  </table>
+                </div>
+                <div id="nmb-col" class="hidden">
+                  <h3 class="font-semibold mb-2" style="color:var(--foreground);">Modified Broad</h3>
+                  <div class="flex justify-between items-center mb-2">
+                    <span id="nmb-count" class="text-sm" style="color:var(--foreground);">0 selected</span>
+                    <button id="copy-nmb-btn" class="shad-btn" disabled>Copy all</button>
+                  </div>
+                  <table class="min-w-full text-sm border border-[var(--foreground)]/20">
+                    <tbody id="nmb-body"></tbody>
+                  </table>
+                </div>
+                <div id="nphrase-col">
+                  <h3 class="font-semibold mb-2" style="color:var(--foreground);">Phrase</h3>
+                  <div class="flex justify-between items-center mb-2">
+                    <span id="nphrase-count" class="text-sm" style="color:var(--foreground);">0 selected</span>
+                    <button id="copy-nphrase-btn" class="shad-btn" disabled>Copy all</button>
+                  </div>
+                  <table class="min-w-full text-sm border border-[var(--foreground)]/20">
+                    <tbody id="nphrase-body"></tbody>
+                  </table>
+                </div>
+                <div id="nexact-col">
+                  <h3 class="font-semibold mb-2" style="color:var(--foreground);">Exact</h3>
+                  <div class="flex justify-between items-center mb-2">
+                    <span id="nexact-count" class="text-sm" style="color:var(--foreground);">0 selected</span>
+                    <button id="copy-nexact-btn" class="shad-btn" disabled>Copy all</button>
+                  </div>
+                  <table class="min-w-full text-sm border border-[var(--foreground)]/20">
+                    <tbody id="nexact-body"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="text-right">
+              <button id="export-csv-btn" class="shad-btn" disabled>Export CSV</button>
             </div>
           </div>
           <section class="mt-8 space-y-4">
