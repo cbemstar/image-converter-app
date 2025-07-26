@@ -7,15 +7,25 @@ document.addEventListener('DOMContentLoaded', () => {
   const minifyBtn = document.getElementById('minify-btn');
   const copyBtn = document.getElementById('copy-btn');
   const downloadBtn = document.getElementById('download-btn');
+  const shareBtn = document.getElementById('share-btn');
+  const jsonCsvBtn = document.getElementById('json-csv-btn');
+  const jsonCsvOutput = document.getElementById('json-csv-output');
+  const jsonCsvCopy = document.getElementById('json-csv-copy');
+  const jsonCsvDownload = document.getElementById('json-csv-download');
   const jsonFileInput = document.getElementById('json-file-input');
   const indentSelect = document.getElementById('indent-select');
   const sortKeysCheckbox = document.getElementById('sort-keys');
+  const jsonSearch = document.getElementById('json-search');
+  const jsonTree = document.getElementById('json-tree');
   const csvInput = document.getElementById('csv-input');
   const csvOutput = document.getElementById('csv-output');
   const csvConvertBtn = document.getElementById('csv-convert-btn');
   const csvCopyBtn = document.getElementById('csv-copy-btn');
   const csvDownloadBtn = document.getElementById('csv-download-btn');
   const csvFileInput = document.getElementById('csv-file-input');
+
+  let currentText = '';
+  let currentData = null;
 
   function getIndent() {
     if (!indentSelect) return 2;
@@ -34,18 +44,65 @@ document.addEventListener('DOMContentLoaded', () => {
     return obj;
   }
 
+  function syntaxHighlight(str) {
+    return str.replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/("(?:\\u[\da-fA-F]{4}|\\[^u]|[^\\"])*"(?=:)|"(?:\\u[\da-fA-F]{4}|\\[^u]|[^\\"])*"|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?)/g, match => {
+        let cls = 'json-number';
+        if (/^"/.test(match)) {
+          cls = /:$/.test(match) ? 'json-key' : 'json-string';
+        } else if (/true|false/.test(match)) {
+          cls = 'json-boolean';
+        } else if (/null/.test(match)) {
+          cls = 'json-null';
+        }
+        return `<span class="${cls}">${match}</span>`;
+      });
+  }
+
+  function parseWithPos(text) {
+    try {
+      return { data: JSON.parse(text) };
+    } catch (err) {
+      const m = err.message.match(/position (\d+)/i);
+      if (m) {
+        const pos = parseInt(m[1], 10);
+        const before = text.slice(0, pos);
+        const line = before.split(/\n/).length;
+        const col = before.length - before.lastIndexOf('\n');
+        return { error: `${err.message} at line ${line}, column ${col}` };
+      }
+      return { error: err.message };
+    }
+  }
+
+  function renderTree(data) {
+    if (!jsonTree || !window.JSONFormatter) return;
+    jsonTree.innerHTML = '';
+    const formatter = new JSONFormatter(data, 1, { theme: document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark' });
+    jsonTree.appendChild(formatter.render());
+  }
+
   function format(pretty) {
     if (!input || !output) return;
-    try {
-      let parsed = JSON.parse(input.value);
-      if (sortKeysCheckbox && sortKeysCheckbox.checked) {
-        parsed = sortObjectKeys(parsed);
-      }
-      output.value = JSON.stringify(parsed, null, pretty ? getIndent() : 0);
-    } catch (err) {
-      output.value = '';
-      showNotification('Invalid JSON: ' + err.message, 'error');
+    const { data, error } = parseWithPos(input.value);
+    if (error) {
+      output.innerHTML = '';
+      currentText = '';
+      currentData = null;
+      jsonTree.innerHTML = '';
+      showNotification('Invalid JSON: ' + error, 'error');
+      return;
     }
+    let parsed = data;
+    if (sortKeysCheckbox && sortKeysCheckbox.checked) {
+      parsed = sortObjectKeys(parsed);
+    }
+    currentText = JSON.stringify(parsed, null, pretty ? getIndent() : 0);
+    currentData = parsed;
+    output.innerHTML = syntaxHighlight(currentText);
+    renderTree(parsed);
   }
 
   function convertCsv() {
@@ -72,6 +129,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  function jsonToCsv() {
+    if (!jsonCsvOutput) return;
+    if (!Array.isArray(currentData) || currentData.length === 0 || typeof currentData[0] !== 'object') {
+      showNotification('JSON must be an array of objects', 'error');
+      return;
+    }
+    const keys = Object.keys(currentData[0]);
+    const rows = currentData.map(obj => keys.map(k => `"${String(obj[k] ?? '').replace(/"/g,'""')}"`).join(','));
+    rows.unshift(keys.join(','));
+    jsonCsvOutput.value = rows.join('\n');
+  }
+
   if (formatBtn) formatBtn.addEventListener('click', () => format(true));
   if (minifyBtn) minifyBtn.addEventListener('click', () => format(false));
 
@@ -79,6 +148,10 @@ document.addEventListener('DOMContentLoaded', () => {
     jsonFileInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (file) {
+        if (file.size > 10 * 1024 * 1024) {
+          showNotification('JSON file exceeds 10MB limit', 'error');
+          return;
+        }
         file.text().then(text => {
           if (input) {
             input.value = text;
@@ -91,8 +164,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (copyBtn) {
     copyBtn.addEventListener('click', () => {
-      if (!output || !output.value) return;
-      navigator.clipboard.writeText(output.value).then(() => {
+      if (!currentText) return;
+      navigator.clipboard.writeText(currentText).then(() => {
         showNotification('Copied to clipboard', 'success');
       });
     });
@@ -100,8 +173,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (downloadBtn) {
     downloadBtn.addEventListener('click', () => {
-      if (!output || !output.value) return;
-      const blob = new Blob([output.value], { type: 'application/json' });
+      if (!currentText) return;
+      const blob = new Blob([currentText], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -117,6 +190,10 @@ document.addEventListener('DOMContentLoaded', () => {
     csvFileInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (file) {
+        if (file.size > 10 * 1024 * 1024) {
+          showNotification('CSV file exceeds 10MB limit', 'error');
+          return;
+        }
         file.text().then(text => {
           if (csvInput) {
             csvInput.value = text;
@@ -147,5 +224,60 @@ document.addEventListener('DOMContentLoaded', () => {
       a.click();
       URL.revokeObjectURL(url);
     });
+  }
+
+  if (jsonCsvBtn) jsonCsvBtn.addEventListener('click', jsonToCsv);
+
+  if (jsonCsvCopy) {
+    jsonCsvCopy.addEventListener('click', () => {
+      if (!jsonCsvOutput || !jsonCsvOutput.value) return;
+      navigator.clipboard.writeText(jsonCsvOutput.value).then(() => {
+        showNotification('Copied to clipboard', 'success');
+      });
+    });
+  }
+
+  if (jsonCsvDownload) {
+    jsonCsvDownload.addEventListener('click', () => {
+      if (!jsonCsvOutput || !jsonCsvOutput.value) return;
+      const blob = new Blob([jsonCsvOutput.value], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'data.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  if (shareBtn) {
+    shareBtn.addEventListener('click', () => {
+      if (!currentText) return;
+      const id = 'share_json_' + Date.now();
+      localStorage.setItem(id, currentText);
+      const url = `${location.origin}${location.pathname}?share=${id}`;
+      navigator.clipboard.writeText(url).then(() => {
+        showNotification('Share link copied', 'success');
+      });
+    });
+  }
+
+  if (jsonSearch && jsonTree) {
+    jsonSearch.addEventListener('input', () => {
+      const term = jsonSearch.value.toLowerCase();
+      jsonTree.querySelectorAll('.json-formatter-row').forEach(row => {
+        row.style.display = term && !row.textContent.toLowerCase().includes(term) ? 'none' : '';
+      });
+    });
+  }
+
+  const params = new URLSearchParams(location.search);
+  const shareId = params.get('share');
+  if (shareId) {
+    const stored = localStorage.getItem(shareId);
+    if (stored && input) {
+      input.value = stored;
+      format(true);
+    }
   }
 });
