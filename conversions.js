@@ -351,4 +351,44 @@ export async function processImages(files, maxW, maxH, quality, format) {
   updateQuotaStatus();
   
   return processed;
-} 
+}
+
+export async function postProcessBlob(blob, format, quality, options = {}) {
+  if (!options.crop && !options.watermark && !options.maxW && !options.maxH) return blob;
+  const img = await createImageBitmap(blob);
+  let sx = 0, sy = 0, sw = img.width, sh = img.height;
+  if (options.crop) {
+    sx = options.crop.x; sy = options.crop.y; sw = options.crop.width; sh = options.crop.height;
+  }
+  let dw = sw, dh = sh;
+  if (options.maxW || options.maxH) {
+    if (options.maintainAspect !== false) {
+      const scale = Math.min((options.maxW || sw)/sw, (options.maxH || sh)/sh, 1);
+      dw = Math.round(sw*scale); dh = Math.round(sh*scale);
+    } else {
+      dw = options.maxW || sw; dh = options.maxH || sh;
+    }
+  }
+  const canvas = document.createElement('canvas');
+  canvas.width = dw; canvas.height = dh;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(img, sx, sy, sw, sh, 0, 0, dw, dh);
+  if (options.watermark) {
+    ctx.save();
+    ctx.globalAlpha = 0.5;
+    if (options.watermark.text) {
+      ctx.fillStyle = 'white';
+      ctx.font = '20px sans-serif';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText(options.watermark.text, canvas.width - 10, canvas.height - 10);
+    }
+    if (options.watermark.image) {
+      const wmW = Math.min(canvas.width/5, options.watermark.image.width);
+      const wmH = wmW / options.watermark.image.width * options.watermark.image.height;
+      ctx.drawImage(options.watermark.image, canvas.width - wmW - 10, canvas.height - wmH - 10, wmW, wmH);
+    }
+    ctx.restore();
+  }
+  return await new Promise(res => canvas.toBlob(res, `image/${format}`, format === 'png' ? undefined : quality));
+}

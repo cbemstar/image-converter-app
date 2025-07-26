@@ -643,3 +643,7 @@ tr.error-row td { color:#ffb4b4 !important; }
 .json-number { color: #d97706; }
 .json-boolean { color: #db2777; }
 .json-null { color: #737373; }
+
+#crop-modal {
+  display: none;
+}
