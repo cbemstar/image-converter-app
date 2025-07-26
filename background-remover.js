@@ -1,17 +1,24 @@
 import { showNotification } from './utils.js';
 
-let net;
+let segmenter;
 
 async function loadModel() {
-  if (!net) {
-    try {
-      net = await bodyPix.load();
-    } catch (e) {
-      showNotification('Failed to load model', 'error');
-      throw e;
-    }
+  if (!segmenter) {
+    segmenter = new SelfieSegmentation({
+      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation@0.1/${file}`,
+    });
+    segmenter.setOptions({ modelSelection: 1 });
+    await segmenter.initialize();
   }
-  return net;
+  return segmenter;
+}
+
+async function runSegmentation(image) {
+  await loadModel();
+  return new Promise((resolve, reject) => {
+    segmenter.onResults((results) => resolve(results.segmentationMask));
+    segmenter.send({ image }).catch(reject);
+  });
 }
 
 async function processImage(file) {
@@ -19,23 +26,20 @@ async function processImage(file) {
   img.src = URL.createObjectURL(file);
   await img.decode();
 
+  const mask = await runSegmentation(img);
+
   const canvas = document.createElement('canvas');
   canvas.width = img.naturalWidth;
   canvas.height = img.naturalHeight;
   const ctx = canvas.getContext('2d');
   ctx.drawImage(img, 0, 0);
 
-  await loadModel();
-  const segmentation = await net.segmentPerson(img);
-  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  const data = imageData.data;
-  const mask = segmentation.data;
-  for (let i = 0; i < mask.length; i++) {
-    if (mask[i] === 0) {
-      data[i * 4 + 3] = 0;
-    }
-  }
-  ctx.putImageData(imageData, 0, 0);
+  ctx.globalCompositeOperation = 'destination-in';
+  ctx.filter = 'blur(2px)';
+  ctx.drawImage(mask, 0, 0, canvas.width, canvas.height);
+  ctx.filter = 'none';
+  ctx.globalCompositeOperation = 'source-over';
+
   URL.revokeObjectURL(img.src);
   return canvas.toDataURL('image/png');
 }
