@@ -1,47 +1,15 @@
 import { showNotification } from './utils.js';
 
-let segmenter;
-
-async function loadModel() {
-  if (!segmenter) {
-    segmenter = new SelfieSegmentation({
-      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation@0.1/${file}`,
-    });
-    segmenter.setOptions({ modelSelection: 1 });
-    await segmenter.initialize();
-  }
-  return segmenter;
-}
-
-async function runSegmentation(image) {
-  await loadModel();
-  return new Promise((resolve, reject) => {
-    segmenter.onResults((results) => resolve(results.segmentationMask));
-    segmenter.send({ image }).catch(reject);
-  });
-}
+// Update this URL to point to your FastAPI deployment
+const API_BASE = 'http://localhost:8000';
 
 async function processImage(file) {
-  const img = new Image();
-  img.src = URL.createObjectURL(file);
-  await img.decode();
-
-  const mask = await runSegmentation(img);
-
-  const canvas = document.createElement('canvas');
-  canvas.width = img.naturalWidth;
-  canvas.height = img.naturalHeight;
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(img, 0, 0);
-
-  ctx.globalCompositeOperation = 'destination-in';
-  ctx.filter = 'blur(2px)';
-  ctx.drawImage(mask, 0, 0, canvas.width, canvas.height);
-  ctx.filter = 'none';
-  ctx.globalCompositeOperation = 'source-over';
-
-  URL.revokeObjectURL(img.src);
-  return canvas.toDataURL('image/png');
+  const formData = new FormData();
+  formData.append('file', file);
+  const res = await fetch(`${API_BASE}/api/remove-background`, { method: 'POST', body: formData });
+  if (!res.ok) throw new Error('Server error');
+  const blob = await res.blob();
+  return URL.createObjectURL(blob);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
