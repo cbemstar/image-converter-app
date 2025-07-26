@@ -6,7 +6,7 @@
   <!-- End Google Tag Manager -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Request a Tool</title>
+  <title>A/B Test Calculator</title>
   <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
@@ -14,16 +14,15 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script type="module" src="theme.js"></script>
   <script type="module" src="layout.js"></script>
+  <script type="module" src="ab-test-calculator.js"></script>
 </head>
-<body data-slug="request-tool" class="bg-transparent min-h-screen flex flex-col">
+<body data-slug="ab-test-calculator" class="bg-transparent min-h-screen flex flex-col">
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
-  <!-- Navigation Bar -->
   <nav class="bg-[var(--background)] shadow-md border-b border-[var(--foreground)]/30">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
-        <!-- Logo and site name -->
         <div class="flex items-center gap-4">
           <button id="sidebar-toggle" class="text-[var(--foreground)] hover:text-[var(--primary)] focus:outline-none">
             <i class="fas fa-bars"></i>
@@ -40,7 +39,6 @@
       </div>
     </div>
   </nav>
-  <!-- Page Layout -->
   <div class="flex flex-grow">
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
     <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full transition-transform z-40">
@@ -66,29 +64,53 @@
       </div>
     </aside>
     <main id="main-content" class="flex-grow p-4">
-      <div class="max-w-xl mx-auto">
-        <h1 class="text-3xl font-bold mb-4" style="color:var(--foreground);">Request a Tool</h1>
-        <p style="color:var(--foreground);">Let us know what tool you'd like us to build next.</p>
-        <div id="request-tool-embed" class="my-8">
-          <!-- loops.so embed code will be inserted here -->
+      <div class="max-w-xl mx-auto space-y-6">
+        <h1 class="text-3xl font-bold" style="color:var(--foreground);">A/B Test Calculator</h1>
+        <p style="color:var(--foreground);">Enter visitor and conversion counts for each variant to see uplift and significance.</p>
+        <form id="ab-test-form" class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label for="visitors-a" class="block mb-1">Visitors A</label>
+              <input id="visitors-a" type="number" min="0" class="shad-input">
+            </div>
+            <div>
+              <label for="conversions-a" class="block mb-1">Conversions A</label>
+              <input id="conversions-a" type="number" min="0" class="shad-input">
+            </div>
+            <div>
+              <label for="visitors-b" class="block mb-1">Visitors B</label>
+              <input id="visitors-b" type="number" min="0" class="shad-input">
+            </div>
+            <div>
+              <label for="conversions-b" class="block mb-1">Conversions B</label>
+              <input id="conversions-b" type="number" min="0" class="shad-input">
+            </div>
+          </div>
+          <button type="submit" class="mt-2 px-4 py-2 rounded bg-[var(--primary)] text-[var(--primary-foreground)]">Calculate</button>
+        </form>
+        <div id="results" class="space-y-2" style="display:none;">
+          <p id="rate-a"></p>
+          <p id="rate-b"></p>
+          <p id="uplift"></p>
+          <p id="significance"></p>
+          <p id="recommendation" class="font-semibold"></p>
         </div>
-        <section class="space-y-4">
-          <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this page</h2>
-          <p style="color:var(--foreground);">Use this form to suggest new utilities that would help your marketing workflow. We review submissions regularly.</p>
+        <section class="mt-8 space-y-4">
+          <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this tool</h2>
+          <p style="color:var(--foreground);">Quickly estimate whether your B variant beats A. Enter the visitors and conversions from your experiment and the calculator runs a two-tailed z-test.</p>
           <h3 class="text-xl font-semibold" style="color:var(--foreground);">FAQs</h3>
           <details class="border p-2 rounded">
-            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">How soon will my idea be built?</summary>
-            <p class="mt-2" style="color:var(--foreground);">Ideas with the most interest get prioritised, but we can't guarantee timelines.</p>
+            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">What counts as significant?</summary>
+            <p class="mt-2" style="color:var(--foreground);">We flag results as significant when the p-value is below 0.05 (95% confidence).</p>
           </details>
           <details class="border p-2 rounded">
-            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Will you notify me?</summary>
-            <p class="mt-2" style="color:var(--foreground);">Leave your email in the request and we'll let you know if we develop your suggestion.</p>
+            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Should I stop my test?</summary>
+            <p class="mt-2" style="color:var(--foreground);">Only stop a test early if you have strong significance and enough traffic to be confident in the result.</p>
           </details>
         </section>
       </div>
     </main>
   </div>
-
   <footer class="bg-[var(--background)] border-t border-[var(--foreground)]/30 mt-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <div class="text-center">
@@ -96,6 +118,5 @@
       </div>
     </div>
   </footer>
-  <!-- layout.js handles sidebar functionality -->
 </body>
 </html>
