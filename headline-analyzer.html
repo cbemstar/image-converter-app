@@ -6,19 +6,17 @@
   <!-- End Google Tag Manager -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Background Remover</title>
+  <title>Headline Analyzer</title>
   <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- MediaPipe Selfie Segmentation -->
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation@0.1/selfie_segmentation.js"></script>
   <script type="module" src="theme.js"></script>
   <script type="module" src="layout.js"></script>
-  <script type="module" src="background-remover.js"></script>
+  <script type="module" src="headline-analyzer.js"></script>
 </head>
-<body data-slug="background-remover" class="bg-transparent min-h-screen flex flex-col">
+<body data-slug="headline-analyzer" class="bg-transparent min-h-screen flex flex-col">
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
@@ -70,16 +68,17 @@
 
     <main id="main-content" class="flex-grow p-4">
       <div class="max-w-2xl mx-auto space-y-4">
-        <h1 class="text-3xl font-bold" style="color:var(--foreground);">Background Remover</h1>
-        <p style="color:var(--foreground);">Upload a PNG or JPG image to remove its background. The result will be a transparent PNG.</p>
-        <input id="image-input" type="file" accept="image/png,image/jpeg" class="shad-input" />
-        <img id="result-preview" class="mt-4 max-w-full rounded" alt="Result preview" />
-        <a id="download-btn" href="#" download="background.png" class="download-btn mt-2" style="display:none;">Download PNG</a>
+        <h1 class="text-3xl font-bold" style="color:var(--foreground);">Headline Analyzer</h1>
+        <p style="color:var(--foreground);">Evaluate your headline for word balance, readability and SEO friendliness.</p>
+        <input id="headline-input" type="text" class="shad-input" placeholder="Enter headline" />
+        <input id="industry-input" type="text" class="shad-input" placeholder="Industry (optional)" />
+        <input id="seo-input" type="text" class="shad-input" placeholder="SEO keywords (comma separated)" />
+        <button id="analyze-btn" class="shad-btn">Analyze</button>
+        <div id="analysis-output" class="border rounded p-4 space-y-2"></div>
 
         <section class="mt-8 space-y-4">
           <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this tool</h2>
-          <p style="color:var(--foreground);">This demo uses MediaPipe Selfie Segmentation to estimate the subject and make the rest transparent. Complex backgrounds may leave artifacts.</p>
-          <p style="color:var(--foreground);">For unsupported formats, first convert your image using the <a href="image-converter.html" class="underline text-[var(--primary)]">image converter</a>.</p>
+          <p style="color:var(--foreground);">Use this headline analyzer to craft compelling titles for articles, ads or social posts. It scores your headline and suggests improvements based on readability, word choice and keyword usage. All processing happens locally in your browser.</p>
         </section>
       </div>
     </main>
