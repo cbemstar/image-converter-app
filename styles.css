@@ -636,7 +636,6 @@ tr.error-row td { color:#ffb4b4 !important; }
   color: var(--foreground);
   background-color: transparent;
 }
-
 .shad-input {
   width: 100%;
   border-radius: 0.375rem;
@@ -645,12 +644,10 @@ tr.error-row td { color:#ffb4b4 !important; }
   background-color: var(--background);
   color: var(--foreground);
 }
-
 .shad-input:focus {
   outline: none;
   box-shadow: 0 0 0 2px var(--primary);
 }
-
 /* JSON syntax highlighting */
 .json-key { color: var(--primary); }
 .json-string { color: #65a30d; }
@@ -661,6 +658,13 @@ tr.error-row td { color:#ffb4b4 !important; }
 /* range input for PDF merger */
 .range-input {
   border: 1px solid var(--foreground);
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+  border-radius: 4px;
+  padding: 2px 4px;
+}
+.range-input::placeholder {
+  color: var(--muted-foreground);
   background: transparent;
   border-radius: 4px;
   padding: 2px 4px;
