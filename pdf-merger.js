@@ -14,6 +14,37 @@ document.addEventListener('DOMContentLoaded', () => {
   let files = [];
   let sortable = null;
 
+  function parseRange(range, pageCount) {
+    const indices = [];
+    for (const part of range.split(',')) {
+      const seg = part.trim();
+      if (!seg) continue;
+      let start, end;
+      let m;
+      if (/^\d+$/.test(seg)) {
+        start = end = parseInt(seg, 10);
+      } else if ((m = seg.match(/^(\d+)-(\d+)$/))) {
+        start = parseInt(m[1], 10);
+        end = parseInt(m[2], 10);
+      } else if ((m = seg.match(/^(\d+)-$/))) {
+        start = parseInt(m[1], 10);
+        end = pageCount;
+      } else if ((m = seg.match(/^-(\d+)$/))) {
+        start = 1;
+        end = parseInt(m[1], 10);
+      } else {
+        throw new Error(`Invalid range segment: ${seg}`);
+      }
+      if (start < 1 || end > pageCount || start > end) {
+        throw new Error(`Invalid page numbers in segment: ${seg}`);
+      }
+      for (let i = start - 1; i < end; i++) {
+        if (!indices.includes(i)) indices.push(i);
+      }
+    }
+    return indices;
+  }
+
   function setupSortable() {
     if (window.Sortable && list && !sortable) {
       sortable = new Sortable(list, {
@@ -30,15 +61,28 @@ document.addEventListener('DOMContentLoaded', () => {
     list.innerHTML = '';
     for (const f of files) {
       const li = document.createElement('li');
-      li.className = 'flex flex-col items-center gap-1';
+      li.className = 'flex flex-col items-center gap-1 p-2 border rounded';
+
       const img = document.createElement('img');
       img.src = f.thumb;
       img.className = 'preview';
+
       const span = document.createElement('span');
       span.className = 'text-xs break-all text-center';
-      span.textContent = f.file.name;
+      span.textContent = `${f.file.name} (${f.pageCount}p)`;
+
+      const rangeInput = document.createElement('input');
+      rangeInput.type = 'text';
+      rangeInput.className = 'range-input text-xs w-24 text-center mt-1';
+      rangeInput.placeholder = `1-${f.pageCount}`;
+      rangeInput.value = f.range;
+      rangeInput.addEventListener('input', () => {
+        f.range = rangeInput.value.trim();
+      });
+
       li.appendChild(img);
       li.appendChild(span);
+      li.appendChild(rangeInput);
       list.appendChild(li);
     }
     setupSortable();
@@ -54,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.height = viewport.height;
     const ctx = canvas.getContext('2d');
     await page.render({ canvasContext: ctx, viewport }).promise;
-    return canvas.toDataURL();
+    return { thumb: canvas.toDataURL(), pageCount: pdf.numPages };
   }
 
   async function handleFiles(fileList) {
@@ -64,8 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
         continue;
       }
       try {
-        const thumb = await generateThumb(file);
-        files.push({ file, thumb });
+        const meta = await generateThumb(file);
+        files.push({ file, thumb: meta.thumb, pageCount: meta.pageCount, range: `1-${meta.pageCount}` });
       } catch (err) {
         console.error('Failed to read PDF', err);
         showNotification(`Could not load ${file.name}`, 'error');
@@ -113,11 +157,12 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const buf = await files[i].file.arrayBuffer();
         const doc = await PDFLib.PDFDocument.load(buf);
-        const pages = await merged.copyPages(doc, doc.getPageIndices());
+        const indices = parseRange(files[i].range || `1-${files[i].pageCount}`, doc.getPageCount());
+        const pages = await merged.copyPages(doc, indices);
         pages.forEach(p => merged.addPage(p));
       } catch (err) {
         console.error(err);
-        showNotification(`Error merging ${files[i].file.name}`, 'error');
+        showNotification(`Error merging ${files[i].file.name}: ${err.message}`, 'error');
       }
       if (progressBar) progressBar.style.width = `${Math.round(((i + 1) / files.length) * 100)}%`;
     }
