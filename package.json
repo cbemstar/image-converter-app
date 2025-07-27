@@ -1,0 +1,17 @@
+{
+  "name": "image-converter-app",
+  "version": "1.0.0",
+  "description": "A browser-based image conversion tool that allows you to convert images between various formats including WebP, JPEG, PNG, AVIF, BMP, TIFF, GIF, and ICO. The app also supports special formats like HEIC/HEIF and RAW camera formats.",
+  "main": "background-remover.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "jest": "^30.0.5",
+    "pdf-lib": "^1.17.1"
+  }
+}
