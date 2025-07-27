@@ -657,3 +657,12 @@ tr.error-row td { color:#ffb4b4 !important; }
 .json-number { color: #d97706; }
 .json-boolean { color: #db2777; }
 .json-null { color: #737373; }
+
+/* range input for PDF merger */
+.range-input {
+  border: 1px solid var(--foreground);
+  background: transparent;
+  border-radius: 4px;
+  padding: 2px 4px;
+  color: var(--foreground);
+}
