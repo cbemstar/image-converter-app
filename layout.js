@@ -55,5 +55,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const key = `visits_${slug}`;
     const count = parseInt(localStorage.getItem(key) || '0', 10) + 1;
     localStorage.setItem(key, count);
+
+    if (toolList) {
+      toolList.querySelectorAll('a').forEach(link => {
+        const href = link.getAttribute('href') || '';
+        if (href.includes(slug)) {
+          link.classList.add('font-semibold', 'text-[var(--primary)]');
+        } else {
+          link.classList.remove('font-semibold', 'text-[var(--primary)]');
+        }
+      });
+    }
   }
 });
