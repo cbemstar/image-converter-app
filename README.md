@@ -60,6 +60,8 @@ This site loads Google Tag Manager (container `GTM-NFJTSQ3N`) on every page so v
 
 Alongside the image converter, the site offers several marketing utilities like a Google Ads RSA previewer, a campaign structure visualizer (now with PNG/PDF export), and a **Bulk Match Type Editor** for quickly converting keyword lists to phrase and exact match formats. Enter keywords once and the tool shows both match types side by side with options to copy individual or all results. A simple **Background Remover** uses MediaPipe Selfie Segmentation to strip backgrounds from PNG or JPG files directly in the browser.
 
+The latest addition is a **PDF Toolkit** for editing, merging, splitting, compressing and converting PDF files entirely client-side.
+
 Every tool page includes a short "About" section and FAQs so you know when to use it and how it works.
 
 The homepage lists all tools in a searchable grid. You can filter by category or sort A-Z or by the most visited tools, with visit counts stored in your browser.

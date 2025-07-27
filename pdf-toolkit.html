@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-NFJTSQ3N');</script>
+  <!-- End Google Tag Manager -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Toolkit</title>
+  <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.10.111/pdf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script type="module" src="theme.js"></script>
+  <script type="module" src="layout.js"></script>
+  <script type="module" src="pdf-toolkit.js"></script>
+</head>
+<body data-slug="pdf-toolkit" class="bg-transparent min-h-screen flex flex-col">
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  <nav class="bg-[var(--background)] shadow-md border-b border-[var(--foreground)]/30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center gap-4">
+          <button id="sidebar-toggle" class="text-[var(--foreground)] hover:text-[var(--primary)] focus:outline-none">
+            <i class="fas fa-bars"></i>
+          </button>
+          <a href="index.html" class="flex items-center gap-2">
+            <span class="text-[var(--foreground)] text-xl font-bold">reformately</span>
+          </a>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="theme-toggle" class="text-[var(--foreground)] hover:text-[var(--primary)] focus:outline-none" aria-label="Toggle theme">
+            <span id="theme-toggle-icon">🌙</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="flex-1 flex overflow-hidden">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="bg-[var(--background)] border-r border-[var(--foreground)]/30 w-64 p-4 transform -translate-x-full transition-transform lg:relative lg:translate-x-0 overflow-y-auto">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-semibold" style="color:var(--foreground);">Tools</h2>
+        <button id="sidebar-close" class="lg:hidden text-[var(--foreground)] hover:text-[var(--primary)] focus:outline-none">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <input id="tool-search" type="text" placeholder="Search tools" class="shad-input mb-4" />
+      <ul id="tool-list" class="space-y-2">
+        <li><a href="image-converter.html">Image Converter</a></li>
+        <li><a href="background-remover.html">Background Remover</a></li>
+        <li><a href="google-ads-rsa-preview.html">Google Ads RSA Preview</a></li>
+        <li><a href="campaign-structure.html">Campaign Structure</a></li>
+        <li><a href="bulk-match-editor.html">Bulk Match Type Editor</a></li>
+        <li><a href="json-formatter.html">JSON Formatter</a></li>
+        <li><a href="color-palette.html">Colour Palette Extractor</a></li>
+        <li><a href="pdf-toolkit.html" class="font-semibold">PDF Toolkit</a></li>
+      </ul>
+    </aside>
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black opacity-50 hidden lg:hidden"></div>
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto">
+      <div class="max-w-5xl mx-auto px-4 py-8 space-y-10">
+        <section>
+          <h1 class="text-3xl font-bold mb-4" style="color:var(--foreground);">PDF Toolkit</h1>
+          <p style="color:var(--foreground);">Edit, merge, split, compress and convert PDFs directly in your browser.</p>
+        </section>
+
+        <section id="editor" class="space-y-2">
+          <h2 class="text-xl font-semibold" style="color:var(--foreground);">PDF Editor</h2>
+          <input type="file" id="editor-upload" accept="application/pdf" class="shad-input" />
+          <div class="flex gap-2 my-2">
+            <button id="add-text" class="shad-btn">Add Text</button>
+            <button id="draw-tool" class="shad-btn">Draw</button>
+            <button id="save-pdf" class="shad-btn">Save PDF</button>
+          </div>
+          <div id="pdf-preview" class="border rounded p-2 space-y-4"></div>
+        </section>
+
+        <section id="merger" class="space-y-2">
+          <h2 class="text-xl font-semibold" style="color:var(--foreground);">PDF Merger</h2>
+          <input type="file" id="merge-upload" accept="application/pdf" multiple class="shad-input" />
+          <div id="merge-list" class="flex flex-wrap gap-2 mt-2"></div>
+          <button id="merge-btn" class="shad-btn mt-2">Merge PDFs</button>
+        </section>
+
+        <section id="splitter" class="space-y-2">
+          <h2 class="text-xl font-semibold" style="color:var(--foreground);">PDF Splitter</h2>
+          <input type="file" id="split-upload" accept="application/pdf" class="shad-input" />
+          <input type="text" id="split-ranges" placeholder="e.g. 1-3,5" class="shad-input" />
+          <button id="split-btn" class="shad-btn">Split</button>
+          <div id="split-list" class="mt-2 space-y-1"></div>
+        </section>
+
+        <section id="compressor" class="space-y-2">
+          <h2 class="text-xl font-semibold" style="color:var(--foreground);">PDF Compressor</h2>
+          <input type="file" id="compress-upload" accept="application/pdf" class="shad-input" />
+          <select id="compression-level" class="shad-input">
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+          <button id="compress-btn" class="shad-btn">Compress</button>
+        </section>
+
+        <section id="converter" class="space-y-2">
+          <h2 class="text-xl font-semibold" style="color:var(--foreground);">PDF Converter</h2>
+          <input type="file" id="convert-upload" multiple class="shad-input" />
+          <select id="convert-type" class="shad-input">
+            <option value="pdf-to-jpg">PDF to JPG</option>
+            <option value="pdf-to-png">PDF to PNG</option>
+            <option value="images-to-pdf">Images to PDF</option>
+          </select>
+          <button id="convert-btn" class="shad-btn">Convert</button>
+          <div id="convert-results" class="mt-2 space-y-1"></div>
+        </section>
+
+        <section id="security" class="space-y-2">
+          <h2 class="text-xl font-semibold" style="color:var(--foreground);">Security</h2>
+          <input type="file" id="security-upload" accept="application/pdf" class="shad-input" />
+          <input type="password" id="security-password" placeholder="Password" class="shad-input" />
+          <label class="flex items-center gap-2" style="color:var(--foreground);"><input type="checkbox" id="remove-password"> Remove existing password</label>
+          <button id="security-btn" class="shad-btn">Apply</button>
+        </section>
+
+        <section id="about" class="mt-8 space-y-4">
+          <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this tool</h2>
+          <p style="color:var(--foreground);">This all-in-one PDF toolkit runs mostly in your browser using pdf-lib and PDF.js. It works best for files up to 100 pages or 50MB. Complex editing or very large files may require offline software.</p>
+        </section>
+
+        <section id="faqs" class="max-w-5xl mx-auto px-4 py-4">
+          <h2 class="text-2xl font-bold mb-4" style="color:var(--foreground);">PDF Toolkit FAQs</h2>
+          <div class="space-y-2">
+            <div class="faq-item border-b border-[var(--foreground)]/20">
+              <button class="faq-question w-full text-left py-2 flex justify-between items-center" aria-expanded="false">
+                <span style="color:var(--foreground);">Is my PDF uploaded to a server?</span>
+                <i class="fas fa-chevron-down text-[var(--foreground)]"></i>
+              </button>
+              <div class="faq-answer hidden pb-4" style="color:var(--foreground);">
+                No. All processing happens locally in your browser for privacy.
+              </div>
+            </div>
+            <div class="faq-item border-b border-[var(--foreground)]/20">
+              <button class="faq-question w-full text-left py-2 flex justify-between items-center" aria-expanded="false">
+                <span style="color:var(--foreground);">What file size can I use?</span>
+                <i class="fas fa-chevron-down text-[var(--foreground)]"></i>
+              </button>
+              <div class="faq-answer hidden pb-4" style="color:var(--foreground);">
+                The toolkit is optimized for PDFs up to 100 pages or around 50&nbsp;MB.
+              </div>
+            </div>
+            <div class="faq-item border-b border-[var(--foreground)]/20">
+              <button class="faq-question w-full text-left py-2 flex justify-between items-center" aria-expanded="false">
+                <span style="color:var(--foreground);">Which formats are supported?</span>
+                <i class="fas fa-chevron-down text-[var(--foreground)]"></i>
+              </button>
+              <div class="faq-answer hidden pb-4" style="color:var(--foreground);">
+                You can convert PDFs to JPG or PNG images and build new PDFs from images.
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <footer class="bg-[var(--background)] border-t border-[var(--foreground)]/30 mt-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="text-center">
+        <p class="text-[var(--foreground)]/70">&copy; 2024 reformately. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
