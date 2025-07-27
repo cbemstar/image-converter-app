@@ -661,8 +661,12 @@ tr.error-row td { color:#ffb4b4 !important; }
 /* range input for PDF merger */
 .range-input {
   border: 1px solid var(--foreground);
-  background: transparent;
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
   border-radius: 4px;
   padding: 2px 4px;
-  color: var(--foreground);
+}
+
+.range-input::placeholder {
+  color: var(--muted-foreground);
 }
