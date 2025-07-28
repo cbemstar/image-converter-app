@@ -6,7 +6,7 @@
   <!-- End Google Tag Manager -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>reformately Tools</title>
+  <title>UTM Parameter Builder</title>
   <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
@@ -14,9 +14,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script type="module" src="theme.js"></script>
   <script type="module" src="layout.js"></script>
-  <script type="module" src="home.js"></script>
+  <script type="module" src="utm-builder.js"></script>
 </head>
-<body class="bg-transparent min-h-screen flex flex-col">
+<body data-slug="utm-builder" class="bg-transparent min-h-screen flex flex-col">
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
@@ -39,7 +39,6 @@
       </div>
     </div>
   </nav>
-
   <div class="flex flex-grow">
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
     <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full transition-transform z-40">
@@ -67,71 +66,56 @@
         <a href="request-tool.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Request a Tool</a>
       </div>
     </aside>
-
     <main id="main-content" class="flex-grow p-4">
-      <div class="max-w-7xl mx-auto">
-      <section class="text-center py-12">
-        <h1 class="text-4xl font-bold mb-2" style="color:var(--foreground);">Welcome to reformately</h1>
-        <p class="text-lg" style="color:var(--foreground);">A collection of handy online tools</p>
-      </section>
-
-      <div class="max-w-md mx-auto mb-4 space-y-2">
-        <input id="home-search" type="text" placeholder="Search tools" class="shad-input w-full" />
-        <div class="flex gap-2">
-          <select id="category-filter" class="border rounded px-2 py-1 bg-transparent flex-grow">
-            <option value="All">All Categories</option>
-            <option value="Images">Images</option>
-            <option value="Marketing">Marketing</option>
-            <option value="Writing">Writing</option>
-            <option value="Utilities">Utilities</option>
-          </select>
-          <select id="sort-select" class="border rounded px-2 py-1 bg-transparent">
-            <option value="az">A-Z</option>
-            <option value="visits">Most Visited</option>
-          </select>
+      <div class="max-w-xl mx-auto">
+        <h1 class="text-3xl font-bold mb-2" style="color:var(--foreground);">UTM Parameter Builder</h1>
+        <p class="mb-4" style="color:var(--foreground);">Generate tracking URLs for your marketing campaigns.</p>
+        <div class="space-y-4">
+          <label class="block" style="color:var(--foreground);">Base URL
+            <input id="base-url" type="text" class="shad-input mt-1" placeholder="https://example.com/page" />
+          </label>
+          <label class="block" style="color:var(--foreground);">Source
+            <input id="utm-source" type="text" class="shad-input mt-1" placeholder="newsletter" />
+          </label>
+          <label class="block" style="color:var(--foreground);">Medium
+            <input id="utm-medium" type="text" class="shad-input mt-1" placeholder="email" />
+          </label>
+          <label class="block" style="color:var(--foreground);">Campaign
+            <input id="utm-campaign" type="text" class="shad-input mt-1" placeholder="spring_sale" />
+          </label>
+          <label class="block" style="color:var(--foreground);">Term
+            <input id="utm-term" type="text" class="shad-input mt-1" placeholder="optional keyword" />
+          </label>
+          <label class="block" style="color:var(--foreground);">Content
+            <input id="utm-content" type="text" class="shad-input mt-1" placeholder="ad variant" />
+          </label>
+          <label class="block" style="color:var(--foreground);">Tracking URL
+            <input id="utm-result" type="text" class="shad-input mt-1" readonly />
+          </label>
+          <button id="copy-btn" class="shad-btn">Copy URL</button>
         </div>
-      </div>
-
-      <div id="home-tools" class="grid gap-4 md:grid-cols-2 max-w-2xl mx-auto">
-        <a href="image-converter.html" class="tool-card border rounded p-4" data-name="Image Converter" data-category="Images" data-slug="image-converter">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Image Converter</h3>
-          <p class="text-sm" style="color:var(--foreground);">Convert images between formats.</p>
-        </a>
-        <a href="background-remover.html" class="tool-card border rounded p-4" data-name="Background Remover" data-category="Images" data-slug="background-remover">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Background Remover</h3>
-          <p class="text-sm" style="color:var(--foreground);">Remove the background from images.</p>
-        </a>
-        <a href="google-ads-rsa-preview.html" class="tool-card border rounded p-4" data-name="Google Ads RSA Preview" data-category="Marketing" data-slug="google-ads-rsa-preview">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Google Ads RSA Preview</h3>
-          <p class="text-sm" style="color:var(--foreground);">Visualize responsive search ads.</p>
-        </a>
-        <a href="campaign-structure.html" class="tool-card border rounded p-4" data-name="Campaign Structure" data-category="Marketing" data-slug="campaign-structure">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Campaign Structure</h3>
-          <p class="text-sm" style="color:var(--foreground);">Visualize ad campaign hierarchy.</p>
-        </a>
-        <a href="bulk-match-editor.html" class="tool-card border rounded p-4" data-name="Bulk Match Type Editor" data-category="Marketing" data-slug="bulk-match-editor">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Bulk Match Type Editor</h3>
-          <p class="text-sm" style="color:var(--foreground);">Convert keywords to phrase and exact match.</p>
-        </a>
-        <a href="json-formatter.html" class="tool-card border rounded p-4" data-name="JSON Formatter" data-category="Utilities" data-slug="json-formatter">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">JSON Formatter</h3>
-          <p class="text-sm" style="color:var(--foreground);">Format or minify JSON easily.</p>
-        </a>
-        <a href="color-palette.html" class="tool-card border rounded p-4" data-name="Colour Palette Extractor" data-category="Images" data-slug="color-palette">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Colour Palette Extractor</h3>
-          <p class="text-sm" style="color:var(--foreground);">Extract dominant colours from images.</p>
-        </a>
-        <a href="pdf-merger.html" class="tool-card border rounded p-4" data-name="PDF Merger" data-category="Utilities" data-slug="pdf-merger">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">PDF Merger</h3>
-          <p class="text-sm" style="color:var(--foreground);">Combine PDFs easily.</p>
-        </a>
-        <a href="utm-builder.html" class="tool-card border rounded p-4" data-name="UTM Builder" data-category="Marketing" data-slug="utm-builder">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">UTM Builder</h3>
-          <p class="text-sm" style="color:var(--foreground);">Create tracking URLs quickly.</p>
-        </a>
-      </div>
+        <section class="space-y-4 mt-8">
+          <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this tool</h2>
+          <p style="color:var(--foreground);">Use this builder to append UTM parameters to your links so you can track campaign performance in analytics platforms.</p>
+          <h3 class="text-xl font-semibold" style="color:var(--foreground);">FAQs</h3>
+          <details class="border p-2 rounded">
+            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">What are UTM parameters?</summary>
+            <p class="mt-2" style="color:var(--foreground);">They are tags added to a URL that help identify where visitors come from when they land on your site.</p>
+          </details>
+          <details class="border p-2 rounded">
+            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Do you store my links?</summary>
+            <p class="mt-2" style="color:var(--foreground);">No. Everything runs locally in your browser.</p>
+          </details>
+        </section>
       </div>
     </main>
   </div>
+  <footer class="bg-[var(--background)] border-t border-[var(--foreground)]/30 mt-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="text-center">
+        <p class="text-[var(--foreground)]/70">&copy; 2024 reformately. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
