@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
     list.innerHTML = '';
     for (const f of files) {
       const li = document.createElement('li');
-      li.className = 'flex flex-col items-center gap-1 p-2 border rounded';
+      li.className = 'flex flex-col items-center gap-1 p-2 border rounded-lg bg-[var(--card)]';
 
       const img = document.createElement('img');
       img.src = f.thumb;
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const rangeInput = document.createElement('input');
       rangeInput.type = 'text';
-      rangeInput.className = 'range-input text-xs w-24 text-center mt-1';
+      rangeInput.className = 'range-input shad-input text-xs w-24 text-center mt-1';
       rangeInput.placeholder = `1-${f.pageCount}`;
       rangeInput.value = f.range;
       rangeInput.addEventListener('input', () => {
