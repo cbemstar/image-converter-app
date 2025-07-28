@@ -24,17 +24,17 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
         <div class="flex items-center gap-4">
-          <button id="sidebar-toggle" class="text-[var(--foreground)] hover:text-[var(--primary)] focus:outline-none">
-            <i class="fas fa-bars"></i>
-          </button>
+            <button id="sidebar-toggle" class="shad-btn p-2" aria-label="Open sidebar">
+              <i class="fas fa-bars"></i>
+            </button>
           <a href="index.html" class="flex items-center gap-2">
             <span class="text-[var(--foreground)] text-xl font-bold">reformately</span>
           </a>
         </div>
         <div class="flex items-center gap-2">
-          <button id="theme-toggle" class="text-[var(--foreground)] hover:text-[var(--primary)] focus:outline-none" aria-label="Toggle theme">
-            <span id="theme-toggle-icon">🌙</span>
-          </button>
+            <button id="theme-toggle" class="shad-btn p-2" aria-label="Toggle theme">
+              <span id="theme-toggle-icon">🌙</span>
+            </button>
         </div>
       </div>
     </div>
@@ -45,7 +45,7 @@
     <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full transition-transform z-40">
       <div class="flex justify-between items-center mb-4">
         <a href="index.html" class="text-xl font-bold" style="color:var(--foreground);">reformately</a>
-        <button id="sidebar-close" class="text-[var(--foreground)] hover:text-[var(--primary)] focus:outline-none" aria-label="Close sidebar">
+        <button id="sidebar-close" class="shad-btn p-2" aria-label="Close sidebar">
           <i class="fas fa-times"></i>
         </button>
       </div>
@@ -78,14 +78,14 @@
       <div class="max-w-md mx-auto mb-4 space-y-2">
         <input id="home-search" type="text" placeholder="Search tools" class="shad-input w-full" />
         <div class="flex gap-2">
-          <select id="category-filter" class="border rounded px-2 py-1 bg-transparent flex-grow">
+          <select id="category-filter" class="shad-input flex-grow">
             <option value="All">All Categories</option>
             <option value="Images">Images</option>
             <option value="Marketing">Marketing</option>
             <option value="Writing">Writing</option>
             <option value="Utilities">Utilities</option>
           </select>
-          <select id="sort-select" class="border rounded px-2 py-1 bg-transparent">
+          <select id="sort-select" class="shad-input">
             <option value="az">A-Z</option>
             <option value="visits">Most Visited</option>
           </select>
@@ -93,39 +93,39 @@
       </div>
 
       <div id="home-tools" class="grid gap-4 md:grid-cols-2 max-w-2xl mx-auto">
-        <a href="image-converter.html" class="tool-card border rounded p-4" data-name="Image Converter" data-category="Images" data-slug="image-converter">
+        <a href="image-converter.html" class="tool-card" data-name="Image Converter" data-category="Images" data-slug="image-converter">
           <h3 class="font-semibold mb-1" style="color:var(--foreground);">Image Converter</h3>
           <p class="text-sm" style="color:var(--foreground);">Convert images between formats.</p>
         </a>
-        <a href="background-remover.html" class="tool-card border rounded p-4" data-name="Background Remover" data-category="Images" data-slug="background-remover">
+        <a href="background-remover.html" class="tool-card" data-name="Background Remover" data-category="Images" data-slug="background-remover">
           <h3 class="font-semibold mb-1" style="color:var(--foreground);">Background Remover</h3>
           <p class="text-sm" style="color:var(--foreground);">Remove the background from images.</p>
         </a>
-        <a href="google-ads-rsa-preview.html" class="tool-card border rounded p-4" data-name="Google Ads RSA Preview" data-category="Marketing" data-slug="google-ads-rsa-preview">
+        <a href="google-ads-rsa-preview.html" class="tool-card" data-name="Google Ads RSA Preview" data-category="Marketing" data-slug="google-ads-rsa-preview">
           <h3 class="font-semibold mb-1" style="color:var(--foreground);">Google Ads RSA Preview</h3>
           <p class="text-sm" style="color:var(--foreground);">Visualize responsive search ads.</p>
         </a>
-        <a href="campaign-structure.html" class="tool-card border rounded p-4" data-name="Campaign Structure" data-category="Marketing" data-slug="campaign-structure">
+        <a href="campaign-structure.html" class="tool-card" data-name="Campaign Structure" data-category="Marketing" data-slug="campaign-structure">
           <h3 class="font-semibold mb-1" style="color:var(--foreground);">Campaign Structure</h3>
           <p class="text-sm" style="color:var(--foreground);">Visualize ad campaign hierarchy.</p>
         </a>
-        <a href="bulk-match-editor.html" class="tool-card border rounded p-4" data-name="Bulk Match Type Editor" data-category="Marketing" data-slug="bulk-match-editor">
+        <a href="bulk-match-editor.html" class="tool-card" data-name="Bulk Match Type Editor" data-category="Marketing" data-slug="bulk-match-editor">
           <h3 class="font-semibold mb-1" style="color:var(--foreground);">Bulk Match Type Editor</h3>
           <p class="text-sm" style="color:var(--foreground);">Convert keywords to phrase and exact match.</p>
         </a>
-        <a href="json-formatter.html" class="tool-card border rounded p-4" data-name="JSON Formatter" data-category="Utilities" data-slug="json-formatter">
+        <a href="json-formatter.html" class="tool-card" data-name="JSON Formatter" data-category="Utilities" data-slug="json-formatter">
           <h3 class="font-semibold mb-1" style="color:var(--foreground);">JSON Formatter</h3>
           <p class="text-sm" style="color:var(--foreground);">Format or minify JSON easily.</p>
         </a>
-        <a href="color-palette.html" class="tool-card border rounded p-4" data-name="Colour Palette Extractor" data-category="Images" data-slug="color-palette">
+        <a href="color-palette.html" class="tool-card" data-name="Colour Palette Extractor" data-category="Images" data-slug="color-palette">
           <h3 class="font-semibold mb-1" style="color:var(--foreground);">Colour Palette Extractor</h3>
           <p class="text-sm" style="color:var(--foreground);">Extract dominant colours from images.</p>
         </a>
-        <a href="pdf-merger.html" class="tool-card border rounded p-4" data-name="PDF Merger" data-category="Utilities" data-slug="pdf-merger">
+        <a href="pdf-merger.html" class="tool-card" data-name="PDF Merger" data-category="Utilities" data-slug="pdf-merger">
           <h3 class="font-semibold mb-1" style="color:var(--foreground);">PDF Merger</h3>
           <p class="text-sm" style="color:var(--foreground);">Combine PDFs easily.</p>
         </a>
-        <a href="utm-builder.html" class="tool-card border rounded p-4" data-name="UTM Builder" data-category="Marketing" data-slug="utm-builder">
+        <a href="utm-builder.html" class="tool-card" data-name="UTM Builder" data-category="Marketing" data-slug="utm-builder">
           <h3 class="font-semibold mb-1" style="color:var(--foreground);">UTM Builder</h3>
           <p class="text-sm" style="color:var(--foreground);">Create tracking URLs quickly.</p>
         </a>
