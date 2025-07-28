@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const progressStatus = document.getElementById('progress-status');
   const progressContainer = document.getElementById('progress-bar-container');
   const progressBar = document.getElementById('progress-bar');
+  const extractBtn = document.getElementById('extract-btn');
+  const imageFormatSelect = document.getElementById('image-format');
+  const downloadImagesLink = document.getElementById('download-images-link');
   const selectBtn = document.getElementById('select-btn');
 
   let files = [];
@@ -177,6 +180,52 @@ document.addEventListener('DOMContentLoaded', () => {
     if (progressContainer) progressContainer.style.display = 'none';
     if (progressBar) progressBar.style.width = '0%';
     mergeBtn.disabled = false;
+  });
+  extractBtn.addEventListener('click', async () => {
+    if (files.length === 0) {
+      showNotification('Please add some PDF files first', 'error');
+      return;
+    }
+    extractBtn.disabled = true;
+    downloadImagesLink.style.display = 'none';
+    if (progressContainer) progressContainer.style.display = 'block';
+    if (progressBar) progressBar.style.width = '0%';
+    if (progressStatus) progressStatus.textContent = `Extracting 0 pages`;
+    const format = imageFormatSelect ? imageFormatSelect.value : 'jpeg';
+    const zip = new JSZip();
+    let processed = 0;
+    let total = 0;
+    for (const f of files) {
+      const buf = await f.file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+      const indices = parseRange(f.range || `1-${f.pageCount}`, pdf.numPages);
+      total += indices.length;
+      for (const idx of indices) {
+        const page = await pdf.getPage(idx + 1);
+        const viewport = page.getViewport({ scale: 2 });
+        const canvas = document.createElement('canvas');
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        const ctx = canvas.getContext('2d');
+        await page.render({ canvasContext: ctx, viewport }).promise;
+        const mime = format === 'png' ? 'image/png' : format === 'webp' ? 'image/webp' : 'image/jpeg';
+        const blob = await new Promise(r => canvas.toBlob(r, mime, 0.92));
+        const base = f.file.name.replace(/\.pdf$/i, '');
+        const ext = format === 'jpeg' ? 'jpg' : format;
+        zip.file(`${base}_p${idx + 1}.${ext}`, blob);
+        processed++;
+        if (progressStatus) progressStatus.textContent = `Extracting ${processed} of ${total}`;
+        if (progressBar) progressBar.style.width = `${Math.round((processed / total) * 100)}%`;
+      }
+    }
+    const zipBlob = await zip.generateAsync({ type: 'blob' });
+    downloadImagesLink.href = URL.createObjectURL(zipBlob);
+    downloadImagesLink.download = 'pdf_pages.zip';
+    downloadImagesLink.style.display = 'inline-block';
+    if (progressContainer) progressContainer.style.display = 'none';
+    if (progressBar) progressBar.style.width = '0%';
+    if (progressStatus) progressStatus.textContent = 'Extraction complete!';
+    extractBtn.disabled = false;
   });
 });
 

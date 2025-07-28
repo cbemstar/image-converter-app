@@ -13,6 +13,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script type="module" src="theme.js"></script>
@@ -86,6 +87,16 @@
         <div class="flex flex-col items-center gap-4">
           <button id="merge-btn" class="shad-btn">Merge PDFs</button>
           <a id="download-link" class="download-btn" href="#" download="merged.pdf" style="display:none;">Download Merged PDF</a>
+        </div>
+        <div class="flex flex-col items-center gap-4">
+          <label for="image-format" class="text-sm" style="color:var(--foreground);">Image format:</label>
+          <select id="image-format" class="border rounded p-1">
+            <option value="jpeg">JPEG</option>
+            <option value="png">PNG</option>
+            <option value="webp">WebP</option>
+          </select>
+          <button id="extract-btn" class="shad-btn">Extract Pages as Images</button>
+          <a id="download-images-link" class="download-btn" href="#" download="pages.zip" style="display:none;">Download Images ZIP</a>
         </div>
           <section class="mt-8 space-y-4">
             <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this tool</h2>
