@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script type="module" src="theme.js"></script>
   <script type="module" src="layout.js"></script>
+  <script type="module" src="request-tool.js"></script>
 </head>
 <body data-slug="request-tool" class="bg-transparent min-h-screen flex flex-col">
   <!-- Google Tag Manager (noscript) -->
@@ -71,9 +72,21 @@
       <div class="max-w-xl mx-auto">
         <h1 class="text-3xl font-bold mb-4" style="color:var(--foreground);">Request a Tool</h1>
         <p style="color:var(--foreground);">Let us know what tool you'd like us to build next.</p>
-        <div id="request-tool-embed" class="my-8">
-          <!-- loops.so embed code will be inserted here -->
-        </div>
+        <form id="tool-request-form" class="space-y-4 my-8">
+          <label class="block" style="color:var(--foreground);">Tool Name
+            <input id="tool-name" type="text" class="shad-input mt-1" placeholder="e.g. Keyword Grouper" required />
+          </label>
+          <label class="block" style="color:var(--foreground);">What problem would this solve?
+            <textarea id="tool-problem" class="shad-input mt-1" rows="3" required></textarea>
+          </label>
+          <label class="block" style="color:var(--foreground);">Your Name
+            <input id="requester-name" type="text" class="shad-input mt-1" placeholder="Optional" />
+          </label>
+          <label class="block" style="color:var(--foreground);">Email (optional)
+            <input id="requester-email" type="email" class="shad-input mt-1" placeholder="you@example.com" />
+          </label>
+          <button type="submit" class="shad-btn">Submit Request</button>
+        </form>
         <section class="space-y-4">
           <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this page</h2>
           <p style="color:var(--foreground);">Use this form to suggest new utilities that would help your marketing workflow. We review submissions regularly.</p>
