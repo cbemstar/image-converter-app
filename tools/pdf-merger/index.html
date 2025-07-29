@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-NFJTSQ3N');</script>
+  <!-- End Google Tag Manager -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Merger</title>
+  <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
+  <link rel="stylesheet" href="../../styles/styles.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script type="module" src="../../styles/theme.js"></script>
+  <script type="module" src="../../layout.js"></script>
+  <script type="module" src="pdf-merger.js"></script>
+</head>
+<body data-slug="pdf-merger" class="bg-transparent min-h-screen flex flex-col">
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  <nav class="bg-[var(--background)] shadow-md border-b border-[var(--foreground)]/30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center gap-4">
+          <button id="sidebar-toggle" class="shad-btn p-2" aria-label="Open sidebar">
+            <i class="fas fa-bars"></i>
+          </button>
+          <a href="../../index.html" class="flex items-center gap-2">
+            <span class="text-[var(--foreground)] text-xl font-bold">reformately</span>
+          </a>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="theme-toggle" class="shad-btn p-2" aria-label="Toggle theme">
+            <span id="theme-toggle-icon">🌙</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <div class="flex flex-grow">
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
+    <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full transition-transform z-40">
+      <div class="flex justify-between items-center mb-4">
+        <a href="../../index.html" class="text-xl font-bold" style="color:var(--foreground);">reformately</a>
+        <button id="sidebar-close" class="shad-btn p-2" aria-label="Close sidebar">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <h2 class="text-lg font-bold mb-4" style="color:var(--foreground);">Tools</h2>
+      <input id="tool-search" type="text" placeholder="Search" class="w-full mb-4 px-2 py-1 rounded border border-[var(--foreground)] bg-transparent" />
+      <ul id="tool-list" class="space-y-2">
+        <li><a href="../image-converter/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Image Converter</a></li>
+        <li><a href="../background-remover/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Background Remover</a></li>
+        <li><a href="../google-ads-rsa-preview/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Google Ads RSA Preview</a></li>
+        <li><a href="../campaign-structure/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Campaign Structure</a></li>
+        <li><a href="../bulk-match-editor/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Bulk Match Type Editor</a></li>
+        <li><a href="../json-formatter/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">JSON Formatter</a></li>
+        <li><a href="../color-palette/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Colour Palette Extractor</a></li>
+        <li><a href="../pdf-merger/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">PDF Merger</a></li>
+        <li><a href="../pdf-ocr/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">PDF OCR</a></li>
+        <li><a href="../meta-tag-generator/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Meta Tag Generator</a></li>
+        <li><a href="#" class="text-[var(--foreground)] hover:text-[var(--primary)]">More coming soon</a></li>
+      </ul>
+      <div class="mt-6 pt-6 border-t border-[var(--foreground)]/20">
+        <a href="../request-tool/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Request a Tool</a>
+      </div>
+    </aside>
+    <main id="main-content" class="flex-grow p-4">
+      <div class="max-w-2xl mx-auto space-y-4">
+        <h1 class="text-3xl font-bold" style="color:var(--foreground);">PDF Merger</h1>
+        <p style="color:var(--foreground);">Upload multiple PDF files, reorder them, and merge into a single document.</p>
+        <div id="drop-area" class="border-2 border-dashed border-[var(--border)] rounded-lg p-6 text-center space-y-2 bg-[var(--card)]">
+          <p class="text-sm" style="color:var(--foreground);">Drag and drop PDFs here</p>
+          <button id="select-btn" class="shad-btn">Select PDFs</button>
+          <input id="file-input" type="file" accept="application/pdf" multiple style="display:none;" />
+        </div>
+        <ul id="pdf-list" class="grid grid-cols-2 sm:grid-cols-3 gap-4"></ul>
+        <p class="text-sm text-center" style="color:var(--foreground);">Specify page ranges like <code>1-3,5</code> for each file.</p>
+        <div id="progress-status" class="text-center" style="color:var(--foreground);"></div>
+        <div id="progress-bar-container" class="w-full max-w-md mx-auto border rounded-lg p-1 bg-[var(--card)]">
+          <div id="progress-bar"></div>
+        </div>
+        <div class="flex flex-col items-center gap-4">
+          <button id="merge-btn" class="shad-btn">Merge PDFs</button>
+          <a id="download-link" class="download-btn" href="#" download="merged.pdf" style="display:none;">Download Merged PDF</a>
+        </div>
+        <div class="flex flex-col items-center gap-4">
+          <label for="image-format" class="text-sm" style="color:var(--foreground);">Image format:</label>
+          <select id="image-format" class="shad-input w-32 text-center">
+            <option value="jpeg">JPEG</option>
+            <option value="png">PNG</option>
+            <option value="webp">WebP</option>
+          </select>
+          <button id="extract-btn" class="shad-btn">Extract Pages as Images</button>
+          <a id="download-images-link" class="download-btn" href="#" download="pages.zip" style="display:none;">Download Images ZIP</a>
+        </div>
+          <section class="mt-8 space-y-4">
+            <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this tool</h2>
+            <p style="color:var(--foreground);">Combine specific pages from multiple PDFs. Reorder them and download one tidy file.</p>
+            <h3 class="text-xl font-semibold" style="color:var(--foreground);">FAQs</h3>
+            <details class="border p-4 rounded-lg bg-[var(--card)]">
+              <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Can I select only certain pages?</summary>
+              <p class="mt-2" style="color:var(--foreground);">Yes. Choose page ranges and the merger will include just those pages.</p>
+            </details>
+            <details class="border p-4 rounded-lg bg-[var(--card)]">
+              <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Does it process files online?</summary>
+              <p class="mt-2" style="color:var(--foreground);">No, everything runs locally in your browser so PDFs stay private.</p>
+            </details>
+          </section>
+      </div>
+    </main>
+  </div>
+  <footer class="bg-[var(--background)] border-t border-[var(--foreground)]/30 mt-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="text-center">
+        <p class="text-[var(--foreground)]/70">&copy; 2024 reformately. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
