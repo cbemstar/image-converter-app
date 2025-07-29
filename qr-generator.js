@@ -52,6 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const ecc = eccSelect.value || 'M';
 
     canvas.width = canvas.height = size;
+    container.style.width = `${size}px`;
+    container.style.height = `${size}px`;
 
     if (!qr) {
       qr = new QRCode(container, {
