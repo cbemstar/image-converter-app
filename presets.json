@@ -1,0 +1,18 @@
+[
+  {
+    "name": "Poster A4",
+    "width": 210,
+    "height": 297,
+    "units": "mm",
+    "dpi": 300,
+    "bleed": 3
+  },
+  {
+    "name": "Instagram Square",
+    "width": 1080,
+    "height": 1080,
+    "units": "px",
+    "dpi": 72,
+    "bleed": 0
+  }
+]

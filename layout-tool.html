@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Layout Tool</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script type="module" src="layout-tool.js"></script>
+</head>
+<body class="p-4">
+  <div class="space-y-2 mb-4">
+    <select id="preset-select" class="shad-input"></select>
+    <button id="add-text" class="shad-btn">Add Text</button>
+    <input type="file" id="img-input" accept="image/*" class="hidden" />
+    <button id="add-image" class="shad-btn">Add Image</button>
+    <button id="export-png" class="shad-btn">Export PNG</button>
+    <button id="export-pdf" class="shad-btn">Export PDF</button>
+  </div>
+  <div id="canvas-container" class="relative border bg-white" style="width:600px;height:800px">
+    <canvas id="canvas" width="600" height="800" class="border"></canvas>
+  </div>
+</body>
+</html>
