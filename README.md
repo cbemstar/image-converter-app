@@ -41,7 +41,7 @@ Access the tool at: [https://cbemstar.github.io/image-converter-app/](https://cb
 ## Authentication Setup
 
 To enable email/password and Google sign in you need a Supabase project. Update
-`SUPABASE_URL` and `SUPABASE_ANON_KEY` in `core.js` with your project values.
+`SUPABASE_URL` and `SUPABASE_ANON_KEY` in `tools/image-converter/core.js` with your project values.
 
 Ensure Google OAuth is configured in your Supabase dashboard and that your
 `users` table includes a `full_name` column (stored in the `auth.users` metadata)
@@ -67,3 +67,17 @@ The homepage lists all tools in a searchable grid. You can filter by category or
 ## React redevelopment
 
 The current implementation uses vanilla HTML and JavaScript. To adopt ShadCN UI components, create a React or Next.js project and migrate these tools into React components. Package installation was attempted in this environment but was blocked by network restrictions, so only the plan is documented here.
+
+## Repository Structure
+
+```
+/ (repo root)
+├── index.html           # landing page listing all tools
+├── styles/              # global CSS and theme scripts
+├── tools/               # one folder per tool
+│   └── <tool>/          # tool assets (HTML, JS, etc.)
+│       └── index.html
+└── README.md
+```
+
+Each tool lives entirely within its own subdirectory under `tools/`. Global styling resources are located in the `styles/` directory.

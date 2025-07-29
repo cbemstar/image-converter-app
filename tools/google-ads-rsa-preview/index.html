@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-NFJTSQ3N');</script>
+  <!-- End Google Tag Manager -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Ads RSA Preview</title>
+  <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
+  <link rel="stylesheet" href="../../styles/styles.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script type="module" src="../../styles/theme.js"></script>
+  <script type="module" src="../../layout.js"></script>
+    <style>
+        /* CSS Variables for Design Tokens */
+        :root {
+            /* Colors */
+            --background: #ffffff;
+            --foreground: #0f172a;
+            --card: #ffffff;
+            --card-foreground: #0f172a;
+            --popover: #ffffff;
+            --popover-foreground: #0f172a;
+            --primary: #0f172a;
+            --primary-foreground: #f8fafc;
+            --secondary: #f1f5f9;
+            --secondary-foreground: #0f172a;
+            --muted: #f8fafc;
+            --muted-foreground: #64748b;
+            --accent: #f1f5f9;
+            --accent-foreground: #0f172a;
+            --destructive: #ef4444;
+            --destructive-foreground: #f8fafc;
+            --border: #e2e8f0;
+            --input: #e2e8f0;
+            --ring: #0f172a;
+            --radius: 0.5rem;
+            
+            /* Typography */
+            --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+            --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+            
+            /* Spacing */
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 0.75rem;
+            --space-4: 1rem;
+            --space-5: 1.25rem;
+            --space-6: 1.5rem;
+            --space-8: 2rem;
+            --space-10: 2.5rem;
+            --space-12: 3rem;
+            --space-16: 4rem;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+        [data-theme="dark"] {
+            --background: #101624;
+            --foreground: #f3f6fa;
+            --card: #181f2e;
+            --card-foreground: #f3f6fa;
+            --popover: #181f2e;
+            --popover-foreground: #f3f6fa;
+            --primary: #3b82f6;
+            --primary-foreground: #f3f6fa;
+            --secondary: #232b3d;
+            --secondary-foreground: #f3f6fa;
+            --muted: #232b3d;
+            --muted-foreground: #b6c2d6;
+            --accent: #232b3d;
+            --accent-foreground: #f3f6fa;
+            --destructive: #ef4444;
+            --destructive-foreground: #f3f6fa;
+            --border: #2d3748;
+            --input: #2d3748;
+            --ring: #3b82f6;
+        }
+        [data-theme="light"] {
+            /* Explicitly set to default, for clarity */
+            --background: #ffffff;
+            --foreground: #0f172a;
+            --card: #ffffff;
+            --card-foreground: #0f172a;
+            --popover: #ffffff;
+            --popover-foreground: #0f172a;
+            --primary: #0f172a;
+            --primary-foreground: #f8fafc;
+            --secondary: #f1f5f9;
+            --secondary-foreground: #0f172a;
+            --muted: #f8fafc;
+            --muted-foreground: #64748b;
+            --accent: #f1f5f9;
+            --accent-foreground: #0f172a;
+            --destructive: #ef4444;
+            --destructive-foreground: #f8fafc;
+            --border: #e2e8f0;
+            --input: #e2e8f0;
+            --ring: #0f172a;
+        }
+
+        /* Reset and Base Styles */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--background);
+            color: var(--foreground);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: var(--space-6) auto;
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--primary-foreground);
+            padding: var(--space-12) var(--space-8) var(--space-8);
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%);
+            pointer-events: none;
+        }
+
+        .header h1 {
+            margin: 0 0 var(--space-3) 0;
+            font-size: clamp(1.875rem, 4vw, 2.5rem);
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            margin: 0;
+            font-size: 1.125rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-8);
+            padding: var(--space-8);
+        }
+
+        /* Form Section */
+        .form-section {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: var(--space-8);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .form-section h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: var(--space-6);
+            color: var(--foreground);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .form-section h2::before {
+            content: '';
+            width: 3px;
+            height: 1.25rem;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: var(--space-6);
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: var(--foreground);
+            display: block;
+            margin-bottom: var(--space-2);
+            font-size: 0.875rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: var(--space-3) var(--space-4);
+            border: 1px solid var(--input);
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            background: var(--background);
+            color: var(--foreground);
+            transition: all 0.2s ease;
+            margin-bottom: var(--space-1);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--ring);
+            box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--muted-foreground);
+        }
+
+        /* Character Counter */
+        .char-counter {
+            font-size: 0.75rem;
+            color: var(--muted-foreground);
+            text-align: right;
+            font-weight: 500;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+            border-radius: var(--radius);
+            font-weight: 500;
+            font-size: 0.875rem;
+            padding: var(--space-2) var(--space-4);
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .btn:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--primary-foreground);
+        }
+
+        .btn-primary:hover {
+            background: color-mix(in srgb, var(--primary) 90%, black);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: var(--secondary-foreground);
+            border-color: var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: color-mix(in srgb, var(--secondary) 80%, black);
+        }
+
+        .btn-destructive {
+            background: var(--destructive);
+            color: var(--destructive-foreground);
+        }
+
+        .btn-destructive:hover {
+            background: color-mix(in srgb, var(--destructive) 90%, black);
+        }
+
+        .btn-sm {
+            padding: var(--space-1) var(--space-3);
+            font-size: 0.75rem;
+        }
+
+        /* Section Dividers */
+        .section-divider {
+            border-top: 1px solid var(--border);
+            margin: var(--space-8) 0 var(--space-6);
+        }
+
+        /* Preview Section */
+        .preview-section {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: var(--space-8);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .preview-section h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: var(--space-6);
+            color: var(--foreground);
+        }
+
+        /* Tabs */
+        .preview-tabs {
+            display: flex;
+            gap: var(--space-1);
+            margin-bottom: var(--space-6);
+            background: var(--muted);
+            padding: var(--space-1);
+            border-radius: var(--radius);
+        }
+
+        .preview-tab {
+            background: transparent;
+            color: var(--muted-foreground);
+            border: none;
+            border-radius: calc(var(--radius) - 2px);
+            padding: var(--space-2) var(--space-4);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex: 1;
+        }
+
+        .preview-tab.active {
+            background: var(--background);
+            color: var(--foreground);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .preview-tab:hover:not(.active) {
+            background: color-mix(in srgb, var(--muted) 80%, white);
+        }
+
+        /* Google Ad Preview */
+        .google-ad-preview {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: var(--space-6);
+            background: var(--background);
+            margin-bottom: var(--space-6);
+            min-height: 200px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .ad-url {
+            color: #006621;
+            font-size: 0.875rem;
+            margin-bottom: var(--space-1);
+            font-family: var(--font-sans);
+        }
+
+        .ad-title {
+            color: #3b82f6;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: var(--space-2);
+            font-family: var(--font-sans);
+            line-height: 1.3;
+        }
+
+        .ad-description {
+            color: var(--foreground);
+            font-size: 0.875rem;
+            line-height: 1.5;
+            font-family: var(--font-sans);
+        }
+
+        .ad-extensions {
+            margin-top: var(--space-4);
+        }
+
+        .sitelinks {
+            margin-top: var(--space-3);
+        }
+
+        .sitelink {
+            color: #3b82f6;
+            font-size: 0.875rem;
+            margin-right: var(--space-4);
+            display: inline-block;
+            margin-bottom: var(--space-1);
+        }
+
+        .callout {
+            color: var(--muted-foreground);
+            font-size: 0.75rem;
+            margin-right: var(--space-3);
+            display: inline-block;
+        }
+
+        .structured-snippet {
+            color: var(--muted-foreground);
+            font-size: 0.75rem;
+            margin-right: var(--space-3);
+            display: inline-block;
+        }
+
+        .call-extension {
+            color: #3b82f6;
+            font-size: 0.875rem;
+            margin-top: var(--space-3);
+            display: block;
+        }
+
+        /* Validation Summary */
+        .validation-summary {
+            background: var(--muted);
+            padding: var(--space-4) var(--space-6);
+            border-radius: var(--radius);
+            margin-top: var(--space-6);
+            font-size: 0.875rem;
+            border: 1px solid var(--border);
+        }
+
+        .ad-strength {
+            margin-top: var(--space-4);
+            font-weight: 600;
+        }
+        .ad-strength.excellent { color: #10b981; }
+        .ad-strength.good { color: #84cc16; }
+        .ad-strength.average { color: #f59e0b; }
+        .ad-strength.poor { color: #ef4444; }
+
+        .validation-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--space-2);
+            gap: var(--space-2);
+        }
+
+        .validation-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .validation-icon {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .validation-icon.valid {
+            color: #10b981;
+        }
+
+        .validation-icon.invalid {
+            color: #ef4444;
+        }
+
+        .validation-icon.warning {
+            color: #f59e0b;
+        }
+
+        /* Snippet Values */
+        .snippet-values {
+            margin-top: var(--space-4);
+        }
+
+        .snippet-value-group {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            margin-bottom: var(--space-2);
+        }
+
+        .snippet-value-group input {
+            flex: 1;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: var(--space-6);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: var(--space-4);
+                border-radius: calc(var(--radius) - 2px);
+            }
+
+            .header {
+                padding: var(--space-8) var(--space-6) var(--space-6);
+            }
+
+            .main-content {
+                padding: var(--space-6);
+                gap: var(--space-6);
+            }
+
+            .form-section,
+            .preview-section {
+                padding: var(--space-6);
+            }
+
+            .preview-tabs {
+                flex-direction: column;
+            }
+
+            .preview-tab {
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: var(--space-2);
+            }
+
+            .header {
+                padding: var(--space-6) var(--space-4) var(--space-4);
+            }
+
+            .main-content {
+                padding: var(--space-4);
+            }
+
+            .form-section,
+            .preview-section {
+                padding: var(--space-4);
+            }
+
+            .google-ad-preview {
+                padding: var(--space-4);
+            }
+        }
+
+        /* Focus visible for accessibility */
+        .btn:focus-visible,
+        .preview-tab:focus-visible,
+        .form-group input:focus-visible,
+        .form-group textarea:focus-visible,
+        .form-group select:focus-visible {
+            outline: 2px solid var(--ring);
+            outline-offset: 2px;
+        }
+
+        /* Loading states */
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+        .ad-preview-row {
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-6);
+            flex-direction: row;
+        }
+        .ad-preview-text {
+            flex: 1;
+            min-width: 0;
+            padding-right: calc(72px + var(--space-6)); /* Reserve space for image on right */
+        }
+        .ad-image {
+            width: 72px;
+            height: 72px;
+            object-fit: cover;
+            border-radius: 12px;
+            background: var(--muted);
+            border: 1.5px solid var(--border);
+            flex-shrink: 0;
+            display: block;
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 1;
+        }
+        @media (max-width: 768px) {
+            .ad-preview-row {
+                flex-direction: column;
+                align-items: stretch;
+                position: static;
+            }
+            .ad-preview-text {
+                padding-right: 0;
+            }
+            .ad-image {
+                width: 100%;
+                height: 180px;
+                margin-bottom: var(--space-4);
+                border-radius: 16px;
+                position: static;
+                top: auto;
+                right: auto;
+            }
+        }
+        .ad-sponsored-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+            font-size: 0.95em;
+            color: var(--muted-foreground);
+            margin-bottom: var(--space-2);
+            font-weight: 500;
+        }
+        .ad-sponsored-dot {
+            font-size: 1.2em;
+            line-height: 0;
+        }
+        @media (max-width: 480px) {
+            #theme-toggle-label {
+                display: none;
+            }
+            #theme-toggle {
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body data-slug="google-ads-rsa-preview" class="bg-transparent min-h-screen flex flex-col">
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  <!-- Navigation Bar -->
+  <nav class="bg-[var(--background)] shadow-md border-b border-[var(--foreground)]/30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <!-- Logo and site name -->
+        <div class="flex items-center gap-4">
+          <button id="sidebar-toggle" class="shad-btn p-2" aria-label="Open sidebar">
+            <i class="fas fa-bars"></i>
+          </button>
+          <a href="../../index.html" class="flex items-center gap-2">
+            <span class="text-[var(--foreground)] text-xl font-bold">reformately</span>
+          </a>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="theme-toggle" class="shad-btn p-2" aria-label="Toggle theme">
+            <span id="theme-toggle-icon">🌙</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Layout -->
+  <div class="flex flex-grow">
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
+    <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full transition-transform z-40">
+      <div class="flex justify-between items-center mb-4">
+        <a href="../../index.html" class="text-xl font-bold" style="color:var(--foreground);">reformately</a>
+        <button id="sidebar-close" class="shad-btn p-2" aria-label="Close sidebar">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <h2 class="text-lg font-bold mb-4" style="color:var(--foreground);">Tools</h2>
+      <input id="tool-search" type="text" placeholder="Search" class="w-full mb-4 px-2 py-1 rounded border border-[var(--foreground)] bg-transparent" />
+      <ul id="tool-list" class="space-y-2">
+        <li><a href="../image-converter/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Image Converter</a></li>
+        <li><a href="../background-remover/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Background Remover</a></li>
+        <li><a href="../google-ads-rsa-preview/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Google Ads RSA Preview</a></li>
+        <li><a href="../campaign-structure/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Campaign Structure</a></li>
+        <li><a href="../bulk-match-editor/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Bulk Match Type Editor</a></li>
+        <li><a href="../json-formatter/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">JSON Formatter</a></li>
+        <li><a href="../color-palette/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Colour Palette Extractor</a></li>
+        <li><a href="../pdf-merger/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">PDF Merger</a></li>
+        <li><a href="../pdf-ocr/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">PDF OCR</a></li>
+        <li><a href="../meta-tag-generator/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Meta Tag Generator</a></li>
+        <li><a href="#" class="text-[var(--foreground)] hover:text-[var(--primary)]">More coming soon</a></li>
+      </ul>
+      <div class="mt-6 pt-6 border-t border-[var(--foreground)]/20">
+        <a href="../request-tool/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Request a Tool</a>
+      </div>
+    </aside>
+    <main id="main-content" class="flex-grow p-4">
+
+<div class="container">
+    <div class="header">
+        <h1>Google Ads RSA Comprehensive Preview Tool</h1>
+        <p>Simulate and preview your Responsive Search Ads with all major features and extensions.</p>
+    </div>
+    <div class="main-content">
+        <div class="form-section">
+            <h2>Ad Content</h2>
+            <div class="form-group">
+                <label for="finalUrl">Final URL</label>
+                <input type="url" id="finalUrl" placeholder="https://example.com" value="https://example.com">
+            </div>
+            <div class="form-group">
+                <label for="displayUrl">Display URL</label>
+                <input type="text" id="displayUrl" placeholder="example.com" value="example.com">
+            </div>
+            <div class="form-group">
+                <label for="path1">Path 1</label>
+                <input type="text" id="path1" maxlength="15" placeholder="e.g. shoes">
+                <div class="char-counter" id="path1-counter">0 / 15</div>
+            </div>
+            <div class="form-group">
+                <label for="path2">Path 2</label>
+                <input type="text" id="path2" maxlength="15" placeholder="e.g. men">
+                <div class="char-counter" id="path2-counter">0 / 15</div>
+            </div>
+            <div class="section-divider"></div>
+            <h2>Headlines <span style="font-size:0.75rem;font-weight:400;color:var(--muted-foreground);">(up to 15)</span></h2>
+            <div id="headlines-container"></div>
+            <button class="btn btn-primary btn-sm" id="add-headline">+ Add Headline</button>
+            <div class="section-divider"></div>
+            <h2>Descriptions <span style="font-size:0.75rem;font-weight:400;color:var(--muted-foreground);">(up to 4)</span></h2>
+            <div id="descriptions-container"></div>
+            <button class="btn btn-primary btn-sm" id="add-description">+ Add Description</button>
+            <div class="section-divider"></div>
+            <h2>Sitelinks <span style="font-size:0.75rem;font-weight:400;color:var(--muted-foreground);">(up to 4)</span></h2>
+            <div id="sitelinks-container"></div>
+            <button class="btn btn-primary btn-sm" id="add-sitelink">+ Add Sitelink</button>
+            <div class="section-divider"></div>
+            <h2>Callout Extensions <span style="font-size:0.75rem;font-weight:400;color:var(--muted-foreground);">(up to 4)</span></h2>
+            <div id="callouts-container"></div>
+            <button class="btn btn-primary btn-sm" id="add-callout">+ Add Callout</button>
+            <div class="section-divider"></div>
+            <h2>Structured Snippets <span style="font-size:0.75rem;font-weight:400;color:var(--muted-foreground);">(up to 2 headers, 10 values each)</span></h2>
+            <div id="snippets-container"></div>
+            <button class="btn btn-primary btn-sm" id="add-snippet">+ Add Structured Snippet</button>
+            <div class="section-divider"></div>
+            <h2>Image Asset <span style="font-size:0.75rem;font-weight:400;color:var(--muted-foreground);">(1:1 or 1.91:1, JPG/PNG)</span></h2>
+            <div class="form-group">
+                <label for="imageAsset">Upload Image</label>
+                <input type="file" id="imageAsset" accept="image/png, image/jpeg" title="Upload an image to preview with Performance Max">
+                <div class="char-counter" id="imageAsset-info">No image uploaded</div>
+            </div>
+            <div class="section-divider"></div>
+            <h2>Call Extension</h2>
+            <div class="form-group">
+                <label for="callExtension">Phone Number</label>
+                <input type="tel" id="callExtension" maxlength="20" placeholder="e.g. +1-555-123-4567">
+            </div>
+        </div>
+        <div class="preview-section">
+            <h2>Ad Preview</h2>
+            <div class="preview-tabs">
+                <button class="preview-tab active" id="desktop-tab" title="Show desktop preview">Desktop</button>
+                <button class="preview-tab" id="mobile-tab" title="Show mobile preview">Mobile</button>
+            </div>
+            <div class="google-ad-preview" id="ad-preview"></div>
+            <div class="validation-summary" id="validation-summary"></div>
+            <div class="ad-strength" id="ad-strength" title="How strong your ad may be based on diversity of assets"></div>
+        </div>
+    </div>
+</div>
+<script>
+// --- Constants ---
+const MAX_HEADLINES = 15;
+const MAX_DESCRIPTIONS = 4;
+const MAX_SITELINKS = 4;
+const MAX_CALLOUTS = 4;
+const MAX_SNIPPETS = 2;
+const MAX_SNIPPET_VALUES = 10;
+const HEADLINE_LIMIT = 30;
+const DESCRIPTION_LIMIT = 90;
+const SITELINK_LIMIT = 25;
+const CALLOUT_LIMIT = 25;
+const SNIPPET_HEADER_LIMIT = 25;
+const SNIPPET_VALUE_LIMIT = 25;
+
+// --- Utility Functions ---
+function createInput(type, value, placeholder, maxLength, className = '', onInput = null) {
+    const input = document.createElement(type === 'textarea' ? 'textarea' : 'input');
+    if (type !== 'textarea') input.type = type;
+    input.value = value || '';
+    input.placeholder = placeholder || '';
+    if (type === 'text' || type === 'textarea') {
+        input.title = 'Supports dynamic parameters like {Keyword:Default} and {Countdown(2024-12-31)}';
+    }
+    if (maxLength) input.maxLength = maxLength;
+    if (className) input.className = className;
+    if (onInput) input.addEventListener('input', onInput);
+    return input;
+}
+
+function createCharCounter(limit, id) {
+    const div = document.createElement('div');
+    div.className = 'char-counter';
+    if (id) div.id = id;
+    div.textContent = `0 / ${limit}`;
+    return div;
+}
+
+function updateCharCounter(input, counter, limit) {
+    counter.textContent = `${input.value.length} / ${limit}`;
+    if (input.value.length > limit) {
+        counter.style.color = 'var(--destructive)';
+    } else {
+        counter.style.color = 'var(--muted-foreground)';
+    }
+}
+
+function removeElement(btn, container) {
+    btn.addEventListener('click', () => container.remove());
+}
+
+function applyDynamicParams(text) {
+    // Countdown replacement
+    text = text.replace(/\{Countdown\(([^)]+)\)\}/gi, (_, dateStr) => {
+        const target = new Date(dateStr);
+        if (isNaN(target)) return '';
+        const diff = Math.ceil((target - new Date()) / (1000 * 60 * 60 * 24));
+        return diff > 0 ? diff + ' days' : '0 days';
+    });
+    // Keyword insertion
+    text = text.replace(/\{Keyword:([^}]+)\}/gi, (_, def) => def);
+    return text;
+}
+
+// --- Dynamic Fields ---
+function addHeadline(value = '') {
+    const container = document.getElementById('headlines-container');
+    if (container.children.length >= MAX_HEADLINES) return;
+    const idx = container.children.length + 1;
+    const group = document.createElement('div');
+    group.className = 'form-group';
+    const label = document.createElement('label');
+    label.textContent = `Headline ${idx}`;
+    const input = createInput('text', value, `Enter headline ${idx}`, HEADLINE_LIMIT);
+    const counter = createCharCounter(HEADLINE_LIMIT);
+    input.addEventListener('input', () => {
+        updateCharCounter(input, counter, HEADLINE_LIMIT);
+        renderPreview();
+        renderValidation();
+    });
+    updateCharCounter(input, counter, HEADLINE_LIMIT);
+    group.appendChild(label);
+    group.appendChild(input);
+    const pin = document.createElement('select');
+    pin.className = 'pin-select';
+    pin.title = 'Pin this headline to a specific position';
+    pin.innerHTML = '<option value="">Unpinned</option>' + Array.from({length: MAX_HEADLINES}, (_,i)=>`<option value="${i+1}">Position ${i+1}</option>`).join('');
+    pin.addEventListener('change', () => { renderPreview(); renderValidation(); });
+    group.appendChild(pin);
+    group.appendChild(counter);
+    if (container.children.length > 2) {
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn btn-destructive btn-sm';
+        removeBtn.textContent = 'Remove';
+        removeElement(removeBtn, group);
+        group.appendChild(removeBtn);
+    }
+    container.appendChild(group);
+}
+
+function addDescription(value = '') {
+    const container = document.getElementById('descriptions-container');
+    if (container.children.length >= MAX_DESCRIPTIONS) return;
+    const idx = container.children.length + 1;
+    const group = document.createElement('div');
+    group.className = 'form-group';
+    const label = document.createElement('label');
+    label.textContent = `Description ${idx}`;
+    const input = createInput('textarea', value, `Enter description ${idx}`, DESCRIPTION_LIMIT);
+    input.rows = 2;
+    const counter = createCharCounter(DESCRIPTION_LIMIT);
+    input.addEventListener('input', () => {
+        updateCharCounter(input, counter, DESCRIPTION_LIMIT);
+        renderPreview();
+        renderValidation();
+    });
+    updateCharCounter(input, counter, DESCRIPTION_LIMIT);
+    group.appendChild(label);
+    group.appendChild(input);
+    const pin = document.createElement('select');
+    pin.className = 'pin-select';
+    pin.title = 'Pin this description to a specific position';
+    pin.innerHTML = '<option value="">Unpinned</option>' + Array.from({length: MAX_DESCRIPTIONS}, (_,i)=>`<option value="${i+1}">Position ${i+1}</option>`).join('');
+    pin.addEventListener('change', () => { renderPreview(); renderValidation(); });
+    group.appendChild(pin);
+    group.appendChild(counter);
+    if (container.children.length > 1) {
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn btn-destructive btn-sm';
+        removeBtn.textContent = 'Remove';
+        removeElement(removeBtn, group);
+        group.appendChild(removeBtn);
+    }
+    container.appendChild(group);
+}
+
+function addSitelink(link = {text:'', url:'', desc1:'', desc2:''}) {
+    const container = document.getElementById('sitelinks-container');
+    if (container.children.length >= MAX_SITELINKS) return;
+    const idx = container.children.length + 1;
+    const group = document.createElement('div');
+    group.className = 'form-group';
+    const label = document.createElement('label');
+    label.textContent = `Sitelink ${idx}`;
+    const input = createInput('text', link.text, `Sitelink text`, SITELINK_LIMIT);
+    const urlInput = createInput('text', link.url, `Sitelink URL`, 1024);
+    const desc1 = createInput('text', link.desc1, `Description 1 (optional)`, SITELINK_LIMIT);
+    const desc2 = createInput('text', link.desc2, `Description 2 (optional)`, SITELINK_LIMIT);
+    const counter = createCharCounter(SITELINK_LIMIT);
+    input.addEventListener('input', () => {
+        updateCharCounter(input, counter, SITELINK_LIMIT);
+        renderPreview();
+        renderValidation();
+    });
+    updateCharCounter(input, counter, SITELINK_LIMIT);
+    group.appendChild(label);
+    group.appendChild(input);
+    group.appendChild(counter);
+    group.appendChild(urlInput);
+    group.appendChild(desc1);
+    group.appendChild(desc2);
+    if (container.children.length > 0) {
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn btn-destructive btn-sm';
+        removeBtn.textContent = 'Remove';
+        removeElement(removeBtn, group);
+        group.appendChild(removeBtn);
+    }
+    container.appendChild(group);
+}
+
+function addCallout(value = '') {
+    const container = document.getElementById('callouts-container');
+    if (container.children.length >= MAX_CALLOUTS) return;
+    const idx = container.children.length + 1;
+    const group = document.createElement('div');
+    group.className = 'form-group';
+    const label = document.createElement('label');
+    label.textContent = `Callout ${idx}`;
+    const input = createInput('text', value, `Callout text`, CALLOUT_LIMIT);
+    const counter = createCharCounter(CALLOUT_LIMIT);
+    input.addEventListener('input', () => {
+        updateCharCounter(input, counter, CALLOUT_LIMIT);
+        renderPreview();
+        renderValidation();
+    });
+    updateCharCounter(input, counter, CALLOUT_LIMIT);
+    group.appendChild(label);
+    group.appendChild(input);
+    group.appendChild(counter);
+    if (container.children.length > 0) {
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn btn-destructive btn-sm';
+        removeBtn.textContent = 'Remove';
+        removeElement(removeBtn, group);
+        group.appendChild(removeBtn);
+    }
+    container.appendChild(group);
+}
+
+function addSnippet(snippet = {header:'', values:[]}) {
+    const container = document.getElementById('snippets-container');
+    if (container.children.length >= MAX_SNIPPETS) return;
+    const idx = container.children.length + 1;
+    const group = document.createElement('div');
+    group.className = 'form-group';
+    const label = document.createElement('label');
+    label.textContent = `Structured Snippet ${idx} Header`;
+    const headerInput = createInput('text', snippet.header, `Header (e.g. Brands)`, SNIPPET_HEADER_LIMIT);
+    const headerCounter = createCharCounter(SNIPPET_HEADER_LIMIT);
+    headerInput.addEventListener('input', () => {
+        updateCharCounter(headerInput, headerCounter, SNIPPET_HEADER_LIMIT);
+        renderPreview();
+        renderValidation();
+    });
+    updateCharCounter(headerInput, headerCounter, SNIPPET_HEADER_LIMIT);
+    group.appendChild(label);
+    group.appendChild(headerInput);
+    group.appendChild(headerCounter);
+    
+    // Values
+    const valuesDiv = document.createElement('div');
+    valuesDiv.className = 'snippet-values';
+    for (let i = 0; i < (snippet.values.length || 1); i++) {
+        addSnippetValue(valuesDiv, snippet.values[i] || '');
+    }
+    
+    const addValueBtn = document.createElement('button');
+    addValueBtn.className = 'btn btn-secondary btn-sm';
+    addValueBtn.textContent = '+ Add Value';
+    addValueBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (valuesDiv.children.length < MAX_SNIPPET_VALUES) {
+            addSnippetValue(valuesDiv, '');
+            renderPreview();
+            renderValidation();
+        }
+    });
+    group.appendChild(valuesDiv);
+    group.appendChild(addValueBtn);
+    
+    if (container.children.length > 0) {
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn btn-destructive btn-sm';
+        removeBtn.textContent = 'Remove';
+        removeElement(removeBtn, group);
+        group.appendChild(removeBtn);
+    }
+    container.appendChild(group);
+}
+
+function addSnippetValue(valuesDiv, value) {
+    const valueGroup = document.createElement('div');
+    valueGroup.className = 'snippet-value-group';
+    const input = createInput('text', value, 'Value', SNIPPET_VALUE_LIMIT);
+    const counter = createCharCounter(SNIPPET_VALUE_LIMIT);
+    input.addEventListener('input', () => {
+        updateCharCounter(input, counter, SNIPPET_VALUE_LIMIT);
+        renderPreview();
+        renderValidation();
+    });
+    updateCharCounter(input, counter, SNIPPET_VALUE_LIMIT);
+    valueGroup.appendChild(input);
+    valueGroup.appendChild(counter);
+    if (valuesDiv.children.length > 0) {
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn btn-destructive btn-sm';
+        removeBtn.textContent = 'Remove';
+        removeElement(removeBtn, valueGroup);
+        valueGroup.appendChild(removeBtn);
+    }
+    valuesDiv.appendChild(valueGroup);
+}
+
+// --- Initial Fields ---
+document.addEventListener('DOMContentLoaded', () => {
+    // Headlines
+    for (let i = 0; i < 3; i++) addHeadline();
+    document.getElementById('add-headline').addEventListener('click', (e) => {
+        e.preventDefault();
+        addHeadline();
+        renderPreview();
+        renderValidation();
+    });
+    
+    // Descriptions
+    for (let i = 0; i < 2; i++) addDescription();
+    document.getElementById('add-description').addEventListener('click', (e) => {
+        e.preventDefault();
+        addDescription();
+        renderPreview();
+        renderValidation();
+    });
+    
+    // Sitelinks
+    addSitelink();
+    document.getElementById('add-sitelink').addEventListener('click', (e) => {
+        e.preventDefault();
+        addSitelink();
+        renderPreview();
+        renderValidation();
+    });
+    
+    // Callouts
+    addCallout();
+    document.getElementById('add-callout').addEventListener('click', (e) => {
+        e.preventDefault();
+        addCallout();
+        renderPreview();
+        renderValidation();
+    });
+    
+    // Snippets
+    addSnippet();
+    document.getElementById('add-snippet').addEventListener('click', (e) => {
+        e.preventDefault();
+        addSnippet();
+        renderPreview();
+        renderValidation();
+    });
+    
+    // Path fields
+    document.getElementById('path1').addEventListener('input', (e) => {
+        updateCharCounter(e.target, document.getElementById('path1-counter'), 15);
+        renderPreview();
+        renderValidation();
+    });
+    document.getElementById('path2').addEventListener('input', (e) => {
+        updateCharCounter(e.target, document.getElementById('path2-counter'), 15);
+        renderPreview();
+        renderValidation();
+    });
+    
+    // Final/Display URL
+    document.getElementById('finalUrl').addEventListener('input', () => { renderPreview(); renderValidation(); });
+    document.getElementById('displayUrl').addEventListener('input', () => { renderPreview(); renderValidation(); });
+    
+    // Call extension
+    document.getElementById('callExtension').addEventListener('input', () => { renderPreview(); renderValidation(); });
+    
+    // Image upload
+    const imageInput = document.getElementById('imageAsset');
+    const imageInfo = document.getElementById('imageAsset-info');
+    imageInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                imageAssetDataUrl = evt.target.result;
+                imageInfo.textContent = file.name + ' (' + Math.round(file.size/1024) + ' KB)';
+                renderPreview();
+            };
+            reader.readAsDataURL(file);
+        } else {
+            imageAssetDataUrl = '';
+            imageInfo.textContent = 'No image uploaded';
+            renderPreview();
+        }
+    });
+    
+    // Tabs
+    document.getElementById('desktop-tab').addEventListener('click', () => {
+        document.getElementById('desktop-tab').classList.add('active');
+        document.getElementById('mobile-tab').classList.remove('active');
+        renderPreview('desktop');
+    });
+    document.getElementById('mobile-tab').addEventListener('click', () => {
+        document.getElementById('mobile-tab').classList.add('active');
+        document.getElementById('desktop-tab').classList.remove('active');
+        renderPreview('mobile');
+    });
+    
+    // Initial render
+    renderPreview();
+    renderValidation();
+});
+
+// --- Preview Rendering ---
+function renderPreview(mode) {
+    const isMobile = (mode === 'mobile') || document.getElementById('mobile-tab').classList.contains('active');
+    
+    // Gather ad data
+    const finalUrl = document.getElementById('finalUrl').value || 'https://example.com';
+    const displayUrl = document.getElementById('displayUrl').value || 'example.com';
+    const path1 = document.getElementById('path1').value;
+    const path2 = document.getElementById('path2').value;
+    
+    // Headlines
+    const headlineGroups = document.querySelectorAll('#headlines-container .form-group');
+    const orderedHeadlines = Array(MAX_HEADLINES).fill(null);
+    const unpinnedHeads = [];
+    Array.from(headlineGroups).forEach(g => {
+        const text = g.querySelector('input').value;
+        const pin = g.querySelector('.pin-select').value;
+        if (text.trim()) {
+            const processed = applyDynamicParams(text);
+            if (pin) orderedHeadlines[parseInt(pin)-1] = processed;
+            else unpinnedHeads.push(processed);
+        }
+    });
+    for (let i=0;i<orderedHeadlines.length;i++) {
+        if (!orderedHeadlines[i] && unpinnedHeads.length) orderedHeadlines[i] = unpinnedHeads.shift();
+    }
+    const headlines = orderedHeadlines.filter(Boolean);
+    
+    // Descriptions
+    const descGroups = document.querySelectorAll('#descriptions-container .form-group');
+    const orderedDescs = Array(MAX_DESCRIPTIONS).fill(null);
+    const unpinnedDescs = [];
+    Array.from(descGroups).forEach(g => {
+        const textarea = g.querySelector('textarea');
+        const pin = g.querySelector('.pin-select').value;
+        const text = textarea.value;
+        if (text.trim()) {
+            const processed = applyDynamicParams(text);
+            if (pin) orderedDescs[parseInt(pin)-1] = processed;
+            else unpinnedDescs.push(processed);
+        }
+    });
+    for (let i=0;i<orderedDescs.length;i++) {
+        if (!orderedDescs[i] && unpinnedDescs.length) orderedDescs[i] = unpinnedDescs.shift();
+    }
+    const descriptions = orderedDescs.filter(Boolean);
+    
+    // Sitelinks
+    const sitelinkGroups = document.querySelectorAll('#sitelinks-container .form-group');
+    const sitelinks = Array.from(sitelinkGroups).map(g => {
+        const [text, url, desc1, desc2] = g.querySelectorAll('input');
+        return {
+            text: text.value,
+            url: url.value,
+            desc1: desc1.value,
+            desc2: desc2.value
+        };
+    }).filter(s => s.text);
+    
+    // Callouts
+    const calloutInputs = document.querySelectorAll('#callouts-container input');
+    const callouts = Array.from(calloutInputs).map(i => i.value).filter(Boolean);
+    
+    // Structured Snippets
+    const snippetGroups = document.querySelectorAll('#snippets-container .form-group');
+    const snippets = Array.from(snippetGroups).map(g => {
+        const header = g.querySelector('input').value;
+        const values = Array.from(g.querySelectorAll('.snippet-values input')).map(i => i.value).filter(Boolean);
+        return { header, values };
+    }).filter(s => s.header && s.values.length);
+    
+    // Call extension
+    const callExtension = document.getElementById('callExtension').value;
+    
+    // Compose preview
+    let html = '';
+    
+    // Sponsored label and URL row
+    html += `<div class="ad-sponsored-row"><span>Sponsored</span><span class="ad-sponsored-dot">•</span><span>${displayUrl}${path1 ? '/' + path1 : ''}${path2 ? '/' + path2 : ''}</span></div>`;
+    // Ad preview row (text + image absolutely positioned top right for desktop, image above for mobile)
+    html += '<div class="ad-preview-row">';
+    if (isMobile) {
+        // Mobile: image above
+        if (imageAssetDataUrl) {
+            html += `<img class="ad-image" src="${imageAssetDataUrl}" alt="Ad image">`;
+        } else {
+            html += `<div class="ad-image" style="display:flex;align-items:center;justify-content:center;color:var(--muted-foreground);font-size:2.5em;">🖼️</div>`;
+        }
+    }
+    html += '<div class="ad-preview-text">';
+    // Headlines (show up to 3, joined by ' | ')
+    html += `<div class="ad-title">${headlines.slice(0,3).join(' | ') || '<span style="color:var(--muted-foreground)">Your ad title will appear here</span>'}</div>`;
+    // Description (show up to 2, joined by ' ')
+    html += `<div class="ad-description">${descriptions.slice(0,2).join(' ') || '<span style="color:var(--muted-foreground)">Your ad description will appear here.</span>'}</div>`;
+    // Extensions
+    html += '<div class="ad-extensions">';
+    // Sitelinks
+    if (sitelinks.length) {
+        html += '<div class="sitelinks">';
+        sitelinks.forEach(s => {
+            html += `<div class="sitelink">${s.text}</div>`;
+        });
+        html += '</div>';
+    }
+    // Callouts
+    if (callouts.length) {
+        html += '<div class="callouts">';
+        callouts.forEach(c => {
+            html += `<span class="callout">${c}</span>`;
+        });
+        html += '</div>';
+    }
+    // Structured Snippets
+    if (snippets.length) {
+        html += '<div class="structured-snippets">';
+        snippets.forEach(sn => {
+            html += `<span class="structured-snippet"><b>${sn.header}:</b> ${sn.values.join(', ')}</span>`;
+        });
+        html += '</div>';
+    }
+    // Call extension
+    if (callExtension) {
+        html += `<div class="call-extension">Call: <a href="tel:${callExtension}">${callExtension}</a></div>`;
+    }
+    html += '</div>'; // end ad-preview-text
+    // Desktop: absolutely position image top right
+    if (!isMobile) {
+        if (imageAssetDataUrl) {
+            html += `<img class="ad-image" src="${imageAssetDataUrl}" alt="Ad image">`;
+        } else {
+            html += `<div class="ad-image" style="display:flex;align-items:center;justify-content:center;color:var(--muted-foreground);font-size:2.5em;">🖼️</div>`;
+        }
+    }
+    html += '</div>'; // end ad-preview-row
+    document.getElementById('ad-preview').innerHTML = html;
+    renderAdStrength(headlines, descriptions);
+}
+
+// --- Validation ---
+function renderValidation() {
+    const summary = document.getElementById('validation-summary');
+    let validations = [];
+    
+    // Headlines
+    const headlineInputs = document.querySelectorAll('#headlines-container input');
+    const headlines = Array.from(headlineInputs).map(i => i.value);
+    const filledHeadlines = headlines.filter(h => h.trim());
+    if (filledHeadlines.length < 3) {
+        validations.push({icon:'warning', text:'At least 3 headlines recommended (max 15).'});
+    } else {
+        validations.push({icon:'valid', text:`${filledHeadlines.length} headlines added.`});
+    }
+    headlines.forEach((h, i) => {
+        if (h.length > HEADLINE_LIMIT) validations.push({icon:'invalid', text:`Headline ${i+1} exceeds ${HEADLINE_LIMIT} characters.`});
+    });
+    
+    // Descriptions
+    const descInputs = document.querySelectorAll('#descriptions-container textarea');
+    const descriptions = Array.from(descInputs).map(i => i.value);
+    const filledDescs = descriptions.filter(d => d.trim());
+    if (filledDescs.length < 2) {
+        validations.push({icon:'warning', text:'At least 2 descriptions recommended (max 4).'});
+    } else {
+        validations.push({icon:'valid', text:`${filledDescs.length} descriptions added.`});
+    }
+    descriptions.forEach((d, i) => {
+        if (d.length > DESCRIPTION_LIMIT) validations.push({icon:'invalid', text:`Description ${i+1} exceeds ${DESCRIPTION_LIMIT} characters.`});
+    });
+    
+    // Sitelinks
+    const sitelinkGroups = document.querySelectorAll('#sitelinks-container .form-group');
+    Array.from(sitelinkGroups).forEach((g, i) => {
+        const [text] = g.querySelectorAll('input');
+        if (text.value.length > SITELINK_LIMIT) validations.push({icon:'invalid', text:`Sitelink ${i+1} exceeds ${SITELINK_LIMIT} characters.`});
+    });
+    
+    // Callouts
+    const calloutInputs = document.querySelectorAll('#callouts-container input');
+    Array.from(calloutInputs).forEach((c, i) => {
+        if (c.value.length > CALLOUT_LIMIT) validations.push({icon:'invalid', text:`Callout ${i+1} exceeds ${CALLOUT_LIMIT} characters.`});
+    });
+    
+    // Snippets
+    const snippetGroups = document.querySelectorAll('#snippets-container .form-group');
+    Array.from(snippetGroups).forEach((g, i) => {
+        const header = g.querySelector('input').value;
+        if (header.length > SNIPPET_HEADER_LIMIT) validations.push({icon:'invalid', text:`Snippet header ${i+1} exceeds ${SNIPPET_HEADER_LIMIT} characters.`});
+        const values = Array.from(g.querySelectorAll('.snippet-values input'));
+        values.forEach((v, j) => {
+            if (v.value.length > SNIPPET_VALUE_LIMIT) validations.push({icon:'invalid', text:`Snippet value ${j+1} in header ${i+1} exceeds ${SNIPPET_VALUE_LIMIT} characters.`});
+        });
+    });
+    
+    // Path fields
+    const path1 = document.getElementById('path1').value;
+    const path2 = document.getElementById('path2').value;
+    if (path1.length > 15) validations.push({icon:'invalid', text:'Path 1 exceeds 15 characters.'});
+    if (path2.length > 15) validations.push({icon:'invalid', text:'Path 2 exceeds 15 characters.'});
+    
+    // Final/Display URL
+    if (!document.getElementById('finalUrl').value) validations.push({icon:'invalid', text:'Final URL is required.'});
+    if (!document.getElementById('displayUrl').value) validations.push({icon:'invalid', text:'Display URL is required.'});
+    
+    // Call extension
+    const callExtension = document.getElementById('callExtension').value;
+    if (callExtension && !/^\+?[0-9\-\s()]+$/.test(callExtension)) validations.push({icon:'invalid', text:'Call extension phone number format is invalid.'});
+    
+    // Render
+    summary.innerHTML = validations.map(v =>
+        `<div class="validation-item"><span class="validation-icon ${v.icon}">${v.icon==='valid'?'✓':v.icon==='invalid'?'✗':'⚠'}</span>${v.text}</div>`
+    ).join('') || '<div class="validation-item"><span class="validation-icon valid">✓</span>Ready to preview</div>';
+}
+
+function renderAdStrength(headlines, descriptions) {
+    const container = document.getElementById('ad-strength');
+    const unique = new Set([...headlines, ...descriptions].filter(Boolean)).size;
+    let rating = 'poor';
+    if (unique >= 15) rating = 'excellent';
+    else if (unique >= 10) rating = 'good';
+    else if (unique >= 5) rating = 'average';
+    container.textContent = `Ad Strength: ${rating.charAt(0).toUpperCase()+rating.slice(1)}`;
+    container.className = `ad-strength ${rating}`;
+}
+
+// --- Global image asset variable ---
+let imageAssetDataUrl = '';
+</script>
+
+      <section class="mt-8 space-y-4 max-w-xl mx-auto">
+        <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this tool</h2>
+        <p style="color:var(--foreground);">Use the RSA preview to craft your responsive search ads before launching them in Google Ads. Test different headlines, descriptions and assets to ensure everything fits Google's guidelines.</p>
+        <h3 class="text-xl font-semibold" style="color:var(--foreground);">FAQs</h3>
+        <details class="border p-2 rounded">
+          <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Why preview RSAs?</summary>
+          <p class="mt-2" style="color:var(--foreground);">Previewing ads helps you verify character counts and extensions so your final ad looks polished when it serves.</p>
+        </details>
+        <details class="border p-2 rounded">
+          <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Does this create the ad in Google Ads?</summary>
+          <p class="mt-2" style="color:var(--foreground);">No. This tool only simulates the look and validates text length. You'll still create the ad in your Google Ads account.</p>
+        </details>
+      </section>
+</main>
+</div>
+  <footer class="bg-[var(--background)] border-t border-[var(--foreground)]/30 mt-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="text-center">
+        <p class="text-[var(--foreground)]/70">&copy; 2024 reformately. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+      
+  <!-- ../../layout.js handles sidebar functionality -->
+</body>
+</html>
