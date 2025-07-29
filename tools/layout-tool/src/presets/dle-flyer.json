@@ -1,0 +1,8 @@
+{
+  "id": "dle-flyer",
+  "name": "DLE Flyer",
+  "width": 99,
+  "height": 210,
+  "bleed": 3,
+  "safe": 10
+}
