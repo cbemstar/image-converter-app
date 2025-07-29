@@ -10,7 +10,6 @@
   <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
   <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script type="module" src="theme.js"></script>
@@ -81,15 +80,26 @@
         <div class="space-y-2">
           <select id="preset-select" class="shad-input"></select>
           <div class="flex flex-wrap gap-2">
+            <select id="page-select" class="shad-input w-24"></select>
+            <button id="add-page" class="shad-btn">Add Page</button>
+            <button id="undo" class="shad-btn">Undo</button>
+            <button id="redo" class="shad-btn">Redo</button>
+          </div>
+          <div class="flex flex-wrap gap-2">
             <button id="add-text" class="shad-btn">Add Text</button>
             <input type="file" id="img-input" accept="image/*" class="hidden" />
             <button id="add-image" class="shad-btn">Add Image</button>
-            <button id="export-png" class="shad-btn">Export PNG</button>
-            <button id="export-pdf" class="shad-btn">Export PDF</button>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button id="export-png" class="shad-btn">PNG</button>
+            <button id="export-jpg" class="shad-btn">JPG</button>
+            <button id="export-svg" class="shad-btn">SVG</button>
+            <button id="export-pdf" class="shad-btn">PDF</button>
           </div>
         </div>
         <div id="canvas-container" class="relative border bg-white" style="width:600px;height:800px">
           <canvas id="canvas" width="600" height="800" class="border"></canvas>
+          <div id="progress" class="absolute inset-0 flex items-center justify-center bg-black/50 text-white hidden">Processing...</div>
         </div>
       </div>
     </main>
