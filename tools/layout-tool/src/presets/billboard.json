@@ -1,0 +1,8 @@
+{
+  "id": "billboard",
+  "name": "Billboard",
+  "width": 3600,
+  "height": 2400,
+  "bleed": 5,
+  "safe": 50
+}

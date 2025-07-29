@@ -1,0 +1,8 @@
+{
+  "id": "print-ad-100x110",
+  "name": "Print Ad 100x110",
+  "width": 100,
+  "height": 110,
+  "bleed": 3,
+  "safe": 5
+}
