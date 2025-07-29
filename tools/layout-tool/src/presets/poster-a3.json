@@ -1,0 +1,8 @@
+{
+  "id": "poster-a3",
+  "name": "A3 Poster",
+  "width": 297,
+  "height": 420,
+  "bleed": 3,
+  "safe": 10
+}
