@@ -5,12 +5,16 @@ import { TextObject } from '@core/TextObject';
 import ImageControls from './ImageControls';
 import ViewMenu from './ViewMenu';
 import ExportDialog from './ExportDialog';
+import Sidebar from './Sidebar';
+import TopBar from './TopBar';
+import CommandStack from '@core/CommandStack';
 
 export default function App() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [doc, setDoc] = useState<Doc | null>(null);
   const engineRef = useRef<CanvasEngine | null>(null);
   const [showExport, setShowExport] = useState(false);
+  const commandStackRef = useRef(new CommandStack());
 
   useEffect(() => {
     if (containerRef.current && doc) {
@@ -50,21 +54,19 @@ export default function App() {
   };
 
   return (
-    <div className="p-4">
-      {!doc && (
-        <NewDocumentDialog open onClose={() => {}} onCreate={handleCreate} />
-      )}
-      {engineRef.current && <ViewMenu engine={engineRef.current} />}
-      {engineRef.current && (
-        <button
-          className="bg-green-600 px-3 py-1 rounded mb-2 ml-2"
-          onClick={() => setShowExport(true)}
-        >
-          Export
-        </button>
-      )}
-      <div ref={containerRef} />
-      {engineRef.current && <ImageControls engine={engineRef.current} />}
+    <div className="flex h-screen text-sm text-white">
+      <Sidebar />
+      <div className="flex-1 flex flex-col">
+        <TopBar stack={commandStackRef.current} onExport={() => setShowExport(true)} />
+        <div className="p-4 flex-1 overflow-auto">
+          {!doc && (
+            <NewDocumentDialog open onClose={() => {}} onCreate={handleCreate} />
+          )}
+          {engineRef.current && <ViewMenu engine={engineRef.current} />}
+          <div ref={containerRef} className="mt-2" />
+          {engineRef.current && <ImageControls engine={engineRef.current} />}
+        </div>
+      </div>
       {engineRef.current && (
         <ExportDialog
           open={showExport}
