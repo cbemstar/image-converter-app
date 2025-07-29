@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-NFJTSQ3N');</script>
+  <!-- End Google Tag Manager -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Code Generator</title>
+  <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script type="module" src="theme.js"></script>
+  <script type="module" src="layout.js"></script>
+  <script type="module" src="qr-generator.js"></script>
+</head>
+<body data-slug="qr-generator" class="bg-transparent min-h-screen flex flex-col">
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  <nav class="bg-[var(--background)] shadow-md border-b border-[var(--foreground)]/30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center gap-4">
+          <button id="sidebar-toggle" class="shad-btn p-2" aria-label="Open sidebar">
+            <i class="fas fa-bars"></i>
+          </button>
+          <a href="index.html" class="flex items-center gap-2">
+            <span class="text-[var(--foreground)] text-xl font-bold">reformately</span>
+          </a>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="theme-toggle" class="shad-btn p-2" aria-label="Toggle theme">
+            <span id="theme-toggle-icon">🌙</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="flex flex-grow">
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
+    <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full transition-transform z-40">
+      <div class="flex justify-between items-center mb-4">
+        <a href="index.html" class="text-xl font-bold" style="color:var(--foreground);">reformately</a>
+        <button id="sidebar-close" class="shad-btn p-2" aria-label="Close sidebar">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <h2 class="text-lg font-bold mb-4" style="color:var(--foreground);">Tools</h2>
+      <input id="tool-search" type="text" placeholder="Search" class="w-full mb-4 px-2 py-1 rounded border border-[var(--foreground)] bg-transparent" />
+      <ul id="tool-list" class="space-y-2">
+        <li><a href="image-converter.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Image Converter</a></li>
+        <li><a href="background-remover.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Background Remover</a></li>
+        <li><a href="google-ads-rsa-preview.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Google Ads RSA Preview</a></li>
+        <li><a href="campaign-structure.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Campaign Structure</a></li>
+        <li><a href="bulk-match-editor.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Bulk Match Type Editor</a></li>
+        <li><a href="json-formatter.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">JSON Formatter</a></li>
+        <li><a href="color-palette.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Colour Palette Extractor</a></li>
+        <li><a href="pdf-merger.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">PDF Merger</a></li>
+        <li><a href="utm-builder.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">UTM Builder</a></li>
+        <li><a href="qr-generator.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">QR Code Generator</a></li>
+        <li><a href="#" class="text-[var(--foreground)] hover:text-[var(--primary)]">More coming soon</a></li>
+      </ul>
+      <div class="mt-6 pt-6 border-t border-[var(--foreground)]/20">
+        <a href="request-tool.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Request a Tool</a>
+      </div>
+    </aside>
+    <main id="main-content" class="flex-grow p-4">
+      <div class="max-w-xl mx-auto">
+        <h1 class="text-3xl font-bold" style="color:var(--foreground);">QR Code Generator</h1>
+        <p class="mb-4" style="color:var(--foreground);">Create QR codes from any text or URL. Changes update in real time.</p>
+        <div class="space-y-4">
+          <label class="block">
+            <span style="color:var(--foreground);">Text or URL</span>
+            <input id="qr-input" type="text" class="shad-input mt-1" placeholder="Enter text or URL" aria-describedby="url-hint" />
+          </label>
+          <p id="url-hint" class="text-sm" style="color:var(--foreground);"></p>
+          <label class="block">
+            <span style="color:var(--foreground);">Size (100-1000px)</span>
+            <input id="qr-size" type="number" min="100" max="1000" step="50" value="200" class="shad-input mt-1" />
+          </label>
+          <label class="block">
+            <span style="color:var(--foreground);">Error Correction Level</span>
+            <select id="qr-ecc" class="shad-input mt-1" title="Higher levels are more resilient but make the code denser.">
+              <option value="L">L - Low</option>
+              <option value="M" selected>M - Medium</option>
+              <option value="Q">Q - Quartile</option>
+              <option value="H">H - High</option>
+            </select>
+          </label>
+          <div class="flex gap-4">
+            <label class="flex items-center gap-2" title="Colour of the modules">
+              <span style="color:var(--foreground);">Foreground</span>
+              <input id="qr-fg" type="color" value="#000000" class="w-10 h-10 p-0 border border-[var(--border)] rounded" />
+            </label>
+            <label class="flex items-center gap-2" title="Background colour">
+              <span style="color:var(--foreground);">Background</span>
+              <input id="qr-bg" type="color" value="#ffffff" class="w-10 h-10 p-0 border border-[var(--border)] rounded" />
+            </label>
+          </div>
+        </div>
+        <div class="mt-6 flex justify-center">
+          <div id="qr-container" class="p-2 bg-white" aria-label="QR code" role="img">
+            <canvas id="qr-canvas" width="200" height="200"></canvas>
+          </div>
+        </div>
+        <div class="flex gap-2 justify-center mt-4">
+          <button id="qr-download-png" class="shad-btn" style="display:none;">Download PNG</button>
+          <button id="qr-download-svg" class="shad-btn" style="display:none;">Download SVG</button>
+        </div>
+        <section class="mt-8 space-y-4">
+          <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this tool</h2>
+          <p style="color:var(--foreground);">Generate QR codes entirely in your browser. No data is sent to a server.</p>
+          <h3 class="text-xl font-semibold" style="color:var(--foreground);">FAQs</h3>
+          <details class="border p-2 rounded">
+            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Is my input stored online?</summary>
+            <p class="mt-2" style="color:var(--foreground);">No. Everything happens locally, keeping your data private.</p>
+          </details>
+          <details class="border p-2 rounded">
+            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Why choose a higher error correction level?</summary>
+            <p class="mt-2" style="color:var(--foreground);">Higher levels let the QR code remain scannable even if part is obscured, but the pattern becomes denser.</p>
+          </details>
+        </section>
+      </div>
+    </main>
+  </div>
+  <footer class="bg-[var(--background)] border-t border-[var(--foreground)]/30 mt-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="text-center">
+        <p class="text-[var(--foreground)]/70">&copy; 2024 reformately. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
