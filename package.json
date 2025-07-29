@@ -4,6 +4,9 @@
   "description": "A browser-based image conversion tool that allows you to convert images between various formats including WebP, JPEG, PNG, AVIF, BMP, TIFF, GIF, and ICO. The app also supports special formats like HEIC/HEIF and RAW camera formats.",
   "main": "background-remover.js",
   "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "test": "jest"
   },
   "keywords": [],
@@ -13,5 +16,14 @@
   "dependencies": {
     "jest": "^30.0.5",
     "pdf-lib": "^1.17.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^4.7.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.6"
   }
 }
