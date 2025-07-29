@@ -6,19 +6,17 @@
   <!-- End Google Tag Manager -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JSON Formatter</title>
+  <title>Meta Tag Generator</title>
   <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/json-formatter-js@2.3.4/dist/json-formatter.css">
   <script type="module" src="theme.js"></script>
   <script type="module" src="layout.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/json-formatter-js@2.3.4/dist/json-formatter.umd.js"></script>
-  <script type="module" src="json-formatter.js"></script>
+  <script type="module" src="meta-tag-generator.js"></script>
 </head>
-<body data-slug="json-formatter" class="bg-transparent min-h-screen flex flex-col">
+<body data-slug="meta-tag-generator" class="bg-transparent min-h-screen flex flex-col">
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
@@ -41,7 +39,6 @@
       </div>
     </div>
   </nav>
-
   <div class="flex flex-grow">
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
     <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full transition-transform z-40">
@@ -62,6 +59,8 @@
         <li><a href="json-formatter.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">JSON Formatter</a></li>
         <li><a href="color-palette.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Colour Palette Extractor</a></li>
         <li><a href="pdf-merger.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">PDF Merger</a></li>
+        <li><a href="utm-builder.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">UTM Builder</a></li>
+        <li><a href="qr-generator.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">QR Code Generator</a></li>
         <li><a href="pdf-ocr.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">PDF OCR</a></li>
         <li><a href="meta-tag-generator.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Meta Tag Generator</a></li>
         <li><a href="#" class="text-[var(--foreground)] hover:text-[var(--primary)]">More coming soon</a></li>
@@ -70,74 +69,88 @@
         <a href="request-tool.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Request a Tool</a>
       </div>
     </aside>
-
     <main id="main-content" class="flex-grow p-4">
-      <div class="max-w-2xl mx-auto space-y-4">
-        <h1 class="text-3xl font-bold" style="color:var(--foreground);">JSON Formatter</h1>
-        <p style="color:var(--foreground);">Paste JSON below to validate, format or minify it. You can copy the result or download it as a file.</p>
-        <textarea id="json-input" rows="8" class="shad-input font-mono" placeholder="Paste JSON here"></textarea>
-        <input id="json-file-input" type="file" accept=".json" class="shad-input mt-2" />
-        <div class="flex gap-2 mt-2">
-          <label for="indent-select" class="flex items-center gap-2 text-sm" style="color:var(--foreground);">
-            Indent
-            <select id="indent-select" class="border rounded px-2 py-1 bg-transparent">
-              <option value="2">2 spaces</option>
-              <option value="4">4 spaces</option>
-              <option value="tab">Tab</option>
-            </select>
+      <div class="max-w-2xl mx-auto">
+        <h1 class="text-3xl font-bold mb-2" style="color:var(--foreground);">Meta Tag Generator</h1>
+        <p class="mb-4" style="color:var(--foreground);">Create SEO and social media meta tags for your webpages.</p>
+        <div class="space-y-4">
+          <label class="block" style="color:var(--foreground);">Title (max 60 characters)
+            <input id="meta-title" type="text" class="shad-input mt-1" maxlength="60" />
           </label>
-          <label for="sort-keys" class="flex items-center gap-2 text-sm" style="color:var(--foreground);">
-            <input id="sort-keys" type="checkbox" class="shad-input w-4 h-4" /> Sort keys
+          <label class="block" style="color:var(--foreground);">Description (max 160 characters)
+            <textarea id="meta-description" class="shad-input mt-1" rows="2" maxlength="160"></textarea>
           </label>
+          <label class="block" style="color:var(--foreground);">Author
+            <input id="meta-author" type="text" class="shad-input mt-1" />
+          </label>
+          <label class="block" style="color:var(--foreground);">Keywords (comma separated)
+            <input id="meta-keywords" type="text" class="shad-input mt-1" />
+          </label>
+          <label class="block" style="color:var(--foreground);">Canonical URL
+            <input id="meta-canonical" type="url" class="shad-input mt-1" />
+          </label>
+          <div class="grid md:grid-cols-2 gap-4">
+            <div class="space-y-4">
+              <h2 class="text-xl font-semibold" style="color:var(--foreground);">Open Graph</h2>
+              <label class="block" style="color:var(--foreground);">og:title
+                <input id="og-title" type="text" class="shad-input mt-1" />
+              </label>
+              <label class="block" style="color:var(--foreground);">og:description
+                <textarea id="og-description" class="shad-input mt-1" rows="2"></textarea>
+              </label>
+              <label class="block" style="color:var(--foreground);">og:image URL
+                <input id="og-image" type="url" class="shad-input mt-1" />
+              </label>
+              <label class="block" style="color:var(--foreground);">og:url
+                <input id="og-url" type="url" class="shad-input mt-1" />
+              </label>
+              <label class="block" style="color:var(--foreground);">og:type
+                <input id="og-type" type="text" class="shad-input mt-1" placeholder="website" />
+              </label>
+            </div>
+            <div class="space-y-4">
+              <h2 class="text-xl font-semibold" style="color:var(--foreground);">Twitter Card</h2>
+              <label class="block" style="color:var(--foreground);">twitter:card
+                <input id="twitter-card" type="text" class="shad-input mt-1" placeholder="summary_large_image" />
+              </label>
+              <label class="block" style="color:var(--foreground);">twitter:title
+                <input id="twitter-title" type="text" class="shad-input mt-1" />
+              </label>
+              <label class="block" style="color:var(--foreground);">twitter:description
+                <textarea id="twitter-description" class="shad-input mt-1" rows="2"></textarea>
+              </label>
+              <label class="block" style="color:var(--foreground);">twitter:image
+                <input id="twitter-image" type="url" class="shad-input mt-1" />
+              </label>
+            </div>
+          </div>
+          <label class="block" style="color:var(--foreground);">Generated Tags
+            <textarea id="meta-code" class="shad-input mt-1" rows="8" readonly></textarea>
+          </label>
+          <button id="copy-meta" class="shad-btn">Copy Code</button>
         </div>
-        <div class="flex gap-2 mt-2">
-          <button id="format-btn" class="shad-btn">Format</button>
-          <button id="minify-btn" class="shad-btn">Minify</button>
-        </div>
-        <pre id="json-output" class="shad-input font-mono overflow-auto whitespace-pre" style="max-height:250px;"></pre>
-        <div class="flex gap-2 mt-2">
-          <button id="copy-btn" class="shad-btn">Copy</button>
-          <button id="download-btn" class="shad-btn">Download</button>
-          <button id="share-btn" class="shad-btn">Share</button>
-          <button id="json-csv-btn" class="shad-btn">Convert to CSV</button>
-        </div>
-        <textarea id="json-csv-output" rows="6" class="shad-input font-mono mt-2" placeholder="CSV output" readonly></textarea>
-        <div class="flex gap-2 mb-2">
-          <button id="json-csv-copy" class="shad-btn">Copy CSV</button>
-          <button id="json-csv-download" class="shad-btn">Download CSV</button>
-        </div>
-        <input id="json-search" type="text" class="shad-input mb-2" placeholder="Search tree" />
-        <div id="json-tree" class="border rounded p-2 text-sm"></div>
-
-        <h2 class="text-2xl font-bold mt-8" style="color:var(--foreground);">CSV to JSON</h2>
-        <p style="color:var(--foreground);">Convert comma-separated values to JSON. The first row should contain headers.</p>
-        <textarea id="csv-input" rows="8" class="shad-input font-mono" placeholder="Paste CSV here"></textarea>
-        <input id="csv-file-input" type="file" accept=".csv" class="shad-input mt-2" />
-        <div class="flex gap-2 mt-2">
-          <button id="csv-convert-btn" class="shad-btn">Convert</button>
-        </div>
-        <textarea id="csv-output" rows="8" class="shad-input font-mono" placeholder="JSON output" readonly></textarea>
-        <div class="flex gap-2">
-          <button id="csv-copy-btn" class="shad-btn">Copy</button>
-          <button id="csv-download-btn" class="shad-btn">Download</button>
-        </div>
-        <section class="mt-8 space-y-4">
+        <section class="my-8 space-y-4">
+          <h2 class="text-2xl font-bold" style="color:var(--foreground);">Preview</h2>
+          <div id="search-preview" class="border p-4 rounded space-y-1">
+            <p id="preview-title" class="font-semibold text-[var(--primary)]"></p>
+            <p id="preview-url" class="text-sm text-green-700 dark:text-green-400"></p>
+            <p id="preview-desc" class="text-sm"></p>
+          </div>
+          <div id="social-preview" class="border p-4 rounded flex items-center gap-4">
+            <img id="preview-image" src="" alt="image preview" class="w-24 h-24 object-cover hidden">
+            <div>
+              <p id="preview-og-title" class="font-semibold"></p>
+              <p id="preview-og-desc" class="text-sm"></p>
+            </div>
+          </div>
+        </section>
+        <section class="space-y-4 mt-8">
           <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this tool</h2>
-          <p style="color:var(--foreground);">Use the JSON formatter to tidy raw JSON, making it easier to read or share. Upload files or paste text, choose your indent style, and optionally sort keys. The minify option removes whitespace for compact storage.</p>
-          <h3 class="text-xl font-semibold" style="color:var(--foreground);">FAQs</h3>
-          <details class="border p-2 rounded">
-            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">What happens to my data?</summary>
-            <p class="mt-2" style="color:var(--foreground);">All formatting happens locally in your browser. No JSON is uploaded or stored.</p>
-          </details>
-          <details class="border p-2 rounded">
-            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Why would I minify JSON?</summary>
-            <p class="mt-2" style="color:var(--foreground);">Minified JSON removes spaces and line breaks so the file is smaller when transferring or storing.</p>
-          </details>
+          <p style="color:var(--foreground);">Use this generator to craft SEO-friendly &amp; social meta tags. Title and description lengths follow common search engine guidelines. Open Graph tags optimise link previews on platforms like Facebook while Twitter Card tags enhance tweets that link to your page.</p>
         </section>
       </div>
     </main>
   </div>
-
   <footer class="bg-[var(--background)] border-t border-[var(--foreground)]/30 mt-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <div class="text-center">
