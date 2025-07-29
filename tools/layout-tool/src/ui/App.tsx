@@ -54,7 +54,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-screen text-sm text-white">
+    <div className="flex h-screen bg-zinc-900 text-sm text-white">
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <TopBar stack={commandStackRef.current} onExport={() => setShowExport(true)} />

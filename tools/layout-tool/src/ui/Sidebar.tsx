@@ -7,7 +7,7 @@ interface Props {
 
 export default function Sidebar({ onPresetSelect }: Props) {
   return (
-    <aside className="w-48 bg-gray-800 p-2 overflow-y-auto">
+    <aside className="w-64 bg-zinc-800 border-r overflow-y-auto">
       <PresetList onSelect={(p) => onPresetSelect?.(p.id)} />
     </aside>
   );
