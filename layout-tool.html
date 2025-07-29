@@ -6,18 +6,17 @@
   <!-- End Google Tag Manager -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Colour Palette Extractor</title>
+  <title>Layout Tool</title>
   <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.2/color-thief.umd.js"></script>
   <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script type="module" src="theme.js"></script>
   <script type="module" src="layout.js"></script>
-  <script type="module" src="color-palette.js"></script>
+  <script type="module" src="layout-tool.js"></script>
 </head>
-<body data-slug="color-palette" class="bg-transparent min-h-screen flex flex-col">
+<body data-slug="layout-tool" class="bg-transparent min-h-screen flex flex-col">
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
@@ -61,8 +60,14 @@
         <li><a href="json-formatter.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">JSON Formatter</a></li>
         <li><a href="color-palette.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Colour Palette Extractor</a></li>
         <li><a href="pdf-merger.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">PDF Merger</a></li>
+        <li><a href="utm-builder.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">UTM Builder</a></li>
+        <li><a href="qr-generator.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">QR Code Generator</a></li>
         <li><a href="pdf-ocr.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">PDF OCR</a></li>
+        <li><a href="uuid-generator.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">UUID Generator</a></li>
+        <li><a href="timestamp-converter.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Timestamp Converter</a></li>
         <li><a href="meta-tag-generator.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Meta Tag Generator</a></li>
+        <li><a href="robots-txt.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Robots.txt Tool</a></li>
+        <li><a href="text-case-converter.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Text Case Converter</a></li>
         <li><a href="layout-tool.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Layout Tool</a></li>
         <li><a href="#" class="text-[var(--foreground)] hover:text-[var(--primary)]">More coming soon</a></li>
       </ul>
@@ -70,25 +75,41 @@
         <a href="request-tool.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Request a Tool</a>
       </div>
     </aside>
-
     <main id="main-content" class="flex-grow p-4">
-      <div class="max-w-2xl mx-auto space-y-4">
-        <h1 class="text-3xl font-bold" style="color:var(--foreground);">Colour Palette Extractor</h1>
-        <p style="color:var(--foreground);">Upload an image to extract its dominant colours. Adjust the number of colours and export the palette.</p>
+      <div class="max-w-xl mx-auto space-y-4">
         <div class="space-y-2">
-          <input id="image-input" type="file" accept="image/*" class="border rounded px-2 py-1 bg-transparent" />
-          <label class="block" style="color:var(--foreground);">Number of colours:
-            <input id="color-count" type="number" min="1" max="20" value="5" class="border rounded px-2 py-1 bg-transparent ml-2 w-16" />
-          </label>
+          <select id="preset-select" class="shad-input"></select>
+          <div class="flex flex-wrap gap-2">
+            <select id="page-select" class="shad-input w-24"></select>
+            <button id="add-page" class="shad-btn">Add Page</button>
+            <button id="undo" class="shad-btn">Undo</button>
+            <button id="redo" class="shad-btn">Redo</button>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button id="add-text" class="shad-btn">Add Text</button>
+            <input type="file" id="img-input" accept="image/*" class="hidden" />
+            <button id="add-image" class="shad-btn">Add Image</button>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button id="export-png" class="shad-btn">PNG</button>
+            <button id="export-jpg" class="shad-btn">JPG</button>
+            <button id="export-svg" class="shad-btn">SVG</button>
+            <button id="export-pdf" class="shad-btn">PDF</button>
+          </div>
         </div>
-        <div id="palette" class="mt-4 space-y-2"></div>
-        <div class="flex gap-2 mt-4">
-          <a id="download-json" class="download-btn" href="#" download="palette.json" style="display:none;">Download JSON</a>
-          <a id="download-ase" class="download-btn" href="#" download="palette.ase" style="display:none;">Download ASE</a>
-          <a id="download-gpl" class="download-btn" href="#" download="palette.gpl" style="display:none;">Download GPL</a>
+        <div id="canvas-container" class="relative border bg-white" style="width:600px;height:800px">
+          <canvas id="canvas" width="600" height="800" class="border"></canvas>
+          <div id="progress" class="absolute inset-0 flex items-center justify-center bg-black/50 text-white hidden">Processing...</div>
         </div>
       </div>
     </main>
   </div>
+  <footer class="bg-[var(--background)] border-t border-[var(--foreground)]/30 mt-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="text-center">
+        <p class="text-[var(--foreground)]/70">&copy; 2024 reformately. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>

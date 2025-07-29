@@ -1,0 +1,14 @@
+[
+  {"name":"Poster A1","width":594,"height":841,"units":"mm","dpi":300,"bleed":5},
+  {"name":"Poster A2","width":420,"height":594,"units":"mm","dpi":300,"bleed":5},
+  {"name":"Poster A3","width":297,"height":420,"units":"mm","dpi":300,"bleed":3},
+  {"name":"Poster A4","width":210,"height":297,"units":"mm","dpi":300,"bleed":3},
+  {"name":"DLE Flyer","width":99,"height":210,"units":"mm","dpi":300,"bleed":3},
+  {"name":"Billboard","width":3600,"height":2400,"units":"mm","dpi":72,"bleed":0},
+  {"name":"Instagram Square","width":1080,"height":1080,"units":"px","dpi":72,"bleed":0},
+  {"name":"Instagram Portrait","width":1080,"height":1350,"units":"px","dpi":72,"bleed":0},
+  {"name":"Instagram Landscape","width":1080,"height":566,"units":"px","dpi":72,"bleed":0},
+  {"name":"Facebook Cover","width":851,"height":315,"units":"px","dpi":72,"bleed":0},
+  {"name":"Eventbrite Banner","width":2160,"height":1080,"units":"px","dpi":72,"bleed":0},
+  {"name":"Eventfinda Banner","width":1170,"height":504,"units":"px","dpi":72,"bleed":0}
+]
