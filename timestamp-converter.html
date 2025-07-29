@@ -6,17 +6,18 @@
   <!-- End Google Tag Manager -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UUID Generator</title>
+  <title>Timestamp Converter</title>
   <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/luxon/3.4.4/luxon.min.js"></script>
   <script type="module" src="theme.js"></script>
   <script type="module" src="layout.js"></script>
-  <script type="module" src="uuid-generator.js"></script>
+  <script type="module" src="timestamp-converter.js"></script>
 </head>
-<body data-slug="uuid-generator" class="bg-transparent min-h-screen flex flex-col">
+<body data-slug="timestamp-converter" class="bg-transparent min-h-screen flex flex-col">
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
@@ -75,50 +76,46 @@
     </aside>
     <main id="main-content" class="flex-grow p-4">
       <div class="max-w-xl mx-auto">
-        <h1 class="text-3xl font-bold" style="color:var(--foreground);">UUID Generator</h1>
-        <p class="mb-4" style="color:var(--foreground);">Generate unique identifiers entirely in your browser.</p>
+        <h1 class="text-3xl font-bold" style="color:var(--foreground);">Timestamp Converter</h1>
+        <p class="mb-4" style="color:var(--foreground);">Convert between Unix timestamps and readable dates.</p>
         <div class="space-y-4">
           <label class="block">
-            <span style="color:var(--foreground);">Version</span>
-            <select id="uuid-version" class="shad-input mt-1">
-              <option value="v4" selected>v4 - Random</option>
-              <option value="v1">v1 - Timestamp</option>
-              <option value="v3">v3 - Namespace/MD5</option>
-              <option value="v5">v5 - Namespace/SHA-1</option>
-            </select>
+            <span style="color:var(--foreground);">Unix Timestamp</span>
+            <div class="flex gap-2 mt-1">
+              <input id="unix-input" type="text" class="shad-input flex-grow" placeholder="e.g. 1700000000" />
+              <select id="unix-unit" class="shad-input w-32">
+                <option value="s">Seconds</option>
+                <option value="ms">Milliseconds</option>
+              </select>
+            </div>
           </label>
-          <div id="ns-fields" class="space-y-2 hidden">
-            <label class="block">
-              <span style="color:var(--foreground);">Namespace UUID</span>
-              <input id="uuid-namespace" type="text" class="shad-input mt-1" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
-            </label>
-            <label class="block">
-              <span style="color:var(--foreground);">Name</span>
-              <input id="uuid-name" type="text" class="shad-input mt-1" />
-            </label>
-          </div>
           <label class="block">
-            <span style="color:var(--foreground);">How many?</span>
-            <input id="uuid-count" type="number" min="1" max="50" value="1" class="shad-input mt-1" />
+            <span style="color:var(--foreground);">Timezone</span>
+            <select id="timezone-select" class="shad-input mt-1"></select>
           </label>
-          <button id="uuid-generate" class="shad-btn">Generate</button>
+          <input id="human-output" type="text" class="shad-input font-mono" readonly placeholder="Human readable time" />
+          <div class="flex justify-end">
+            <button id="copy-human" class="shad-btn">Copy</button>
+          </div>
         </div>
-        <textarea id="uuid-output" rows="5" class="shad-input font-mono mt-4" readonly></textarea>
-        <div class="mt-2">
-          <button id="uuid-copy" class="shad-btn">Copy</button>
+        <hr class="my-6 border-[var(--foreground)]/20" />
+        <div class="space-y-4">
+          <label class="block">
+            <span style="color:var(--foreground);">Date/Time</span>
+            <input id="date-input" type="text" class="shad-input mt-1" placeholder="e.g. 2024-06-30 14:33" />
+          </label>
+          <input id="unix-seconds-output" type="text" class="shad-input font-mono" readonly placeholder="Unix seconds" />
+          <div class="flex justify-end mb-2">
+            <button id="copy-seconds" class="shad-btn">Copy</button>
+          </div>
+          <input id="unix-milliseconds-output" type="text" class="shad-input font-mono" readonly placeholder="Unix milliseconds" />
+          <div class="flex justify-end">
+            <button id="copy-millis" class="shad-btn">Copy</button>
+          </div>
         </div>
         <section class="mt-8 space-y-4">
           <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this tool</h2>
-          <p style="color:var(--foreground);">Create UUIDs in several versions without sending data to a server.</p>
-          <h3 class="text-xl font-semibold" style="color:var(--foreground);">FAQs</h3>
-          <details class="border p-2 rounded">
-            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">What is a UUID?</summary>
-            <p class="mt-2" style="color:var(--foreground);">A universally unique identifier useful for tagging objects across systems.</p>
-          </details>
-          <details class="border p-2 rounded">
-            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Are UUIDs stored?</summary>
-            <p class="mt-2" style="color:var(--foreground);">No. Everything happens locally in your browser.</p>
-          </details>
+          <p style="color:var(--foreground);">Unix timestamps count the seconds since 1 January 1970 UTC. This converter lets you switch between that number and a readable date in any timezone. Everything happens locally in your browser.</p>
         </section>
       </div>
     </main>
