@@ -1,0 +1,8 @@
+{
+  "id": "poster-a4",
+  "name": "A4 Poster",
+  "width": 210,
+  "height": 297,
+  "bleed": 3,
+  "safe": 10
+}

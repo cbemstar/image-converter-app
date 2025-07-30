@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "jsx": "react-jsx",
+    "strict": true,
+    "moduleResolution": "bundler",
+    "baseUrl": "./",
+    "paths": {
+      "@core/*": ["src/core/*"],
+      "@canvas/*": ["src/canvas/*"],
+      "@ui/*": ["src/ui/*"],
+      "@io/*": ["src/io/*"],
+      "@presets/*": ["src/presets/*"]
+    }
+  },
+  "include": ["src"]
+}
