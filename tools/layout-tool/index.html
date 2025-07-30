@@ -2,10 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Layout Tool</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Layout Generator</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <h1>Layout Tool</h1>
-  <script type="module" src="main.ts"></script>
+<body class="bg-zinc-900 text-white">
+  <div class="topbar" id="topbar"></div>
+  <div style="display:flex;height:calc(100vh - 3rem);">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main style="flex:1;position:relative;overflow:auto;">
+      <canvas id="master-canvas" width="800" height="600"></canvas>
+      <div id="artboards" style="display:flex;flex-wrap:wrap;gap:1rem;margin-top:1rem;"></div>
+    </main>
+  </div>
+  <script type="module" src="app.js"></script>
 </body>
 </html>

@@ -1,0 +1,7 @@
+{
+  "name": "DLE Flyer",
+  "width_mm": 99,
+  "height_mm": 210,
+  "bleed_mm": 3,
+  "channel": "print"
+}
