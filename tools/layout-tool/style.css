@@ -1,0 +1,36 @@
+/* Global styles and shadcn tweaks */
+body {
+  font-family: system-ui, sans-serif;
+  background-color: #18181b;
+  color: white;
+  margin: 0;
+}
+
+canvas {
+  background-color: #000;
+}
+
+.sidebar {
+  width: 16rem;
+  background-color: #27272a;
+  border-right: 1px solid #3f3f46;
+}
+
+.topbar {
+  height: 3rem;
+  background-color: #27272a;
+  border-bottom: 1px solid #3f3f46;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.75rem;
+}
+
+.shad-btn {
+  background-color: #3f3f46;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  border: none;
+  cursor: pointer;
+}
