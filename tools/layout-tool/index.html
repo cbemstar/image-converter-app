@@ -2,10 +2,36 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Layout Tool</title>
+  <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
+  <link rel="stylesheet" href="../../styles/styles.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script type="module" src="../../styles/theme.js"></script>
+  <script type="module" src="../../layout.js"></script>
+  <script type="module" src="app.js"></script>
 </head>
-<body>
-  <h1>Layout Tool</h1>
-  <script type="module" src="main.ts"></script>
+<body data-slug="layout-tool" class="min-h-screen flex flex-col bg-transparent">
+  <nav class="topbar flex items-center px-4 text-white">
+    <button id="sidebar-toggle" class="shad-btn mr-2">☰</button>
+    <span class="font-bold">Layout Tool</span>
+    <div class="ml-auto flex gap-2 items-center">
+      <button id="colour-toggle" class="shad-btn">RGB</button>
+      <select id="dpi-select" class="shad-btn text-black bg-white">
+        <option value="72">72 DPI</option>
+        <option value="300">300 DPI</option>
+      </select>
+      <button id="export-btn" class="shad-btn">Export</button>
+    </div>
+  </nav>
+  <div class="flex flex-grow">
+    <aside class="sidebar p-2" id="sidebar">
+      <input type="file" id="image-input" accept="image/*" class="mb-2 text-white" />
+      <button id="add-text" class="shad-btn w-full mb-2">Add Text</button>
+      <div id="preset-list"></div>
+    </aside>
+    <canvas id="layout-canvas" class="flex-grow bg-zinc-900"></canvas>
+  </div>
 </body>
 </html>

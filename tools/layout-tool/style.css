@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body { background-color: #18181b; color: #e4e4e7; }
+.shad-btn { @apply bg-zinc-700 text-white px-3 py-1 rounded hover:bg-zinc-600; }
+.sidebar { width:16rem; background-color:#27272a; }
+.topbar { height:3rem; background-color:#27272a; }
