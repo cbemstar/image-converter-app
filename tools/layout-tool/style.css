@@ -1,0 +1,7 @@
+body { margin: 0; font-family: sans-serif; }
+.artboard { position: relative; margin-bottom: 1rem; border: 1px dashed #444; }
+.artboard canvas { display: block; background: white; }
+#dialog { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.6); }
+#dialog.hidden { display: none; }
+#dialog .modal { background: #1f1f1f; padding: 1rem; border-radius: 0.5rem; }
+.btn { padding:0.25rem 0.75rem; border-radius:0.25rem; background:#3f3f46; color:white; }
