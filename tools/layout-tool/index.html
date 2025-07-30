@@ -2,10 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Layout Tool</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <h1>Layout Tool</h1>
-  <script type="module" src="main.ts"></script>
+<body class="bg-zinc-900 text-white flex flex-col min-h-screen">
+  <div id="topbar" class="p-2 flex"></div>
+  <div class="flex flex-1 overflow-hidden">
+    <aside id="sidebar" class="w-60 border-r border-zinc-700 overflow-y-auto"></aside>
+    <main id="workspace" class="flex-1 p-4 overflow-auto"></main>
+  </div>
+  <div id="dialog" class="hidden"></div>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
