@@ -41,6 +41,7 @@ function renderMaster() {
 async function init() {
   presets = await getPresets();
   initSidebar(document.getElementById('tool-sidebar'), {
+  initSidebar(document.getElementById('sidebar'), {
     presets,
     onUpload: async file => {
       const img = new Image();
