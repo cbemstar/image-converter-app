@@ -7,7 +7,7 @@ import { setMode } from './modules/colour-manager.js';
 import { createArtboard, createThumbnail } from './modules/canvas-engine.js';
 import { exportZip } from './modules/export-raster.js';
 import { showDialog } from './modules/ui-dialog.js';
-import { openLayoutEditor } from './modules/layout-editor.js';
+import { openLayoutEditor } from './modules/layout-editor.mjs';
 
 // Global state
 let presets = [];
