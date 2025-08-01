@@ -1,0 +1,336 @@
+{
+  "social": [
+    {
+      "name": "Facebook Feed 1:1",
+      "width": 1080,
+      "height": 1080,
+      "channel": "social",
+      "ratio": "1:1",
+      "subcategory": "Facebook"
+    },
+    {
+      "name": "Facebook Feed 4:5",
+      "width": 1200,
+      "height": 630,
+      "channel": "social",
+      "ratio": "1.91:1",
+      "subcategory": "Facebook"
+    },
+    {
+      "name": "Facebook Cover",
+      "width": 1200,
+      "height": 630,
+      "channel": "social",
+      "ratio": "1.91:1",
+      "subcategory": "Facebook"
+    },
+    {
+      "name": "Instagram Feed 1:1",
+      "width": 1080,
+      "height": 1080,
+      "channel": "social",
+      "ratio": "1:1",
+      "subcategory": "Instagram"
+    },
+    {
+      "name": "Instagram Feed 4:5",
+      "width": 1080,
+      "height": 1350,
+      "channel": "social",
+      "ratio": "4:5",
+      "subcategory": "Instagram"
+    },
+    {
+      "name": "Instagram Story",
+      "width": 1080,
+      "height": 1920,
+      "channel": "social",
+      "ratio": "9:16",
+      "subcategory": "Instagram"
+    },
+    {
+      "name": "Instagram Reel",
+      "width": 1080,
+      "height": 1920,
+      "channel": "social",
+      "ratio": "9:16",
+      "subcategory": "Instagram"
+    },
+    {
+      "name": "LinkedIn Single 1:1",
+      "width": 1080,
+      "height": 1080,
+      "channel": "social",
+      "ratio": "1:1",
+      "subcategory": "LinkedIn"
+    },
+    {
+      "name": "LinkedIn Single 1.91:1",
+      "width": 1200,
+      "height": 628,
+      "channel": "social",
+      "ratio": "1.91:1",
+      "subcategory": "LinkedIn"
+    },
+    {
+      "name": "LinkedIn Cover",
+      "width": 1584,
+      "height": 396,
+      "channel": "social",
+      "ratio": "4:1",
+      "subcategory": "LinkedIn"
+    },
+    {
+      "name": "Twitter Image 1.91:1",
+      "width": 1200,
+      "height": 628,
+      "channel": "social",
+      "ratio": "1.91:1",
+      "subcategory": "Twitter"
+    },
+    {
+      "name": "Twitter Header",
+      "width": 1500,
+      "height": 500,
+      "channel": "social",
+      "ratio": "3:1",
+      "subcategory": "Twitter"
+    },
+    {
+      "name": "Pinterest Standard",
+      "width": 1000,
+      "height": 1500,
+      "channel": "social",
+      "ratio": "2:3",
+      "subcategory": "Pinterest"
+    },
+    {
+      "name": "YouTube Thumbnail",
+      "width": 1280,
+      "height": 720,
+      "channel": "social",
+      "ratio": "16:9",
+      "subcategory": "YouTube"
+    },
+    {
+      "name": "YouTube Shorts",
+      "width": 1080,
+      "height": 1920,
+      "channel": "social",
+      "ratio": "9:16",
+      "subcategory": "YouTube"
+    },
+    {
+      "name": "TikTok Video",
+      "width": 1080,
+      "height": 1920,
+      "channel": "social",
+      "ratio": "9:16",
+      "subcategory": "TikTok"
+    }
+  ],
+  "digital": [
+    {
+      "name": "Google RDA Landscape",
+      "width": 1200,
+      "height": 628,
+      "channel": "digital",
+      "ratio": "1.91:1",
+      "subcategory": "Google Ads"
+    },
+    {
+      "name": "Google RDA Square",
+      "width": 1200,
+      "height": 1200,
+      "channel": "digital",
+      "ratio": "1:1",
+      "subcategory": "Google Ads"
+    },
+    {
+      "name": "Google Display Banner",
+      "width": 728,
+      "height": 90,
+      "channel": "digital",
+      "ratio": "8.09:1",
+      "subcategory": "Display Ads"
+    },
+    {
+      "name": "Google Display Rectangle",
+      "width": 300,
+      "height": 250,
+      "channel": "digital",
+      "ratio": "1.2:1",
+      "subcategory": "Display Ads"
+    },
+    {
+      "name": "Google Display Large Rectangle",
+      "width": 336,
+      "height": 280,
+      "channel": "digital",
+      "ratio": "1.2:1",
+      "subcategory": "Display Ads"
+    },
+    {
+      "name": "Google Display Skyscraper",
+      "width": 160,
+      "height": 600,
+      "channel": "digital",
+      "ratio": "1:3.75",
+      "subcategory": "Display Ads"
+    },
+    {
+      "name": "Web Banner Leaderboard",
+      "width": 970,
+      "height": 250,
+      "channel": "digital",
+      "ratio": "3.88:1",
+      "subcategory": "Web Banners"
+    },
+    {
+      "name": "Email Header",
+      "width": 600,
+      "height": 200,
+      "channel": "digital",
+      "ratio": "3:1",
+      "subcategory": "Email Marketing"
+    },
+    {
+      "name": "Website Hero Banner",
+      "width": 1920,
+      "height": 600,
+      "channel": "digital",
+      "ratio": "3.2:1",
+      "subcategory": "Website"
+    }
+  ],
+  "print": [
+    {
+      "name": "Business Card Standard",
+      "width_mm": 85,
+      "height_mm": 55,
+      "bleed_mm": 2,
+      "channel": "print",
+      "subcategory": "Business Cards"
+    },
+    {
+      "name": "Business Card US",
+      "width_mm": 89,
+      "height_mm": 51,
+      "bleed_mm": 2,
+      "channel": "print",
+      "subcategory": "Business Cards"
+    },
+    {
+      "name": "Postcard Standard",
+      "width_mm": 148,
+      "height_mm": 105,
+      "bleed_mm": 3,
+      "channel": "print",
+      "subcategory": "Marketing Materials"
+    },
+    {
+      "name": "Brochure Tri-fold",
+      "width_mm": 297,
+      "height_mm": 210,
+      "bleed_mm": 3,
+      "channel": "print",
+      "subcategory": "Marketing Materials"
+    },
+    {
+      "name": "Poster A0",
+      "width_mm": 841,
+      "height_mm": 1189,
+      "bleed_mm": 5,
+      "channel": "print",
+      "subcategory": "Posters"
+    },
+    {
+      "name": "Poster A1",
+      "width_mm": 594,
+      "height_mm": 841,
+      "bleed_mm": 3,
+      "channel": "print",
+      "subcategory": "Posters"
+    },
+    {
+      "name": "Poster A2",
+      "width_mm": 420,
+      "height_mm": 594,
+      "bleed_mm": 3,
+      "channel": "print",
+      "subcategory": "Posters"
+    },
+    {
+      "name": "Poster A3",
+      "width_mm": 297,
+      "height_mm": 420,
+      "bleed_mm": 3,
+      "channel": "print",
+      "subcategory": "Posters"
+    },
+    {
+      "name": "Poster A4",
+      "width_mm": 210,
+      "height_mm": 297,
+      "bleed_mm": 3,
+      "channel": "print",
+      "subcategory": "Posters"
+    },
+    {
+      "name": "Poster A5",
+      "width_mm": 148,
+      "height_mm": 210,
+      "bleed_mm": 3,
+      "channel": "print",
+      "subcategory": "Posters"
+    },
+    {
+      "name": "Magazine Cover",
+      "width_mm": 210,
+      "height_mm": 280,
+      "bleed_mm": 3,
+      "channel": "print",
+      "subcategory": "Publications"
+    },
+    {
+      "name": "Book Cover Paperback",
+      "width_mm": 152,
+      "height_mm": 229,
+      "bleed_mm": 3,
+      "channel": "print",
+      "subcategory": "Publications"
+    },
+    {
+      "name": "DLE Flyer",
+      "width_mm": 99,
+      "height_mm": 210,
+      "bleed_mm": 3,
+      "channel": "print",
+      "subcategory": "Marketing Materials"
+    },
+    {
+      "name": "Pull-up Banner",
+      "width_mm": 850,
+      "height_mm": 2000,
+      "bleed_mm": 10,
+      "channel": "print",
+      "subcategory": "Large Format"
+    },
+    {
+      "name": "Vinyl Banner 3x8ft",
+      "width_mm": 2438,
+      "height_mm": 914,
+      "bleed_mm": 25,
+      "channel": "print",
+      "subcategory": "Large Format"
+    },
+    {
+      "name": "Billboard",
+      "width_mm": 3600,
+      "height_mm": 2400,
+      "bleed_mm": 50,
+      "channel": "print",
+      "subcategory": "Large Format"
+    }
+  ]
+}
