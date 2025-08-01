@@ -33,7 +33,7 @@ function renderMaster() {
   masterCtx.fillStyle = '#ffffff';
   masterCtx.fillRect(0, 0, masterCanvas.width, masterCanvas.height);
   
-  // Draw hero image
+  // Draw hero imagea
   if (master.hero) {
     masterCtx.drawImage(master.hero, 0, 0, masterCanvas.width, masterCanvas.height);
   }
@@ -88,27 +88,42 @@ function generateArtboards(selectedNames) {
   selectedNames.forEach(name => {
     const preset = presets.find(p => p.name === name);
     if (!preset) return;
-    
+
     // Filter by channel if not 'all'
     if (currentChannel !== 'all' && preset.channel !== currentChannel) {
       return;
     }
-    
-    // Create artboard canvas
-    const artboardCanvas = createArtboard(preset, master, dpi / 72);
-    currentArtboards.push({ canvas: artboardCanvas, preset });
-    
+
+    // Check for existing custom state for this artboard
+    let customObjects = null;
+    let heroSettings = null;
+    let customHero = null;
+    let customArtboard = currentArtboards.find(ab => ab.preset.name === name);
+    if (customArtboard) {
+      if (customArtboard.customObjects) customObjects = customArtboard.customObjects;
+      if (customArtboard.heroSettings) heroSettings = customArtboard.heroSettings;
+      if (customArtboard.customHero) customHero = customArtboard.customHero;
+    }
+
+    // Create artboard canvas using custom objects, heroSettings, and customHero if present
+    const artboardMaster = { ...master };
+    if (customObjects) artboardMaster.objects = customObjects;
+    if (heroSettings) artboardMaster.heroSettings = heroSettings;
+    if (customHero) artboardMaster.hero = customHero;
+    const artboardCanvas = createArtboard(preset, artboardMaster, dpi / 72);
+    currentArtboards.push({ canvas: artboardCanvas, preset, customObjects, heroSettings, customHero });
+
     // Create thumbnail for display
     const thumbnailCanvas = createThumbnail(artboardCanvas, 300);
-    
+
     // Create artboard container
     const artboardItem = document.createElement('div');
     artboardItem.className = 'artboard-item';
-    
+
     // Get actual dimensions
     const actualWidth = preset.width || Math.round(preset.width_mm * 11.811);
     const actualHeight = preset.height || Math.round(preset.height_mm * 11.811);
-    
+
     artboardItem.innerHTML = `
       <div class="artboard-title">${preset.name}</div>
       <div class="artboard-dimensions">${actualWidth} × ${actualHeight}px</div>
@@ -116,15 +131,15 @@ function generateArtboards(selectedNames) {
         <span class="text-xs text-[var(--muted-foreground)]">${preset.channel} • ${preset.category}</span>
       </div>
     `;
-    
+
     // Add thumbnail canvas
     thumbnailCanvas.className = 'artboard-canvas';
     artboardItem.insertBefore(thumbnailCanvas, artboardItem.firstChild);
-    
+
     // Add action buttons container
     const buttonsContainer = document.createElement('div');
     buttonsContainer.className = 'flex gap-2 mt-2';
-    
+
     // Add edit button
     const editBtn = document.createElement('button');
     editBtn.className = 'layout-btn text-xs flex-1';
@@ -133,33 +148,47 @@ function generateArtboards(selectedNames) {
       // Find the current artboard data
       const artboardData = currentArtboards.find(ab => ab.preset.name === preset.name);
       if (artboardData) {
-        openLayoutEditor(artboardData.canvas, preset, master, (updatedObjects) => {
-          // Create a custom master state for this artboard with updated objects
-          const customMaster = {
+        openLayoutEditor(
+          artboardData.canvas,
+          preset,
+          {
             ...master,
-            objects: updatedObjects
-          };
-          
-          // Regenerate this specific artboard with custom objects
-          const newArtboardCanvas = createArtboard(preset, customMaster, dpi / 72);
-          artboardData.canvas = newArtboardCanvas;
-          
-          // Store the custom objects for this artboard
-          artboardData.customObjects = updatedObjects;
-          
-          // Update the thumbnail display
-          const newThumbnail = createThumbnail(newArtboardCanvas, 300);
-          newThumbnail.className = 'artboard-canvas';
-          
-          // Replace the old thumbnail
-          const oldThumbnail = artboardItem.querySelector('.artboard-canvas');
-          artboardItem.replaceChild(newThumbnail, oldThumbnail);
-          
-          showNotification(`Layout "${preset.name}" updated successfully`, 'success');
-        });
+            objects: artboardData.customObjects || master.objects,
+            heroSettings: artboardData.heroSettings,
+            hero: artboardData.customHero || master.hero
+          },
+          (updatedObjects, updatedHeroSettings, updatedHero) => {
+            // Create a custom master state for this artboard with updated objects, heroSettings, and hero
+            const customMaster = {
+              ...master,
+              objects: updatedObjects,
+              heroSettings: updatedHeroSettings,
+              hero: updatedHero || master.hero
+            };
+
+            // Regenerate this specific artboard with custom objects, heroSettings, and hero
+            const newArtboardCanvas = createArtboard(preset, customMaster, dpi / 72);
+            artboardData.canvas = newArtboardCanvas;
+
+            // Store the custom objects, heroSettings, and hero for this artboard
+            artboardData.customObjects = updatedObjects;
+            artboardData.heroSettings = updatedHeroSettings;
+            artboardData.customHero = updatedHero || master.hero;
+
+            // Update the thumbnail display
+            const newThumbnail = createThumbnail(newArtboardCanvas, 300);
+            newThumbnail.className = 'artboard-canvas';
+
+            // Replace the old thumbnail
+            const oldThumbnail = artboardItem.querySelector('.artboard-canvas');
+            artboardItem.replaceChild(newThumbnail, oldThumbnail);
+
+            showNotification(`Layout "${preset.name}" updated successfully`, 'success');
+          }
+        );
       }
     });
-    
+
     // Add download button for individual artboard
     const downloadBtn = document.createElement('button');
     downloadBtn.className = 'layout-btn text-xs flex-1';
@@ -169,7 +198,7 @@ function generateArtboards(selectedNames) {
         const { exportSingle } = await import('./modules/export-raster.js');
         const artboardData = currentArtboards.find(ab => ab.preset.name === preset.name);
         const blob = await exportSingle(artboardData.canvas, preset, dpi);
-        
+
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -182,7 +211,7 @@ function generateArtboards(selectedNames) {
         showDialog('Download failed: ' + error.message, 'error');
       }
     });
-    
+
     buttonsContainer.appendChild(editBtn);
     buttonsContainer.appendChild(downloadBtn);
     artboardItem.appendChild(buttonsContainer);
@@ -249,21 +278,34 @@ function setupCanvasInteraction() {
     renderMaster();
   });
   
+  // Debounced and rAF-optimized rendering for performance
+  let renderPending = false;
+  let lastPresets = null;
+  function scheduleRender(presetsToRender) {
+    if (!renderPending) {
+      renderPending = true;
+      requestAnimationFrame(() => {
+        renderMaster();
+        if (presetsToRender && currentArtboards.length > 0) {
+          generateArtboards(presetsToRender);
+        }
+        renderPending = false;
+      });
+    }
+    lastPresets = presetsToRender;
+  }
+
   masterCanvas.addEventListener('mousemove', (e) => {
     const rect = masterCanvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    
+
     if (isDragging && selectedElement) {
       selectedElement.x = x - startX;
       selectedElement.y = y - startY;
-      renderMaster();
-      
-      // Regenerate artboards if they exist
-      if (currentArtboards.length > 0) {
-        const selectedPresets = currentArtboards.map(ab => ab.preset.name);
-        generateArtboards(selectedPresets);
-      }
+      // Debounced render
+      const selectedPresets = currentArtboards.map(ab => ab.preset.name);
+      scheduleRender(selectedPresets);
     } else {
       // Update cursor based on hover
       const element = getElementAtPosition(x, y);
