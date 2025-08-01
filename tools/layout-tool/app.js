@@ -137,7 +137,7 @@ function generateArtboards(selectedNames) {
           // Create a custom master state for this artboard with updated objects
           const customMaster = {
             ...master,
-            customObjects: updatedObjects
+            objects: updatedObjects
           };
           
           // Regenerate this specific artboard with custom objects
