@@ -1,0 +1,22 @@
+{
+  "enabled": true,
+  "name": "Documentation Sync",
+  "description": "Listens to all JavaScript source files, HTML files, CSS files, and configuration files in the repository. When changes are detected, triggers an AI agent to update the README.md and any documentation to reflect the changes in functionality, features, or structure.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "*.js",
+      "tools/**/*.js",
+      "styles/*.css",
+      "*.html",
+      "tools/**/*.html",
+      "package.json",
+      "components.json"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Source files have been modified in the reformately utility tools project. Please review the changes and update the README.md file and any relevant documentation to reflect:\n\n1. New or modified functionality in the tools\n2. Changes to the project structure or architecture\n3. Updates to dependencies or configuration\n4. New features or capabilities added\n5. Any breaking changes or important updates\n\nFocus on keeping the documentation accurate, comprehensive, and user-friendly. Ensure that the README properly describes all available tools, their features, and how to use them. If there are significant structural changes, also consider updating any technical documentation about the project architecture."
+  }
+}

@@ -7,7 +7,7 @@ import { setMode } from './modules/colour-manager.js';
 import { createArtboard, createThumbnail } from './modules/canvas-engine.js';
 import { exportZip } from './modules/export-raster.js';
 import { showDialog } from './modules/ui-dialog.js';
-import { openLayoutEditor } from './modules/layout-editor.mjs';
+import { openLayoutEditor } from './modules/layout-editor.js';
 
 // Global state
 let presets = [];
@@ -133,19 +133,19 @@ function generateArtboards(selectedNames) {
       // Find the current artboard data
       const artboardData = currentArtboards.find(ab => ab.preset.name === preset.name);
       if (artboardData) {
-        openLayoutEditor(artboardData.canvas, preset, master, (updatedObjects, updatedMaster) => {
-          // Use the updated master state if provided, otherwise create custom master
-          const customMaster = updatedMaster || {
+        openLayoutEditor(artboardData.canvas, preset, master, (updatedObjects) => {
+          // Create a custom master state for this artboard with updated objects
+          const customMaster = {
             ...master,
             objects: updatedObjects
           };
           
-          // Regenerate this specific artboard with updated master
+          // Regenerate this specific artboard with custom objects
           const newArtboardCanvas = createArtboard(preset, customMaster, dpi / 72);
           artboardData.canvas = newArtboardCanvas;
           
-          // Store the custom master state for this artboard
-          artboardData.customMaster = customMaster;
+          // Store the custom objects for this artboard
+          artboardData.customObjects = updatedObjects;
           
           // Update the thumbnail display
           const newThumbnail = createThumbnail(newArtboardCanvas, 300);
