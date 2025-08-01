@@ -1240,6 +1240,177 @@ function getCursorForHandle(type) {
 }
 
 /**
+ * Update hero image slider values
+ */
+function updateHeroSliders() {
+  const heroXSlider = document.getElementById('hero-x');
+  const heroYSlider = document.getElementById('hero-y');
+  const heroScaleSlider = document.getElementById('hero-scale');
+  const heroXValue = document.getElementById('hero-x-value');
+  const heroYValue = document.getElementById('hero-y-value');
+  const heroScaleValue = document.getElementById('hero-scale-value');
+  
+  if (heroXSlider) {
+    const xValue = Math.round(editorState.heroCrop.x * 100);
+    heroXSlider.value = xValue;
+    if (heroXValue) heroXValue.textContent = `${xValue}%`;
+  }
+  
+  if (heroYSlider) {
+    const yValue = Math.round(editorState.heroCrop.y * 100);
+    heroYSlider.value = yValue;
+    if (heroYValue) heroYValue.textContent = `${yValue}%`;
+  }
+  
+  if (heroScaleSlider) {
+    const scaleValue = Math.round(editorState.heroCrop.scale * 100);
+    heroScaleSlider.value = scaleValue;
+    if (heroScaleValue) heroScaleValue.textContent = `${scaleValue}%`;
+  }
+}
+
+/**
+ * Bind hero image control events
+ */
+function bindHeroImageControls() {
+  const cropModeBtn = document.getElementById('crop-mode-btn');
+  const heroProperties = document.getElementById('hero-properties');
+  const heroXSlider = document.getElementById('hero-x');
+  const heroYSlider = document.getElementById('hero-y');
+  const heroScaleSlider = document.getElementById('hero-scale');
+  const heroXValue = document.getElementById('hero-x-value');
+  const heroYValue = document.getElementById('hero-y-value');
+  const heroScaleValue = document.getElementById('hero-scale-value');
+  const heroFitBtn = document.getElementById('hero-fit');
+  const heroFillBtn = document.getElementById('hero-fill');
+  const heroResetBtn = document.getElementById('hero-reset');
+  
+  // Toggle crop mode
+  if (cropModeBtn) {
+    cropModeBtn.addEventListener('click', () => {
+      editorState.cropMode = !editorState.cropMode;
+      heroProperties.classList.toggle('hidden', !editorState.cropMode);
+      
+      if (editorState.cropMode) {
+        cropModeBtn.innerHTML = '<i class="fas fa-times mr-2"></i>Exit Crop Mode';
+        cropModeBtn.classList.add('primary');
+      } else {
+        cropModeBtn.innerHTML = '<i class="fas fa-crop mr-2"></i>Crop & Position';
+        cropModeBtn.classList.remove('primary');
+      }
+      
+      renderEditor();
+    });
+  }
+  
+  // Position X slider
+  if (heroXSlider) {
+    heroXSlider.addEventListener('input', (e) => {
+      const value = parseFloat(e.target.value);
+      editorState.heroCrop.x = value / 100;
+      heroXValue.textContent = `${value}%`;
+      renderEditor();
+    });
+  }
+  
+  // Position Y slider
+  if (heroYSlider) {
+    heroYSlider.addEventListener('input', (e) => {
+      const value = parseFloat(e.target.value);
+      editorState.heroCrop.y = value / 100;
+      heroYValue.textContent = `${value}%`;
+      renderEditor();
+    });
+  }
+  
+  // Scale slider
+  if (heroScaleSlider) {
+    heroScaleSlider.addEventListener('input', (e) => {
+      const value = parseFloat(e.target.value);
+      editorState.heroCrop.scale = value / 100;
+      heroScaleValue.textContent = `${value}%`;
+      renderEditor();
+    });
+  }
+  
+  // Fit button - scale image to fit within canvas
+  if (heroFitBtn) {
+    heroFitBtn.addEventListener('click', () => {
+      if (!editorState.heroImage) return;
+      
+      const canvas = editorState.canvas;
+      const img = editorState.heroImage;
+      
+      const canvasRatio = canvas.width / canvas.height;
+      const imageRatio = img.width / img.height;
+      
+      if (imageRatio > canvasRatio) {
+        // Image is wider - fit to width
+        editorState.heroCrop.scale = 1;
+      } else {
+        // Image is taller - fit to height
+        editorState.heroCrop.scale = 1;
+      }
+      
+      editorState.heroCrop.x = 0;
+      editorState.heroCrop.y = 0;
+      editorState.heroCrop.mode = 'fit';
+      
+      updateHeroSliders();
+      renderEditor();
+      showNotification('Hero image fitted to canvas', 'success');
+    });
+  }
+  
+  // Fill button - scale image to fill entire canvas
+  if (heroFillBtn) {
+    heroFillBtn.addEventListener('click', () => {
+      if (!editorState.heroImage) return;
+      
+      const canvas = editorState.canvas;
+      const img = editorState.heroImage;
+      
+      const canvasRatio = canvas.width / canvas.height;
+      const imageRatio = img.width / img.height;
+      
+      if (imageRatio > canvasRatio) {
+        // Image is wider - scale to fill height
+        editorState.heroCrop.scale = canvas.height / img.height;
+      } else {
+        // Image is taller - scale to fill width
+        editorState.heroCrop.scale = canvas.width / img.width;
+      }
+      
+      editorState.heroCrop.x = 0;
+      editorState.heroCrop.y = 0;
+      editorState.heroCrop.mode = 'fill';
+      
+      updateHeroSliders();
+      renderEditor();
+      showNotification('Hero image scaled to fill canvas', 'success');
+    });
+  }
+  
+  // Reset button - reset all hero image transformations
+  if (heroResetBtn) {
+    heroResetBtn.addEventListener('click', () => {
+      editorState.heroCrop = {
+        x: 0,
+        y: 0,
+        width: 1,
+        height: 1,
+        scale: 1,
+        mode: 'cover'
+      };
+      
+      updateHeroSliders();
+      renderEditor();
+      showNotification('Hero image reset to original state', 'success');
+    });
+  }
+}
+
+/**
  * Bind enhanced text property inputs
  */
 function bindEnhancedTextProperties() {
@@ -1286,6 +1457,206 @@ function updateEnhancedTextProperties() {
   element.textOutline = textOutline;
   
   renderEditor();
+}
+
+/**
+ * Enhanced canvas interaction for hero image manipulation
+ */
+function setupHeroImageInteraction() {
+  const canvas = editorState.canvas;
+  let isDraggingHero = false;
+  let isDraggingHandle = false;
+  let dragStartX, dragStartY;
+  
+  canvas.addEventListener('mousedown', (e) => {
+    if (!editorState.cropMode) return;
+    
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / editorState.scale;
+    const y = (e.clientY - rect.top) / editorState.scale;
+    
+    // Check for crop handle interaction
+    const handle = getCropHandleAtPosition(x, y);
+    if (handle) {
+      isDraggingHandle = true;
+      editorState.dragHandle = handle;
+      dragStartX = x;
+      dragStartY = y;
+      canvas.style.cursor = getCursorForHandle(handle.type);
+      e.preventDefault();
+      return;
+    }
+    
+    // Check for hero image dragging
+    if (isPointInHeroImage(x, y)) {
+      isDraggingHero = true;
+      dragStartX = x;
+      dragStartY = y;
+      canvas.style.cursor = 'move';
+      e.preventDefault();
+    }
+  });
+  
+  canvas.addEventListener('mousemove', (e) => {
+    if (!editorState.cropMode) return;
+    
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / editorState.scale;
+    const y = (e.clientY - rect.top) / editorState.scale;
+    
+    if (isDraggingHandle && editorState.dragHandle) {
+      // Handle crop area resizing
+      const deltaX = (x - dragStartX) / canvas.width;
+      const deltaY = (y - dragStartY) / canvas.height;
+      
+      const handle = editorState.dragHandle;
+      
+      // Update crop dimensions based on handle type
+      switch (handle.type) {
+        case 'nw':
+          editorState.heroCrop.x += deltaX;
+          editorState.heroCrop.y += deltaY;
+          editorState.heroCrop.width -= deltaX;
+          editorState.heroCrop.height -= deltaY;
+          break;
+        case 'ne':
+          editorState.heroCrop.y += deltaY;
+          editorState.heroCrop.width += deltaX;
+          editorState.heroCrop.height -= deltaY;
+          break;
+        case 'sw':
+          editorState.heroCrop.x += deltaX;
+          editorState.heroCrop.width -= deltaX;
+          editorState.heroCrop.height += deltaY;
+          break;
+        case 'se':
+          editorState.heroCrop.width += deltaX;
+          editorState.heroCrop.height += deltaY;
+          break;
+        case 'n':
+          editorState.heroCrop.y += deltaY;
+          editorState.heroCrop.height -= deltaY;
+          break;
+        case 's':
+          editorState.heroCrop.height += deltaY;
+          break;
+        case 'w':
+          editorState.heroCrop.x += deltaX;
+          editorState.heroCrop.width -= deltaX;
+          break;
+        case 'e':
+          editorState.heroCrop.width += deltaX;
+          break;
+      }
+      
+      // Clamp values
+      editorState.heroCrop.x = Math.max(0, Math.min(0.8, editorState.heroCrop.x));
+      editorState.heroCrop.y = Math.max(0, Math.min(0.8, editorState.heroCrop.y));
+      editorState.heroCrop.width = Math.max(0.1, Math.min(1 - editorState.heroCrop.x, editorState.heroCrop.width));
+      editorState.heroCrop.height = Math.max(0.1, Math.min(1 - editorState.heroCrop.y, editorState.heroCrop.height));
+      
+      dragStartX = x;
+      dragStartY = y;
+      
+      updateHeroSliders();
+      renderEditor();
+    } else if (isDraggingHero) {
+      // Handle hero image position dragging
+      const deltaX = (x - dragStartX) / canvas.width;
+      const deltaY = (y - dragStartY) / canvas.height;
+      
+      editorState.heroCrop.x += deltaX * 2; // Multiply for more responsive movement
+      editorState.heroCrop.y += deltaY * 2;
+      
+      // Clamp values
+      editorState.heroCrop.x = Math.max(-1, Math.min(1, editorState.heroCrop.x));
+      editorState.heroCrop.y = Math.max(-1, Math.min(1, editorState.heroCrop.y));
+      
+      dragStartX = x;
+      dragStartY = y;
+      
+      updateHeroSliders();
+      renderEditor();
+    } else {
+      // Update cursor based on what's under mouse
+      const handle = getCropHandleAtPosition(x, y);
+      if (handle) {
+        canvas.style.cursor = getCursorForHandle(handle.type);
+      } else if (isPointInHeroImage(x, y)) {
+        canvas.style.cursor = 'move';
+      } else {
+        canvas.style.cursor = 'crosshair';
+      }
+    }
+  });
+  
+  canvas.addEventListener('mouseup', () => {
+    isDraggingHero = false;
+    isDraggingHandle = false;
+    editorState.dragHandle = null;
+    canvas.style.cursor = 'crosshair';
+  });
+}
+
+/**
+ * Check if a point is within the hero image bounds
+ */
+function isPointInHeroImage(x, y) {
+  if (!editorState.heroImage) return false;
+  
+  const canvas = editorState.canvas;
+  const { heroCrop } = editorState;
+  
+  const destWidth = canvas.width * heroCrop.scale;
+  const destHeight = canvas.height * heroCrop.scale;
+  const destX = (canvas.width - destWidth) / 2 + (heroCrop.x * canvas.width * 0.5);
+  const destY = (canvas.height - destHeight) / 2 + (heroCrop.y * canvas.height * 0.5);
+  
+  return x >= destX && x <= destX + destWidth && y >= destY && y <= destY + destHeight;
+}
+
+/**
+ * Save changes and close editor
+ */
+function saveChanges() {
+  if (editorState.onSave) {
+    // Create updated master state with custom objects and hero settings
+    const updatedMaster = {
+      ...editorState.master,
+      objects: editorState.objects,
+      hero: editorState.heroImage,
+      heroSettings: {
+        crop: { ...editorState.heroCrop },
+        mode: editorState.heroCrop.mode || 'cover'
+      }
+    };
+    
+    editorState.onSave(editorState.objects, updatedMaster);
+  }
+  closeEditor();
+}
+
+/**
+ * Reset changes to original state
+ */
+function resetChanges() {
+  if (confirm('Are you sure you want to reset all changes?')) {
+    editorState.objects = cloneObjects(editorState.master.objects);
+    editorState.heroCrop = {
+      x: 0,
+      y: 0,
+      width: 1,
+      height: 1,
+      scale: 1
+    };
+    editorState.selectedElement = null;
+    document.getElementById('element-properties').classList.add('hidden');
+    
+    updateHeroSliders();
+    renderEditor();
+    updateElementList();
+    showNotification('Changes reset successfully', 'success');
+  }
 }
 
 /**
