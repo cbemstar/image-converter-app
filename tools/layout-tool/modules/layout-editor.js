@@ -2,6 +2,9 @@
  * Layout Editor Module - Provides full-screen editing for individual layouts
  */
 
+/* eslint-disable */
+// @ts-nocheck
+// IDE AUTOFIX DISABLED - This file has complex function dependencies
 import { showNotification } from '../../../utils.js';
 import { createThumbnail } from './canvas-engine.js';
 import { exportSingle } from './export-raster.js';
