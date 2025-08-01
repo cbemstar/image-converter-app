@@ -298,11 +298,47 @@ function setupCanvasInteraction() {
 }
 
 /**
- * Initialize the application
+ * Update loading progress
+ */
+function updateLoadingProgress(percentage, status, detail) {
+  const progressBar = document.getElementById('loading-progress');
+  const statusText = document.getElementById('loading-status');
+  const detailText = document.getElementById('loading-detail');
+  
+  if (progressBar) progressBar.style.width = `${percentage}%`;
+  if (statusText) statusText.textContent = status;
+  if (detailText) detailText.textContent = detail;
+}
+
+/**
+ * Hide loading overlay and show tool interface
+ */
+function hideLoadingOverlay() {
+  const loadingOverlay = document.getElementById('loading-overlay');
+  const toolInterface = document.getElementById('tool-interface');
+  
+  if (loadingOverlay && toolInterface) {
+    // Fade out loading overlay
+    loadingOverlay.style.opacity = '0';
+    loadingOverlay.style.transition = 'opacity 0.5s ease-out';
+    
+    // Fade in tool interface
+    toolInterface.style.opacity = '1';
+    
+    // Remove loading overlay after animation
+    setTimeout(() => {
+      loadingOverlay.style.display = 'none';
+    }, 500);
+  }
+}
+
+/**
+ * Initialize the application with loading progress
  */
 async function init() {
   try {
     console.log('Starting layout tool initialization...');
+    updateLoadingProgress(10, 'Initializing...', 'Setting up DOM elements');
     
     // Initialize DOM elements
     masterCanvas = document.getElementById('master-canvas');
@@ -327,10 +363,17 @@ async function init() {
     };
     
     console.log('DOM elements initialized successfully');
+    updateLoadingProgress(25, 'Loading presets...', 'Fetching layout presets');
+    
+    // Add small delay to show progress
+    await new Promise(resolve => setTimeout(resolve, 200));
     
     console.log('Loading presets...');
     presets = await getPresets();
     console.log(`Loaded ${presets.length} presets successfully`);
+    
+    updateLoadingProgress(50, 'Setting up interface...', 'Initializing sidebar');
+    await new Promise(resolve => setTimeout(resolve, 100));
     
     console.log('Initializing sidebar...');
     initSidebar(document.getElementById('tool-sidebar'), {
@@ -426,6 +469,9 @@ async function init() {
       onGenerate: generateArtboards
     });
 
+    updateLoadingProgress(75, 'Setting up controls...', 'Initializing topbar');
+    await new Promise(resolve => setTimeout(resolve, 100));
+
     initTopbar(document.getElementById('topbar'), {
       onUndo: () => {
         commandStack.undo();
@@ -475,11 +521,39 @@ async function init() {
       }
     });
     
+    updateLoadingProgress(90, 'Finalizing...', 'Setting up canvas interaction');
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
     setupCanvasInteraction();
     renderMaster();
     
+    updateLoadingProgress(100, 'Ready!', 'Layout tool loaded successfully');
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    // Hide loading overlay and show the tool
+    hideLoadingOverlay();
+    
+    console.log('Layout tool initialization completed successfully!');
+    
   } catch (error) {
     console.error('Failed to initialize layout tool:', error);
+    
+    // Show error in loading overlay
+    updateLoadingProgress(0, 'Error!', 'Failed to initialize - please refresh');
+    const loadingOverlay = document.getElementById('loading-overlay');
+    if (loadingOverlay) {
+      loadingOverlay.innerHTML = `
+        <div class="text-center">
+          <div class="text-red-500 text-6xl mb-4">⚠️</div>
+          <h3 class="text-lg font-semibold text-[var(--foreground)] mb-2">Initialization Failed</h3>
+          <p class="text-sm text-[var(--muted-foreground)] mb-4">The layout tool failed to load properly.</p>
+          <button onclick="window.location.reload()" class="layout-btn primary">
+            <i class="fas fa-refresh mr-2"></i>Refresh Page
+          </button>
+        </div>
+      `;
+    }
+    
     showDialog('Failed to initialize the layout tool. Please refresh the page.');
   }
 }
