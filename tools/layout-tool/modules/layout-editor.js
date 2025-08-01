@@ -130,15 +130,82 @@ export function openLayoutEditor(artboardCanvas, preset, master, onSave) {
           <div id="text-properties" class="hidden space-y-3">
             <div>
               <label class="layout-label text-sm">Text</label>
-              <input type="text" id="prop-text" class="layout-input">
+              <textarea id="prop-text" class="layout-input" rows="2" placeholder="Enter your text here..."></textarea>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="layout-label text-sm">Font Size</label>
+                <input type="number" id="prop-size" class="layout-input" min="8" max="200" value="24">
+              </div>
+              <div>
+                <label class="layout-label text-sm">Line Height</label>
+                <input type="number" id="prop-line-height" class="layout-input" min="0.8" max="3" step="0.1" value="1.2">
+              </div>
             </div>
             <div>
-              <label class="layout-label text-sm">Font Size</label>
-              <input type="number" id="prop-size" class="layout-input" min="8" max="200">
+              <label class="layout-label text-sm">Font Family</label>
+              <select id="prop-font-family" class="layout-input">
+                <option value="Arial">Arial</option>
+                <option value="Helvetica">Helvetica</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Verdana">Verdana</option>
+                <option value="Trebuchet MS">Trebuchet MS</option>
+                <option value="Impact">Impact</option>
+                <option value="Comic Sans MS">Comic Sans MS</option>
+                <option value="Courier New">Courier New</option>
+                <option value="Lucida Console">Lucida Console</option>
+              </select>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+              <div>
+                <label class="layout-label text-sm">Weight</label>
+                <select id="prop-font-weight" class="layout-input">
+                  <option value="normal">Normal</option>
+                  <option value="bold">Bold</option>
+                  <option value="lighter">Light</option>
+                  <option value="bolder">Extra Bold</option>
+                </select>
+              </div>
+              <div>
+                <label class="layout-label text-sm">Style</label>
+                <select id="prop-font-style" class="layout-input">
+                  <option value="normal">Normal</option>
+                  <option value="italic">Italic</option>
+                  <option value="oblique">Oblique</option>
+                </select>
+              </div>
+              <div>
+                <label class="layout-label text-sm">Align</label>
+                <select id="prop-text-align" class="layout-input">
+                  <option value="left">Left</option>
+                  <option value="center">Center</option>
+                  <option value="right">Right</option>
+                </select>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="layout-label text-sm">Text Color</label>
+                <input type="color" id="prop-color" class="layout-input" value="#000000">
+              </div>
+              <div>
+                <label class="layout-label text-sm">Background</label>
+                <input type="color" id="prop-bg-color" class="layout-input" value="#ffffff">
+              </div>
             </div>
             <div>
-              <label class="layout-label text-sm">Color</label>
-              <input type="color" id="prop-color" class="layout-input">
+              <label class="layout-label text-sm">Text Effects</label>
+              <div class="grid grid-cols-2 gap-2">
+                <label class="flex items-center gap-2">
+                  <input type="checkbox" id="prop-text-shadow" class="w-4 h-4">
+                  <span class="text-sm">Text Shadow</span>
+                </label>
+                <label class="flex items-center gap-2">
+                  <input type="checkbox" id="prop-text-outline" class="w-4 h-4">
+                  <span class="text-sm">Text Outline</span>
+                </label>
+              </div>
             </div>
           </div>
           <div id="logo-properties" class="hidden space-y-3">
@@ -300,24 +367,25 @@ function drawHeroImage(ctx, canvasWidth, canvasHeight) {
 }
 
 /**
- * Draw crop overlay with handles
+ * Draw crop overlay with interactive handles
  */
 function drawCropOverlay(ctx, canvasWidth, canvasHeight) {
   ctx.save();
   
+  // Calculate crop area based on heroCrop settings
+  const { heroCrop } = editorState;
+  const cropX = canvasWidth * 0.1 + (heroCrop.x * canvasWidth * 0.1);
+  const cropY = canvasHeight * 0.1 + (heroCrop.y * canvasHeight * 0.1);
+  const cropWidth = canvasWidth * 0.8 * heroCrop.width;
+  const cropHeight = canvasHeight * 0.8 * heroCrop.height;
+  
   // Semi-transparent overlay
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
   
-  // Clear the crop area
-  const cropX = canvasWidth * 0.1;
-  const cropY = canvasHeight * 0.1;
-  const cropWidth = canvasWidth * 0.8;
-  const cropHeight = canvasHeight * 0.8;
-  
+  // Clear the crop area to show the image
   ctx.globalCompositeOperation = 'destination-out';
   ctx.fillRect(cropX, cropY, cropWidth, cropHeight);
-  
   ctx.globalCompositeOperation = 'source-over';
   
   // Draw crop border
@@ -326,17 +394,32 @@ function drawCropOverlay(ctx, canvasWidth, canvasHeight) {
   ctx.strokeRect(cropX, cropY, cropWidth, cropHeight);
   
   // Draw corner handles
-  const handleSize = 8;
+  const handleSize = 12;
   ctx.fillStyle = '#007bff';
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 2;
   
-  // Top-left
-  ctx.fillRect(cropX - handleSize/2, cropY - handleSize/2, handleSize, handleSize);
-  // Top-right
-  ctx.fillRect(cropX + cropWidth - handleSize/2, cropY - handleSize/2, handleSize, handleSize);
-  // Bottom-left
-  ctx.fillRect(cropX - handleSize/2, cropY + cropHeight - handleSize/2, handleSize, handleSize);
-  // Bottom-right
-  ctx.fillRect(cropX + cropWidth - handleSize/2, cropY + cropHeight - handleSize/2, handleSize, handleSize);
+  // Store handle positions for interaction
+  editorState.cropHandles = [
+    { x: cropX, y: cropY, type: 'nw' }, // Northwest
+    { x: cropX + cropWidth, y: cropY, type: 'ne' }, // Northeast
+    { x: cropX, y: cropY + cropHeight, type: 'sw' }, // Southwest
+    { x: cropX + cropWidth, y: cropY + cropHeight, type: 'se' }, // Southeast
+    { x: cropX + cropWidth/2, y: cropY, type: 'n' }, // North
+    { x: cropX + cropWidth/2, y: cropY + cropHeight, type: 's' }, // South
+    { x: cropX, y: cropY + cropHeight/2, type: 'w' }, // West
+    { x: cropX + cropWidth, y: cropY + cropHeight/2, type: 'e' } // East
+  ];
+  
+  // Draw handles
+  editorState.cropHandles.forEach(handle => {
+    ctx.fillRect(handle.x - handleSize/2, handle.y - handleSize/2, handleSize, handleSize);
+    ctx.strokeRect(handle.x - handleSize/2, handle.y - handleSize/2, handleSize, handleSize);
+  });
+  
+  // Draw center drag area
+  ctx.fillStyle = 'rgba(0, 123, 255, 0.1)';
+  ctx.fillRect(cropX, cropY, cropWidth, cropHeight);
   
   ctx.restore();
 }
@@ -371,22 +454,55 @@ function renderEditor() {
     const scaledY = obj.y * scaleY;
     
     if (obj.type === 'text') {
-      ctx.fillStyle = obj.color || '#000000';
+      // Enhanced text rendering with new properties
       const scaledSize = (obj.size || 24) * Math.min(scaleX, scaleY);
-      ctx.font = `${scaledSize}px Arial, sans-serif`;
+      const fontFamily = obj.fontFamily || 'Arial';
+      const fontWeight = obj.fontWeight || 'normal';
+      const fontStyle = obj.fontStyle || 'normal';
+      const textAlign = obj.textAlign || 'left';
+      const lineHeight = obj.lineHeight || 1.2;
+      
+      // Set font with enhanced properties
+      ctx.font = `${fontStyle} ${fontWeight} ${scaledSize}px ${fontFamily}`;
+      ctx.textAlign = textAlign;
       ctx.textBaseline = 'top';
       
-      // Add text shadow for better readability
-      if (master.hero) {
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-        ctx.shadowBlur = 2;
-        ctx.shadowOffsetX = 1;
-        ctx.shadowOffsetY = 1;
+      // Draw background if specified
+      if (obj.bgColor && obj.bgColor !== '#ffffff') {
+        const textMetrics = ctx.measureText(obj.text);
+        const textWidth = textMetrics.width;
+        const textHeight = scaledSize * lineHeight;
+        
+        ctx.fillStyle = obj.bgColor;
+        ctx.fillRect(scaledX - 4, scaledY - 2, textWidth + 8, textHeight + 4);
       }
       
-      ctx.fillText(obj.text, scaledX, scaledY);
+      // Apply text outline if enabled
+      if (obj.textOutline) {
+        ctx.strokeStyle = obj.color === '#ffffff' ? '#000000' : '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.strokeText(obj.text, scaledX, scaledY);
+      }
       
-      // Reset shadow
+      // Apply text shadow if enabled or if on image
+      if (obj.textShadow || editorState.heroImage) {
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+        ctx.shadowBlur = obj.textShadow ? 4 : 2;
+        ctx.shadowOffsetX = obj.textShadow ? 2 : 1;
+        ctx.shadowOffsetY = obj.textShadow ? 2 : 1;
+      }
+      
+      // Draw the text
+      ctx.fillStyle = obj.color || '#000000';
+      
+      // Handle multi-line text
+      const lines = obj.text.split('\n');
+      lines.forEach((line, index) => {
+        const lineY = scaledY + (index * scaledSize * lineHeight);
+        ctx.fillText(line, scaledX, lineY);
+      });
+      
+      // Reset shadow and stroke
       ctx.shadowColor = 'transparent';
       ctx.shadowBlur = 0;
       ctx.shadowOffsetX = 0;
@@ -540,6 +656,9 @@ function bindEditorEvents() {
   
   // Hero image controls
   bindHeroImageControls();
+  
+  // Enhanced text property inputs
+  bindEnhancedTextProperties();
 }
 
 /**
@@ -555,6 +674,17 @@ function setupCanvasInteraction() {
     const rect = canvas.getBoundingClientRect();
     const x = (e.clientX - rect.left) / editorState.scale;
     const y = (e.clientY - rect.top) / editorState.scale;
+    
+    // Handle crop handle interaction in crop mode
+    if (editorState.cropMode && editorState.cropHandles.length > 0) {
+      const handle = getCropHandleAtPosition(x, y);
+      if (handle) {
+        editorState.dragHandle = handle;
+        canvas.style.cursor = getCursorForHandle(handle.type);
+        e.preventDefault();
+        return;
+      }
+    }
     
     // Handle hero image interaction in crop mode
     if (editorState.cropMode && editorState.heroImage && isPointInHeroImage(x, y)) {
@@ -1059,6 +1189,361 @@ function setupHeroImageInteraction() {
     updateHeroSliders();
     renderEditor();
   });
+}
+
+/**
+ * Check if a point is within the hero image bounds
+ */
+function isPointInHeroImage(x, y) {
+  if (!editorState.heroImage) return false;
+  
+  const canvas = editorState.canvas;
+  const { heroCrop } = editorState;
+  
+  const destWidth = canvas.width * heroCrop.scale;
+  const destHeight = canvas.height * heroCrop.scale;
+  const destX = (canvas.width - destWidth) / 2 + (heroCrop.x * canvas.width * 0.5);
+  const destY = (canvas.height - destHeight) / 2 + (heroCrop.y * canvas.height * 0.5);
+  
+  return x >= destX && x <= destX + destWidth && y >= destY && y <= destY + destHeight;
+}
+
+/**
+ * Get crop handle at mouse position
+ */
+function getCropHandleAtPosition(x, y) {
+  const handleSize = 12;
+  for (const handle of editorState.cropHandles) {
+    if (x >= handle.x - handleSize/2 && x <= handle.x + handleSize/2 &&
+        y >= handle.y - handleSize/2 && y <= handle.y + handleSize/2) {
+      return handle;
+    }
+  }
+  return null;
+}
+
+/**
+ * Get cursor style for crop handle type
+ */
+function getCursorForHandle(type) {
+  const cursors = {
+    'nw': 'nw-resize',
+    'ne': 'ne-resize', 
+    'sw': 'sw-resize',
+    'se': 'se-resize',
+    'n': 'n-resize',
+    's': 's-resize',
+    'w': 'w-resize',
+    'e': 'e-resize'
+  };
+  return cursors[type] || 'default';
+}
+
+/**
+ * Update hero image slider values
+ */
+function updateHeroSliders() {
+  const heroXSlider = document.getElementById('hero-x');
+  const heroYSlider = document.getElementById('hero-y');
+  const heroScaleSlider = document.getElementById('hero-scale');
+  const heroXValue = document.getElementById('hero-x-value');
+  const heroYValue = document.getElementById('hero-y-value');
+  const heroScaleValue = document.getElementById('hero-scale-value');
+  
+  if (heroXSlider) {
+    const xValue = Math.round(editorState.heroCrop.x * 100);
+    heroXSlider.value = xValue;
+    if (heroXValue) heroXValue.textContent = `${xValue}%`;
+  }
+  
+  if (heroYSlider) {
+    const yValue = Math.round(editorState.heroCrop.y * 100);
+    heroYSlider.value = yValue;
+    if (heroYValue) heroYValue.textContent = `${yValue}%`;
+  }
+  
+  if (heroScaleSlider) {
+    const scaleValue = Math.round(editorState.heroCrop.scale * 100);
+    heroScaleSlider.value = scaleValue;
+    if (heroScaleValue) heroScaleValue.textContent = `${scaleValue}%`;
+  }
+}
+
+/**
+ * Check if a point is within the hero image bounds
+ */
+function isPointInHeroImage(x, y) {
+  if (!editorState.heroImage) return false;
+  
+  const canvas = editorState.canvas;
+  const { heroCrop } = editorState;
+  
+  const destWidth = canvas.width * heroCrop.scale;
+  const destHeight = canvas.height * heroCrop.scale;
+  const destX = (canvas.width - destWidth) / 2 + (heroCrop.x * canvas.width * 0.5);
+  const destY = (canvas.height - destHeight) / 2 + (heroCrop.y * canvas.height * 0.5);
+  
+  return x >= destX && x <= destX + destWidth && y >= destY && y <= destY + destHeight;
+}
+
+/**
+ * Close the editor
+ */
+function closeEditor() {
+  if (currentEditor) {
+    currentEditor.remove();
+    currentEditor = null;
+  }
+}/**
+
+ * Bind enhanced text property inputs
+ */
+function bindEnhancedTextProperties() {
+  const enhancedInputs = [
+    'prop-line-height', 'prop-font-family', 'prop-font-weight', 
+    'prop-font-style', 'prop-text-align', 'prop-bg-color',
+    'prop-text-shadow', 'prop-text-outline'
+  ];
+  
+  enhancedInputs.forEach(id => {
+    const input = document.getElementById(id);
+    if (input) {
+      input.addEventListener('input', updateEnhancedTextProperties);
+      input.addEventListener('change', updateEnhancedTextProperties);
+    }
+  });
+}
+
+/**
+ * Update enhanced text properties
+ */
+function updateEnhancedTextProperties() {
+  const element = editorState.selectedElement;
+  if (!element || element.type !== 'text') return;
+  
+  // Get enhanced text properties
+  const lineHeight = parseFloat(document.getElementById('prop-line-height').value) || 1.2;
+  const fontFamily = document.getElementById('prop-font-family').value || 'Arial';
+  const fontWeight = document.getElementById('prop-font-weight').value || 'normal';
+  const fontStyle = document.getElementById('prop-font-style').value || 'normal';
+  const textAlign = document.getElementById('prop-text-align').value || 'left';
+  const bgColor = document.getElementById('prop-bg-color').value || '#ffffff';
+  const textShadow = document.getElementById('prop-text-shadow').checked;
+  const textOutline = document.getElementById('prop-text-outline').checked;
+  
+  // Update element properties
+  element.lineHeight = lineHeight;
+  element.fontFamily = fontFamily;
+  element.fontWeight = fontWeight;
+  element.fontStyle = fontStyle;
+  element.textAlign = textAlign;
+  element.bgColor = bgColor;
+  element.textShadow = textShadow;
+  element.textOutline = textOutline;
+  
+  renderEditor();
+}
+
+/**
+ * Get crop handle at mouse position
+ */
+function getCropHandleAtPosition(x, y) {
+  const handleSize = 12;
+  for (const handle of editorState.cropHandles) {
+    if (x >= handle.x - handleSize/2 && x <= handle.x + handleSize/2 &&
+        y >= handle.y - handleSize/2 && y <= handle.y + handleSize/2) {
+      return handle;
+    }
+  }
+  return null;
+}
+
+/**
+ * Get cursor style for crop handle type
+ */
+function getCursorForHandle(type) {
+  const cursors = {
+    'nw': 'nw-resize',
+    'ne': 'ne-resize', 
+    'sw': 'sw-resize',
+    'se': 'se-resize',
+    'n': 'n-resize',
+    's': 's-resize',
+    'w': 'w-resize',
+    'e': 'e-resize'
+  };
+  return cursors[type] || 'default';
+}
+
+/**
+ * Bind hero image control events
+ */
+function bindHeroImageControls() {
+  const cropModeBtn = document.getElementById('crop-mode-btn');
+  const heroProperties = document.getElementById('hero-properties');
+  const heroXSlider = document.getElementById('hero-x');
+  const heroYSlider = document.getElementById('hero-y');
+  const heroScaleSlider = document.getElementById('hero-scale');
+  const heroXValue = document.getElementById('hero-x-value');
+  const heroYValue = document.getElementById('hero-y-value');
+  const heroScaleValue = document.getElementById('hero-scale-value');
+  const heroFitBtn = document.getElementById('hero-fit');
+  const heroFillBtn = document.getElementById('hero-fill');
+  const heroResetBtn = document.getElementById('hero-reset');
+  
+  // Toggle crop mode
+  if (cropModeBtn) {
+    cropModeBtn.addEventListener('click', () => {
+      editorState.cropMode = !editorState.cropMode;
+      heroProperties.classList.toggle('hidden', !editorState.cropMode);
+      
+      if (editorState.cropMode) {
+        cropModeBtn.innerHTML = '<i class="fas fa-times mr-2"></i>Exit Crop Mode';
+        cropModeBtn.classList.add('primary');
+      } else {
+        cropModeBtn.innerHTML = '<i class="fas fa-crop mr-2"></i>Crop & Position';
+        cropModeBtn.classList.remove('primary');
+      }
+      
+      renderEditor();
+    });
+  }
+  
+  // Position X slider
+  if (heroXSlider) {
+    heroXSlider.addEventListener('input', (e) => {
+      const value = parseFloat(e.target.value);
+      editorState.heroCrop.x = value / 100;
+      heroXValue.textContent = `${value}%`;
+      renderEditor();
+    });
+  }
+  
+  // Position Y slider
+  if (heroYSlider) {
+    heroYSlider.addEventListener('input', (e) => {
+      const value = parseFloat(e.target.value);
+      editorState.heroCrop.y = value / 100;
+      heroYValue.textContent = `${value}%`;
+      renderEditor();
+    });
+  }
+  
+  // Scale slider
+  if (heroScaleSlider) {
+    heroScaleSlider.addEventListener('input', (e) => {
+      const value = parseFloat(e.target.value);
+      editorState.heroCrop.scale = value / 100;
+      heroScaleValue.textContent = `${value}%`;
+      renderEditor();
+    });
+  }
+  
+  // Fit button - scale image to fit within canvas
+  if (heroFitBtn) {
+    heroFitBtn.addEventListener('click', () => {
+      if (!editorState.heroImage) return;
+      
+      const canvas = editorState.canvas;
+      const img = editorState.heroImage;
+      
+      const canvasRatio = canvas.width / canvas.height;
+      const imageRatio = img.width / img.height;
+      
+      if (imageRatio > canvasRatio) {
+        // Image is wider - fit to width
+        editorState.heroCrop.scale = 1;
+      } else {
+        // Image is taller - fit to height
+        editorState.heroCrop.scale = 1;
+      }
+      
+      editorState.heroCrop.x = 0;
+      editorState.heroCrop.y = 0;
+      editorState.heroCrop.mode = 'fit';
+      
+      updateHeroSliders();
+      renderEditor();
+      showNotification('Hero image fitted to canvas', 'success');
+    });
+  }
+  
+  // Fill button - scale image to fill entire canvas
+  if (heroFillBtn) {
+    heroFillBtn.addEventListener('click', () => {
+      if (!editorState.heroImage) return;
+      
+      const canvas = editorState.canvas;
+      const img = editorState.heroImage;
+      
+      const canvasRatio = canvas.width / canvas.height;
+      const imageRatio = img.width / img.height;
+      
+      if (imageRatio > canvasRatio) {
+        // Image is wider - scale to fill height
+        editorState.heroCrop.scale = canvas.height / img.height;
+      } else {
+        // Image is taller - scale to fill width
+        editorState.heroCrop.scale = canvas.width / img.width;
+      }
+      
+      editorState.heroCrop.x = 0;
+      editorState.heroCrop.y = 0;
+      editorState.heroCrop.mode = 'fill';
+      
+      updateHeroSliders();
+      renderEditor();
+      showNotification('Hero image scaled to fill canvas', 'success');
+    });
+  }
+  
+  // Reset button - reset all hero image transformations
+  if (heroResetBtn) {
+    heroResetBtn.addEventListener('click', () => {
+      editorState.heroCrop = {
+        x: 0,
+        y: 0,
+        width: 1,
+        height: 1,
+        scale: 1,
+        mode: 'cover'
+      };
+      
+      updateHeroSliders();
+      renderEditor();
+      showNotification('Hero image reset to original state', 'success');
+    });
+  }
+}
+
+/**
+ * Update hero image slider values
+ */
+function updateHeroSliders() {
+  const heroXSlider = document.getElementById('hero-x');
+  const heroYSlider = document.getElementById('hero-y');
+  const heroScaleSlider = document.getElementById('hero-scale');
+  const heroXValue = document.getElementById('hero-x-value');
+  const heroYValue = document.getElementById('hero-y-value');
+  const heroScaleValue = document.getElementById('hero-scale-value');
+  
+  if (heroXSlider) {
+    const xValue = Math.round(editorState.heroCrop.x * 100);
+    heroXSlider.value = xValue;
+    if (heroXValue) heroXValue.textContent = `${xValue}%`;
+  }
+  
+  if (heroYSlider) {
+    const yValue = Math.round(editorState.heroCrop.y * 100);
+    heroYSlider.value = yValue;
+    if (heroYValue) heroYValue.textContent = `${yValue}%`;
+  }
+  
+  if (heroScaleSlider) {
+    const scaleValue = Math.round(editorState.heroCrop.scale * 100);
+    heroScaleSlider.value = scaleValue;
+    if (heroScaleValue) heroScaleValue.textContent = `${scaleValue}%`;
+  }
 }
 
 /**

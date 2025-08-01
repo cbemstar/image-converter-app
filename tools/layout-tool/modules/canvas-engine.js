@@ -38,12 +38,17 @@ export function createArtboard(preset, master, scale = 1) {
   
   // Draw hero image if present
   if (master.hero) {
-    const crop = coverFit(master.hero, canvas.width, canvas.height);
-    ctx.drawImage(
-      master.hero, 
-      crop.sx, crop.sy, crop.sw, crop.sh, 
-      0, 0, canvas.width, canvas.height
-    );
+    // Use custom hero settings if available, otherwise use default cover fit
+    if (master.heroSettings) {
+      drawHeroImageWithSettings(ctx, canvas.width, canvas.height, master.hero, master.heroSettings);
+    } else {
+      const crop = coverFit(master.hero, canvas.width, canvas.height);
+      ctx.drawImage(
+        master.hero, 
+        crop.sx, crop.sy, crop.sw, crop.sh, 
+        0, 0, canvas.width, canvas.height
+      );
+    }
   }
   
   // Calculate scale factors for positioning elements
@@ -123,6 +128,64 @@ export function createThumbnail(artboard, maxSize = 300) {
   ctx.drawImage(artboard, 0, 0, canvas.width, canvas.height);
   
   return canvas;
+}
+
+/**
+ * Draw hero image with custom settings (fit, fill, crop, position)
+ * @param {CanvasRenderingContext2D} ctx - Canvas context
+ * @param {number} canvasWidth - Canvas width
+ * @param {number} canvasHeight - Canvas height
+ * @param {HTMLImageElement} heroImage - Hero image
+ * @param {object} heroSettings - Hero image settings
+ */
+function drawHeroImageWithSettings(ctx, canvasWidth, canvasHeight, heroImage, heroSettings) {
+  const { x = 0, y = 0, scale = 1, mode = 'cover' } = heroSettings;
+  
+  ctx.save();
+  
+  // Clip to canvas bounds
+  ctx.beginPath();
+  ctx.rect(0, 0, canvasWidth, canvasHeight);
+  ctx.clip();
+  
+  let destWidth, destHeight, destX, destY;
+  
+  if (mode === 'fit') {
+    // Scale to fit entirely within canvas
+    const scaleToFit = Math.min(canvasWidth / heroImage.width, canvasHeight / heroImage.height) * scale;
+    destWidth = heroImage.width * scaleToFit;
+    destHeight = heroImage.height * scaleToFit;
+    destX = (canvasWidth - destWidth) / 2 + (x * canvasWidth * 0.5);
+    destY = (canvasHeight - destHeight) / 2 + (y * canvasHeight * 0.5);
+  } else if (mode === 'fill') {
+    // Scale to fill entire canvas
+    const scaleToFill = Math.max(canvasWidth / heroImage.width, canvasHeight / heroImage.height) * scale;
+    destWidth = heroImage.width * scaleToFill;
+    destHeight = heroImage.height * scaleToFill;
+    destX = (canvasWidth - destWidth) / 2 + (x * canvasWidth * 0.5);
+    destY = (canvasHeight - destHeight) / 2 + (y * canvasHeight * 0.5);
+  } else {
+    // Default cover mode with custom positioning
+    const crop = coverFit(heroImage, canvasWidth, canvasHeight);
+    destWidth = canvasWidth * scale;
+    destHeight = canvasHeight * scale;
+    destX = (canvasWidth - destWidth) / 2 + (x * canvasWidth * 0.5);
+    destY = (canvasHeight - destHeight) / 2 + (y * canvasHeight * 0.5);
+    
+    // Use crop coordinates for cover mode
+    ctx.drawImage(
+      heroImage,
+      crop.sx, crop.sy, crop.sw, crop.sh,
+      destX, destY, destWidth, destHeight
+    );
+    ctx.restore();
+    return;
+  }
+  
+  // Draw the hero image with calculated dimensions
+  ctx.drawImage(heroImage, destX, destY, destWidth, destHeight);
+  
+  ctx.restore();
 }
 
 /**
