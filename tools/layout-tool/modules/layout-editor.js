@@ -1,13 +1,18 @@
 /**
- * Layout Editor Module - Provides full-screen editing for individual layouts
+ * Layout Editor Module – provides full‑screen editing for individual layouts
+ * Cropping functionality removed - clean version with enhanced text features only
  */
 
 /* eslint-disable */
-// @ts-nocheck
-// IDE AUTOFIX DISABLED - This file has complex function dependencies
-import { showNotification } from '../../../utils.js';
-import { createThumbnail } from './canvas-engine.js';
-import { exportSingle } from './export-raster.js';
+// @ts-nocheck – this module relies on dynamic DOM look‑ups + runtime types
+
+import { showNotification } from "../../../utils.js";
+import { createThumbnail } from "./canvas-engine.js";
+import { exportSingle } from "./export-raster.js";
+
+// ────────────────────────────────
+// GLOBAL STATE
+// ────────────────────────────────
 
 let currentEditor = null;
 let editorState = {
@@ -21,1630 +26,811 @@ let editorState = {
   scale: 1,
   panX: 0,
   panY: 0,
-  // Hero image cropping and positioning
   heroImage: null,
-  heroCrop: {
-    x: 0,
-    y: 0,
-    width: 1,
-    height: 1,
-    scale: 1
-  },
-  cropMode: false,
-  cropHandles: [],
-  dragHandle: null
+  onSave: null,
 };
 
+// ────────────────────────────────
+// ENTRY
+// ────────────────────────────────
+
 /**
- * Open the full-screen layout editor
- * @param {HTMLCanvasElement} artboardCanvas - The artboard to edit
- * @param {object} preset - The preset configuration
- * @param {object} master - The master document state
- * @param {function} onSave - Callback when changes are saved
+ * Open the full‑screen editor overlay.
  */
 export function openLayoutEditor(artboardCanvas, preset, master, onSave) {
-  // Create editor overlay
-  const editorOverlay = document.createElement('div');
-  editorOverlay.id = 'layout-editor-overlay';
-  editorOverlay.className = 'fixed inset-0 bg-[var(--background)] z-50 flex flex-col';
+  /* Build overlay */
+  const overlay = document.createElement("div");
+  overlay.id = "layout-editor-overlay";
+  overlay.className = "fixed inset-0 bg-[var(--background)] z-50 flex flex-col";
 
-  // Create editor header
-  const header = document.createElement('div');
-  header.className = 'bg-[var(--card)] border-b border-[var(--border)] p-4 flex items-center justify-between';
-  header.innerHTML = `
-    <div class="flex items-center gap-4">
-      <h2 class="text-xl font-bold text-[var(--foreground)]">Edit Layout: ${preset.name}</h2>
-      <div class="text-sm text-[var(--muted-foreground)]">
-        ${preset.width || Math.round(preset.width_mm * 11.811)} × ${preset.height || Math.round(preset.height_mm * 11.811)}px
-      </div>
-    </div>
-    <div class="flex items-center gap-2">
-      <button id="editor-reset" class="layout-btn">
-        <i class="fas fa-undo mr-2"></i>Reset
-      </button>
-      <button id="editor-save" class="layout-btn primary">
-        <i class="fas fa-save mr-2"></i>Save Changes
-      </button>
-      <button id="editor-close" class="layout-btn">
-        <i class="fas fa-times mr-2"></i>Close
-      </button>
-    </div>
-  `;
+  overlay.appendChild(makeHeader(preset));
+  overlay.appendChild(makeContent());
+  document.body.appendChild(overlay);
 
-  // Create editor content area
-  const content = document.createElement('div');
-  content.className = 'flex-1 flex';
-
-  // Create sidebar for tools
-  const sidebar = document.createElement('div');
-  sidebar.className = 'w-80 bg-[var(--card)] border-r border-[var(--border)] p-4 overflow-y-auto';
-  sidebar.innerHTML = `
-    <div class="space-y-6">
-      <!-- Hero Image Controls -->
-      <div id="hero-controls">
-        <h3 class="layout-label mb-3">Hero Image</h3>
-        <div class="space-y-3">
-          <button id="crop-mode-btn" class="layout-btn w-full">
-            <i class="fas fa-crop mr-2"></i>Crop & Position
-          </button>
-          <div id="hero-properties" class="hidden space-y-3">
-            <div>
-              <label class="layout-label text-sm">Position X</label>
-              <input type="range" id="hero-x" class="layout-input" min="-100" max="100" value="0">
-              <span id="hero-x-value" class="text-xs text-[var(--muted-foreground)]">0%</span>
-            </div>
-            <div>
-              <label class="layout-label text-sm">Position Y</label>
-              <input type="range" id="hero-y" class="layout-input" min="-100" max="100" value="0">
-              <span id="hero-y-value" class="text-xs text-[var(--muted-foreground)]">0%</span>
-            </div>
-            <div>
-              <label class="layout-label text-sm">Scale</label>
-              <input type="range" id="hero-scale" class="layout-input" min="50" max="200" value="100">
-              <span id="hero-scale-value" class="text-xs text-[var(--muted-foreground)]">100%</span>
-            </div>
-            <div class="flex gap-2">
-              <button id="hero-fit" class="layout-btn flex-1 text-xs">Fit</button>
-              <button id="hero-fill" class="layout-btn flex-1 text-xs">Fill</button>
-              <button id="hero-reset" class="layout-btn flex-1 text-xs">Reset</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Element List -->
-      <div>
-        <h3 class="layout-label mb-3">Elements</h3>
-        <div id="element-list" class="space-y-2"></div>
-      </div>
-      
-      <!-- Element Properties -->
-      <div id="element-properties" class="hidden">
-        <h3 class="layout-label mb-3">Properties</h3>
-        <div class="space-y-3">
-          <div>
-            <label class="layout-label text-sm">Position X</label>
-            <input type="number" id="prop-x" class="layout-input">
-          </div>
-          <div>
-            <label class="layout-label text-sm">Position Y</label>
-            <input type="number" id="prop-y" class="layout-input">
-          </div>
-          <div id="text-properties" class="hidden space-y-3">
-            <div>
-              <label class="layout-label text-sm">Text</label>
-              <textarea id="prop-text" class="layout-input" rows="2" placeholder="Enter your text here..."></textarea>
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-              <div>
-                <label class="layout-label text-sm">Font Size</label>
-                <input type="number" id="prop-size" class="layout-input" min="8" max="200" value="24">
-              </div>
-              <div>
-                <label class="layout-label text-sm">Line Height</label>
-                <input type="number" id="prop-line-height" class="layout-input" min="0.8" max="3" step="0.1" value="1.2">
-              </div>
-            </div>
-            <div>
-              <label class="layout-label text-sm">Font Family</label>
-              <select id="prop-font-family" class="layout-input">
-                <option value="Arial">Arial</option>
-                <option value="Helvetica">Helvetica</option>
-                <option value="Times New Roman">Times New Roman</option>
-                <option value="Georgia">Georgia</option>
-                <option value="Verdana">Verdana</option>
-                <option value="Trebuchet MS">Trebuchet MS</option>
-                <option value="Impact">Impact</option>
-                <option value="Comic Sans MS">Comic Sans MS</option>
-                <option value="Courier New">Courier New</option>
-                <option value="Lucida Console">Lucida Console</option>
-              </select>
-            </div>
-            <div class="grid grid-cols-3 gap-2">
-              <div>
-                <label class="layout-label text-sm">Weight</label>
-                <select id="prop-font-weight" class="layout-input">
-                  <option value="normal">Normal</option>
-                  <option value="bold">Bold</option>
-                  <option value="lighter">Light</option>
-                  <option value="bolder">Extra Bold</option>
-                </select>
-              </div>
-              <div>
-                <label class="layout-label text-sm">Style</label>
-                <select id="prop-font-style" class="layout-input">
-                  <option value="normal">Normal</option>
-                  <option value="italic">Italic</option>
-                  <option value="oblique">Oblique</option>
-                </select>
-              </div>
-              <div>
-                <label class="layout-label text-sm">Align</label>
-                <select id="prop-text-align" class="layout-input">
-                  <option value="left">Left</option>
-                  <option value="center">Center</option>
-                  <option value="right">Right</option>
-                </select>
-              </div>
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-              <div>
-                <label class="layout-label text-sm">Text Color</label>
-                <input type="color" id="prop-color" class="layout-input" value="#000000">
-              </div>
-              <div>
-                <label class="layout-label text-sm">Background</label>
-                <input type="color" id="prop-bg-color" class="layout-input" value="#ffffff">
-              </div>
-            </div>
-            <div>
-              <label class="layout-label text-sm">Text Effects</label>
-              <div class="grid grid-cols-2 gap-2">
-                <label class="flex items-center gap-2">
-                  <input type="checkbox" id="prop-text-shadow" class="w-4 h-4">
-                  <span class="text-sm">Text Shadow</span>
-                </label>
-                <label class="flex items-center gap-2">
-                  <input type="checkbox" id="prop-text-outline" class="w-4 h-4">
-                  <span class="text-sm">Text Outline</span>
-                </label>
-              </div>
-            </div>
-          </div>
-          <div id="logo-properties" class="hidden space-y-3">
-            <div>
-              <label class="layout-label text-sm">Width</label>
-              <input type="number" id="prop-width" class="layout-input" min="10">
-            </div>
-            <div>
-              <label class="layout-label text-sm">Height</label>
-              <input type="number" id="prop-height" class="layout-input" min="10">
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Add Elements -->
-      <div>
-        <h3 class="layout-label mb-3">Add Elements</h3>
-        <div class="space-y-2">
-          <button id="add-text-editor" class="layout-btn w-full">
-            <i class="fas fa-font mr-2"></i>Add Text
-          </button>
-          <button id="add-logo-editor" class="layout-btn w-full">
-            <i class="fas fa-image mr-2"></i>Add Logo
-          </button>
-        </div>
-      </div>
-    </div>
-  `;
-
-  // Create canvas area
-  const canvasArea = document.createElement('div');
-  canvasArea.className = 'flex-1 bg-[var(--muted)] p-8 overflow-auto flex items-center justify-center';
-  canvasArea.innerHTML = `
-    <div class="bg-white rounded-lg shadow-lg p-4">
-      <canvas id="editor-canvas" class="border border-gray-300 rounded"></canvas>
-    </div>
-  `;
-
-  content.appendChild(sidebar);
-  content.appendChild(canvasArea);
-
-  editorOverlay.appendChild(header);
-  editorOverlay.appendChild(content);
-  document.body.appendChild(editorOverlay);
-
-  // Initialize editor
+  /* Init + bind */
   initializeEditor(artboardCanvas, preset, master, onSave);
-
-  // Bind events
   bindEditorEvents();
-
-  currentEditor = editorOverlay;
+  currentEditor = overlay;
 }
 
-/**
- * Initialize the editor with the artboard data
- */
-function initializeEditor(artboardCanvas, preset, master, onSave) {
-  const canvas = document.getElementById('editor-canvas');
-  const ctx = canvas.getContext('2d');
+// ────────────────────────────────
+// LAYOUT HELPERS (DOM)
+// ────────────────────────────────
 
-  // Set canvas size
-  canvas.width = artboardCanvas.width;
-  canvas.height = artboardCanvas.height;
+function makeHeader(preset) {
+  const h = document.createElement("div");
+  h.className = "bg-[var(--card)] border-b border-[var(--border)] p-4 flex items-center justify-between";
+  h.innerHTML = `
+    <div class="flex items-center gap-4">
+      <h2 class="text-xl font-bold text-[var(--foreground)]">Edit Layout: ${preset.name}</h2>
+      <div class="text-sm text-[var(--muted-foreground)]">${preset.width || Math.round(preset.width_mm * 11.811)
+    } × ${preset.height || Math.round(preset.height_mm * 11.811)}px</div>
+    </div>
+    <div class="flex items-center gap-2">
+      <button id="editor-reset" class="layout-btn"><i class="fas fa-undo mr-2"></i>Reset</button>
+      <button id="editor-save" class="layout-btn primary"><i class="fas fa-save mr-2"></i>Save</button>
+      <button id="editor-close" class="layout-btn"><i class="fas fa-times mr-2"></i>Close</button>
+    </div>`;
+  return h;
+}
 
-  // Calculate scale to fit in viewport
-  const maxWidth = window.innerWidth - 400; // Account for sidebar
-  const maxHeight = window.innerHeight - 200; // Account for header/padding
-  const scale = Math.min(maxWidth / canvas.width, maxHeight / canvas.height, 1);
+function makeContent() {
+  const wrap = document.createElement("div");
+  wrap.className = "flex-1 flex";
+  wrap.appendChild(makeSidebar());
+  wrap.appendChild(makeCanvasArea());
+  return wrap;
+}
 
+function makeSidebar() {
+  const sb = document.createElement("div");
+  sb.className = "w-80 bg-[var(--card)] border-r border-[var(--border)] p-4 overflow-y-auto";
+  sb.innerHTML = /*html*/ `
+    <div class="space-y-6">
+      <div><h3 class="layout-label mb-3">Elements</h3><div id="element-list" class="space-y-2"></div></div>
+
+      <div id="element-properties" class="hidden">${propertiesPanel()}</div>
+
+      <div id="hero-image-controls" class="space-y-4">
+        <div>
+          <h3 class="layout-label mb-3">Hero Image Ratio</h3>
+          <div class="grid grid-cols-2 gap-2">
+            <button id="ratio-1-1" class="layout-btn text-xs" data-ratio="1:1">1:1<br><span class="text-xs opacity-75">Square</span></button>
+            <button id="ratio-3-2" class="layout-btn text-xs" data-ratio="3:2">3:2<br><span class="text-xs opacity-75">Photo</span></button>
+            <button id="ratio-4-3" class="layout-btn text-xs" data-ratio="4:3">4:3<br><span class="text-xs opacity-75">Classic</span></button>
+            <button id="ratio-16-9" class="layout-btn text-xs" data-ratio="16:9">16:9<br><span class="text-xs opacity-75">Widescreen</span></button>
+            <button id="ratio-5-4" class="layout-btn text-xs" data-ratio="5:4">5:4<br><span class="text-xs opacity-75">Print</span></button>
+            <button id="ratio-7-5" class="layout-btn text-xs" data-ratio="7:5">7:5<br><span class="text-xs opacity-75">Portrait</span></button>
+            <button id="ratio-16-10" class="layout-btn text-xs" data-ratio="16:10">16:10<br><span class="text-xs opacity-75">Monitor</span></button>
+            <button id="ratio-original" class="layout-btn text-xs" data-ratio="original">Original<br><span class="text-xs opacity-75">No crop</span></button>
+          </div>
+          <div class="text-xs text-[var(--muted-foreground)] mt-2">
+            <p><strong>Current:</strong> <span id="current-ratio">Original</span></p>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="layout-label mb-3">Image Fit Mode</h3>
+          <div class="grid grid-cols-2 gap-2">
+            <button id="fit-cover" class="layout-btn text-xs primary" data-fit="cover">Cover<br><span class="text-xs opacity-75">Fill & crop</span></button>
+            <button id="fit-contain" class="layout-btn text-xs" data-fit="contain">Contain<br><span class="text-xs opacity-75">Fit all</span></button>
+            <button id="fit-fill" class="layout-btn text-xs" data-fit="fill">Fill<br><span class="text-xs opacity-75">Stretch</span></button>
+            <button id="fit-scale-down" class="layout-btn text-xs" data-fit="scale-down">Scale Down<br><span class="text-xs opacity-75">Shrink only</span></button>
+            <button id="fit-none" class="layout-btn text-xs" data-fit="none">None<br><span class="text-xs opacity-75">Original size</span></button>
+            <button id="fit-crop" class="layout-btn text-xs" data-fit="crop">Crop<br><span class="text-xs opacity-75">Center crop</span></button>
+          </div>
+          <div class="text-xs text-[var(--muted-foreground)] mt-2">
+            <p><strong>Current:</strong> <span id="current-fit">Cover</span></p>
+            <p class="mt-1 text-xs">
+              <strong>Cover:</strong> Fills canvas, may crop<br>
+              <strong>Contain:</strong> Shows full image, may have gaps<br>
+              <strong>Fill:</strong> Stretches to fill exactly<br>
+              <strong>Scale Down:</strong> Like contain but won't upscale<br>
+              <strong>None:</strong> Original size, centered<br>
+              <strong>Crop:</strong> Crops to canvas size from center
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div><h3 class="layout-label mb-3">Add Elements</h3><div class="space-y-2"><button id="add-text-editor" class="layout-btn w-full"><i class="fas fa-font mr-2"></i>Add Text</button><button id="add-logo-editor" class="layout-btn w-full"><i class="fas fa-image mr-2"></i>Add Logo</button></div></div>
+    </div>`;
+  return sb;
+}
+
+function propertiesPanel() {
+  return /*html*/ `
+    <h3 class="layout-label mb-3">Properties</h3>
+    <div class="space-y-3">
+      <div><label class="layout-label text-sm">Position X</label><input id="prop-x" type="number" class="layout-input"></div>
+      <div><label class="layout-label text-sm">Position Y</label><input id="prop-y" type="number" class="layout-input"></div>
+      <div id="text-properties" class="hidden space-y-3">
+        <div><label class="layout-label text-sm">Text</label><textarea id="prop-text" rows="2" class="layout-input"></textarea></div>
+        <div class="grid grid-cols-2 gap-2"><div><label class="layout-label text-sm">Font Size</label><input id="prop-size" type="number" class="layout-input" value="24"></div><div><label class="layout-label text-sm">Line Height</label><input id="prop-line-height" type="number" step="0.1" class="layout-input" value="1.2"></div></div>
+        <div><label class="layout-label text-sm">Font Family</label><select id="prop-font-family" class="layout-input">${["Arial", "Helvetica", "Times New Roman", "Georgia", "Verdana", "Trebuchet MS", "Impact", "Comic Sans MS", "Courier New", "Lucida Console"].map(f => `<option>${f}</option>`).join("")}</select></div>
+        <div class="grid grid-cols-3 gap-2"><div>${select("weight", ["normal", "bold", "lighter", "bolder"])}</div><div>${select("style", ["normal", "italic", "oblique"], "font-")}</div><div>${select("text-align", ["left", "center", "right"], "text-")}</div></div>
+        <div class="grid grid-cols-2 gap-2"><div><label class="layout-label text-sm">Text Color</label><input id="prop-color" type="color" class="layout-input" value="#000000"></div><div><label class="layout-label text-sm">Background</label><input id="prop-bg-color" type="color" class="layout-input" value="#ffffff"></div></div>
+        <div><label class="layout-label text-sm">Text Effects</label><div class="grid grid-cols-2 gap-2"><label class="flex items-center gap-2"><input id="prop-text-shadow" type="checkbox" class="w-4 h-4"><span class="text-sm">Text Shadow</span></label><label class="flex items-center gap-2"><input id="prop-text-outline" type="checkbox" class="w-4 h-4"><span class="text-sm">Outline</span></label></div></div>
+      </div>
+      <div id="logo-properties" class="hidden space-y-3"><div><label class="layout-label text-sm">Width</label><input id="prop-width" type="number" class="layout-input" min="10"></div><div><label class="layout-label text-sm">Height</label><input id="prop-height" type="number" class="layout-input" min="10"></div></div>
+    </div>`;
+}
+
+function select(id, opts, prefix = "") {
+  return `<label class=\"layout-label text-sm\">${prefix.replace(/(^.|-)/g, m => m.toUpperCase().replace("-", ""))}</label><select id="prop-${prefix}${id}" class="layout-input">${opts.map(o => `<option value="${o}">${o}</option>`).join("")}</select>`;
+}
+
+function makeCanvasArea() {
+  const c = document.createElement("div");
+  c.className = "flex-1 bg-[var(--muted)] p-8 overflow-auto flex items-center justify-center";
+  c.innerHTML = '<div class="bg-white rounded-lg shadow-lg p-4"><canvas id="editor-canvas" class="border border-gray-300 rounded"></canvas></div>';
+  return c;
+}
+
+// ────────────────────────────────
+// INITIALISATION
+// ────────────────────────────────
+
+function initializeEditor(artboard, preset, master, onSave) {
+  const canvas = document.getElementById("editor-canvas");
+  const ctx = canvas.getContext("2d");
+  canvas.width = artboard.width;
+  canvas.height = artboard.height;
+
+  const maxW = window.innerWidth - 400;
+  const maxH = window.innerHeight - 200;
+  const scale = Math.min(maxW / canvas.width, maxH / canvas.height, 1);
   canvas.style.width = `${canvas.width * scale}px`;
   canvas.style.height = `${canvas.height * scale}px`;
 
-  // Store editor state
-  editorState = {
+  Object.assign(editorState, {
     canvas,
     ctx,
     preset,
     master,
     objects: cloneObjects(master.objects),
-    selectedElement: null,
-    isDragging: false,
-    scale,
-    panX: 0,
-    panY: 0,
-    onSave,
-    // Hero image cropping and positioning
     heroImage: master.hero,
-    heroCrop: {
-      x: 0,
-      y: 0,
-      width: 1,
-      height: 1,
-      scale: 1
-    },
-    cropMode: false,
-    cropHandles: [],
-    dragHandle: null
-  };
+    onSave,
+    scale,
+  });
 
-  // Initial render
   renderEditor();
   updateElementList();
 }
 
-/**
- * Clone objects for independent editing
- */
-function cloneObjects(objects) {
-  return objects.map(obj => ({
-    ...obj,
-    // Create independent copy for this layout
-    id: Math.random().toString(36).substr(2, 9)
-  }));
+function cloneObjects(objs) {
+  return objs.map(o => ({ ...o, id: Math.random().toString(36).slice(2, 11) }));
 }
 
-/**
- * Draw hero image with cropping and positioning
- */
-function drawHeroImage(ctx, canvasWidth, canvasHeight) {
-  const { heroImage, heroCrop } = editorState;
-  if (!heroImage) return;
+// ────────────────────────────────
+// RENDERING
+// ────────────────────────────────
 
-  // Calculate source dimensions based on crop settings
-  const sourceX = heroCrop.x * heroImage.width;
-  const sourceY = heroCrop.y * heroImage.height;
-  const sourceWidth = heroCrop.width * heroImage.width;
-  const sourceHeight = heroCrop.height * heroImage.height;
-
-  // Calculate destination dimensions based on scale
-  const destWidth = canvasWidth * heroCrop.scale;
-  const destHeight = canvasHeight * heroCrop.scale;
-
-  // Center the scaled image and apply position offset
-  const destX = (canvasWidth - destWidth) / 2 + (heroCrop.x * canvasWidth * 0.5);
-  const destY = (canvasHeight - destHeight) / 2 + (heroCrop.y * canvasHeight * 0.5);
-
-  ctx.save();
-
-  // Clip to canvas bounds
-  ctx.beginPath();
-  ctx.rect(0, 0, canvasWidth, canvasHeight);
-  ctx.clip();
-
-  // Draw the hero image
-  ctx.drawImage(
-    heroImage,
-    0, 0, heroImage.width, heroImage.height,
-    destX, destY, destWidth, destHeight
-  );
-
-  ctx.restore();
-
-  // Draw crop overlay if in crop mode
-  if (editorState.cropMode) {
-    drawCropOverlay(ctx, canvasWidth, canvasHeight);
-  }
-}
-
-/**
- * Draw crop overlay with interactive handles
- */
-function drawCropOverlay(ctx, canvasWidth, canvasHeight) {
-  ctx.save();
-
-  // Calculate crop area based on heroCrop settings
-  const { heroCrop } = editorState;
-  const cropX = canvasWidth * 0.1 + (heroCrop.x * canvasWidth * 0.1);
-  const cropY = canvasHeight * 0.1 + (heroCrop.y * canvasHeight * 0.1);
-  const cropWidth = canvasWidth * 0.8 * heroCrop.width;
-  const cropHeight = canvasHeight * 0.8 * heroCrop.height;
-
-  // Semi-transparent overlay
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
-  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-
-  // Clear the crop area to show the image
-  ctx.globalCompositeOperation = 'destination-out';
-  ctx.fillRect(cropX, cropY, cropWidth, cropHeight);
-  ctx.globalCompositeOperation = 'source-over';
-
-  // Draw crop border
-  ctx.strokeStyle = '#007bff';
-  ctx.lineWidth = 2;
-  ctx.strokeRect(cropX, cropY, cropWidth, cropHeight);
-
-  // Draw corner handles
-  const handleSize = 12;
-  ctx.fillStyle = '#007bff';
-  ctx.strokeStyle = '#ffffff';
-  ctx.lineWidth = 2;
-
-  // Store handle positions for interaction
-  editorState.cropHandles = [
-    { x: cropX, y: cropY, type: 'nw' }, // Northwest
-    { x: cropX + cropWidth, y: cropY, type: 'ne' }, // Northeast
-    { x: cropX, y: cropY + cropHeight, type: 'sw' }, // Southwest
-    { x: cropX + cropWidth, y: cropY + cropHeight, type: 'se' }, // Southeast
-    { x: cropX + cropWidth / 2, y: cropY, type: 'n' }, // North
-    { x: cropX + cropWidth / 2, y: cropY + cropHeight, type: 's' }, // South
-    { x: cropX, y: cropY + cropHeight / 2, type: 'w' }, // West
-    { x: cropX + cropWidth, y: cropY + cropHeight / 2, type: 'e' } // East
-  ];
-
-  // Draw handles
-  editorState.cropHandles.forEach(handle => {
-    ctx.fillRect(handle.x - handleSize / 2, handle.y - handleSize / 2, handleSize, handleSize);
-    ctx.strokeRect(handle.x - handleSize / 2, handle.y - handleSize / 2, handleSize, handleSize);
-  });
-
-  // Draw center drag area
-  ctx.fillStyle = 'rgba(0, 123, 255, 0.1)';
-  ctx.fillRect(cropX, cropY, cropWidth, cropHeight);
-
-  ctx.restore();
-}
-
-/**
- * Render the editor canvas
- */
 function renderEditor() {
-  const { canvas, ctx, preset, master, objects } = editorState;
-
-  // Clear canvas
+  const { canvas, ctx, master, objects } = editorState;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Fill background
-  ctx.fillStyle = '#ffffff';
+  ctx.fillStyle = "#fff";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Draw hero image if present with cropping and positioning
-  if (editorState.heroImage) {
-    drawHeroImage(ctx, canvas.width, canvas.height);
-  }
+  if (editorState.heroImage) drawHeroImage(ctx, canvas.width, canvas.height);
 
-  // Calculate scale factors
-  const scaleX = canvas.width / master.width;
-  const scaleY = canvas.height / master.height;
+  const sx = canvas.width / master.width;
+  const sy = canvas.height / master.height;
 
-  // Draw all objects
   for (const obj of objects) {
     ctx.save();
+    const x = obj.x * sx,
+      y = obj.y * sy;
 
-    const scaledX = obj.x * scaleX;
-    const scaledY = obj.y * scaleY;
+    if (obj.type === "text") drawText(ctx, obj, x, y, sx, sy);
+    if (obj.type === "logo" && obj.image) ctx.drawImage(obj.image, x, y, obj.w * sx, obj.h * sy);
 
-    if (obj.type === 'text') {
-      // Enhanced text rendering with new properties
-      const scaledSize = (obj.size || 24) * Math.min(scaleX, scaleY);
-      const fontFamily = obj.fontFamily || 'Arial';
-      const fontWeight = obj.fontWeight || 'normal';
-      const fontStyle = obj.fontStyle || 'normal';
-      const textAlign = obj.textAlign || 'left';
-      const lineHeight = obj.lineHeight || 1.2;
-
-      // Set font with enhanced properties
-      ctx.font = `${fontStyle} ${fontWeight} ${scaledSize}px ${fontFamily}`;
-      ctx.textAlign = textAlign;
-      ctx.textBaseline = 'top';
-
-      // Draw background if specified
-      if (obj.bgColor && obj.bgColor !== '#ffffff') {
-        const textMetrics = ctx.measureText(obj.text);
-        const textWidth = textMetrics.width;
-        const textHeight = scaledSize * lineHeight;
-
-        ctx.fillStyle = obj.bgColor;
-        ctx.fillRect(scaledX - 4, scaledY - 2, textWidth + 8, textHeight + 4);
-      }
-
-      // Apply text outline if enabled
-      if (obj.textOutline) {
-        ctx.strokeStyle = obj.color === '#ffffff' ? '#000000' : '#ffffff';
-        ctx.lineWidth = 2;
-        ctx.strokeText(obj.text, scaledX, scaledY);
-      }
-
-      // Apply text shadow if enabled or if on image
-      if (obj.textShadow || editorState.heroImage) {
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-        ctx.shadowBlur = obj.textShadow ? 4 : 2;
-        ctx.shadowOffsetX = obj.textShadow ? 2 : 1;
-        ctx.shadowOffsetY = obj.textShadow ? 2 : 1;
-      }
-
-      // Draw the text
-      ctx.fillStyle = obj.color || '#000000';
-
-      // Handle multi-line text
-      const lines = obj.text.split('\n');
-      lines.forEach((line, index) => {
-        const lineY = scaledY + (index * scaledSize * lineHeight);
-        ctx.fillText(line, scaledX, lineY);
-      });
-
-      // Reset shadow and stroke
-      ctx.shadowColor = 'transparent';
-      ctx.shadowBlur = 0;
-      ctx.shadowOffsetX = 0;
-      ctx.shadowOffsetY = 0;
-    }
-
-    if (obj.type === 'logo' && obj.image) {
-      const scaledW = obj.w * scaleX;
-      const scaledH = obj.h * scaleY;
-      ctx.drawImage(obj.image, scaledX, scaledY, scaledW, scaledH);
-    }
-
-    // Draw selection outline
-    if (obj === editorState.selectedElement) {
-      ctx.strokeStyle = '#007bff';
-      ctx.lineWidth = 2;
-      ctx.setLineDash([5, 5]);
-
-      if (obj.type === 'text') {
-        const metrics = ctx.measureText(obj.text);
-        const scaledSize = (obj.size || 24) * Math.min(scaleX, scaleY);
-        ctx.strokeRect(scaledX - 2, scaledY - 2, metrics.width + 4, scaledSize + 4);
-      } else if (obj.type === 'logo') {
-        const scaledW = obj.w * scaleX;
-        const scaledH = obj.h * scaleY;
-        ctx.strokeRect(scaledX - 2, scaledY - 2, scaledW + 4, scaledH + 4);
-      }
-
-      ctx.setLineDash([]);
-    }
-
+    if (obj === editorState.selectedElement) drawSelection(ctx, obj, x, y, sx, sy);
     ctx.restore();
   }
 }
 
-/**
- * Update the element list in the sidebar
- */
+function drawText(ctx, obj, x, y, sx, sy) {
+  const size = (obj.size || 24) * Math.min(sx, sy);
+  const font = `${obj.fontStyle || "normal"} ${obj.fontWeight || "normal"} ${size}px ${obj.fontFamily || "Arial"}`;
+  ctx.font = font;
+  ctx.textAlign = obj.textAlign || "left";
+  ctx.textBaseline = "top";
+
+  if (obj.bgColor && obj.bgColor !== "#ffffff") {
+    const m = ctx.measureText(obj.text);
+    ctx.fillStyle = obj.bgColor;
+    ctx.fillRect(x - 4, y - 2, m.width + 8, size * (obj.lineHeight || 1.2) + 4);
+  }
+
+  if (obj.textOutline) {
+    ctx.strokeStyle = obj.color === "#ffffff" ? "#000" : "#fff";
+    ctx.lineWidth = 2;
+    ctx.strokeText(obj.text, x, y);
+  }
+
+  if (obj.textShadow) {
+    ctx.shadowColor = "rgba(0,0,0,.5)";
+    ctx.shadowBlur = 4;
+    ctx.shadowOffsetX = 2;
+    ctx.shadowOffsetY = 2;
+  }
+
+  ctx.fillStyle = obj.color || "#000";
+  obj.text.split("\n").forEach((line, i) => ctx.fillText(line, x, y + i * size * (obj.lineHeight || 1.2)));
+}
+
+function drawSelection(ctx, obj, x, y, sx, sy) {
+  ctx.strokeStyle = "#007bff";
+  ctx.setLineDash([5, 5]);
+  ctx.lineWidth = 2;
+  if (obj.type === "text") {
+    const m = ctx.measureText(obj.text);
+    const h = (obj.size || 24) * Math.min(sx, sy);
+    ctx.strokeRect(x - 2, y - 2, m.width + 4, h + 4);
+  } else {
+    ctx.strokeRect(x - 2, y - 2, obj.w * sx + 4, obj.h * sy + 4);
+  }
+  ctx.setLineDash([]);
+}
+
+function drawHeroImage(ctx, cw, ch) {
+  const { heroImage: img, heroImageRatio, heroImageFit } = editorState;
+  if (!img) return;
+
+  ctx.save();
+
+  // Get fit mode (default to 'cover' if not set)
+  const fitMode = heroImageFit || 'cover';
+
+  // Handle different fit modes
+  switch (fitMode) {
+    case 'cover':
+      drawImageCover(ctx, img, cw, ch, heroImageRatio);
+      break;
+    case 'contain':
+      drawImageContain(ctx, img, cw, ch, heroImageRatio);
+      break;
+    case 'fill':
+      drawImageFill(ctx, img, cw, ch, heroImageRatio);
+      break;
+    case 'scale-down':
+      drawImageScaleDown(ctx, img, cw, ch, heroImageRatio);
+      break;
+    case 'none':
+      drawImageNone(ctx, img, cw, ch);
+      break;
+    case 'crop':
+      drawImageCrop(ctx, img, cw, ch);
+      break;
+    default:
+      drawImageCover(ctx, img, cw, ch, heroImageRatio);
+  }
+
+  ctx.restore();
+}
+
+function drawImageCover(ctx, img, cw, ch, ratio) {
+  // Cover: Scale image to fill canvas, may crop parts
+  if (ratio && ratio !== 'original') {
+    // Apply specific aspect ratio with cover behavior
+    const targetRatio = getRatioValue(ratio);
+    const imgRatio = img.width / img.height;
+
+    let srcX = 0, srcY = 0, srcWidth = img.width, srcHeight = img.height;
+
+    if (imgRatio > targetRatio) {
+      // Image wider than target - crop sides
+      srcWidth = img.height * targetRatio;
+      srcX = (img.width - srcWidth) / 2;
+    } else if (imgRatio < targetRatio) {
+      // Image taller than target - crop top/bottom
+      srcHeight = img.width / targetRatio;
+      srcY = (img.height - srcHeight) / 2;
+    }
+
+    ctx.drawImage(img, srcX, srcY, srcWidth, srcHeight, 0, 0, cw, ch);
+  } else {
+    // Standard cover behavior
+    const scale = Math.max(cw / img.width, ch / img.height);
+    const scaledWidth = img.width * scale;
+    const scaledHeight = img.height * scale;
+    const x = (cw - scaledWidth) / 2;
+    const y = (ch - scaledHeight) / 2;
+
+    ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
+  }
+}
+
+function drawImageContain(ctx, img, cw, ch, ratio) {
+  // Contain: Scale image to fit entirely within canvas, may have gaps
+  if (ratio && ratio !== 'original') {
+    const targetRatio = getRatioValue(ratio);
+    const canvasRatio = cw / ch;
+
+    let drawWidth, drawHeight, drawX, drawY;
+
+    if (targetRatio > canvasRatio) {
+      // Target is wider than canvas - fit to width
+      drawWidth = cw;
+      drawHeight = cw / targetRatio;
+      drawX = 0;
+      drawY = (ch - drawHeight) / 2;
+    } else {
+      // Target is taller than canvas - fit to height
+      drawHeight = ch;
+      drawWidth = ch * targetRatio;
+      drawX = (cw - drawWidth) / 2;
+      drawY = 0;
+    }
+
+    ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+  } else {
+    // Standard contain behavior
+    const scale = Math.min(cw / img.width, ch / img.height);
+    const scaledWidth = img.width * scale;
+    const scaledHeight = img.height * scale;
+    const x = (cw - scaledWidth) / 2;
+    const y = (ch - scaledHeight) / 2;
+
+    ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
+  }
+}
+
+function drawImageFill(ctx, img, cw, ch, ratio) {
+  // Fill: Stretch image to fill canvas exactly (may distort)
+  if (ratio && ratio !== 'original') {
+    const targetRatio = getRatioValue(ratio);
+    const canvasRatio = cw / ch;
+
+    let drawWidth, drawHeight, drawX, drawY;
+
+    if (targetRatio > canvasRatio) {
+      drawWidth = cw;
+      drawHeight = cw / targetRatio;
+      drawX = 0;
+      drawY = (ch - drawHeight) / 2;
+    } else {
+      drawHeight = ch;
+      drawWidth = ch * targetRatio;
+      drawX = (cw - drawWidth) / 2;
+      drawY = 0;
+    }
+
+    ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+  } else {
+    // Stretch to fill entire canvas
+    ctx.drawImage(img, 0, 0, cw, ch);
+  }
+}
+
+function drawImageScaleDown(ctx, img, cw, ch, ratio) {
+  // Scale-down: Like contain, but never scale up
+  if (ratio && ratio !== 'original') {
+    const targetRatio = getRatioValue(ratio);
+    const canvasRatio = cw / ch;
+
+    let drawWidth, drawHeight;
+
+    if (targetRatio > canvasRatio) {
+      drawWidth = Math.min(cw, img.width);
+      drawHeight = drawWidth / targetRatio;
+    } else {
+      drawHeight = Math.min(ch, img.height);
+      drawWidth = drawHeight * targetRatio;
+    }
+
+    const drawX = (cw - drawWidth) / 2;
+    const drawY = (ch - drawHeight) / 2;
+
+    ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+  } else {
+    const scale = Math.min(cw / img.width, ch / img.height, 1); // Never scale up
+    const scaledWidth = img.width * scale;
+    const scaledHeight = img.height * scale;
+    const x = (cw - scaledWidth) / 2;
+    const y = (ch - scaledHeight) / 2;
+
+    ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
+  }
+}
+
+function drawImageNone(ctx, img, cw, ch) {
+  // None: Original size, centered
+  const x = (cw - img.width) / 2;
+  const y = (ch - img.height) / 2;
+
+  ctx.drawImage(img, x, y);
+}
+
+function drawImageCrop(ctx, img, cw, ch) {
+  // Crop: Crop image from center to fit canvas exactly
+  const imgRatio = img.width / img.height;
+  const canvasRatio = cw / ch;
+
+  let srcX = 0, srcY = 0, srcWidth = img.width, srcHeight = img.height;
+
+  if (imgRatio > canvasRatio) {
+    // Image is wider - crop sides
+    srcWidth = img.height * canvasRatio;
+    srcX = (img.width - srcWidth) / 2;
+  } else {
+    // Image is taller - crop top/bottom
+    srcHeight = img.width / canvasRatio;
+    srcY = (img.height - srcHeight) / 2;
+  }
+
+  ctx.drawImage(img, srcX, srcY, srcWidth, srcHeight, 0, 0, cw, ch);
+}
+
+function getRatioValue(ratioString) {
+  const ratios = {
+    '1:1': 1,
+    '3:2': 3 / 2,
+    '4:3': 4 / 3,
+    '16:9': 16 / 9,
+    '5:4': 5 / 4,
+    '7:5': 7 / 5,
+    '16:10': 16 / 10
+  };
+  return ratios[ratioString] || 1;
+}
+
+// ────────────────────────────────
+// SIDEBAR ELEMENT LIST
+// ────────────────────────────────
+
 function updateElementList() {
-  const elementList = document.getElementById('element-list');
-  elementList.innerHTML = '';
-
-  editorState.objects.forEach((obj, index) => {
-    const item = document.createElement('div');
-    item.className = `p-2 border border-[var(--border)] rounded cursor-pointer transition-colors ${obj === editorState.selectedElement ? 'bg-[var(--primary)] text-[var(--primary-foreground)]' : 'bg-[var(--background)] hover:bg-[var(--accent)]'
+  const list = document.getElementById("element-list");
+  list.innerHTML = "";
+  editorState.objects.forEach((o, i) => {
+    const item = document.createElement("div");
+    item.className = `p-2 border rounded cursor-pointer transition-colors ${o === editorState.selectedElement ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : "bg-[var(--background)] hover:bg-[var(--accent)]"
       }`;
-
-    const icon = obj.type === 'text' ? 'fas fa-font' : 'fas fa-image';
-    const name = obj.type === 'text' ? obj.text.substring(0, 20) : 'Logo';
-
-    item.innerHTML = `
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <i class="${icon}"></i>
-          <span class="text-sm">${name}</span>
-        </div>
-        <button class="delete-element text-red-500 hover:text-red-700" data-index="${index}">
-          <i class="fas fa-trash text-xs"></i>
-        </button>
-      </div>
-    `;
-
-    item.addEventListener('click', (e) => {
-      if (!e.target.closest('.delete-element')) {
-        selectElement(obj);
-      }
+    item.innerHTML = `<div class="flex items-center justify-between"><div class="flex items-center gap-2"><i class="${o.type === "text" ? "fas fa-font" : "fas fa-image"
+      }"></i><span class="text-sm">${o.type === "text" ? o.text.slice(0, 20) : "Logo"}</span></div><button class="delete-element text-red-500 hover:text-red-700" data-i="${i}"><i class="fas fa-trash text-xs"></i></button></div>`;
+    item.addEventListener("click", e => {
+      if (!e.target.closest(".delete-element")) selectElement(o);
     });
-
-    const deleteBtn = item.querySelector('.delete-element');
-    deleteBtn.addEventListener('click', (e) => {
+    item.querySelector(".delete-element").addEventListener("click", e => {
       e.stopPropagation();
-      deleteElement(index);
+      deleteElement(i);
     });
-
-    elementList.appendChild(item);
+    list.appendChild(item);
   });
 }
 
-/**
- * Select an element for editing
- */
-function selectElement(element) {
-  editorState.selectedElement = element;
+function selectElement(el) {
+  editorState.selectedElement = el;
   renderEditor();
   updateElementList();
-  showElementProperties(element);
+  showElementProperties(el);
 }
 
-/**
- * Show element properties in the sidebar
- */
-function showElementProperties(element) {
-  const propertiesPanel = document.getElementById('element-properties');
-  const textProps = document.getElementById('text-properties');
-  const logoProps = document.getElementById('logo-properties');
-
-  propertiesPanel.classList.remove('hidden');
-
-  // Update position inputs
-  document.getElementById('prop-x').value = Math.round(element.x);
-  document.getElementById('prop-y').value = Math.round(element.y);
-
-  if (element.type === 'text') {
-    textProps.classList.remove('hidden');
-    logoProps.classList.add('hidden');
-
-    document.getElementById('prop-text').value = element.text;
-    document.getElementById('prop-size').value = element.size || 24;
-    document.getElementById('prop-color').value = element.color || '#000000';
-  } else if (element.type === 'logo') {
-    textProps.classList.add('hidden');
-    logoProps.classList.remove('hidden');
-
-    document.getElementById('prop-width').value = Math.round(element.w);
-    document.getElementById('prop-height').value = Math.round(element.h);
-  }
-}
-
-/**
- * Delete an element
- */
-function deleteElement(index) {
-  editorState.objects.splice(index, 1);
-  if (editorState.selectedElement === editorState.objects[index]) {
-    editorState.selectedElement = null;
-    document.getElementById('element-properties').classList.add('hidden');
-  }
+function deleteElement(i) {
+  editorState.objects.splice(i, 1);
+  editorState.selectedElement = null;
+  document.getElementById("element-properties").classList.add("hidden");
   renderEditor();
   updateElementList();
 }
 
-/**
- * Bind all editor events
- */
+function showElementProperties(el) {
+  const panel = document.getElementById("element-properties");
+  const txt = document.getElementById("text-properties");
+  const logo = document.getElementById("logo-properties");
+
+  panel.classList.remove("hidden");
+  document.getElementById("prop-x").value = Math.round(el.x);
+  document.getElementById("prop-y").value = Math.round(el.y);
+
+  if (el.type === "text") {
+    txt.classList.remove("hidden");
+    logo.classList.add("hidden");
+    document.getElementById("prop-text").value = el.text;
+    document.getElementById("prop-size").value = el.size || 24;
+    document.getElementById("prop-color").value = el.color || "#000000";
+    document.getElementById("prop-line-height").value = el.lineHeight || 1.2;
+    document.getElementById("prop-font-family").value = el.fontFamily || "Arial";
+    document.getElementById("prop-font-weight").value = el.fontWeight || "normal";
+    document.getElementById("prop-font-style").value = el.fontStyle || "normal";
+    document.getElementById("prop-text-align").value = el.textAlign || "left";
+    document.getElementById("prop-bg-color").value = el.bgColor || "#ffffff";
+    document.getElementById("prop-text-shadow").checked = el.textShadow || false;
+    document.getElementById("prop-text-outline").checked = el.textOutline || false;
+  } else {
+    txt.classList.add("hidden");
+    logo.classList.remove("hidden");
+    document.getElementById("prop-width").value = Math.round(el.w);
+    document.getElementById("prop-height").value = Math.round(el.h);
+  }
+}
+
+// ────────────────────────────────
+// INPUT BINDINGS & UPDATES
+// ────────────────────────────────
+
 function bindEditorEvents() {
-  // Canvas interaction
   setupCanvasInteraction();
-
-  // Property inputs
   bindPropertyInputs();
-
-  // Header buttons
-  document.getElementById('editor-close').addEventListener('click', closeEditor);
-  document.getElementById('editor-save').addEventListener('click', saveChanges);
-  document.getElementById('editor-reset').addEventListener('click', resetChanges);
-
-  // Add element buttons
-  document.getElementById('add-text-editor').addEventListener('click', addTextElement);
-  document.getElementById('add-logo-editor').addEventListener('click', addLogoElement);
-
-  // Hero image controls
-  bindHeroImageControls();
-
-  // Enhanced text property inputs
   bindEnhancedTextProperties();
+  bindRatioControls();
+
+  document.getElementById("editor-close").addEventListener("click", closeEditor);
+  document.getElementById("editor-save").addEventListener("click", saveChanges);
+  document.getElementById("editor-reset").addEventListener("click", resetChanges);
+  document.getElementById("add-text-editor").addEventListener("click", addTextElement);
+  document.getElementById("add-logo-editor").addEventListener("click", addLogoElement);
 }
 
-/**
- * Setup canvas interaction for the editor
- */
+function bindPropertyInputs() {
+  ["prop-x", "prop-y", "prop-text", "prop-size", "prop-color", "prop-width", "prop-height"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener("input", updateElementFromProperties);
+  });
+}
+
+function updateElementFromProperties() {
+  const el = editorState.selectedElement;
+  if (!el) return;
+  el.x = parseFloat(document.getElementById("prop-x").value) || 0;
+  el.y = parseFloat(document.getElementById("prop-y").value) || 0;
+  if (el.type === "text") {
+    el.text = document.getElementById("prop-text").value || "Text";
+    el.size = parseFloat(document.getElementById("prop-size").value) || 24;
+    el.color = document.getElementById("prop-color").value || "#000000";
+  } else {
+    el.w = parseFloat(document.getElementById("prop-width").value) || 100;
+    el.h = parseFloat(document.getElementById("prop-height").value) || 100;
+  }
+  renderEditor();
+}
+
+function updateElementProperties() {
+  const el = editorState.selectedElement;
+  if (!el) return;
+
+  document.getElementById("prop-x").value = Math.round(el.x);
+  document.getElementById("prop-y").value = Math.round(el.y);
+}
+
+function bindEnhancedTextProperties() {
+  ["prop-line-height", "prop-font-family", "prop-font-weight", "prop-font-style", "prop-text-align", "prop-bg-color", "prop-text-shadow", "prop-text-outline"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.addEventListener("input", updateEnhancedTextProperties); el.addEventListener("change", updateEnhancedTextProperties); }
+  });
+}
+
+function updateEnhancedTextProperties() {
+  const el = editorState.selectedElement;
+  if (!el || el.type !== "text") return;
+  el.lineHeight = parseFloat(document.getElementById("prop-line-height").value) || 1.2;
+  el.fontFamily = document.getElementById("prop-font-family").value || "Arial";
+  el.fontWeight = document.getElementById("prop-font-weight").value || "normal";
+  el.fontStyle = document.getElementById("prop-font-style").value || "normal";
+  el.textAlign = document.getElementById("prop-text-align").value || "left";
+  el.bgColor = document.getElementById("prop-bg-color").value || "#ffffff";
+  el.textShadow = document.getElementById("prop-text-shadow").checked;
+  el.textOutline = document.getElementById("prop-text-outline").checked;
+  renderEditor();
+}
+
+// ────────────────────────────────
+// HERO IMAGE RATIO CONTROLS
+// ────────────────────────────────
+
+function bindRatioControls() {
+  // Bind ratio buttons
+  const ratioButtons = document.querySelectorAll('[data-ratio]');
+  ratioButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const ratio = button.getAttribute('data-ratio');
+      applyImageRatio(ratio);
+      updateCurrentRatioDisplay(ratio);
+
+      // Update button states
+      ratioButtons.forEach(btn => btn.classList.remove('primary'));
+      button.classList.add('primary');
+    });
+  });
+
+  // Bind fit buttons
+  const fitButtons = document.querySelectorAll('[data-fit]');
+  fitButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const fit = button.getAttribute('data-fit');
+      applyImageFit(fit);
+      updateCurrentFitDisplay(fit);
+
+      // Update button states
+      fitButtons.forEach(btn => btn.classList.remove('primary'));
+      button.classList.add('primary');
+    });
+  });
+
+  // Set initial states
+  updateCurrentRatioDisplay('original');
+  updateCurrentFitDisplay('cover');
+  document.getElementById('ratio-original').classList.add('primary');
+  document.getElementById('fit-cover').classList.add('primary');
+}
+
+function applyImageRatio(ratio) {
+  if (!editorState.heroImage) {
+    showNotification('Please upload a hero image first', 'warning');
+    return;
+  }
+
+  // Store the ratio in editor state
+  editorState.heroImageRatio = ratio;
+
+  // Re-render with new ratio
+  renderEditor();
+  showNotification(`Applied ${ratio} ratio to hero image`, 'success');
+}
+
+function updateCurrentRatioDisplay(ratio) {
+  const currentRatioSpan = document.getElementById('current-ratio');
+  if (currentRatioSpan) {
+    const ratioNames = {
+      '1:1': '1:1 (Square)',
+      '3:2': '3:2 (Photo)',
+      '4:3': '4:3 (Classic)',
+      '16:9': '16:9 (Widescreen)',
+      '5:4': '5:4 (Print)',
+      '7:5': '7:5 (Portrait)',
+      '16:10': '16:10 (Monitor)',
+      'original': 'Original (No crop)'
+    };
+    currentRatioSpan.textContent = ratioNames[ratio] || ratio;
+  }
+}
+
+function applyImageFit(fit) {
+  if (!editorState.heroImage) {
+    showNotification('Please upload a hero image first', 'warning');
+    return;
+  }
+
+  // Store the fit mode in editor state
+  editorState.heroImageFit = fit;
+
+  // Re-render with new fit mode
+  renderEditor();
+  showNotification(`Applied ${fit} fit mode to hero image`, 'success');
+}
+
+function updateCurrentFitDisplay(fit) {
+  const currentFitSpan = document.getElementById('current-fit');
+  if (currentFitSpan) {
+    const fitNames = {
+      'cover': 'Cover (Fill & crop)',
+      'contain': 'Contain (Fit all)',
+      'fill': 'Fill (Stretch)',
+      'scale-down': 'Scale Down (Shrink only)',
+      'none': 'None (Original size)',
+      'crop': 'Crop (Center crop)'
+    };
+    currentFitSpan.textContent = fitNames[fit] || fit;
+  }
+}
+
+// ────────────────────────────────
+// CANVAS INTERACTION
+// ────────────────────────────────
+
 function setupCanvasInteraction() {
   const canvas = editorState.canvas;
-  let startX, startY;
-  let isDraggingHero = false;
-  let heroStartX, heroStartY;
+  let dragStartX, dragStartY;
 
-  canvas.addEventListener('mousedown', (e) => {
-    const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / editorState.scale;
-    const y = (e.clientY - rect.top) / editorState.scale;
-
-    // Handle crop handle interaction in crop mode
-    if (editorState.cropMode && editorState.cropHandles.length > 0) {
-      const handle = getCropHandleAtPosition(x, y);
-      if (handle) {
-        editorState.dragHandle = handle;
-        canvas.style.cursor = getCursorForHandle(handle.type);
-        e.preventDefault();
-        return;
-      }
-    }
-
-    // Handle hero image interaction in crop mode
-    if (editorState.cropMode && editorState.heroImage && isPointInHeroImage(x, y)) {
-      isDraggingHero = true;
-      heroStartX = x;
-      heroStartY = y;
-      canvas.style.cursor = 'move';
-      e.preventDefault();
-      return;
-    }
-
-    // Handle element interaction
-    const element = getElementAtPosition(x, y);
-
-    if (element) {
-      selectElement(element);
+  canvas.addEventListener("mousedown", e => {
+    const { x, y } = canvasCoords(e);
+    const el = getElementAtPosition(x, y);
+    if (el) {
+      selectElement(el);
       editorState.isDragging = true;
-      startX = x - element.x * (canvas.width / editorState.master.width);
-      startY = y - element.y * (canvas.height / editorState.master.height);
-      canvas.style.cursor = 'grabbing';
+      dragStartX = x - el.x * (canvas.width / editorState.master.width);
+      dragStartY = y - el.y * (canvas.height / editorState.master.height);
+      canvas.style.cursor = "grabbing";
     } else {
       editorState.selectedElement = null;
-      document.getElementById('element-properties').classList.add('hidden');
+      document.getElementById("element-properties").classList.add("hidden");
       renderEditor();
       updateElementList();
     }
   });
 
-  canvas.addEventListener('mousemove', (e) => {
-    const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / editorState.scale;
-    const y = (e.clientY - rect.top) / editorState.scale;
-
-    // Handle hero image dragging
-    if (isDraggingHero && editorState.cropMode) {
-      const deltaX = (x - heroStartX) / canvas.width;
-      const deltaY = (y - heroStartY) / canvas.height;
-
-      editorState.heroCrop.x += deltaX;
-      editorState.heroCrop.y += deltaY;
-
-      // Clamp values
-      editorState.heroCrop.x = Math.max(-1, Math.min(1, editorState.heroCrop.x));
-      editorState.heroCrop.y = Math.max(-1, Math.min(1, editorState.heroCrop.y));
-
-      heroStartX = x;
-      heroStartY = y;
-
-      updateHeroSliders();
-      renderEditor();
-      return;
-    }
-
-    // Handle element dragging
+  canvas.addEventListener("mousemove", e => {
+    const { x, y } = canvasCoords(e);
     if (editorState.isDragging && editorState.selectedElement) {
-      const scaleX = editorState.master.width / canvas.width;
-      const scaleY = editorState.master.height / canvas.height;
-
-      editorState.selectedElement.x = (x - startX) * scaleX;
-      editorState.selectedElement.y = (y - startY) * scaleY;
-
+      const sx = editorState.master.width / canvas.width, sy = editorState.master.height / canvas.height;
+      editorState.selectedElement.x = (x - dragStartX) * sx;
+      editorState.selectedElement.y = (y - dragStartY) * sy;
       renderEditor();
       updateElementProperties();
-    } else {
-      // Update cursor based on what's under the mouse
-      if (editorState.cropMode && editorState.heroImage && isPointInHeroImage(x, y)) {
-        canvas.style.cursor = 'move';
-      } else {
-        const element = getElementAtPosition(x, y);
-        canvas.style.cursor = element ? 'grab' : (editorState.cropMode ? 'crosshair' : 'default');
-      }
+      return;
     }
+    canvas.style.cursor = getElementAtPosition(x, y) ? "grab" : "default";
   });
 
-  canvas.addEventListener('mouseup', () => {
-    isDraggingHero = false;
+  canvas.addEventListener("mouseup", () => {
     editorState.isDragging = false;
-
-    if (editorState.cropMode) {
-      canvas.style.cursor = 'crosshair';
-    } else {
-      canvas.style.cursor = editorState.selectedElement ? 'grab' : 'default';
-    }
+    canvas.style.cursor = "default";
   });
 
-  // Add mouse wheel for scaling in crop mode
-  canvas.addEventListener('wheel', (e) => {
-    if (!editorState.cropMode || !editorState.heroImage) return;
-
-    e.preventDefault();
-
-    const scaleDelta = e.deltaY > 0 ? -0.1 : 0.1;
-    editorState.heroCrop.scale = Math.max(0.1, Math.min(3, editorState.heroCrop.scale + scaleDelta));
-
-    updateHeroSliders();
-    renderEditor();
-  });
+  function canvasCoords(ev) {
+    const r = canvas.getBoundingClientRect();
+    return { x: (ev.clientX - r.left) / editorState.scale, y: (ev.clientY - r.top) / editorState.scale };
+  }
 }
 
-/**
- * Get element at mouse position in editor
- */
 function getElementAtPosition(x, y) {
   const { canvas, master, objects } = editorState;
-  const scaleX = canvas.width / master.width;
-  const scaleY = canvas.height / master.height;
-
+  const sx = canvas.width / master.width, sy = canvas.height / master.height;
+  const ctx = canvas.getContext("2d");
   for (let i = objects.length - 1; i >= 0; i--) {
-    const obj = objects[i];
-    const scaledX = obj.x * scaleX;
-    const scaledY = obj.y * scaleY;
-
-    if (obj.type === 'text') {
-      const ctx = canvas.getContext('2d');
-      const scaledSize = (obj.size || 24) * Math.min(scaleX, scaleY);
-      ctx.font = `${scaledSize}px Arial, sans-serif`;
-      const metrics = ctx.measureText(obj.text);
-
-      if (x >= scaledX && x <= scaledX + metrics.width &&
-        y >= scaledY && y <= scaledY + scaledSize) {
-        return obj;
-      }
+    const o = objects[i], ox = o.x * sx, oy = o.y * sy;
+    if (o.type === "text") {
+      ctx.font = `${(o.size || 24) * Math.min(sx, sy)}px Arial`;
+      const w = ctx.measureText(o.text).width, h = (o.size || 24) * Math.min(sx, sy);
+      if (x >= ox && x <= ox + w && y >= oy && y <= oy + h) return o;
     }
-
-    if (obj.type === 'logo') {
-      const scaledW = obj.w * scaleX;
-      const scaledH = obj.h * scaleY;
-
-      if (x >= scaledX && x <= scaledX + scaledW &&
-        y >= scaledY && y <= scaledY + scaledH) {
-        return obj;
-      }
+    if (o.type === "logo") {
+      const w = o.w * sx, h = o.h * sy;
+      if (x >= ox && x <= ox + w && y >= oy && y <= oy + h) return o;
     }
   }
-
   return null;
 }
 
-/**
- * Bind property input events
- */
-function bindPropertyInputs() {
-  const inputs = ['prop-x', 'prop-y', 'prop-text', 'prop-size', 'prop-color', 'prop-width', 'prop-height'];
+// ────────────────────────────────
+// ADD ELEMENTS
+// ────────────────────────────────
 
-  inputs.forEach(id => {
-    const input = document.getElementById(id);
-    if (input) {
-      input.addEventListener('input', updateElementFromProperties);
-    }
-  });
-}
-
-/**
- * Update element properties from input values
- */
-function updateElementFromProperties() {
-  const element = editorState.selectedElement;
-  if (!element) return;
-
-  element.x = parseFloat(document.getElementById('prop-x').value) || 0;
-  element.y = parseFloat(document.getElementById('prop-y').value) || 0;
-
-  if (element.type === 'text') {
-    element.text = document.getElementById('prop-text').value || 'Text';
-    element.size = parseFloat(document.getElementById('prop-size').value) || 24;
-    element.color = document.getElementById('prop-color').value || '#000000';
-  } else if (element.type === 'logo') {
-    element.w = parseFloat(document.getElementById('prop-width').value) || 100;
-    element.h = parseFloat(document.getElementById('prop-height').value) || 100;
-  }
-
-  renderEditor();
-}
-
-/**
- * Update property inputs from selected element
- */
-function updateElementProperties() {
-  const element = editorState.selectedElement;
-  if (!element) return;
-
-  document.getElementById('prop-x').value = Math.round(element.x);
-  document.getElementById('prop-y').value = Math.round(element.y);
-}
-
-/**
- * Add a new text element
- */
 function addTextElement() {
-  const text = prompt('Enter text:');
-  if (!text) return;
-
-  const obj = {
-    type: 'text',
-    text,
-    x: 50,
-    y: 50,
-    size: 24,
-    color: '#000000',
-    id: Math.random().toString(36).substr(2, 9)
-  };
-
-  editorState.objects.push(obj);
-  selectElement(obj);
-  renderEditor();
-  updateElementList();
+  const txt = prompt("Enter text:"); if (!txt) return;
+  const obj = { type: "text", text: txt, x: 50, y: 50, size: 24, color: "#000", fontFamily: "Arial", fontWeight: "normal", fontStyle: "normal", textAlign: "left", lineHeight: 1.2, bgColor: "#ffffff", textShadow: false, textOutline: false, id: randId() };
+  editorState.objects.push(obj); selectElement(obj); renderEditor(); updateElementList();
 }
 
-/**
- * Add a new logo element
- */
 function addLogoElement() {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'image/*';
+  const input = document.createElement("input"); input.type = "file"; input.accept = "image/*";
   input.onchange = async () => {
-    const file = input.files[0];
-    if (!file) return;
-
-    try {
-      const img = new Image();
-      img.src = URL.createObjectURL(file);
-      await img.decode();
-
-      const obj = {
-        type: 'logo',
-        image: img,
-        x: 50,
-        y: 50,
-        w: Math.min(img.width, 200),
-        h: Math.min(img.height, 200),
-        id: Math.random().toString(36).substr(2, 9)
-      };
-
-      editorState.objects.push(obj);
-      selectElement(obj);
-      renderEditor();
-      updateElementList();
-    } catch (error) {
-      showNotification('Error loading image: ' + error.message, 'error');
-    }
+    const f = input.files[0]; if (!f) return;
+    try { const img = new Image(); img.src = URL.createObjectURL(f); await img.decode(); const obj = { type: "logo", image: img, x: 50, y: 50, w: Math.min(img.width, 200), h: Math.min(img.height, 200), id: randId() }; editorState.objects.push(obj); selectElement(obj); renderEditor(); updateElementList(); }
+    catch (err) { showNotification("Error loading image: " + err.message, "error"); }
   };
   input.click();
 }
 
-/**
- * Save changes and close editor
- */
+// ────────────────────────────────
+// SAVE / RESET / CLOSE
+// ────────────────────────────────
+
 function saveChanges() {
   if (editorState.onSave) {
-    // Create updated master state with custom objects and hero settings
-    const updatedMaster = {
-      ...editorState.master,
-      objects: editorState.objects,
-      hero: editorState.heroImage,
-      heroSettings: {
-        crop: { ...editorState.heroCrop },
-        mode: editorState.heroCrop.mode || 'cover'
-      }
-    };
-    
-    editorState.onSave(editorState.objects, updatedMaster);
+    editorState.onSave(editorState.objects);
   }
+  showNotification('Layout changes saved successfully', 'success');
   closeEditor();
 }
 
-/**
- * Reset changes to original state
- */
 function resetChanges() {
-  if (confirm('Are you sure you want to reset all changes?')) {
+  if (confirm("Reset all changes?")) {
     editorState.objects = cloneObjects(editorState.master.objects);
-    editorState.heroCrop = {
-      x: 0,
-      y: 0,
-      width: 1,
-      height: 1,
-      scale: 1
-    };
-    editorState.selectedElement = null;
-    document.getElementById('element-properties').classList.add('hidden');
-    
-    updateHeroSliders();
     renderEditor();
     updateElementList();
-    showNotification('Changes reset successfully', 'success');
-  }
-}
-
-/**
- * Bind hero image control events
- */
-function bindHeroImageControls() {
-  const cropModeBtn = document.getElementById('crop-mode-btn');
-  const heroProperties = document.getElementById('hero-properties');
-  const heroXSlider = document.getElementById('hero-x');
-  const heroYSlider = document.getElementById('hero-y');
-  const heroScaleSlider = document.getElementById('hero-scale');
-  const heroXValue = document.getElementById('hero-x-value');
-  const heroYValue = document.getElementById('hero-y-value');
-  const heroScaleValue = document.getElementById('hero-scale-value');
-  const heroFitBtn = document.getElementById('hero-fit');
-  const heroFillBtn = document.getElementById('hero-fill');
-  const heroResetBtn = document.getElementById('hero-reset');
-
-  // Toggle crop mode
-  if (cropModeBtn) {
-    cropModeBtn.addEventListener('click', () => {
-      editorState.cropMode = !editorState.cropMode;
-      heroProperties.classList.toggle('hidden', !editorState.cropMode);
-
-      if (editorState.cropMode) {
-        cropModeBtn.innerHTML = '<i class="fas fa-times mr-2"></i>Exit Crop Mode';
-        cropModeBtn.classList.add('primary');
-      } else {
-        cropModeBtn.innerHTML = '<i class="fas fa-crop mr-2"></i>Crop & Position';
-        cropModeBtn.classList.remove('primary');
-      }
-
-      renderEditor();
-    });
-  }
-
-  // Position X slider
-  if (heroXSlider) {
-    heroXSlider.addEventListener('input', (e) => {
-      const value = parseFloat(e.target.value);
-      editorState.heroCrop.x = value / 100;
-      if (heroXValue) heroXValue.textContent = `${value}%`;
-      renderEditor();
-    });
-  }
-
-  // Position Y slider
-  if (heroYSlider) {
-    heroYSlider.addEventListener('input', (e) => {
-      const value = parseFloat(e.target.value);
-      editorState.heroCrop.y = value / 100;
-      if (heroYValue) heroYValue.textContent = `${value}%`;
-      renderEditor();
-    });
-  }
-
-  // Scale slider
-  if (heroScaleSlider) {
-    heroScaleSlider.addEventListener('input', (e) => {
-      const value = parseFloat(e.target.value);
-      editorState.heroCrop.scale = value / 100;
-      if (heroScaleValue) heroScaleValue.textContent = `${value}%`;
-      renderEditor();
-    });
-  }
-
-  // Fit, Fill, Reset buttons
-  if (heroFitBtn) {
-    heroFitBtn.addEventListener('click', () => {
-      if (!editorState.heroImage) return;
-      editorState.heroCrop = { x: 0, y: 0, width: 1, height: 1, scale: 1, mode: 'fit' };
-      updateHeroSliders();
-      renderEditor();
-      showNotification('Hero image fitted to canvas', 'success');
-    });
-  }
-
-  if (heroFillBtn) {
-    heroFillBtn.addEventListener('click', () => {
-      if (!editorState.heroImage) return;
-      editorState.heroCrop = { x: 0, y: 0, width: 1, height: 1, scale: 1.5, mode: 'fill' };
-      updateHeroSliders();
-      renderEditor();
-      showNotification('Hero image scaled to fill canvas', 'success');
-    });
-  }
-
-  if (heroResetBtn) {
-    heroResetBtn.addEventListener('click', () => {
-      editorState.heroCrop = { x: 0, y: 0, width: 1, height: 1, scale: 1, mode: 'cover' };
-      updateHeroSliders();
-      renderEditor();
-      showNotification('Hero image reset to original state', 'success');
-    });
-  }
-}
-
-/**
- * Update hero image slider values
- */
-function updateHeroSliders() {
-  const heroXSlider = document.getElementById('hero-x');
-  const heroYSlider = document.getElementById('hero-y');
-  const heroScaleSlider = document.getElementById('hero-scale');
-  const heroXValue = document.getElementById('hero-x-value');
-  const heroYValue = document.getElementById('hero-y-value');
-  const heroScaleValue = document.getElementById('hero-scale-value');
-
-  if (heroXSlider) {
-    const xValue = Math.round(editorState.heroCrop.x * 100);
-    heroXSlider.value = xValue;
-    if (heroXValue) heroXValue.textContent = `${xValue}%`;
-  }
-
-  if (heroYSlider) {
-    const yValue = Math.round(editorState.heroCrop.y * 100);
-    heroYSlider.value = yValue;
-    if (heroYValue) heroYValue.textContent = `${yValue}%`;
-  }
-
-  if (heroScaleSlider) {
-    const scaleValue = Math.round(editorState.heroCrop.scale * 100);
-    heroScaleSlider.value = scaleValue;
-    if (heroScaleValue) heroScaleValue.textContent = `${scaleValue}%`;
-  }
-}
-
-/**
- * Enhanced canvas interaction for hero image manipulation
- */
-function setupHeroImageInteraction() {
-  const canvas = editorState.canvas;
-  let isDraggingHero = false;
-  let heroStartX, heroStartY;
-
-  canvas.addEventListener('mousedown', (e) => {
-    if (!editorState.cropMode) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / editorState.scale;
-    const y = (e.clientY - rect.top) / editorState.scale;
-
-    // Check if clicking on hero image area
-    if (editorState.heroImage && isPointInHeroImage(x, y)) {
-      isDraggingHero = true;
-      heroStartX = x;
-      heroStartY = y;
-      canvas.style.cursor = 'move';
-      e.preventDefault();
-    }
-  });
-
-  canvas.addEventListener('mousemove', (e) => {
-    if (!editorState.cropMode || !isDraggingHero) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / editorState.scale;
-    const y = (e.clientY - rect.top) / editorState.scale;
-
-    const deltaX = (x - heroStartX) / canvas.width;
-    const deltaY = (y - heroStartY) / canvas.height;
-
-    editorState.heroCrop.x += deltaX;
-    editorState.heroCrop.y += deltaY;
-
-    // Clamp values
-    editorState.heroCrop.x = Math.max(-1, Math.min(1, editorState.heroCrop.x));
-    editorState.heroCrop.y = Math.max(-1, Math.min(1, editorState.heroCrop.y));
-
-    heroStartX = x;
-    heroStartY = y;
-
-    updateHeroSliders();
-    renderEditor();
-  });
-
-  canvas.addEventListener('mouseup', () => {
-    isDraggingHero = false;
-    canvas.style.cursor = editorState.cropMode ? 'crosshair' : 'default';
-  });
-}
-
-/**
- * Check if a point is within the hero image bounds
- */
-function isPointInHeroImage(x, y) {
-  if (!editorState.heroImage) return false;
-
-  const canvas = editorState.canvas;
-  const { heroCrop } = editorState;
-
-  const destWidth = canvas.width * heroCrop.scale;
-  const destHeight = canvas.height * heroCrop.scale;
-  const destX = (canvas.width - destWidth) / 2 + (heroCrop.x * canvas.width * 0.5);
-  const destY = (canvas.height - destHeight) / 2 + (heroCrop.y * canvas.height * 0.5);
-
-  return x >= destX && x <= destX + destWidth && y >= destY && y <= destY + destHeight;
-}
-
-/**
- * Get crop handle at mouse position
- */
-function getCropHandleAtPosition(x, y) {
-  const handleSize = 12;
-  for (const handle of editorState.cropHandles) {
-    if (x >= handle.x - handleSize / 2 && x <= handle.x + handleSize / 2 &&
-      y >= handle.y - handleSize / 2 && y <= handle.y + handleSize / 2) {
-      return handle;
-    }
-  }
-  return null;
-}
-
-/**
- * Get cursor style for crop handle type
- */
-function getCursorForHandle(type) {
-  const cursors = {
-    'nw': 'nw-resize', 'ne': 'ne-resize', 'sw': 'sw-resize', 'se': 'se-resize',
-    'n': 'n-resize', 's': 's-resize', 'w': 'w-resize', 'e': 'e-resize'
-  };
-  return cursors[type] || 'default';
-}
-
-/**
- * Bind enhanced text property inputs
- */
-function bindEnhancedTextProperties() {
-  const enhancedInputs = [
-    'prop-line-height', 'prop-font-family', 'prop-font-weight',
-    'prop-font-style', 'prop-text-align', 'prop-bg-color',
-    'prop-text-shadow', 'prop-text-outline'
-  ];
-
-  enhancedInputs.forEach(id => {
-    const input = document.getElementById(id);
-    if (input) {
-      input.addEventListener('input', updateEnhancedTextProperties);
-      input.addEventListener('change', updateEnhancedTextProperties);
-    }
-  });
-}
-
-/**
- * Update enhanced text properties
- */
-function updateEnhancedTextProperties() {
-  const element = editorState.selectedElement;
-  if (!element || element.type !== 'text') return;
-
-  // Get enhanced text properties
-  const lineHeight = parseFloat(document.getElementById('prop-line-height').value) || 1.2;
-  const fontFamily = document.getElementById('prop-font-family').value || 'Arial';
-  const fontWeight = document.getElementById('prop-font-weight').value || 'normal';
-  const fontStyle = document.getElementById('prop-font-style').value || 'normal';
-  const textAlign = document.getElementById('prop-text-align').value || 'left';
-  const bgColor = document.getElementById('prop-bg-color').value || '#ffffff';
-  const textShadow = document.getElementById('prop-text-shadow').checked;
-  const textOutline = document.getElementById('prop-text-outline').checked;
-
-  // Update element properties
-  element.lineHeight = lineHeight;
-  element.fontFamily = fontFamily;
-  element.fontWeight = fontWeight;
-  element.fontStyle = fontStyle;
-  element.textAlign = textAlign;
-  element.bgColor = bgColor;
-  element.textShadow = textShadow;
-  element.textOutline = textOutline;
-
-  renderEditor();
-}
-
-/**
- * Close the editor
- */
-function closeEditor() {
-  if (currentEditor) {
-    currentEditor.remove();
-    currentEditor = null;
-  }
-}mg.height, 200),
-        id: Math.random().toString(36).substr(2, 9)
-      };
-
-      editorState.objects.push(obj);
-      selectElement(obj);
-      renderEditor();
-      updateElementList();
-    } catch (error) {
-      showNotification('Error loading image: ' + error.message, 'error');
-    }
-  };
-  input.click();
-}
-
-/**
- * Save changes and close editor
- */
-function saveChanges() {
-  if (editorState.onSave) {
-    // Create updated master state with custom objects and hero settings
-    const updatedMaster = {
-      ...editorState.master,
-      objects: editorState.objects,
-      hero: editorState.heroImage,
-      heroSettings: {
-        crop: { ...editorState.heroCrop },
-        mode: editorState.heroCrop.mode || 'cover'
-      }
-    };
-
-    editorState.onSave(editorState.objects, updatedMaster);
-  }
-  closeEditor();
-}
-
-/**
- * Reset changes to original state
- */
-function resetChanges() {
-  if (confirm('Are you sure you want to reset all changes?')) {
-    editorState.objects = cloneObjects(editorState.master.objects);
-    editorState.heroCrop = {
-      x: 0,
-      y: 0,
-      width: 1,
-      height: 1,
-      scale: 1
-    };
     editorState.selectedElement = null;
-    document.getElementById('element-properties').classList.add('hidden');
-
-    updateHeroSliders();
-    renderEditor();
-    updateElementList();
-    showNotification('Changes reset successfully', 'success');
+    document.getElementById("element-properties").classList.add("hidden");
   }
 }
 
-/**
- * Bind hero image control events
- */
-function bindHeroImageControls() {
-  const cropModeBtn = document.getElementById('crop-mode-btn');
-  const heroProperties = document.getElementById('hero-properties');
-  const heroXSlider = document.getElementById('hero-x');
-  const heroYSlider = document.getElementById('hero-y');
-  const heroScaleSlider = document.getElementById('hero-scale');
-  const heroXValue = document.getElementById('hero-x-value');
-  const heroYValue = document.getElementById('hero-y-value');
-  const heroScaleValue = document.getElementById('hero-scale-value');
-  const heroFitBtn = document.getElementById('hero-fit');
-  const heroFillBtn = document.getElementById('hero-fill');
-  const heroResetBtn = document.getElementById('hero-reset');
-
-  // Toggle crop mode
-  if (cropModeBtn) {
-    cropModeBtn.addEventListener('click', () => {
-      editorState.cropMode = !editorState.cropMode;
-      heroProperties.classList.toggle('hidden', !editorState.cropMode);
-
-      if (editorState.cropMode) {
-        cropModeBtn.innerHTML = '<i class="fas fa-times mr-2"></i>Exit Crop Mode';
-        cropModeBtn.classList.add('primary');
-      } else {
-        cropModeBtn.innerHTML = '<i class="fas fa-crop mr-2"></i>Crop & Position';
-        cropModeBtn.classList.remove('primary');
-      }
-
-      renderEditor();
-    });
-  }
-
-  // Position X slider
-  if (heroXSlider) {
-    heroXSlider.addEventListener('input', (e) => {
-      const value = parseFloat(e.target.value);
-      editorState.heroCrop.x = value / 100;
-      if (heroXValue) heroXValue.textContent = `${value}%`;
-      renderEditor();
-    });
-  }
-
-  // Position Y slider
-  if (heroYSlider) {
-    heroYSlider.addEventListener('input', (e) => {
-      const value = parseFloat(e.target.value);
-      editorState.heroCrop.y = value / 100;
-      if (heroYValue) heroYValue.textContent = `${value}%`;
-      renderEditor();
-    });
-  }
-
-  // Scale slider
-  if (heroScaleSlider) {
-    heroScaleSlider.addEventListener('input', (e) => {
-      const value = parseFloat(e.target.value);
-      editorState.heroCrop.scale = value / 100;
-      if (heroScaleValue) heroScaleValue.textContent = `${value}%`;
-      renderEditor();
-    });
-  }
-
-  // Fit, Fill, Reset buttons
-  if (heroFitBtn) {
-    heroFitBtn.addEventListener('click', () => {
-      if (!editorState.heroImage) return;
-      editorState.heroCrop = { x: 0, y: 0, width: 1, height: 1, scale: 1, mode: 'fit' };
-      updateHeroSliders();
-      renderEditor();
-      showNotification('Hero image fitted to canvas', 'success');
-    });
-  }
-
-  if (heroFillBtn) {
-    heroFillBtn.addEventListener('click', () => {
-      if (!editorState.heroImage) return;
-      editorState.heroCrop = { x: 0, y: 0, width: 1, height: 1, scale: 1.5, mode: 'fill' };
-      updateHeroSliders();
-      renderEditor();
-      showNotification('Hero image scaled to fill canvas', 'success');
-    });
-  }
-
-  if (heroResetBtn) {
-    heroResetBtn.addEventListener('click', () => {
-      editorState.heroCrop = { x: 0, y: 0, width: 1, height: 1, scale: 1, mode: 'cover' };
-      updateHeroSliders();
-      renderEditor();
-      showNotification('Hero image reset to original state', 'success');
-    });
-  }
-}
-
-/**
- * Update hero image slider values
- */
-function updateHeroSliders() {
-  const heroXSlider = document.getElementById('hero-x');
-  const heroYSlider = document.getElementById('hero-y');
-  const heroScaleSlider = document.getElementById('hero-scale');
-  const heroXValue = document.getElementById('hero-x-value');
-  const heroYValue = document.getElementById('hero-y-value');
-  const heroScaleValue = document.getElementById('hero-scale-value');
-
-  if (heroXSlider) {
-    const xValue = Math.round(editorState.heroCrop.x * 100);
-    heroXSlider.value = xValue;
-    if (heroXValue) heroXValue.textContent = `${xValue}%`;
-  }
-
-  if (heroYSlider) {
-    const yValue = Math.round(editorState.heroCrop.y * 100);
-    heroYSlider.value = yValue;
-    if (heroYValue) heroYValue.textContent = `${yValue}%`;
-  }
-
-  if (heroScaleSlider) {
-    const scaleValue = Math.round(editorState.heroCrop.scale * 100);
-    heroScaleSlider.value = scaleValue;
-    if (heroScaleValue) heroScaleValue.textContent = `${scaleValue}%`;
-  }
-}
-
-/**
- * Enhanced canvas interaction for hero image manipulation
- */
-function setupHeroImageInteraction() {
-  const canvas = editorState.canvas;
-  let isDraggingHero = false;
-  let heroStartX, heroStartY;
-
-  canvas.addEventListener('mousedown', (e) => {
-    if (!editorState.cropMode) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / editorState.scale;
-    const y = (e.clientY - rect.top) / editorState.scale;
-
-    // Check if clicking on hero image area
-    if (editorState.heroImage && isPointInHeroImage(x, y)) {
-      isDraggingHero = true;
-      heroStartX = x;
-      heroStartY = y;
-      canvas.style.cursor = 'move';
-      e.preventDefault();
-    }
-  });
-
-  canvas.addEventListener('mousemove', (e) => {
-    if (!editorState.cropMode || !isDraggingHero) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / editorState.scale;
-    const y = (e.clientY - rect.top) / editorState.scale;
-
-    const deltaX = (x - heroStartX) / canvas.width;
-    const deltaY = (y - heroStartY) / canvas.height;
-
-    editorState.heroCrop.x += deltaX;
-    editorState.heroCrop.y += deltaY;
-
-    // Clamp values
-    editorState.heroCrop.x = Math.max(-1, Math.min(1, editorState.heroCrop.x));
-    editorState.heroCrop.y = Math.max(-1, Math.min(1, editorState.heroCrop.y));
-
-    heroStartX = x;
-    heroStartY = y;
-
-    updateHeroSliders();
-    renderEditor();
-  });
-
-  canvas.addEventListener('mouseup', () => {
-    isDraggingHero = false;
-    canvas.style.cursor = editorState.cropMode ? 'crosshair' : 'default';
-  });
-}
-
-/**
- * Check if a point is within the hero image bounds
- */
-function isPointInHeroImage(x, y) {
-  if (!editorState.heroImage) return false;
-
-  const canvas = editorState.canvas;
-  const { heroCrop } = editorState;
-
-  const destWidth = canvas.width * heroCrop.scale;
-  const destHeight = canvas.height * heroCrop.scale;
-  const destX = (canvas.width - destWidth) / 2 + (heroCrop.x * canvas.width * 0.5);
-  const destY = (canvas.height - destHeight) / 2 + (heroCrop.y * canvas.height * 0.5);
-
-  return x >= destX && x <= destX + destWidth && y >= destY && y <= destY + destHeight;
-}
-
-/**
- * Get crop handle at mouse position
- */
-function getCropHandleAtPosition(x, y) {
-  const handleSize = 12;
-  for (const handle of editorState.cropHandles) {
-    if (x >= handle.x - handleSize / 2 && x <= handle.x + handleSize / 2 &&
-      y >= handle.y - handleSize / 2 && y <= handle.y + handleSize / 2) {
-      return handle;
-    }
-  }
-  return null;
-}
-
-/**
- * Get cursor style for crop handle type
- */
-function getCursorForHandle(type) {
-  const cursors = {
-    'nw': 'nw-resize', 'ne': 'ne-resize', 'sw': 'sw-resize', 'se': 'se-resize',
-    'n': 'n-resize', 's': 's-resize', 'w': 'w-resize', 'e': 'e-resize'
-  };
-  return cursors[type] || 'default';
-}
-
-/**
- * Bind enhanced text property inputs
- */
-function bindEnhancedTextProperties() {
-  const enhancedInputs = [
-    'prop-line-height', 'prop-font-family', 'prop-font-weight',
-    'prop-font-style', 'prop-text-align', 'prop-bg-color',
-    'prop-text-shadow', 'prop-text-outline'
-  ];
-
-  enhancedInputs.forEach(id => {
-    const input = document.getElementById(id);
-    if (input) {
-      input.addEventListener('input', updateEnhancedTextProperties);
-      input.addEventListener('change', updateEnhancedTextProperties);
-    }
-  });
-}
-
-/**
- * Update enhanced text properties
- */
-function updateEnhancedTextProperties() {
-  const element = editorState.selectedElement;
-  if (!element || element.type !== 'text') return;
-
-  // Get enhanced text properties
-  const lineHeight = parseFloat(document.getElementById('prop-line-height').value) || 1.2;
-  const fontFamily = document.getElementById('prop-font-family').value || 'Arial';
-  const fontWeight = document.getElementById('prop-font-weight').value || 'normal';
-  const fontStyle = document.getElementById('prop-font-style').value || 'normal';
-  const textAlign = document.getElementById('prop-text-align').value || 'left';
-  const bgColor = document.getElementById('prop-bg-color').value || '#ffffff';
-  const textShadow = document.getElementById('prop-text-shadow').checked;
-  const textOutline = document.getElementById('prop-text-outline').checked;
-
-  // Update element properties
-  element.lineHeight = lineHeight;
-  element.fontFamily = fontFamily;
-  element.fontWeight = fontWeight;
-  element.fontStyle = fontStyle;
-  element.textAlign = textAlign;
-  element.bgColor = bgColor;
-  element.textShadow = textShadow;
-  element.textOutline = textOutline;
-
-  renderEditor();
-}
-
-/**
- * Close the editor
- */
 function closeEditor() {
-  if (currentEditor) {
-    currentEditor.remove();
-    currentEditor = null;
-  }
-// Corrupted duplicate code sections removed to fix syntax errors
-
-/**
- * Save changes and close editor
- */
-function saveChanges() {
-  if (editorState.onSave) {
-    // Create updated master state with custom objects and hero settings
-    const updatedMaster = {
-      ...editorState.master,
-      objects: editorState.objects,
-      hero: editorState.heroImage,
-      heroSettings: {
-        crop: { ...editorState.heroCrop },
-        mode: editorState.heroCrop.mode || 'cover'
-      }
-    };
-
-    editorState.onSave(editorState.objects, updatedMaster);
-  }
-  closeEditor();
+  if (currentEditor) { currentEditor.remove(); currentEditor = null; }
 }
 
-/**
- * Reset changes to original state
- */
-function resetChanges() {
-  if (confirm('Are you sure you want to reset all changes?')) {
-    editorState.objects = cloneObjects(editorState.master.objects);
-    editorState.heroCrop = {
-      x: 0,
-      y: 0,
-      width: 1,
-      height: 1,
-      scale: 1
-    };
-    editorState.selectedElement = null;
-    document.getElementById('element-properties').classList.add('hidden');
+// ────────────────────────────────
+// UTILITIES
+// ────────────────────────────────
 
-    updateHeroSliders();
-    renderEditor();
-    updateElementList();
-    showNotification('Changes reset successfully', 'success');
-  }
-}
-
-/**
- * Close the editor
- */
-function closeEditor() {
-  if (currentEditor) {
-    currentEditor.remove();
-    currentEditor = null;
-  }
-}
+function randId() { return Math.random().toString(36).slice(2, 11); }
