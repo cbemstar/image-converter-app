@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Layout Tool Debug</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .error { color: red; }
+    .success { color: green; }
+    .info { color: blue; }
+    pre { background: #f5f5f5; padding: 10px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Layout Tool Debug</h1>
+  <div id="debug-output"></div>
+
+  <script type="module">
+    const output = document.getElementById('debug-output');
+    
+    function log(message, type = 'info') {
+      const div = document.createElement('div');
+      div.className = type;
+      div.innerHTML = message;
+      output.appendChild(div);
+    }
+    
+    async function runDiagnostics() {
+      log('<h2>Running Diagnostics...</h2>');
+      
+      // Test 1: Check if modules can be imported
+      try {
+        log('✓ Testing module imports...');
+        const { getPresets } = await import('./modules/preset-manager.js');
+        log('✓ preset-manager.js imported successfully', 'success');
+        
+        // Test 2: Try to load presets
+        log('✓ Testing preset loading...');
+        const presets = await getPresets();
+        log(`✓ Loaded ${presets.length} presets successfully`, 'success');
+        
+        // Test 3: Show preset details
+        log('<h3>Preset Details:</h3>');
+        const categories = {};
+        presets.forEach(preset => {
+          if (!categories[preset.category]) categories[preset.category] = [];
+          categories[preset.category].push(preset);
+        });
+        
+        Object.entries(categories).forEach(([category, presets]) => {
+          log(`<strong>${category}:</strong> ${presets.length} presets`);
+          presets.forEach(preset => {
+            log(`&nbsp;&nbsp;- ${preset.name} (${preset.width || preset.width_mm}×${preset.height || preset.height_mm})`);
+          });
+        });
+        
+      } catch (error) {
+        log(`✗ Error loading presets: ${error.message}`, 'error');
+        log(`<pre>${error.stack}</pre>`, 'error');
+      }
+      
+      // Test 4: Check if other modules load
+      try {
+        await import('./modules/ui-sidebar.js');
+        log('✓ ui-sidebar.js imported successfully', 'success');
+      } catch (error) {
+        log(`✗ Error importing ui-sidebar.js: ${error.message}`, 'error');
+      }
+      
+      try {
+        await import('./modules/canvas-engine.js');
+        log('✓ canvas-engine.js imported successfully', 'success');
+      } catch (error) {
+        log(`✗ Error importing canvas-engine.js: ${error.message}`, 'error');
+      }
+      
+      // Test 5: Check utils.js
+      try {
+        const { showNotification } = await import('../../utils.js');
+        log('✓ utils.js imported successfully', 'success');
+      } catch (error) {
+        log(`✗ Error importing utils.js: ${error.message}`, 'error');
+      }
+    }
+    
+    runDiagnostics();
+  </script>
+</body>
+</html>

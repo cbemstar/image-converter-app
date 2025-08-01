@@ -1,0 +1,7 @@
+{
+  "name": "Book Cover Paperback",
+  "width_mm": 152,
+  "height_mm": 229,
+  "bleed_mm": 3,
+  "channel": "print"
+}
