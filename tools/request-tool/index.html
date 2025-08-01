@@ -17,16 +17,17 @@
   <script type="module" src="request-tool.js"></script>
 </head>
 <body data-slug="request-tool" class="bg-transparent min-h-screen flex flex-col">
+  <a href="#main-content" class="sr-only focus:not-sr-only absolute left-2 top-2 bg-[var(--background)] text-[var(--foreground)] p-2 z-50">Skip to main content</a>
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
   <!-- Navigation Bar -->
-  <nav class="bg-[var(--background)] shadow-md border-b border-[var(--foreground)]/30">
+  <nav class="bg-[var(--background)] shadow-md border-b border-[var(--foreground)]/30" role="navigation" aria-label="Main navigation">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
         <!-- Logo and site name -->
         <div class="flex items-center gap-4">
-          <button id="sidebar-toggle" class="shad-btn p-2" aria-label="Open sidebar">
+          <button id="sidebar-toggle" class="shad-btn p-2" aria-label="Open sidebar" aria-controls="sidebar" aria-expanded="false">
             <i class="fas fa-bars"></i>
           </button>
           <a href="../../index.html" class="flex items-center gap-2">
@@ -44,7 +45,7 @@
   <!-- Page Layout -->
   <div class="flex flex-grow">
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
-    <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full transition-transform z-40">
+    <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full transition-transform z-40" role="complementary" aria-label="Sidebar" tabindex="-1">
       <div class="flex justify-between items-center mb-4">
         <a href="../../index.html" class="text-xl font-bold" style="color:var(--foreground);">reformately</a>
         <button id="sidebar-close" class="shad-btn p-2" aria-label="Close sidebar">
@@ -52,8 +53,9 @@
         </button>
       </div>
       <h2 class="text-lg font-bold mb-4" style="color:var(--foreground);">Tools</h2>
+      <label for="tool-search" class="sr-only">Search tools</label>
       <input id="tool-search" type="text" placeholder="Search" class="w-full mb-4 px-2 py-1 rounded border border-[var(--foreground)] bg-transparent" />
-      <ul id="tool-list" class="space-y-2">
+      <ul id="tool-list" class="space-y-2" role="list">
         <li><a href="../image-converter/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Image Converter</a></li>
         <li><a href="../background-remover/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Background Remover</a></li>
         <li><a href="../google-ads-rsa-preview/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Google Ads RSA Preview</a></li>
@@ -70,24 +72,24 @@
         <a href="../request-tool/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Request a Tool</a>
       </div>
     </aside>
-    <main id="main-content" class="flex-grow p-4">
+    <main id="main-content" class="flex-grow p-4" tabindex="-1">
       <div class="max-w-xl mx-auto">
         <h1 class="text-3xl font-bold mb-4" style="color:var(--foreground);">Request a Tool</h1>
         <p style="color:var(--foreground);">Let us know what tool you'd like us to build next.</p>
         <form id="tool-request-form" class="space-y-4 my-8">
-          <label class="block" style="color:var(--foreground);">Tool Name
-            <input id="tool-name" type="text" class="shad-input mt-1" placeholder="e.g. Keyword Grouper" required />
+          <label class="layout-label">Tool Name
+            <input id="tool-name" type="text" class="layout-input mt-1" placeholder="e.g. Keyword Grouper" required />
           </label>
-          <label class="block" style="color:var(--foreground);">What problem would this solve?
-            <textarea id="tool-problem" class="shad-input mt-1" rows="3" required></textarea>
+          <label class="layout-label">What problem would this solve?
+            <textarea id="tool-problem" class="layout-input mt-1" rows="3" required></textarea>
           </label>
-          <label class="block" style="color:var(--foreground);">Your Name
-            <input id="requester-name" type="text" class="shad-input mt-1" placeholder="Optional" />
+          <label class="layout-label">Your Name
+            <input id="requester-name" type="text" class="layout-input mt-1" placeholder="Optional" />
           </label>
-          <label class="block" style="color:var(--foreground);">Email (optional)
-            <input id="requester-email" type="email" class="shad-input mt-1" placeholder="you@example.com" />
+          <label class="layout-label">Email (optional)
+            <input id="requester-email" type="email" class="layout-input mt-1" placeholder="you@example.com" />
           </label>
-          <button type="submit" class="shad-btn">Submit Request</button>
+          <button type="submit" class="layout-btn">Submit Request</button>
         </form>
         <section class="space-y-4">
           <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this page</h2>

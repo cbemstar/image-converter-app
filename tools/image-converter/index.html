@@ -39,7 +39,7 @@
       <div class="flex justify-between h-16">
         <!-- Logo and site name -->
         <div class="flex items-center gap-4">
-          <button id="sidebar-toggle" class="shad-btn p-2" aria-label="Open sidebar">
+          <button id="sidebar-toggle" class="layout-btn p-2" aria-label="Open sidebar">
             <i class="fas fa-bars"></i>
           </button>
           <a href="../../index.html" class="flex items-center gap-2">
@@ -57,7 +57,7 @@
         </div> -->
         
         <div class="flex items-center gap-2">
-          <button id="theme-toggle" class="shad-btn p-2" aria-label="Toggle theme">
+          <button id="theme-toggle" class="layout-btn p-2" aria-label="Toggle theme">
             <span id="theme-toggle-icon">🌙</span>
           </button>
         </div>
@@ -71,12 +71,12 @@
     <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full transition-transform z-40">
       <div class="flex justify-between items-center mb-4">
         <a href="../../index.html" class="text-xl font-bold" style="color:var(--foreground);">reformately</a>
-        <button id="sidebar-close" class="shad-btn p-2" aria-label="Close sidebar">
+        <button id="sidebar-close" class="layout-btn p-2" aria-label="Close sidebar">
           <i class="fas fa-times"></i>
         </button>
       </div>
       <h2 class="text-lg font-bold mb-4" style="color:var(--foreground);">Tools</h2>
-      <input id="tool-search" type="text" placeholder="Search" class="w-full mb-4 px-2 py-1 rounded border border-[var(--foreground)] bg-transparent" />
+      <input id="tool-search" type="text" placeholder="Search" class="layout-input w-full mb-4" />
       <ul id="tool-list" class="space-y-2">
         <li><a href="../image-converter/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Image Converter</a></li>
         <li><a href="../background-remover/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Background Remover</a></li>
