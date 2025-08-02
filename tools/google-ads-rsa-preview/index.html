@@ -8,6 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Google Ads RSA Preview</title>
   <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
+  <link rel="stylesheet" href="../../styles/shadcn-tokens.css">
+  <link rel="stylesheet" href="../../styles/shadcn-bridge.css">
   <link rel="stylesheet" href="../../styles/styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome for icons -->
@@ -15,29 +17,29 @@
   <script type="module" src="../../styles/theme.js"></script>
   <script type="module" src="../../layout.js"></script>
     <style>
-        /* CSS Variables for Design Tokens */
+        /* CSS Variables for Design Tokens - Using shadcn colors */
         :root {
-            /* Colors */
-            --background: #ffffff;
-            --foreground: #0f172a;
-            --card: #ffffff;
-            --card-foreground: #0f172a;
-            --popover: #ffffff;
-            --popover-foreground: #0f172a;
-            --primary: #0f172a;
-            --primary-foreground: #f8fafc;
-            --secondary: #f1f5f9;
-            --secondary-foreground: #0f172a;
-            --muted: #f8fafc;
-            --muted-foreground: #64748b;
-            --accent: #f1f5f9;
-            --accent-foreground: #0f172a;
-            --destructive: #ef4444;
-            --destructive-foreground: #f8fafc;
-            --border: #e2e8f0;
-            --input: #e2e8f0;
-            --ring: #0f172a;
-            --radius: 0.5rem;
+            /* Colors - inherit from shadcn tokens */
+            --background: oklch(var(--background));
+            --foreground: oklch(var(--foreground));
+            --card: oklch(var(--card));
+            --card-foreground: oklch(var(--card-foreground));
+            --popover: oklch(var(--popover));
+            --popover-foreground: oklch(var(--popover-foreground));
+            --primary: oklch(var(--primary));
+            --primary-foreground: oklch(var(--primary-foreground));
+            --secondary: oklch(var(--secondary));
+            --secondary-foreground: oklch(var(--secondary-foreground));
+            --muted: oklch(var(--muted));
+            --muted-foreground: oklch(var(--muted-foreground));
+            --accent: oklch(var(--accent));
+            --accent-foreground: oklch(var(--accent-foreground));
+            --destructive: oklch(var(--destructive));
+            --destructive-foreground: oklch(var(--destructive-foreground));
+            --border: oklch(var(--border));
+            --input: oklch(var(--input));
+            --ring: oklch(var(--ring));
+            --radius: var(--radius);
             
             /* Typography */
             --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
@@ -62,49 +64,7 @@
             --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
             --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
         }
-        [data-theme="dark"] {
-            --background: #101624;
-            --foreground: #f3f6fa;
-            --card: #181f2e;
-            --card-foreground: #f3f6fa;
-            --popover: #181f2e;
-            --popover-foreground: #f3f6fa;
-            --primary: #3b82f6;
-            --primary-foreground: #f3f6fa;
-            --secondary: #232b3d;
-            --secondary-foreground: #f3f6fa;
-            --muted: #232b3d;
-            --muted-foreground: #b6c2d6;
-            --accent: #232b3d;
-            --accent-foreground: #f3f6fa;
-            --destructive: #ef4444;
-            --destructive-foreground: #f3f6fa;
-            --border: #2d3748;
-            --input: #2d3748;
-            --ring: #3b82f6;
-        }
-        [data-theme="light"] {
-            /* Explicitly set to default, for clarity */
-            --background: #ffffff;
-            --foreground: #0f172a;
-            --card: #ffffff;
-            --card-foreground: #0f172a;
-            --popover: #ffffff;
-            --popover-foreground: #0f172a;
-            --primary: #0f172a;
-            --primary-foreground: #f8fafc;
-            --secondary: #f1f5f9;
-            --secondary-foreground: #0f172a;
-            --muted: #f8fafc;
-            --muted-foreground: #64748b;
-            --accent: #f1f5f9;
-            --accent-foreground: #0f172a;
-            --destructive: #ef4444;
-            --destructive-foreground: #f8fafc;
-            --border: #e2e8f0;
-            --input: #e2e8f0;
-            --ring: #0f172a;
-        }
+        /* Theme overrides are handled by shadcn-tokens.css */
 
         /* Reset and Base Styles */
         * {
