@@ -2,9 +2,9 @@
 
 /* Master Canvas Styling */
 #master-canvas {
-  background-color: hsl(var(--background));
-  border: 2px solid hsl(var(--border));
-  border-radius: 0.5rem;
+  background-color: var(--background);
+  border: 2px solid var(--border);
+  border-radius: calc(var(--radius) - 2px);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   max-width: 100%;
   height: auto;
@@ -15,13 +15,13 @@
 
 /* Tool Sidebar Styling */
 #tool-sidebar {
-  background-color: hsl(var(--card));
-  border: 1px solid hsl(var(--border));
+  background-color: var(--card);
+  border: 1px solid var(--border);
   color: var(--card-foreground);
 }
 
 #tool-sidebar h3 {
-  color: hsl(var(--foreground));
+  color: var(--foreground);
   font-weight: 600;
   margin-bottom: 0.75rem;
 }
@@ -32,15 +32,15 @@
 
 #tool-sidebar .control-group:last-child {
   padding: 0.5rem 0.75rem;
-  background-color: hsl(var(--background));
-  color: hsl(var(--foreground));
+  background-color: var(--background);
+  color: var(--foreground);
   font-size: var(--text-sm);
 }
 
 .layout-input:focus {
   outline: none;
-  box-shadow: 0 0 0 2px hsl(var(--ring));
-  border-color: hsl(var(--ring));
+  box-shadow: 0 0 0 2px var(--ring);
+  border-color: var(--ring);
 }
 
 /* Layout Tool Labels */
@@ -48,8 +48,8 @@
   display: block;
   font-weight: 500;
   font-size: var(--text-sm);
-  color: hsl(var(--foreground));
-  margin-bottom: 0.5rem;
+  color: var(--foreground);
+  margin-bottom: var(--spacing-2);
 }
 
 /* Preset Selection */
@@ -66,28 +66,28 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem;
-  border: 1px solid hsl(var(--border));
+  border: 1px solid var(--border);
   border-radius: calc(var(--radius) - 2px);
-  background-color: hsl(var(--background));
+  background-color: var(--background);
   cursor: pointer;
   transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .preset-item:hover {
-  background-color: hsl(var(--accent));
-  border-color: hsl(var(--primary));
+  background-color: var(--accent);
+  border-color: var(--primary);
 }
 
 .preset-item.selected {
-  background-color: hsl(var(--primary));
+  background-color: var(--primary);
   color: var(--primary-foreground);
-  border-color: hsl(var(--primary));
+  border-color: var(--primary);
 }
 
 .preset-checkbox {
   width: 1rem;
   height: 1rem;
-  accent-color: hsl(var(--primary));
+  accent-color: var(--primary);
 }
 
 .preset-name {
@@ -97,21 +97,21 @@
 
 .preset-dimensions {
   font-size: 0.75rem;
-  color: hsl(var(--muted-foreground));
+  color: var(--muted-foreground);
   margin-left: auto;
 }
 
 /* Artboard Grid */
 #artboards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr);
   gap: 1.5rem;
 }
 
 .artboard-item {
-  background-color: hsl(var(--card));
-  border: 1px solid hsl(var(--border));
-  border-radius: 0.5rem;
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) - 2px);
   padding: 1rem;
   text-align: center;
   transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -120,15 +120,15 @@
 }
 
 .artboard-item:hover {
-  border-color: hsl(var(--primary));
+  border-color: var(--primary);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .artboard-canvas {
-  border: 1px solid hsl(var(--border));
+  border: 1px solid var(--border);
   border-radius: calc(var(--radius) - 2px);
   margin-bottom: 0.75rem;
-  background-color: hsl(var(--background));
+  background-color: var(--background);
   max-width: 100%;
   height: auto;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -137,13 +137,13 @@
 .artboard-title {
   font-weight: 600;
   font-size: var(--text-sm);
-  color: hsl(var(--foreground));
+  color: var(--foreground);
   margin-bottom: 0.25rem;
 }
 
 .artboard-dimensions {
   font-size: 0.75rem;
-  color: hsl(var(--muted-foreground));
+  color: var(--muted-foreground);
   margin-bottom: 0.25rem;
 }
 
@@ -153,40 +153,40 @@
 
 .artboard-info span {
   font-size: 0.75rem;
-  color: hsl(var(--muted-foreground));
+  color: var(--muted-foreground);
   text-transform: capitalize;
 }
 
 /* File Upload Area */
 .upload-area {
-  border: 2px dashed hsl(var(--border));
-  border-radius: 0.5rem;
+  border: 2px dashed var(--border);
+  border-radius: calc(var(--radius) - 2px);
   padding: 2rem;
   text-align: center;
-  background-color: hsl(var(--background));
+  background-color: var(--background);
   transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
 }
 
 .upload-area:hover {
-  border-color: hsl(var(--primary));
-  background-color: hsl(var(--accent));
+  border-color: var(--primary);
+  background-color: var(--accent);
 }
 
 .upload-area.dragover {
-  border-color: hsl(var(--primary));
-  background-color: hsl(var(--primary));
+  border-color: var(--primary);
+  background-color: var(--primary);
   color: var(--primary-foreground);
 }
 
 .upload-text {
-  color: hsl(var(--foreground));
+  color: var(--foreground);
   font-size: var(--text-sm);
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--spacing-2);
 }
 
 .upload-hint {
-  color: hsl(var(--muted-foreground));
+  color: var(--muted-foreground);
   font-size: 0.75rem;
 }
 
@@ -201,7 +201,7 @@
 
 .progress-fill {
   height: 100%;
-  background-color: hsl(var(--primary));
+  background-color: var(--primary);
   transition: width 0.3s ease;
 }
 
@@ -235,7 +235,7 @@
 }
 
 .mb-2 {
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--spacing-2);
 }
 
 .mb-0 {
@@ -272,8 +272,8 @@
   width: 20px;
   height: 20px;
   margin: -10px 0 0 -10px;
-  border: 2px solid hsl(var(--border));
-  border-top-color: hsl(var(--primary));
+  border: 2px solid var(--border);
+  border-top-color: var(--primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -453,7 +453,7 @@ ut Editor Styles */
 }
 
 #layout-editor-overlay .rounded-lg {
-  border-radius: 0.5rem;
+  border-radius: calc(var(--radius) - 2px);
 }
 
 #layout-editor-overlay .shadow-lg {
@@ -586,12 +586,12 @@ ed Preset List Styles */
   align-items: flex-start;
   gap: 0.5rem;
   padding: 0.75rem;
-  border: 1px solid hsl(var(--border));
+  border: 1px solid var(--border);
   border-radius: calc(var(--radius) - 2px);
-  background-color: hsl(var(--background));
+  background-color: var(--background);
   cursor: pointer;
   transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--spacing-2);
 }
 
 .preset-item .flex-1 {
@@ -602,13 +602,13 @@ ed Preset List Styles */
 .preset-item .preset-name {
   font-size: var(--text-sm);
   font-weight: 500;
-  color: hsl(var(--foreground));
+  color: var(--foreground);
   line-height: 1.2;
 }
 
 .preset-item .preset-dimensions {
   font-size: 0.75rem;
-  color: hsl(var(--muted-foreground));
+  color: var(--muted-foreground);
   margin-top: 0.25rem;
   line-height: 1;
 }
@@ -628,10 +628,10 @@ ed Preset List Styles */
 
 /* Category headers */
 .preset-grid .text-sm.font-bold {
-  color: hsl(var(--foreground));
-  border-bottom: 1px solid hsl(var(--border));
+  color: var(--foreground);
+  border-bottom: 1px solid var(--border);
   padding-bottom: 0.25rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--spacing-2);
   margin-top: 1rem;
 }
 
@@ -641,10 +641,10 @@ ed Preset List Styles */
 
 /* Subcategory headers */
 .preset-grid .text-xs.font-semibold {
-  color: hsl(var(--muted-foreground));
+  color: var(--muted-foreground);
   margin-left: 0.5rem;
   margin-top: 0.75rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--spacing-2);
   text-transform: uppercase;
   letter-spacing: 0.025em;
 }
@@ -667,12 +667,12 @@ ed Preset List Styles */
 }
 
 .preset-grid::-webkit-scrollbar-thumb {
-  background: hsl(var(--muted-foreground));
+  background: var(--muted-foreground);
   border-radius: 3px;
 }
 
 .preset-grid::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--foreground));
+  background: var(--foreground);
 }
 
 /* Responsive improvements for preset list */

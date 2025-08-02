@@ -4,7 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>shadcn Styling Test</title>
-  <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
+  <script>
+    const theme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', theme);
+    document.documentElement.classList.add(theme);
+  </script>
   <link rel="stylesheet" href="styles/styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script type="module" src="styles/theme.js"></script>
@@ -188,7 +192,12 @@
         toggle.addEventListener('click', () => {
           const current = document.documentElement.getAttribute('data-theme');
           const next = current === 'dark' ? 'light' : 'dark';
+          
+          // Update both data-theme and class
           document.documentElement.setAttribute('data-theme', next);
+          document.documentElement.classList.remove('light', 'dark');
+          document.documentElement.classList.add(next);
+          
           localStorage.setItem('theme', next);
           icon.textContent = next === 'dark' ? '☀️' : '🌙';
         });
