@@ -11,16 +11,17 @@ document.addEventListener('DOMContentLoaded', () => {
   function openSidebar() {
     sidebar.classList.remove('-translate-x-full');
     if (sidebarOverlay) sidebarOverlay.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
   }
 
   function closeSidebar() {
     sidebar.classList.add('-translate-x-full');
     if (sidebarOverlay) sidebarOverlay.classList.add('hidden');
+    document.body.style.overflow = '';
   }
 
   if (sidebar && sidebarToggle) {
-    // Start closed on all screen sizes for consistent behavior.
-    closeSidebar();
+    // Sidebar starts hidden via CSS for consistent behavior.
 
     sidebarToggle.addEventListener('click', () => {
       const isOpen = !sidebar.classList.contains('-translate-x-full');
