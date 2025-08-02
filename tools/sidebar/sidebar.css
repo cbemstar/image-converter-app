@@ -1,0 +1,14 @@
+/* Optional scrollbar styling for reform-sidebar component */
+reform-sidebar::part(container) {
+  scrollbar-width: thin;
+  scrollbar-color: #52525b transparent;
+}
+
+reform-sidebar::part(container)::-webkit-scrollbar {
+  width: 8px;
+}
+
+reform-sidebar::part(container)::-webkit-scrollbar-thumb {
+  background-color: #52525b;
+  border-radius: 4px;
+}
