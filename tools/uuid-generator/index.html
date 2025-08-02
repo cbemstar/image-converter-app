@@ -44,12 +44,12 @@
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
     <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-background border-r border-border/20 p-4 transform -translate-x-full transition-transform z-40">
       <div class="flex justify-between items-center mb-4">
-        <a href="../../index.html" class="text-xl font-bold" style="color:var(--foreground);">reformately</a>
+        <a href="../../index.html" class="text-xl font-bold" class="text-foreground">reformately</a>
         <button id="sidebar-close" class="btn btn-sm" aria-label="Close sidebar">
           <i class="fas fa-times"></i>
         </button>
       </div>
-      <h2 class="text-lg font-bold mb-4" style="color:var(--foreground);">Tools</h2>
+      <h2 class="text-lg font-bold mb-4" class="text-foreground">Tools</h2>
       <input id="tool-search" type="text" placeholder="Search" class="w-full mb-4 px-2 py-1 rounded border border-foreground bg-transparent" />
       <ul id="tool-list" class="space-y-2">
         <li><a href="../image-converter/index.html" class="text-foreground hover:text-primary">Image Converter</a></li>
@@ -76,11 +76,11 @@
     </aside>
     <main id="main-content" class="flex-grow p-4">
       <div class="max-w-xl mx-auto">
-        <h1 class="text-3xl font-bold" style="color:var(--foreground);">UUID Generator</h1>
-        <p class="mb-4" style="color:var(--foreground);">Generate unique identifiers entirely in your browser.</p>
+        <h1 class="text-3xl font-bold" class="text-foreground">UUID Generator</h1>
+        <p class="mb-4" class="text-foreground">Generate unique identifiers entirely in your browser.</p>
         <div class="space-y-4">
           <label class="block">
-            <span style="color:var(--foreground);">Version</span>
+            <span class="text-foreground">Version</span>
             <select id="uuid-version" class="input mt-1">
               <option value="v4" selected>v4 - Random</option>
               <option value="v1">v1 - Timestamp</option>
@@ -90,16 +90,16 @@
           </label>
           <div id="ns-fields" class="space-y-2 hidden">
             <label class="block">
-              <span style="color:var(--foreground);">Namespace UUID</span>
+              <span class="text-foreground">Namespace UUID</span>
               <input id="uuid-namespace" type="text" class="input mt-1" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
             </label>
             <label class="block">
-              <span style="color:var(--foreground);">Name</span>
+              <span class="text-foreground">Name</span>
               <input id="uuid-name" type="text" class="input mt-1" />
             </label>
           </div>
           <label class="block">
-            <span style="color:var(--foreground);">How many?</span>
+            <span class="text-foreground">How many?</span>
             <input id="uuid-count" type="number" min="1" max="50" value="1" class="input mt-1" />
           </label>
           <button id="uuid-generate" class="btn">Generate</button>
@@ -109,16 +109,16 @@
           <button id="uuid-copy" class="btn">Copy</button>
         </div>
         <section class="mt-8 space-y-4">
-          <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this tool</h2>
-          <p style="color:var(--foreground);">Create UUIDs in several versions without sending data to a server.</p>
-          <h3 class="text-xl font-semibold" style="color:var(--foreground);">FAQs</h3>
+          <h2 class="text-2xl font-bold" class="text-foreground">About this tool</h2>
+          <p class="text-foreground">Create UUIDs in several versions without sending data to a server.</p>
+          <h3 class="text-xl font-semibold" class="text-foreground">FAQs</h3>
           <details class="border p-2 rounded">
-            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">What is a UUID?</summary>
-            <p class="mt-2" style="color:var(--foreground);">A universally unique identifier useful for tagging objects across systems.</p>
+            <summary class="cursor-pointer font-semibold" class="text-foreground">What is a UUID?</summary>
+            <p class="mt-2" class="text-foreground">A universally unique identifier useful for tagging objects across systems.</p>
           </details>
           <details class="border p-2 rounded">
-            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Are UUIDs stored?</summary>
-            <p class="mt-2" style="color:var(--foreground);">No. Everything happens locally in your browser.</p>
+            <summary class="cursor-pointer font-semibold" class="text-foreground">Are UUIDs stored?</summary>
+            <p class="mt-2" class="text-foreground">No. Everything happens locally in your browser.</p>
           </details>
         </section>
       </div>

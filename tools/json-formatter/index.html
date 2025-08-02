@@ -47,12 +47,12 @@
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
     <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-background border-r border-border/20 p-4 transform -translate-x-full transition-transform z-40" role="complementary" aria-label="Sidebar" tabindex="-1">
       <div class="flex justify-between items-center mb-4">
-        <a href="../../index.html" class="text-xl font-bold" style="color:var(--foreground);">reformately</a>
+        <a href="../../index.html" class="text-xl font-bold" class="text-foreground">reformately</a>
         <button id="sidebar-close" class="btn btn-outline btn-sm" aria-label="Close sidebar">
           <i class="fas fa-times"></i>
         </button>
       </div>
-      <h2 class="text-lg font-bold mb-4" style="color:var(--foreground);">Tools</h2>
+      <h2 class="text-lg font-bold mb-4" class="text-foreground">Tools</h2>
       <label for="tool-search" class="sr-only">Search tools</label>
       <input id="tool-search" type="text" placeholder="Search" class="input w-full mb-4" />
       <ul id="tool-list" class="space-y-2" role="list">
@@ -76,12 +76,12 @@
 
     <main id="main-content" class="flex-grow p-4" tabindex="-1">
       <div class="max-w-2xl mx-auto space-y-4">
-        <h1 class="text-3xl font-bold" style="color:var(--foreground);">JSON Formatter</h1>
-        <p style="color:var(--foreground);">Paste JSON below to validate, format or minify it. You can copy the result or download it as a file.</p>
+        <h1 class="text-3xl font-bold" class="text-foreground">JSON Formatter</h1>
+        <p class="text-foreground">Paste JSON below to validate, format or minify it. You can copy the result or download it as a file.</p>
         <textarea id="json-input" rows="8" class="input font-mono" placeholder="Paste JSON here"></textarea>
         <input id="json-file-input" type="file" accept=".json" class="input mt-2" />
         <div class="flex gap-2 mt-2">
-          <label for="indent-select" class="flex items-center gap-2 text-sm" style="color:var(--foreground);">
+          <label for="indent-select" class="flex items-center gap-2 text-sm" class="text-foreground">
             Indent
             <select id="indent-select" class="border rounded px-2 py-1 bg-transparent">
               <option value="2">2 spaces</option>
@@ -89,7 +89,7 @@
               <option value="tab">Tab</option>
             </select>
           </label>
-          <label for="sort-keys" class="flex items-center gap-2 text-sm" style="color:var(--foreground);">
+          <label for="sort-keys" class="flex items-center gap-2 text-sm" class="text-foreground">
             <input id="sort-keys" type="checkbox" class="input w-4 h-4" /> Sort keys
           </label>
         </div>
@@ -112,8 +112,8 @@
         <input id="json-search" type="text" class="input mb-2" placeholder="Search tree" />
         <div id="json-tree" class="border rounded p-2 text-sm"></div>
 
-        <h2 class="text-2xl font-bold mt-8" style="color:var(--foreground);">CSV to JSON</h2>
-        <p style="color:var(--foreground);">Convert comma-separated values to JSON. The first row should contain headers.</p>
+        <h2 class="text-2xl font-bold mt-8" class="text-foreground">CSV to JSON</h2>
+        <p class="text-foreground">Convert comma-separated values to JSON. The first row should contain headers.</p>
         <textarea id="csv-input" rows="8" class="input font-mono" placeholder="Paste CSV here"></textarea>
         <input id="csv-file-input" type="file" accept=".csv" class="input mt-2" />
         <div class="flex gap-2 mt-2">
@@ -125,16 +125,16 @@
           <button id="csv-download-btn" class="btn">Download</button>
         </div>
         <section class="mt-8 space-y-4">
-          <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this tool</h2>
-          <p style="color:var(--foreground);">Use the JSON formatter to tidy raw JSON, making it easier to read or share. Upload files or paste text, choose your indent style, and optionally sort keys. The minify option removes whitespace for compact storage.</p>
-          <h3 class="text-xl font-semibold" style="color:var(--foreground);">FAQs</h3>
+          <h2 class="text-2xl font-bold" class="text-foreground">About this tool</h2>
+          <p class="text-foreground">Use the JSON formatter to tidy raw JSON, making it easier to read or share. Upload files or paste text, choose your indent style, and optionally sort keys. The minify option removes whitespace for compact storage.</p>
+          <h3 class="text-xl font-semibold" class="text-foreground">FAQs</h3>
           <details class="border p-2 rounded">
-            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">What happens to my data?</summary>
-            <p class="mt-2" style="color:var(--foreground);">All formatting happens locally in your browser. No JSON is uploaded or stored.</p>
+            <summary class="cursor-pointer font-semibold" class="text-foreground">What happens to my data?</summary>
+            <p class="mt-2" class="text-foreground">All formatting happens locally in your browser. No JSON is uploaded or stored.</p>
           </details>
           <details class="border p-2 rounded">
-            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Why would I minify JSON?</summary>
-            <p class="mt-2" style="color:var(--foreground);">Minified JSON removes spaces and line breaks so the file is smaller when transferring or storing.</p>
+            <summary class="cursor-pointer font-semibold" class="text-foreground">Why would I minify JSON?</summary>
+            <p class="mt-2" class="text-foreground">Minified JSON removes spaces and line breaks so the file is smaller when transferring or storing.</p>
           </details>
         </section>
       </div>

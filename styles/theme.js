@@ -3,6 +3,9 @@ function setTheme(theme) {
   localStorage.setItem('theme', theme);
   const icon = document.getElementById('theme-toggle-icon');
   if (icon) icon.textContent = theme === 'dark' ? '☀️' : '🌙';
+  
+  // Dispatch custom event for theme change (useful for components that need to react)
+  window.dispatchEvent(new CustomEvent('themechange', { detail: { theme } }));
 }
 
 function getPreferredTheme() {

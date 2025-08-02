@@ -449,7 +449,7 @@
         }
         .ad-strength.excellent { color: #10b981; }
         .ad-strength.good { color: #84cc16; }
-        .ad-strength.average { color: #f59e0b; }
+        .ad-strength.average { color: hsl(45 93% 47%); }
         .ad-strength.poor { color: #ef4444; }
 
         .validation-item {
@@ -477,7 +477,7 @@
         }
 
         .validation-icon.warning {
-            color: #f59e0b;
+            color: hsl(45 93% 47%);
         }
 
         /* Snippet Values */
@@ -675,12 +675,12 @@
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
     <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-background border-r border-border/20 p-4 transform -translate-x-full transition-transform z-40">
       <div class="flex justify-between items-center mb-4">
-        <a href="../../index.html" class="text-xl font-bold" style="color:var(--foreground);">reformately</a>
+        <a href="../../index.html" class="text-xl font-bold" class="text-foreground">reformately</a>
         <button id="sidebar-close" class="btn btn-sm" aria-label="Close sidebar">
           <i class="fas fa-times"></i>
         </button>
       </div>
-      <h2 class="text-lg font-bold mb-4" style="color:var(--foreground);">Tools</h2>
+      <h2 class="text-lg font-bold mb-4" class="text-foreground">Tools</h2>
       <input id="tool-search" type="text" placeholder="Search" class="w-full mb-4 px-2 py-1 rounded border border-foreground bg-transparent" />
       <ul id="tool-list" class="space-y-2">
         <li><a href="../image-converter/index.html" class="text-foreground hover:text-primary">Image Converter</a></li>
@@ -1380,16 +1380,16 @@ let imageAssetDataUrl = '';
 </script>
 
       <section class="mt-8 space-y-4 max-w-xl mx-auto">
-        <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this tool</h2>
-        <p style="color:var(--foreground);">Use the RSA preview to craft your responsive search ads before launching them in Google Ads. Test different headlines, descriptions and assets to ensure everything fits Google's guidelines.</p>
-        <h3 class="text-xl font-semibold" style="color:var(--foreground);">FAQs</h3>
+        <h2 class="text-2xl font-bold" class="text-foreground">About this tool</h2>
+        <p class="text-foreground">Use the RSA preview to craft your responsive search ads before launching them in Google Ads. Test different headlines, descriptions and assets to ensure everything fits Google's guidelines.</p>
+        <h3 class="text-xl font-semibold" class="text-foreground">FAQs</h3>
         <details class="border p-2 rounded">
-          <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Why preview RSAs?</summary>
-          <p class="mt-2" style="color:var(--foreground);">Previewing ads helps you verify character counts and extensions so your final ad looks polished when it serves.</p>
+          <summary class="cursor-pointer font-semibold" class="text-foreground">Why preview RSAs?</summary>
+          <p class="mt-2" class="text-foreground">Previewing ads helps you verify character counts and extensions so your final ad looks polished when it serves.</p>
         </details>
         <details class="border p-2 rounded">
-          <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Does this create the ad in Google Ads?</summary>
-          <p class="mt-2" style="color:var(--foreground);">No. This tool only simulates the look and validates text length. You'll still create the ad in your Google Ads account.</p>
+          <summary class="cursor-pointer font-semibold" class="text-foreground">Does this create the ad in Google Ads?</summary>
+          <p class="mt-2" class="text-foreground">No. This tool only simulates the look and validates text length. You'll still create the ad in your Google Ads account.</p>
         </details>
       </section>
 </main>
