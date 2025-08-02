@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const rangeInput = document.createElement('input');
       rangeInput.type = 'text';
-      rangeInput.className = 'range-input shad-input text-xs w-24 text-center mt-1';
+      rangeInput.className = 'range-input input text-xs w-24 text-center mt-1';
       rangeInput.placeholder = `1-${f.pageCount}`;
       rangeInput.value = f.range;
       rangeInput.addEventListener('input', () => {

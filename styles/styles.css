@@ -1,3 +1,7 @@
+/* Import shadcn design tokens */
+@import './shadcn-tokens.css';
+@import './shadcn-bridge.css';
+
 /* --- Global Button, Input, and Label Styles (moved from tool-specific CSS) --- */
 .layout-btn {
   display: inline-flex;

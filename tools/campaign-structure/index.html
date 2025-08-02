@@ -25,11 +25,11 @@
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
-  <nav class="bg-[var(--background)] shadow-md border-b border-[var(--foreground)]/30" role="navigation" aria-label="Main navigation">
+  <nav class="bg-[var(--background)] shadow-md border-b border-border" role="navigation" aria-label="Main navigation">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
         <div class="flex items-center gap-4">
-          <button id="sidebar-toggle" class="shad-btn p-2" aria-label="Open sidebar" aria-controls="sidebar" aria-expanded="false">
+          <button id="sidebar-toggle" class="btn p-2" aria-label="Open sidebar" aria-controls="sidebar" aria-expanded="false">
             <i class="fas fa-bars"></i>
           </button>
           <a href="../../index.html" class="flex items-center gap-2">
@@ -37,7 +37,7 @@
           </a>
         </div>
         <div class="flex items-center gap-2">
-          <button id="theme-toggle" class="shad-btn p-2" aria-label="Toggle theme">
+          <button id="theme-toggle" class="btn p-2" aria-label="Toggle theme">
             <span id="theme-toggle-icon">🌙</span>
           </button>
         </div>
@@ -47,10 +47,10 @@
 
   <div class="flex flex-grow">
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
-    <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full transition-transform z-40" role="complementary" aria-label="Sidebar" tabindex="-1">
+    <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-border/20 p-4 transform -translate-x-full transition-transform z-40" role="complementary" aria-label="Sidebar" tabindex="-1">
       <div class="flex justify-between items-center mb-4">
         <a href="../../index.html" class="text-xl font-bold" style="color:var(--foreground);">reformately</a>
-        <button id="sidebar-close" class="shad-btn p-2" aria-label="Close sidebar">
+        <button id="sidebar-close" class="btn p-2" aria-label="Close sidebar">
           <i class="fas fa-times"></i>
         </button>
       </div>
@@ -71,7 +71,7 @@
         <li><a href="../layout-tool/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Layout Generator</a></li>
         <li><a href="#" class="text-[var(--foreground)] hover:text-[var(--primary)]">More coming soon</a></li>
       </ul>
-      <div class="mt-6 pt-6 border-t border-[var(--foreground)]/20">
+      <div class="mt-6 pt-6 border-t border-border/20">
         <a href="../request-tool/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Request a Tool</a>
       </div>
     </aside>
@@ -79,27 +79,27 @@
       <div class="max-w-xl mx-auto">
         <h1 class="text-3xl font-bold mb-4" style="color:var(--foreground);">Google Ads Campaign Structure</h1>
         <form id="structure-form" class="space-y-4">
-          <select id="campaign-type" class="shad-input">
+          <select id="campaign-type" class="input">
             <option value="Search">Search</option>
             <option value="Performance Max">Performance Max</option>
             <option value="Display">Display</option>
             <option value="Video">Video</option>
             <option value="Shopping">Shopping</option>
           </select>
-          <input id="campaign-name" type="text" placeholder="Campaign Name" class="shad-input" />
-          <input id="ad-group-name" type="text" placeholder="Ad Group Name" class="shad-input" />
-          <input id="ad-name" type="text" placeholder="Ad Name" class="shad-input" />
-          <input id="keywords" type="text" placeholder="Keywords (comma separated)" class="shad-input" />
-          <button type="submit" class="shad-btn">Generate Structure</button>
+          <input id="campaign-name" type="text" placeholder="Campaign Name" class="input" />
+          <input id="ad-group-name" type="text" placeholder="Ad Group Name" class="input" />
+          <input id="ad-name" type="text" placeholder="Ad Name" class="input" />
+          <input id="keywords" type="text" placeholder="Keywords (comma separated)" class="input" />
+          <button type="submit" class="btn">Generate Structure</button>
         </form>
 
           <div id="structure-output" class="mt-6 text-[var(--foreground)]">
             <div id="tree" class="bg-[var(--background)] border rounded p-4"></div>
           </div>
           <div id="download-buttons" class="mt-4 flex gap-4 hidden">
-            <button id="download-png" class="shad-btn">Download PNG</button>
-            <button id="download-pdf" class="shad-btn">Download PDF</button>
-            <button id="download-csv" class="shad-btn">Download CSV</button>
+            <button id="download-png" class="btn">Download PNG</button>
+            <button id="download-pdf" class="btn">Download PDF</button>
+            <button id="download-csv" class="btn">Download CSV</button>
           </div>
 
 
@@ -130,7 +130,7 @@
     </main>
   </div>
 
-  <footer class="bg-[var(--background)] border-t border-[var(--foreground)]/30 mt-8">
+  <footer class="bg-[var(--background)] border-t border-border mt-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <div class="text-center">
         <p class="text-[var(--foreground)]/70">&copy; 2024 reformately. All rights reserved.</p>

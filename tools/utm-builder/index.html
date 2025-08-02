@@ -20,11 +20,11 @@
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
-  <nav class="bg-[var(--background)] shadow-md border-b border-[var(--foreground)]/30">
+  <nav class="bg-[var(--background)] shadow-md border-b border-border">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
         <div class="flex items-center gap-4">
-          <button id="sidebar-toggle" class="shad-btn p-2" aria-label="Open sidebar">
+          <button id="sidebar-toggle" class="btn p-2" aria-label="Open sidebar">
             <i class="fas fa-bars"></i>
           </button>
           <a href="../../index.html" class="flex items-center gap-2">
@@ -32,7 +32,7 @@
           </a>
         </div>
         <div class="flex items-center gap-2">
-          <button id="theme-toggle" class="shad-btn p-2" aria-label="Toggle theme">
+          <button id="theme-toggle" class="btn p-2" aria-label="Toggle theme">
             <span id="theme-toggle-icon">🌙</span>
           </button>
         </div>
@@ -41,10 +41,10 @@
   </nav>
   <div class="flex flex-grow">
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
-    <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full transition-transform z-40">
+    <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-border/20 p-4 transform -translate-x-full transition-transform z-40">
       <div class="flex justify-between items-center mb-4">
         <a href="../../index.html" class="text-xl font-bold" style="color:var(--foreground);">reformately</a>
-        <button id="sidebar-close" class="shad-btn p-2" aria-label="Close sidebar">
+        <button id="sidebar-close" class="btn p-2" aria-label="Close sidebar">
           <i class="fas fa-times"></i>
         </button>
       </div>
@@ -65,7 +65,7 @@
         <li><a href="../layout-tool/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Layout Generator</a></li>
         <li><a href="#" class="text-[var(--foreground)] hover:text-[var(--primary)]">More coming soon</a></li>
       </ul>
-      <div class="mt-6 pt-6 border-t border-[var(--foreground)]/20">
+      <div class="mt-6 pt-6 border-t border-border/20">
         <a href="../request-tool/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Request a Tool</a>
       </div>
     </aside>
@@ -75,27 +75,27 @@
         <p class="mb-4" style="color:var(--foreground);">Generate tracking URLs for your marketing campaigns.</p>
         <div class="space-y-4">
           <label class="block" style="color:var(--foreground);">Base URL
-            <input id="base-url" type="text" class="shad-input mt-1" placeholder="https://example.com/page" />
+            <input id="base-url" type="text" class="input mt-1" placeholder="https://example.com/page" />
           </label>
           <label class="block" style="color:var(--foreground);">Source
-            <input id="utm-source" type="text" class="shad-input mt-1" placeholder="newsletter" />
+            <input id="utm-source" type="text" class="input mt-1" placeholder="newsletter" />
           </label>
           <label class="block" style="color:var(--foreground);">Medium
-            <input id="utm-medium" type="text" class="shad-input mt-1" placeholder="email" />
+            <input id="utm-medium" type="text" class="input mt-1" placeholder="email" />
           </label>
           <label class="block" style="color:var(--foreground);">Campaign
-            <input id="utm-campaign" type="text" class="shad-input mt-1" placeholder="spring_sale" />
+            <input id="utm-campaign" type="text" class="input mt-1" placeholder="spring_sale" />
           </label>
           <label class="block" style="color:var(--foreground);">Term
-            <input id="utm-term" type="text" class="shad-input mt-1" placeholder="optional keyword" />
+            <input id="utm-term" type="text" class="input mt-1" placeholder="optional keyword" />
           </label>
           <label class="block" style="color:var(--foreground);">Content
-            <input id="utm-content" type="text" class="shad-input mt-1" placeholder="ad variant" />
+            <input id="utm-content" type="text" class="input mt-1" placeholder="ad variant" />
           </label>
           <label class="block" style="color:var(--foreground);">Tracking URL
-            <input id="utm-result" type="text" class="shad-input mt-1" readonly />
+            <input id="utm-result" type="text" class="input mt-1" readonly />
           </label>
-          <button id="copy-btn" class="shad-btn">Copy URL</button>
+          <button id="copy-btn" class="btn">Copy URL</button>
         </div>
         <section class="space-y-4 mt-8">
           <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this tool</h2>
@@ -113,7 +113,7 @@
       </div>
     </main>
   </div>
-  <footer class="bg-[var(--background)] border-t border-[var(--foreground)]/30 mt-8">
+  <footer class="bg-[var(--background)] border-t border-border mt-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <div class="text-center">
         <p class="text-[var(--foreground)]/70">&copy; 2024 reformately. All rights reserved.</p>

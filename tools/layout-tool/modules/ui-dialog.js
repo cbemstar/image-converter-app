@@ -36,7 +36,7 @@ export function showDialog(msg, type = 'info') {
       </div>
     </div>
     <div class="flex justify-end">
-      <button id="dialog-ok" class="layout-btn primary">OK</button>
+      <button id="dialog-ok" class="btn btn-outline primary">OK</button>
     </div>
   `;
 
@@ -106,8 +106,8 @@ export function showConfirmDialog(msg, onConfirm, onCancel = null) {
       </div>
     </div>
     <div class="flex justify-end gap-2">
-      <button id="dialog-cancel" class="layout-btn">Cancel</button>
-      <button id="dialog-confirm" class="layout-btn primary">Confirm</button>
+      <button id="dialog-cancel" class="btn btn-outline">Cancel</button>
+      <button id="dialog-confirm" class="btn btn-outline primary">Confirm</button>
     </div>
   `;
 

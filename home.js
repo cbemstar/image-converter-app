@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const sort = document.getElementById('sort-select');
   const container = document.getElementById('home-tools');
   if (!search || !container) return;
-  const cards = Array.from(container.querySelectorAll('.tool-card'));
+  const cards = Array.from(container.querySelectorAll('.card'));
   function getVisits(slug) {
     return parseInt(localStorage.getItem(`visits_${slug}`) || '0', 10);
   }

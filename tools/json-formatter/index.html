@@ -23,11 +23,11 @@
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
-  <nav class="bg-[var(--background)] shadow-md border-b border-[var(--foreground)]/30" role="navigation" aria-label="Main navigation">
+  <nav class="bg-[var(--background)] shadow-md border-b border-border" role="navigation" aria-label="Main navigation">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
         <div class="flex items-center gap-4">
-          <button id="sidebar-toggle" class="layout-btn p-2" aria-label="Open sidebar" aria-controls="sidebar" aria-expanded="false">
+          <button id="sidebar-toggle" class="btn btn-outline p-2" aria-label="Open sidebar" aria-controls="sidebar" aria-expanded="false">
             <i class="fas fa-bars"></i>
           </button>
           <a href="../../index.html" class="flex items-center gap-2">
@@ -35,7 +35,7 @@
           </a>
         </div>
         <div class="flex items-center gap-2">
-          <button id="theme-toggle" class="layout-btn p-2" aria-label="Toggle theme">
+          <button id="theme-toggle" class="btn btn-outline p-2" aria-label="Toggle theme">
             <span id="theme-toggle-icon">🌙</span>
           </button>
         </div>
@@ -45,16 +45,16 @@
 
   <div class="flex flex-grow">
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
-    <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full transition-transform z-40" role="complementary" aria-label="Sidebar" tabindex="-1">
+    <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-border/20 p-4 transform -translate-x-full transition-transform z-40" role="complementary" aria-label="Sidebar" tabindex="-1">
       <div class="flex justify-between items-center mb-4">
         <a href="../../index.html" class="text-xl font-bold" style="color:var(--foreground);">reformately</a>
-        <button id="sidebar-close" class="layout-btn p-2" aria-label="Close sidebar">
+        <button id="sidebar-close" class="btn btn-outline p-2" aria-label="Close sidebar">
           <i class="fas fa-times"></i>
         </button>
       </div>
       <h2 class="text-lg font-bold mb-4" style="color:var(--foreground);">Tools</h2>
       <label for="tool-search" class="sr-only">Search tools</label>
-      <input id="tool-search" type="text" placeholder="Search" class="layout-input w-full mb-4" />
+      <input id="tool-search" type="text" placeholder="Search" class="input w-full mb-4" />
       <ul id="tool-list" class="space-y-2" role="list">
         <li><a href="../image-converter/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Image Converter</a></li>
         <li><a href="../background-remover/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Background Remover</a></li>
@@ -69,7 +69,7 @@
         <li><a href="../layout-tool/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Layout Generator</a></li>
         <li><a href="#" class="text-[var(--foreground)] hover:text-[var(--primary)]">More coming soon</a></li>
       </ul>
-      <div class="mt-6 pt-6 border-t border-[var(--foreground)]/20">
+      <div class="mt-6 pt-6 border-t border-border/20">
         <a href="../request-tool/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Request a Tool</a>
       </div>
     </aside>
@@ -78,8 +78,8 @@
       <div class="max-w-2xl mx-auto space-y-4">
         <h1 class="text-3xl font-bold" style="color:var(--foreground);">JSON Formatter</h1>
         <p style="color:var(--foreground);">Paste JSON below to validate, format or minify it. You can copy the result or download it as a file.</p>
-        <textarea id="json-input" rows="8" class="shad-input font-mono" placeholder="Paste JSON here"></textarea>
-        <input id="json-file-input" type="file" accept=".json" class="shad-input mt-2" />
+        <textarea id="json-input" rows="8" class="input font-mono" placeholder="Paste JSON here"></textarea>
+        <input id="json-file-input" type="file" accept=".json" class="input mt-2" />
         <div class="flex gap-2 mt-2">
           <label for="indent-select" class="flex items-center gap-2 text-sm" style="color:var(--foreground);">
             Indent
@@ -90,39 +90,39 @@
             </select>
           </label>
           <label for="sort-keys" class="flex items-center gap-2 text-sm" style="color:var(--foreground);">
-            <input id="sort-keys" type="checkbox" class="shad-input w-4 h-4" /> Sort keys
+            <input id="sort-keys" type="checkbox" class="input w-4 h-4" /> Sort keys
           </label>
         </div>
         <div class="flex gap-2 mt-2">
-          <button id="format-btn" class="shad-btn">Format</button>
-          <button id="minify-btn" class="shad-btn">Minify</button>
+          <button id="format-btn" class="btn">Format</button>
+          <button id="minify-btn" class="btn">Minify</button>
         </div>
-        <pre id="json-output" class="shad-input font-mono overflow-auto whitespace-pre" style="max-height:250px;"></pre>
+        <pre id="json-output" class="input font-mono overflow-auto whitespace-pre" style="max-height:250px;"></pre>
         <div class="flex gap-2 mt-2">
-          <button id="copy-btn" class="shad-btn">Copy</button>
-          <button id="download-btn" class="shad-btn">Download</button>
-          <button id="share-btn" class="shad-btn">Share</button>
-          <button id="json-csv-btn" class="shad-btn">Convert to CSV</button>
+          <button id="copy-btn" class="btn">Copy</button>
+          <button id="download-btn" class="btn">Download</button>
+          <button id="share-btn" class="btn">Share</button>
+          <button id="json-csv-btn" class="btn">Convert to CSV</button>
         </div>
-        <textarea id="json-csv-output" rows="6" class="shad-input font-mono mt-2" placeholder="CSV output" readonly></textarea>
+        <textarea id="json-csv-output" rows="6" class="input font-mono mt-2" placeholder="CSV output" readonly></textarea>
         <div class="flex gap-2 mb-2">
-          <button id="json-csv-copy" class="shad-btn">Copy CSV</button>
-          <button id="json-csv-download" class="shad-btn">Download CSV</button>
+          <button id="json-csv-copy" class="btn">Copy CSV</button>
+          <button id="json-csv-download" class="btn">Download CSV</button>
         </div>
-        <input id="json-search" type="text" class="shad-input mb-2" placeholder="Search tree" />
+        <input id="json-search" type="text" class="input mb-2" placeholder="Search tree" />
         <div id="json-tree" class="border rounded p-2 text-sm"></div>
 
         <h2 class="text-2xl font-bold mt-8" style="color:var(--foreground);">CSV to JSON</h2>
         <p style="color:var(--foreground);">Convert comma-separated values to JSON. The first row should contain headers.</p>
-        <textarea id="csv-input" rows="8" class="shad-input font-mono" placeholder="Paste CSV here"></textarea>
-        <input id="csv-file-input" type="file" accept=".csv" class="shad-input mt-2" />
+        <textarea id="csv-input" rows="8" class="input font-mono" placeholder="Paste CSV here"></textarea>
+        <input id="csv-file-input" type="file" accept=".csv" class="input mt-2" />
         <div class="flex gap-2 mt-2">
-          <button id="csv-convert-btn" class="shad-btn">Convert</button>
+          <button id="csv-convert-btn" class="btn">Convert</button>
         </div>
-        <textarea id="csv-output" rows="8" class="shad-input font-mono" placeholder="JSON output" readonly></textarea>
+        <textarea id="csv-output" rows="8" class="input font-mono" placeholder="JSON output" readonly></textarea>
         <div class="flex gap-2">
-          <button id="csv-copy-btn" class="shad-btn">Copy</button>
-          <button id="csv-download-btn" class="shad-btn">Download</button>
+          <button id="csv-copy-btn" class="btn">Copy</button>
+          <button id="csv-download-btn" class="btn">Download</button>
         </div>
         <section class="mt-8 space-y-4">
           <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this tool</h2>
@@ -141,7 +141,7 @@
     </main>
   </div>
 
-  <footer class="bg-[var(--background)] border-t border-[var(--foreground)]/30 mt-8">
+  <footer class="bg-[var(--background)] border-t border-border mt-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <div class="text-center">
         <p class="text-[var(--foreground)]/70">&copy; 2024 reformately. All rights reserved.</p>

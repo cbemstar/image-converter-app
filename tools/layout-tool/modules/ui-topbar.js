@@ -8,11 +8,11 @@ export function initTopbar(el, props) {
     <div class="flex flex-wrap items-center gap-4">
       <!-- History Controls -->
       <div class="flex items-center gap-2">
-        <button id="undo-btn" class="layout-btn" title="Undo">
+        <button id="undo-btn" class="btn btn-outline" title="Undo">
           <i class="fas fa-undo mr-2"></i>
           Undo
         </button>
-        <button id="redo-btn" class="layout-btn" title="Redo">
+        <button id="redo-btn" class="btn btn-outline" title="Redo">
           <i class="fas fa-redo mr-2"></i>
           Redo
         </button>
@@ -23,8 +23,8 @@ export function initTopbar(el, props) {
 
       <!-- Channel Filter -->
       <div class="flex items-center gap-2">
-        <label class="layout-label text-sm mb-0">Channel:</label>
-        <select id="channel-select" class="layout-input w-auto min-w-100">
+        <label class="label text-sm mb-0">Channel:</label>
+        <select id="channel-select" class="input w-auto min-w-100">
           <option value="all">All</option>
           <option value="print">Print</option>
           <option value="digital">Digital</option>
@@ -34,16 +34,16 @@ export function initTopbar(el, props) {
 
       <!-- Color Mode -->
       <div class="flex items-center gap-2">
-        <label class="layout-label text-sm mb-0">Color:</label>
-        <button id="color-mode-btn" class="layout-btn min-w-60">
+        <label class="label text-sm mb-0">Color:</label>
+        <button id="color-mode-btn" class="btn btn-outline min-w-60">
           RGB
         </button>
       </div>
 
       <!-- DPI Setting -->
       <div class="flex items-center gap-2">
-        <label class="layout-label text-sm mb-0">DPI:</label>
-        <select id="dpi-select" class="layout-input w-auto min-w-80">
+        <label class="label text-sm mb-0">DPI:</label>
+        <select id="dpi-select" class="input w-auto min-w-80">
           <option value="72">72 DPI</option>
           <option value="150">150 DPI</option>
           <option value="300">300 DPI</option>
@@ -54,7 +54,7 @@ export function initTopbar(el, props) {
       <div class="w-px h-6 bg-[var(--border)]"></div>
 
       <!-- Export Button -->
-      <button id="export-btn" class="layout-btn primary">
+      <button id="export-btn" class="btn btn-outline primary">
         <i class="fas fa-download mr-2"></i>
         Export ZIP
       </button>
