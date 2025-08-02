@@ -8,8 +8,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Google Ads RSA Preview</title>
   <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
-  <link rel="stylesheet" href="../../styles/shadcn-tokens.css">
-  <link rel="stylesheet" href="../../styles/shadcn-bridge.css">
   <link rel="stylesheet" href="../../styles/styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome for icons -->
@@ -17,86 +15,56 @@
   <script type="module" src="../../styles/theme.js"></script>
   <script type="module" src="../../layout.js"></script>
     <style>
-        /* CSS Variables for Design Tokens - Using shadcn colors */
-        :root {
-            /* Colors - inherit from shadcn tokens */
-            --background: oklch(var(--background));
-            --foreground: oklch(var(--foreground));
-            --card: oklch(var(--card));
-            --card-foreground: oklch(var(--card-foreground));
-            --popover: oklch(var(--popover));
-            --popover-foreground: oklch(var(--popover-foreground));
-            --primary: oklch(var(--primary));
-            --primary-foreground: oklch(var(--primary-foreground));
-            --secondary: oklch(var(--secondary));
-            --secondary-foreground: oklch(var(--secondary-foreground));
-            --muted: oklch(var(--muted));
-            --muted-foreground: oklch(var(--muted-foreground));
-            --accent: oklch(var(--accent));
-            --accent-foreground: oklch(var(--accent-foreground));
-            --destructive: oklch(var(--destructive));
-            --destructive-foreground: oklch(var(--destructive-foreground));
-            --border: oklch(var(--border));
-            --input: oklch(var(--input));
-            --ring: oklch(var(--ring));
-            --radius: var(--radius);
-            
-            /* Typography */
-            --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
-            --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
-            
-            /* Spacing */
-            --space-1: 0.25rem;
-            --space-2: 0.5rem;
-            --space-3: 0.75rem;
-            --space-4: 1rem;
-            --space-5: 1.25rem;
-            --space-6: 1.5rem;
-            --space-8: 2rem;
-            --space-10: 2.5rem;
-            --space-12: 3rem;
-            --space-16: 4rem;
-            
-            /* Shadows */
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        /* RSA Tool Specific Styles */
+        .preview-tab {
+            background: transparent;
+            color: hsl(var(--muted-foreground));
+            border: none;
         }
-        /* Theme overrides are handled by shadcn-tokens.css */
-
-        /* Reset and Base Styles */
-        * {
-            box-sizing: border-box;
+        
+        .preview-tab.active {
+            background: hsl(var(--background));
+            color: hsl(var(--foreground));
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
         }
-
-        body {
-            font-family: var(--font-sans);
-            background: var(--background);
-            color: var(--foreground);
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+        
+        .ad-url {
+            color: #006621;
         }
-
-        /* Container */
-        .container {
-            max-width: 1200px;
-            margin: var(--space-6) auto;
-            background: var(--card);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-xl);
-            border: 1px solid var(--border);
-            overflow: hidden;
+        
+        .ad-title {
+            color: hsl(var(--primary));
         }
-
-        /* Header */
+        
+        .sitelink, .call-extension {
+            color: hsl(var(--primary));
+        }
+        
+        .callout, .structured-snippet {
+            color: hsl(var(--muted-foreground));
+        }
+        
+        .validation-icon.valid {
+            color: #10b981;
+        }
+        
+        .validation-icon.invalid {
+            color: hsl(var(--destructive));
+        }
+        
+        .validation-icon.warning {
+            color: #f59e0b;
+        }
+        
+        .ad-strength.excellent { color: #10b981; }
+        .ad-strength.good { color: #84cc16; }
+        .ad-strength.average { color: #f59e0b; }
+        .ad-strength.poor { color: hsl(var(--destructive)); }
+    </style>
+    <style>
         .header {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: var(--primary-foreground);
+            background: linear-gradient(135deg, oklch(var(--primary)) 0%, oklch(var(--primary) / 0.8) 100%);
+            color: oklch(var(--primary-foreground));
             padding: var(--space-12) var(--space-8) var(--space-8);
             position: relative;
         }
@@ -108,7 +76,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%);
+            background: linear-gradient(135deg, oklch(var(--primary) / 0.1) 0%, oklch(var(--accent) / 0.1) 100%);
             pointer-events: none;
         }
 
@@ -139,10 +107,10 @@
 
         /* Form Section */
         .form-section {
-            background: var(--card);
+            background: oklch(var(--card));
             border-radius: var(--radius);
             padding: var(--space-8);
-            border: 1px solid var(--border);
+            border: 1px solid oklch(var(--border));
             box-shadow: var(--shadow-sm);
         }
 
@@ -150,7 +118,7 @@
             font-size: 1.25rem;
             font-weight: 600;
             margin-bottom: var(--space-6);
-            color: var(--foreground);
+            color: oklch(var(--foreground));
             display: flex;
             align-items: center;
             gap: var(--space-2);
@@ -160,7 +128,7 @@
             content: '';
             width: 3px;
             height: 1.25rem;
-            background: var(--primary);
+            background: oklch(var(--primary));
             border-radius: 2px;
         }
 
@@ -171,7 +139,7 @@
 
         .form-group label {
             font-weight: 500;
-            color: var(--foreground);
+            color: oklch(var(--foreground));
             display: block;
             margin-bottom: var(--space-2);
             font-size: 0.875rem;
@@ -182,11 +150,11 @@
         .form-group select {
             width: 100%;
             padding: var(--space-3) var(--space-4);
-            border: 1px solid var(--input);
+            border: 1px solid oklch(var(--input));
             border-radius: var(--radius);
             font-size: 0.875rem;
-            background: var(--background);
-            color: var(--foreground);
+            background: oklch(var(--background));
+            color: oklch(var(--foreground));
             transition: all 0.2s ease;
             margin-bottom: var(--space-1);
         }
@@ -195,19 +163,19 @@
         .form-group textarea:focus,
         .form-group select:focus {
             outline: none;
-            border-color: var(--ring);
-            box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+            border-color: oklch(var(--ring));
+            box-shadow: 0 0 0 3px oklch(var(--ring) / 0.1);
         }
 
         .form-group input::placeholder,
         .form-group textarea::placeholder {
-            color: var(--muted-foreground);
+            color: oklch(var(--muted-foreground));
         }
 
         /* Character Counter */
         .char-counter {
             font-size: 0.75rem;
-            color: var(--muted-foreground);
+            color: oklch(var(--muted-foreground));
             text-align: right;
             font-weight: 500;
         }
@@ -235,31 +203,31 @@
         }
 
         .btn-primary {
-            background: var(--primary);
-            color: var(--primary-foreground);
+            background: oklch(var(--primary));
+            color: oklch(var(--primary-foreground));
         }
 
         .btn-primary:hover {
-            background: color-mix(in srgb, var(--primary) 90%, black);
+            background: oklch(var(--primary) / 0.9);
         }
 
         .btn-secondary {
-            background: var(--secondary);
-            color: var(--secondary-foreground);
-            border-color: var(--border);
+            background: oklch(var(--secondary));
+            color: oklch(var(--secondary-foreground));
+            border-color: oklch(var(--border));
         }
 
         .btn-secondary:hover {
-            background: color-mix(in srgb, var(--secondary) 80%, black);
+            background: oklch(var(--secondary) / 0.8);
         }
 
         .btn-destructive {
-            background: var(--destructive);
-            color: var(--destructive-foreground);
+            background: oklch(var(--destructive));
+            color: oklch(var(--destructive-foreground));
         }
 
         .btn-destructive:hover {
-            background: color-mix(in srgb, var(--destructive) 90%, black);
+            background: oklch(var(--destructive) / 0.9);
         }
 
         .btn-sm {
@@ -269,16 +237,16 @@
 
         /* Section Dividers */
         .section-divider {
-            border-top: 1px solid var(--border);
+            border-top: 1px solid oklch(var(--border));
             margin: var(--space-8) 0 var(--space-6);
         }
 
         /* Preview Section */
         .preview-section {
-            background: var(--card);
+            background: oklch(var(--card));
             border-radius: var(--radius);
             padding: var(--space-8);
-            border: 1px solid var(--border);
+            border: 1px solid oklch(var(--border));
             box-shadow: var(--shadow-sm);
         }
 
@@ -286,7 +254,7 @@
             font-size: 1.25rem;
             font-weight: 600;
             margin-bottom: var(--space-6);
-            color: var(--foreground);
+            color: oklch(var(--foreground));
         }
 
         /* Tabs */
@@ -294,14 +262,14 @@
             display: flex;
             gap: var(--space-1);
             margin-bottom: var(--space-6);
-            background: var(--muted);
+            background: oklch(var(--muted));
             padding: var(--space-1);
             border-radius: var(--radius);
         }
 
         .preview-tab {
             background: transparent;
-            color: var(--muted-foreground);
+            color: oklch(var(--muted-foreground));
             border: none;
             border-radius: calc(var(--radius) - 2px);
             padding: var(--space-2) var(--space-4);
@@ -313,21 +281,21 @@
         }
 
         .preview-tab.active {
-            background: var(--background);
-            color: var(--foreground);
+            background: oklch(var(--background));
+            color: oklch(var(--foreground));
             box-shadow: var(--shadow-sm);
         }
 
         .preview-tab:hover:not(.active) {
-            background: color-mix(in srgb, var(--muted) 80%, white);
+            background: oklch(var(--muted) / 0.8);
         }
 
         /* Google Ad Preview */
         .google-ad-preview {
-            border: 1px solid var(--border);
+            border: 1px solid oklch(var(--border));
             border-radius: var(--radius);
             padding: var(--space-6);
-            background: var(--background);
+            background: oklch(var(--background));
             margin-bottom: var(--space-6);
             min-height: 200px;
             box-shadow: var(--shadow-sm);
@@ -341,7 +309,7 @@
         }
 
         .ad-title {
-            color: #3b82f6;
+            color: oklch(var(--primary));
             font-size: 1.25rem;
             font-weight: 600;
             margin-bottom: var(--space-2);
@@ -350,7 +318,7 @@
         }
 
         .ad-description {
-            color: var(--foreground);
+            color: oklch(var(--foreground));
             font-size: 0.875rem;
             line-height: 1.5;
             font-family: var(--font-sans);
@@ -365,7 +333,7 @@
         }
 
         .sitelink {
-            color: #3b82f6;
+            color: oklch(var(--primary));
             font-size: 0.875rem;
             margin-right: var(--space-4);
             display: inline-block;
@@ -373,21 +341,21 @@
         }
 
         .callout {
-            color: var(--muted-foreground);
+            color: oklch(var(--muted-foreground));
             font-size: 0.75rem;
             margin-right: var(--space-3);
             display: inline-block;
         }
 
         .structured-snippet {
-            color: var(--muted-foreground);
+            color: oklch(var(--muted-foreground));
             font-size: 0.75rem;
             margin-right: var(--space-3);
             display: inline-block;
         }
 
         .call-extension {
-            color: #3b82f6;
+            color: oklch(var(--primary));
             font-size: 0.875rem;
             margin-top: var(--space-3);
             display: block;
@@ -395,22 +363,22 @@
 
         /* Validation Summary */
         .validation-summary {
-            background: var(--muted);
+            background: oklch(var(--muted));
             padding: var(--space-4) var(--space-6);
             border-radius: var(--radius);
             margin-top: var(--space-6);
             font-size: 0.875rem;
-            border: 1px solid var(--border);
+            border: 1px solid oklch(var(--border));
         }
 
         .ad-strength {
             margin-top: var(--space-4);
             font-weight: 600;
         }
-        .ad-strength.excellent { color: #10b981; }
-        .ad-strength.good { color: #84cc16; }
-        .ad-strength.average { color: hsl(45 93% 47%); }
-        .ad-strength.poor { color: #ef4444; }
+        .ad-strength.excellent { color: oklch(0.7 0.15 145); }
+        .ad-strength.good { color: oklch(0.75 0.15 120); }
+        .ad-strength.average { color: oklch(0.7 0.15 85); }
+        .ad-strength.poor { color: oklch(var(--destructive)); }
 
         .validation-item {
             display: flex;
@@ -429,15 +397,15 @@
         }
 
         .validation-icon.valid {
-            color: #10b981;
+            color: oklch(0.7 0.15 145);
         }
 
         .validation-icon.invalid {
-            color: #ef4444;
+            color: oklch(var(--destructive));
         }
 
         .validation-icon.warning {
-            color: hsl(45 93% 47%);
+            color: oklch(0.7 0.15 85);
         }
 
         /* Snippet Values */
@@ -546,15 +514,15 @@
         .ad-preview-text {
             flex: 1;
             min-width: 0;
-            padding-right: calc(72px + var(--space-6); /* Reserve space for image on right */
+            padding-right: calc(72px + var(--space-6)); /* Reserve space for image on right */
         }
         .ad-image {
             width: 72px;
             height: 72px;
             object-fit: cover;
             border-radius: 12px;
-            background: var(--muted);
-            border: 1.5px solid var(--border);
+            background: oklch(var(--muted));
+            border: 1.5px solid oklch(var(--border));
             flex-shrink: 0;
             display: block;
             position: absolute;
@@ -586,7 +554,7 @@
             align-items: center;
             gap: 0.5em;
             font-size: 0.95em;
-            color: var(--muted-foreground);
+            color: oklch(var(--muted-foreground));
             margin-bottom: var(--space-2);
             font-weight: 500;
         }
@@ -614,7 +582,7 @@
       <div class="flex justify-between h-16">
         <!-- Logo and site name -->
         <div class="flex items-center gap-4">
-          <button id="sidebar-toggle" class="btn btn-sm" aria-label="Open sidebar">
+          <button id="sidebar-toggle" class="btn btn-outline btn-sm" aria-label="Open sidebar">
             <i class="fas fa-bars"></i>
           </button>
           <a href="../../index.html" class="flex items-center gap-2">
@@ -622,7 +590,7 @@
           </a>
         </div>
         <div class="flex items-center gap-2">
-          <button id="theme-toggle" class="btn btn-sm" aria-label="Toggle theme">
+          <button id="theme-toggle" class="btn btn-outline btn-sm" aria-label="Toggle theme">
             <span id="theme-toggle-icon">🌙</span>
           </button>
         </div>
@@ -633,15 +601,15 @@
   <!-- Page Layout -->
   <div class="flex flex-grow">
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
-    <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-background border-r border-border/20 p-4 transform -translate-x-full transition-transform z-40">
+    <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-background border-r border-border/20 p-4 transform -translate-x-full transition-transform z-40">
       <div class="flex justify-between items-center mb-4">
         <a href="../../index.html" class="text-xl font-bold" class="text-foreground">reformately</a>
-        <button id="sidebar-close" class="btn btn-sm" aria-label="Close sidebar">
+        <button id="sidebar-close" class="btn btn-outline btn-sm" aria-label="Close sidebar">
           <i class="fas fa-times"></i>
         </button>
       </div>
       <h2 class="text-lg font-bold mb-4" class="text-foreground">Tools</h2>
-      <input id="tool-search" type="text" placeholder="Search" class="w-full mb-4 px-2 py-1 rounded border border-foreground bg-transparent" />
+      <input id="tool-search" type="text" placeholder="Search" class="input w-full mb-4" />
       <ul id="tool-list" class="space-y-2">
         <li><a href="../image-converter/index.html" class="text-foreground hover:text-primary">Image Converter</a></li>
         <li><a href="../background-remover/index.html" class="text-foreground hover:text-primary">Background Remover</a></li>
@@ -662,78 +630,79 @@
     </aside>
     <main id="main-content" class="flex-grow p-4">
 
-<div class="container">
-    <div class="header">
-        <h1>Google Ads RSA Comprehensive Preview Tool</h1>
-        <p>Simulate and preview your Responsive Search Ads with all major features and extensions.</p>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-foreground mb-4">Google Ads RSA Comprehensive Preview Tool</h1>
+        <p class="text-muted-foreground">Simulate and preview your Responsive Search Ads with all major features and extensions.</p>
     </div>
-    <div class="main-content">
-        <div class="form-section">
-            <h2>Ad Content</h2>
-            <div class="form-group">
-                <label for="finalUrl">Final URL</label>
-                <input type="url" id="finalUrl" placeholder="https://example.com" value="https://example.com">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="card p-6">
+            <h2 class="text-xl font-semibold text-foreground mb-6">Ad Content</h2>
+            <div class="mb-6">
+                <label for="finalUrl" class="block text-sm font-medium text-foreground mb-2">Final URL</label>
+                <input type="url" id="finalUrl" class="input w-full" placeholder="https://example.com" value="https://example.com">
             </div>
-            <div class="form-group">
-                <label for="displayUrl">Display URL</label>
-                <input type="text" id="displayUrl" placeholder="example.com" value="example.com">
+            <div class="mb-6">
+                <label for="displayUrl" class="block text-sm font-medium text-foreground mb-2">Display URL</label>
+                <input type="text" id="displayUrl" class="input w-full" placeholder="example.com" value="example.com">
             </div>
-            <div class="form-group">
-                <label for="path1">Path 1</label>
-                <input type="text" id="path1" maxlength="15" placeholder="e.g. shoes">
-                <div class="char-counter" id="path1-counter">0 / 15</div>
+            <div class="mb-6">
+                <label for="path1" class="block text-sm font-medium text-foreground mb-2">Path 1</label>
+                <input type="text" id="path1" class="input w-full" maxlength="15" placeholder="e.g. shoes">
+                <div class="text-xs text-muted-foreground text-right mt-1" id="path1-counter">0 / 15</div>
             </div>
-            <div class="form-group">
-                <label for="path2">Path 2</label>
-                <input type="text" id="path2" maxlength="15" placeholder="e.g. men">
-                <div class="char-counter" id="path2-counter">0 / 15</div>
+            <div class="mb-6">
+                <label for="path2" class="block text-sm font-medium text-foreground mb-2">Path 2</label>
+                <input type="text" id="path2" class="input w-full" maxlength="15" placeholder="e.g. men">
+                <div class="text-xs text-muted-foreground text-right mt-1" id="path2-counter">0 / 15</div>
             </div>
-            <div class="section-divider"></div>
-            <h2>Headlines <span style="font-size:0.75rem;font-weight:400;color:var(--muted-foreground);">(up to 15)</span></h2>
+            <div class="border-t border-border my-8"></div>
+            <h2 class="text-xl font-semibold text-foreground mb-6">Headlines <span class="text-xs font-normal text-muted-foreground">(up to 15)</span></h2>
             <div id="headlines-container"></div>
-            <button class="btn btn-primary btn-sm" id="add-headline">+ Add Headline</button>
-            <div class="section-divider"></div>
-            <h2>Descriptions <span style="font-size:0.75rem;font-weight:400;color:var(--muted-foreground);">(up to 4)</span></h2>
+            <button class="btn btn-primary" id="add-headline">+ Add Headline</button>
+            <div class="border-t border-border my-8"></div>
+            <h2 class="text-xl font-semibold text-foreground mb-6">Descriptions <span class="text-xs font-normal text-muted-foreground">(up to 4)</span></h2>
             <div id="descriptions-container"></div>
-            <button class="btn btn-primary btn-sm" id="add-description">+ Add Description</button>
-            <div class="section-divider"></div>
-            <h2>Sitelinks <span style="font-size:0.75rem;font-weight:400;color:var(--muted-foreground);">(up to 4)</span></h2>
+            <button class="btn btn-primary" id="add-description">+ Add Description</button>
+            <div class="border-t border-border my-8"></div>
+            <h2 class="text-xl font-semibold text-foreground mb-6">Sitelinks <span class="text-xs font-normal text-muted-foreground">(up to 4)</span></h2>
             <div id="sitelinks-container"></div>
-            <button class="btn btn-primary btn-sm" id="add-sitelink">+ Add Sitelink</button>
-            <div class="section-divider"></div>
-            <h2>Callout Extensions <span style="font-size:0.75rem;font-weight:400;color:var(--muted-foreground);">(up to 4)</span></h2>
+            <button class="btn btn-primary" id="add-sitelink">+ Add Sitelink</button>
+            <div class="border-t border-border my-8"></div>
+            <h2 class="text-xl font-semibold text-foreground mb-6">Callout Extensions <span class="text-xs font-normal text-muted-foreground">(up to 4)</span></h2>
             <div id="callouts-container"></div>
-            <button class="btn btn-primary btn-sm" id="add-callout">+ Add Callout</button>
-            <div class="section-divider"></div>
-            <h2>Structured Snippets <span style="font-size:0.75rem;font-weight:400;color:var(--muted-foreground);">(up to 2 headers, 10 values each)</span></h2>
+            <button class="btn btn-primary" id="add-callout">+ Add Callout</button>
+            <div class="border-t border-border my-8"></div>
+            <h2 class="text-xl font-semibold text-foreground mb-6">Structured Snippets <span class="text-xs font-normal text-muted-foreground">(up to 2 headers, 10 values each)</span></h2>
             <div id="snippets-container"></div>
-            <button class="btn btn-primary btn-sm" id="add-snippet">+ Add Structured Snippet</button>
-            <div class="section-divider"></div>
-            <h2>Image Asset <span style="font-size:0.75rem;font-weight:400;color:var(--muted-foreground);">(1:1 or 1.91:1, JPG/PNG)</span></h2>
-            <div class="form-group">
-                <label for="imageAsset">Upload Image</label>
-                <input type="file" id="imageAsset" accept="image/png, image/jpeg" title="Upload an image to preview with Performance Max">
-                <div class="char-counter" id="imageAsset-info">No image uploaded</div>
+            <button class="btn btn-primary" id="add-snippet">+ Add Structured Snippet</button>
+            <div class="border-t border-border my-8"></div>
+            <h2 class="text-xl font-semibold text-foreground mb-6">Image Asset <span class="text-xs font-normal text-muted-foreground">(1:1 or 1.91:1, JPG/PNG)</span></h2>
+            <div class="mb-6">
+                <label for="imageAsset" class="block text-sm font-medium text-foreground mb-2">Upload Image</label>
+                <input type="file" id="imageAsset" class="input w-full" accept="image/png, image/jpeg" title="Upload an image to preview with Performance Max">
+                <div class="text-xs text-muted-foreground text-right mt-1" id="imageAsset-info">No image uploaded</div>
             </div>
-            <div class="section-divider"></div>
-            <h2>Call Extension</h2>
-            <div class="form-group">
-                <label for="callExtension">Phone Number</label>
-                <input type="tel" id="callExtension" maxlength="20" placeholder="e.g. +1-555-123-4567">
+            <div class="border-t border-border my-8"></div>
+            <h2 class="text-xl font-semibold text-foreground mb-6">Call Extension</h2>
+            <div class="mb-6">
+                <label for="callExtension" class="block text-sm font-medium text-foreground mb-2">Phone Number</label>
+                <input type="tel" id="callExtension" class="input w-full" maxlength="20" placeholder="e.g. +1-555-123-4567">
             </div>
         </div>
-        <div class="preview-section">
-            <h2>Ad Preview</h2>
-            <div class="preview-tabs">
-                <button class="preview-tab active" id="desktop-tab" title="Show desktop preview">Desktop</button>
-                <button class="preview-tab" id="mobile-tab" title="Show mobile preview">Mobile</button>
+        <div class="card p-6">
+            <h2 class="text-xl font-semibold text-foreground mb-6">Ad Preview</h2>
+            <div class="flex gap-1 mb-6 bg-muted p-1 rounded-lg">
+                <button class="preview-tab flex-1 py-2 px-4 text-sm font-medium rounded-md transition-all active" id="desktop-tab" title="Show desktop preview">Desktop</button>
+                <button class="preview-tab flex-1 py-2 px-4 text-sm font-medium rounded-md transition-all" id="mobile-tab" title="Show mobile preview">Mobile</button>
             </div>
-            <div class="google-ad-preview" id="ad-preview"></div>
-            <div class="validation-summary" id="validation-summary"></div>
-            <div class="ad-strength" id="ad-strength" title="How strong your ad may be based on diversity of assets"></div>
+            <div class="border border-border rounded-lg p-6 mb-6 min-h-[200px] bg-background" id="ad-preview"></div>
+            <div class="bg-muted p-4 rounded-lg text-sm border border-border" id="validation-summary"></div>
+            <div class="mt-4 font-semibold" id="ad-strength" title="How strong your ad may be based on diversity of assets"></div>
         </div>
     </div>
 </div>
+
 <script>
 // --- Constants ---
 const MAX_HEADLINES = 15;
@@ -759,14 +728,14 @@ function createInput(type, value, placeholder, maxLength, className = '', onInpu
         input.title = 'Supports dynamic parameters like {Keyword:Default} and {Countdown(2024-12-31)}';
     }
     if (maxLength) input.maxLength = maxLength;
-    if (className) input.className = className;
+    input.className = className ? `input w-full ${className}` : 'input w-full';
     if (onInput) input.addEventListener('input', onInput);
     return input;
 }
 
 function createCharCounter(limit, id) {
     const div = document.createElement('div');
-    div.className = 'char-counter';
+    div.className = 'text-xs text-muted-foreground text-right mt-1';
     if (id) div.id = id;
     div.textContent = `0 / ${limit}`;
     return div;
@@ -782,15 +751,15 @@ function updateCharCounter(input, counter, limit) {
 }
 
 function removeElement(btn, container) {
-    btn.addEventListener('click', () => container.remove();
+    btn.addEventListener('click', () => container.remove());
 }
 
 function applyDynamicParams(text) {
     // Countdown replacement
     text = text.replace(/\{Countdown\(([^)]+)\)\}/gi, (_, dateStr) => {
         const target = new Date(dateStr);
-        if (isNaN(target) return '';
-        const diff = Math.ceil((target - new Date() / (1000 * 60 * 60 * 24);
+        if (isNaN(target)) return '';
+        const diff = Math.ceil((target - new Date()) / (1000 * 60 * 60 * 24));
         return diff > 0 ? diff + ' days' : '0 days';
     });
     // Keyword insertion
@@ -804,8 +773,9 @@ function addHeadline(value = '') {
     if (container.children.length >= MAX_HEADLINES) return;
     const idx = container.children.length + 1;
     const group = document.createElement('div');
-    group.className = 'form-group';
+    group.className = 'mb-6';
     const label = document.createElement('label');
+    label.className = 'block text-sm font-medium text-foreground mb-2';
     label.textContent = `Headline ${idx}`;
     const input = createInput('text', value, `Enter headline ${idx}`, HEADLINE_LIMIT);
     const counter = createCharCounter(HEADLINE_LIMIT);
@@ -817,16 +787,10 @@ function addHeadline(value = '') {
     updateCharCounter(input, counter, HEADLINE_LIMIT);
     group.appendChild(label);
     group.appendChild(input);
-    const pin = document.createElement('select');
-    pin.className = 'pin-select';
-    pin.title = 'Pin this headline to a specific position';
-    pin.innerHTML = '<option value="">Unpinned</option>' + Array.from({length: MAX_HEADLINES}, (_,i)=>`<option value="${i+1}">Position ${i+1}</option>`).join('');
-    pin.addEventListener('change', () => { renderPreview(); renderValidation(); });
-    group.appendChild(pin);
     group.appendChild(counter);
     if (container.children.length > 2) {
         const removeBtn = document.createElement('button');
-        removeBtn.className = 'btn btn-destructive btn-sm';
+        removeBtn.className = 'btn btn-destructive mt-2';
         removeBtn.textContent = 'Remove';
         removeElement(removeBtn, group);
         group.appendChild(removeBtn);
@@ -839,8 +803,9 @@ function addDescription(value = '') {
     if (container.children.length >= MAX_DESCRIPTIONS) return;
     const idx = container.children.length + 1;
     const group = document.createElement('div');
-    group.className = 'form-group';
+    group.className = 'mb-6';
     const label = document.createElement('label');
+    label.className = 'block text-sm font-medium text-foreground mb-2';
     label.textContent = `Description ${idx}`;
     const input = createInput('textarea', value, `Enter description ${idx}`, DESCRIPTION_LIMIT);
     input.rows = 2;
@@ -853,16 +818,10 @@ function addDescription(value = '') {
     updateCharCounter(input, counter, DESCRIPTION_LIMIT);
     group.appendChild(label);
     group.appendChild(input);
-    const pin = document.createElement('select');
-    pin.className = 'pin-select';
-    pin.title = 'Pin this description to a specific position';
-    pin.innerHTML = '<option value="">Unpinned</option>' + Array.from({length: MAX_DESCRIPTIONS}, (_,i)=>`<option value="${i+1}">Position ${i+1}</option>`).join('');
-    pin.addEventListener('change', () => { renderPreview(); renderValidation(); });
-    group.appendChild(pin);
     group.appendChild(counter);
     if (container.children.length > 1) {
         const removeBtn = document.createElement('button');
-        removeBtn.className = 'btn btn-destructive btn-sm';
+        removeBtn.className = 'btn btn-destructive mt-2';
         removeBtn.textContent = 'Remove';
         removeElement(removeBtn, group);
         group.appendChild(removeBtn);
@@ -1326,7 +1285,7 @@ function renderValidation() {
 
 function renderAdStrength(headlines, descriptions) {
     const container = document.getElementById('ad-strength');
-    const unique = new Set([...headlines, ...descriptions].filter(Boolean).size;
+    const unique = new Set([...headlines, ...descriptions].filter(Boolean)).size;
     let rating = 'poor';
     if (unique >= 15) rating = 'excellent';
     else if (unique >= 10) rating = 'good';
