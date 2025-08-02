@@ -45,12 +45,12 @@
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
     <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-background border-r border-border/20 p-4 transform -translate-x-full transition-transform z-40">
       <div class="flex justify-between items-center mb-4">
-        <a href="../../index.html" class="text-xl font-bold" style="color:var(--foreground);">reformately</a>
+        <a href="../../index.html" class="text-xl font-bold" class="text-foreground">reformately</a>
         <button id="sidebar-close" class="btn btn-sm" aria-label="Close sidebar">
           <i class="fas fa-times"></i>
         </button>
       </div>
-      <h2 class="text-lg font-bold mb-4" style="color:var(--foreground);">Tools</h2>
+      <h2 class="text-lg font-bold mb-4" class="text-foreground">Tools</h2>
       <input id="tool-search" type="text" placeholder="Search" class="w-full mb-4 px-2 py-1 rounded border border-foreground bg-transparent" />
       <ul id="tool-list" class="space-y-2">
         <li><a href="../image-converter/index.html" class="text-foreground hover:text-primary">Image Converter</a></li>
@@ -74,30 +74,30 @@
     </aside>
     <main id="main-content" class="flex-grow p-4">
       <div class="max-w-2xl mx-auto space-y-4">
-        <h1 class="text-3xl font-bold" style="color:var(--foreground);">PDF OCR</h1>
-        <p style="color:var(--foreground);">Upload a PDF file to extract its text using OCR. All processing happens in your browser.</p>
+        <h1 class="text-3xl font-bold" class="text-foreground">PDF OCR</h1>
+        <p class="text-foreground">Upload a PDF file to extract its text using OCR. All processing happens in your browser.</p>
         <div id="drop-area" class="border-2 border-dashed border-border rounded-lg p-6 text-center space-y-2 bg-card">
-          <p class="text-sm" style="color:var(--foreground);">Drag and drop a PDF here</p>
+          <p class="text-sm" class="text-foreground">Drag and drop a PDF here</p>
           <button id="select-btn" class="btn">Select PDF</button>
           <input id="file-input" type="file" accept="application/pdf" style="display:none;" />
         </div>
-        <div id="progress-status" class="text-center" style="color:var(--foreground);"></div>
+        <div id="progress-status" class="text-center" class="text-foreground"></div>
         <div id="progress-bar-container" class="w-full max-w-md mx-auto border rounded-lg p-1 bg-card">
           <div id="progress-bar"></div>
         </div>
         <textarea id="text-output" rows="8" class="input font-mono" placeholder="OCR result will appear here"></textarea>
         <button id="download-btn" class="btn" style="display:none;">Download Text</button>
         <section class="mt-8 space-y-4">
-          <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this tool</h2>
-          <p style="color:var(--foreground);">Extract text from scanned or image-based PDFs entirely offline.</p>
-          <h3 class="text-xl font-semibold" style="color:var(--foreground);">FAQs</h3>
+          <h2 class="text-2xl font-bold" class="text-foreground">About this tool</h2>
+          <p class="text-foreground">Extract text from scanned or image-based PDFs entirely offline.</p>
+          <h3 class="text-xl font-semibold" class="text-foreground">FAQs</h3>
           <details class="border p-4 rounded-lg bg-card">
-            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Does it work with scanned PDFs?</summary>
-            <p class="mt-2" style="color:var(--foreground);">Yes. Each page is converted to an image and processed with OCR.</p>
+            <summary class="cursor-pointer font-semibold" class="text-foreground">Does it work with scanned PDFs?</summary>
+            <p class="mt-2" class="text-foreground">Yes. Each page is converted to an image and processed with OCR.</p>
           </details>
           <details class="border p-4 rounded-lg bg-card">
-            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Is my PDF uploaded anywhere?</summary>
-            <p class="mt-2" style="color:var(--foreground);">No. Everything runs locally in your browser so your files remain private.</p>
+            <summary class="cursor-pointer font-semibold" class="text-foreground">Is my PDF uploaded anywhere?</summary>
+            <p class="mt-2" class="text-foreground">No. Everything runs locally in your browser so your files remain private.</p>
           </details>
         </section>
       </div>

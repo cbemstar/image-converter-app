@@ -44,12 +44,12 @@
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
     <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-background border-r border-border/20 p-4 transform -translate-x-full transition-transform z-40" role="complementary" aria-label="Sidebar" tabindex="-1">
       <div class="flex justify-between items-center mb-4">
-        <a href="../../index.html" class="text-xl font-bold" style="color:var(--foreground);">reformately</a>
+        <a href="../../index.html" class="text-xl font-bold" class="text-foreground">reformately</a>
         <button id="sidebar-close" class="btn btn-sm" aria-label="Close sidebar">
           <i class="fas fa-times"></i>
         </button>
       </div>
-      <h2 class="text-lg font-bold mb-4" style="color:var(--foreground);">Tools</h2>
+      <h2 class="text-lg font-bold mb-4" class="text-foreground">Tools</h2>
       <label for="tool-search" class="sr-only">Search tools</label>
       <input id="tool-search" type="text" placeholder="Search" class="w-full mb-4 px-2 py-1 rounded border border-foreground bg-transparent" />
       <ul id="tool-list" class="space-y-2" role="list">
@@ -74,66 +74,66 @@
     </aside>
     <main id="main-content" class="flex-grow p-4" tabindex="-1">
       <div class="max-w-2xl mx-auto">
-        <h1 class="text-3xl font-bold mb-2" style="color:var(--foreground);">Meta Tag Generator</h1>
-        <p class="mb-4" style="color:var(--foreground);">Create SEO and social media meta tags for your webpages.</p>
+        <h1 class="text-3xl font-bold mb-2" class="text-foreground">Meta Tag Generator</h1>
+        <p class="mb-4" class="text-foreground">Create SEO and social media meta tags for your webpages.</p>
         <div class="space-y-4">
-          <label class="block" style="color:var(--foreground);">Title (max 60 characters)
+          <label class="block" class="text-foreground">Title (max 60 characters)
             <input id="meta-title" type="text" class="input mt-1" maxlength="60" />
           </label>
-          <label class="block" style="color:var(--foreground);">Description (max 160 characters)
+          <label class="block" class="text-foreground">Description (max 160 characters)
             <textarea id="meta-description" class="input mt-1" rows="2" maxlength="160"></textarea>
           </label>
-          <label class="block" style="color:var(--foreground);">Author
+          <label class="block" class="text-foreground">Author
             <input id="meta-author" type="text" class="input mt-1" />
           </label>
-          <label class="block" style="color:var(--foreground);">Keywords (comma separated)
+          <label class="block" class="text-foreground">Keywords (comma separated)
             <input id="meta-keywords" type="text" class="input mt-1" />
           </label>
-          <label class="block" style="color:var(--foreground);">Canonical URL
+          <label class="block" class="text-foreground">Canonical URL
             <input id="meta-canonical" type="url" class="input mt-1" />
           </label>
           <div class="grid md:grid-cols-2 gap-4">
             <div class="space-y-4">
-              <h2 class="text-xl font-semibold" style="color:var(--foreground);">Open Graph</h2>
-              <label class="block" style="color:var(--foreground);">og:title
+              <h2 class="text-xl font-semibold" class="text-foreground">Open Graph</h2>
+              <label class="block" class="text-foreground">og:title
                 <input id="og-title" type="text" class="input mt-1" />
               </label>
-              <label class="block" style="color:var(--foreground);">og:description
+              <label class="block" class="text-foreground">og:description
                 <textarea id="og-description" class="input mt-1" rows="2"></textarea>
               </label>
-              <label class="block" style="color:var(--foreground);">og:image URL
+              <label class="block" class="text-foreground">og:image URL
                 <input id="og-image" type="url" class="input mt-1" />
               </label>
-              <label class="block" style="color:var(--foreground);">og:url
+              <label class="block" class="text-foreground">og:url
                 <input id="og-url" type="url" class="input mt-1" />
               </label>
-              <label class="block" style="color:var(--foreground);">og:type
+              <label class="block" class="text-foreground">og:type
                 <input id="og-type" type="text" class="input mt-1" placeholder="website" />
               </label>
             </div>
             <div class="space-y-4">
-              <h2 class="text-xl font-semibold" style="color:var(--foreground);">Twitter Card</h2>
-              <label class="block" style="color:var(--foreground);">twitter:card
+              <h2 class="text-xl font-semibold" class="text-foreground">Twitter Card</h2>
+              <label class="block" class="text-foreground">twitter:card
                 <input id="twitter-card" type="text" class="input mt-1" placeholder="summary_large_image" />
               </label>
-              <label class="block" style="color:var(--foreground);">twitter:title
+              <label class="block" class="text-foreground">twitter:title
                 <input id="twitter-title" type="text" class="input mt-1" />
               </label>
-              <label class="block" style="color:var(--foreground);">twitter:description
+              <label class="block" class="text-foreground">twitter:description
                 <textarea id="twitter-description" class="input mt-1" rows="2"></textarea>
               </label>
-              <label class="block" style="color:var(--foreground);">twitter:image
+              <label class="block" class="text-foreground">twitter:image
                 <input id="twitter-image" type="url" class="input mt-1" />
               </label>
             </div>
           </div>
-          <label class="block" style="color:var(--foreground);">Generated Tags
+          <label class="block" class="text-foreground">Generated Tags
             <textarea id="meta-code" class="input mt-1" rows="8" readonly></textarea>
           </label>
           <button id="copy-meta" class="btn">Copy Code</button>
         </div>
         <section class="my-8 space-y-4">
-          <h2 class="text-2xl font-bold" style="color:var(--foreground);">Preview</h2>
+          <h2 class="text-2xl font-bold" class="text-foreground">Preview</h2>
           <div id="search-preview" class="border p-4 rounded space-y-1">
             <p id="preview-title" class="font-semibold text-primary"></p>
             <p id="preview-url" class="text-sm text-green-700 dark:text-green-400"></p>
@@ -148,8 +148,8 @@
           </div>
         </section>
         <section class="space-y-4 mt-8">
-          <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this tool</h2>
-          <p style="color:var(--foreground);">Use this generator to craft SEO-friendly &amp; social meta tags. Title and description lengths follow common search engine guidelines. Open Graph tags optimise link previews on platforms like Facebook while Twitter Card tags enhance tweets that link to your page.</p>
+          <h2 class="text-2xl font-bold" class="text-foreground">About this tool</h2>
+          <p class="text-foreground">Use this generator to craft SEO-friendly &amp; social meta tags. Title and description lengths follow common search engine guidelines. Open Graph tags optimise link previews on platforms like Facebook while Twitter Card tags enhance tweets that link to your page.</p>
         </section>
       </div>
     </main>

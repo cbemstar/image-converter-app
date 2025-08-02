@@ -44,12 +44,12 @@
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
     <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-background border-r border-border/20 p-4 transform -translate-x-full transition-transform z-40">
       <div class="flex justify-between items-center mb-4">
-        <a href="../../index.html" class="text-xl font-bold" style="color:var(--foreground);">reformately</a>
+        <a href="../../index.html" class="text-xl font-bold" class="text-foreground">reformately</a>
         <button id="sidebar-close" class="btn btn-sm" aria-label="Close sidebar">
           <i class="fas fa-times"></i>
         </button>
       </div>
-      <h2 class="text-lg font-bold mb-4" style="color:var(--foreground);">Tools</h2>
+      <h2 class="text-lg font-bold mb-4" class="text-foreground">Tools</h2>
       <input id="tool-search" type="text" placeholder="Search" class="w-full mb-4 px-2 py-1 rounded border border-foreground bg-transparent" />
       <ul id="tool-list" class="space-y-2">
         <li><a href="../image-converter/index.html" class="text-foreground hover:text-primary">Image Converter</a></li>
@@ -77,49 +77,49 @@
     </aside>
     <main id="main-content" class="flex-grow p-4">
       <div class="max-w-xl mx-auto">
-        <h1 class="text-3xl font-bold" style="color:var(--foreground);">Text Case Converter</h1>
-        <p class="mb-4" style="color:var(--foreground);">Quickly convert text into common casing styles.</p>
-        <label class="block" style="color:var(--foreground);">Input Text
+        <h1 class="text-3xl font-bold" class="text-foreground">Text Case Converter</h1>
+        <p class="mb-4" class="text-foreground">Quickly convert text into common casing styles.</p>
+        <label class="block" class="text-foreground">Input Text
           <textarea id="tcc-input" rows="5" class="input mt-1"></textarea>
         </label>
         <div id="tcc-results" class="space-y-6 mt-6">
           <div>
-            <label class="font-semibold" style="color:var(--foreground);">Uppercase</label>
+            <label class="font-semibold" class="text-foreground">Uppercase</label>
             <textarea id="tcc-upper" rows="2" class="input font-mono mt-1" readonly></textarea>
             <button class="btn mt-2 copy-btn" data-target="tcc-upper">Copy</button>
           </div>
           <div>
-            <label class="font-semibold" style="color:var(--foreground);">Lowercase</label>
+            <label class="font-semibold" class="text-foreground">Lowercase</label>
             <textarea id="tcc-lower" rows="2" class="input font-mono mt-1" readonly></textarea>
             <button class="btn mt-2 copy-btn" data-target="tcc-lower">Copy</button>
           </div>
           <div>
-            <label class="font-semibold" style="color:var(--foreground);">Title Case</label>
+            <label class="font-semibold" class="text-foreground">Title Case</label>
             <textarea id="tcc-title" rows="2" class="input font-mono mt-1" readonly></textarea>
             <button class="btn mt-2 copy-btn" data-target="tcc-title">Copy</button>
           </div>
           <div>
-            <label class="font-semibold" style="color:var(--foreground);">Sentence Case</label>
+            <label class="font-semibold" class="text-foreground">Sentence Case</label>
             <textarea id="tcc-sentence" rows="2" class="input font-mono mt-1" readonly></textarea>
             <button class="btn mt-2 copy-btn" data-target="tcc-sentence">Copy</button>
           </div>
           <div>
-            <label class="font-semibold" style="color:var(--foreground);">Alternating Case</label>
+            <label class="font-semibold" class="text-foreground">Alternating Case</label>
             <textarea id="tcc-alternate" rows="2" class="input font-mono mt-1" readonly></textarea>
             <button class="btn mt-2 copy-btn" data-target="tcc-alternate">Copy</button>
           </div>
         </div>
         <section class="space-y-4 mt-8">
-          <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this tool</h2>
-          <p style="color:var(--foreground);">Paste text and instantly view it in several cases. Nothing is sent to any server.</p>
-          <h3 class="text-xl font-semibold" style="color:var(--foreground);">FAQs</h3>
+          <h2 class="text-2xl font-bold" class="text-foreground">About this tool</h2>
+          <p class="text-foreground">Paste text and instantly view it in several cases. Nothing is sent to any server.</p>
+          <h3 class="text-xl font-semibold" class="text-foreground">FAQs</h3>
           <details class="border p-2 rounded">
-            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">What is sentence case?</summary>
-            <p class="mt-2" style="color:var(--foreground);">Sentence case capitalizes the first letter of each sentence while leaving the rest lowercase.</p>
+            <summary class="cursor-pointer font-semibold" class="text-foreground">What is sentence case?</summary>
+            <p class="mt-2" class="text-foreground">Sentence case capitalizes the first letter of each sentence while leaving the rest lowercase.</p>
           </details>
           <details class="border p-2 rounded">
-            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Will my text be stored?</summary>
-            <p class="mt-2" style="color:var(--foreground);">No. Conversions happen entirely in your browser.</p>
+            <summary class="cursor-pointer font-semibold" class="text-foreground">Will my text be stored?</summary>
+            <p class="mt-2" class="text-foreground">No. Conversions happen entirely in your browser.</p>
           </details>
         </section>
       </div>

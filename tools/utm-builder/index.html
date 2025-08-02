@@ -43,12 +43,12 @@
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
     <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-background border-r border-border/20 p-4 transform -translate-x-full transition-transform z-40">
       <div class="flex justify-between items-center mb-4">
-        <a href="../../index.html" class="text-xl font-bold" style="color:var(--foreground);">reformately</a>
+        <a href="../../index.html" class="text-xl font-bold" class="text-foreground">reformately</a>
         <button id="sidebar-close" class="btn btn-sm" aria-label="Close sidebar">
           <i class="fas fa-times"></i>
         </button>
       </div>
-      <h2 class="text-lg font-bold mb-4" style="color:var(--foreground);">Tools</h2>
+      <h2 class="text-lg font-bold mb-4" class="text-foreground">Tools</h2>
       <input id="tool-search" type="text" placeholder="Search" class="w-full mb-4 px-2 py-1 rounded border border-foreground bg-transparent" />
       <ul id="tool-list" class="space-y-2">
         <li><a href="../image-converter/index.html" class="text-foreground hover:text-primary">Image Converter</a></li>
@@ -71,43 +71,43 @@
     </aside>
     <main id="main-content" class="flex-grow p-4">
       <div class="max-w-xl mx-auto">
-        <h1 class="text-3xl font-bold mb-2" style="color:var(--foreground);">UTM Parameter Builder</h1>
-        <p class="mb-4" style="color:var(--foreground);">Generate tracking URLs for your marketing campaigns.</p>
+        <h1 class="text-3xl font-bold mb-2" class="text-foreground">UTM Parameter Builder</h1>
+        <p class="mb-4" class="text-foreground">Generate tracking URLs for your marketing campaigns.</p>
         <div class="space-y-4">
-          <label class="block" style="color:var(--foreground);">Base URL
+          <label class="block" class="text-foreground">Base URL
             <input id="base-url" type="text" class="input mt-1" placeholder="https://example.com/page" />
           </label>
-          <label class="block" style="color:var(--foreground);">Source
+          <label class="block" class="text-foreground">Source
             <input id="utm-source" type="text" class="input mt-1" placeholder="newsletter" />
           </label>
-          <label class="block" style="color:var(--foreground);">Medium
+          <label class="block" class="text-foreground">Medium
             <input id="utm-medium" type="text" class="input mt-1" placeholder="email" />
           </label>
-          <label class="block" style="color:var(--foreground);">Campaign
+          <label class="block" class="text-foreground">Campaign
             <input id="utm-campaign" type="text" class="input mt-1" placeholder="spring_sale" />
           </label>
-          <label class="block" style="color:var(--foreground);">Term
+          <label class="block" class="text-foreground">Term
             <input id="utm-term" type="text" class="input mt-1" placeholder="optional keyword" />
           </label>
-          <label class="block" style="color:var(--foreground);">Content
+          <label class="block" class="text-foreground">Content
             <input id="utm-content" type="text" class="input mt-1" placeholder="ad variant" />
           </label>
-          <label class="block" style="color:var(--foreground);">Tracking URL
+          <label class="block" class="text-foreground">Tracking URL
             <input id="utm-result" type="text" class="input mt-1" readonly />
           </label>
           <button id="copy-btn" class="btn">Copy URL</button>
         </div>
         <section class="space-y-4 mt-8">
-          <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this tool</h2>
-          <p style="color:var(--foreground);">Use this builder to append UTM parameters to your links so you can track campaign performance in analytics platforms.</p>
-          <h3 class="text-xl font-semibold" style="color:var(--foreground);">FAQs</h3>
+          <h2 class="text-2xl font-bold" class="text-foreground">About this tool</h2>
+          <p class="text-foreground">Use this builder to append UTM parameters to your links so you can track campaign performance in analytics platforms.</p>
+          <h3 class="text-xl font-semibold" class="text-foreground">FAQs</h3>
           <details class="border p-2 rounded">
-            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">What are UTM parameters?</summary>
-            <p class="mt-2" style="color:var(--foreground);">They are tags added to a URL that help identify where visitors come from when they land on your site.</p>
+            <summary class="cursor-pointer font-semibold" class="text-foreground">What are UTM parameters?</summary>
+            <p class="mt-2" class="text-foreground">They are tags added to a URL that help identify where visitors come from when they land on your site.</p>
           </details>
           <details class="border p-2 rounded">
-            <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Do you store my links?</summary>
-            <p class="mt-2" style="color:var(--foreground);">No. Everything runs locally in your browser.</p>
+            <summary class="cursor-pointer font-semibold" class="text-foreground">Do you store my links?</summary>
+            <p class="mt-2" class="text-foreground">No. Everything runs locally in your browser.</p>
           </details>
         </section>
       </div>

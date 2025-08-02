@@ -47,12 +47,12 @@
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
     <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-background border-r border-border/20 p-4 transform -translate-x-full transition-transform z-40">
       <div class="flex justify-between items-center mb-4">
-        <a href="../../index.html" class="text-xl font-bold" style="color:var(--foreground);">reformately</a>
+        <a href="../../index.html" class="text-xl font-bold" class="text-foreground">reformately</a>
         <button id="sidebar-close" class="btn btn-sm" aria-label="Close sidebar">
           <i class="fas fa-times"></i>
         </button>
       </div>
-      <h2 class="text-lg font-bold mb-4" style="color:var(--foreground);">Tools</h2>
+      <h2 class="text-lg font-bold mb-4" class="text-foreground">Tools</h2>
       <input id="tool-search" type="text" placeholder="Search" class="w-full mb-4 px-2 py-1 rounded border border-foreground bg-transparent" />
       <ul id="tool-list" class="space-y-2">
         <li><a href="../image-converter/index.html" class="text-foreground hover:text-primary">Image Converter</a></li>
@@ -74,16 +74,16 @@
     </aside>
     <main id="main-content" class="flex-grow p-4">
       <div class="max-w-2xl mx-auto space-y-4">
-        <h1 class="text-3xl font-bold" style="color:var(--foreground);">PDF Merger</h1>
-        <p style="color:var(--foreground);">Upload multiple PDF files, reorder them, and merge into a single document.</p>
+        <h1 class="text-3xl font-bold" class="text-foreground">PDF Merger</h1>
+        <p class="text-foreground">Upload multiple PDF files, reorder them, and merge into a single document.</p>
         <div id="drop-area" class="border-2 border-dashed border-border rounded-lg p-6 text-center space-y-2 bg-card">
-          <p class="text-sm" style="color:var(--foreground);">Drag and drop PDFs here</p>
+          <p class="text-sm" class="text-foreground">Drag and drop PDFs here</p>
           <button id="select-btn" class="btn">Select PDFs</button>
           <input id="file-input" type="file" accept="application/pdf" multiple style="display:none;" />
         </div>
         <ul id="pdf-list" class="grid grid-cols-2 sm:grid-cols-3 gap-4"></ul>
-        <p class="text-sm text-center" style="color:var(--foreground);">Specify page ranges like <code>1-3,5</code> for each file.</p>
-        <div id="progress-status" class="text-center" style="color:var(--foreground);"></div>
+        <p class="text-sm text-center" class="text-foreground">Specify page ranges like <code>1-3,5</code> for each file.</p>
+        <div id="progress-status" class="text-center" class="text-foreground"></div>
         <div id="progress-bar-container" class="w-full max-w-md mx-auto border rounded-lg p-1 bg-card">
           <div id="progress-bar"></div>
         </div>
@@ -92,7 +92,7 @@
           <a id="download-link" class="download-btn" href="#" download="merged.pdf" style="display:none;">Download Merged PDF</a>
         </div>
         <div class="flex flex-col items-center gap-4">
-          <label for="image-format" class="text-sm" style="color:var(--foreground);">Image format:</label>
+          <label for="image-format" class="text-sm" class="text-foreground">Image format:</label>
           <select id="image-format" class="input w-32 text-center">
             <option value="jpeg">JPEG</option>
             <option value="png">PNG</option>
@@ -102,16 +102,16 @@
           <a id="download-images-link" class="download-btn" href="#" download="pages.zip" style="display:none;">Download Images ZIP</a>
         </div>
           <section class="mt-8 space-y-4">
-            <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this tool</h2>
-            <p style="color:var(--foreground);">Combine specific pages from multiple PDFs. Reorder them and download one tidy file.</p>
-            <h3 class="text-xl font-semibold" style="color:var(--foreground);">FAQs</h3>
+            <h2 class="text-2xl font-bold" class="text-foreground">About this tool</h2>
+            <p class="text-foreground">Combine specific pages from multiple PDFs. Reorder them and download one tidy file.</p>
+            <h3 class="text-xl font-semibold" class="text-foreground">FAQs</h3>
             <details class="border p-4 rounded-lg bg-card">
-              <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Can I select only certain pages?</summary>
-              <p class="mt-2" style="color:var(--foreground);">Yes. Choose page ranges and the merger will include just those pages.</p>
+              <summary class="cursor-pointer font-semibold" class="text-foreground">Can I select only certain pages?</summary>
+              <p class="mt-2" class="text-foreground">Yes. Choose page ranges and the merger will include just those pages.</p>
             </details>
             <details class="border p-4 rounded-lg bg-card">
-              <summary class="cursor-pointer font-semibold" style="color:var(--foreground);">Does it process files online?</summary>
-              <p class="mt-2" style="color:var(--foreground);">No, everything runs locally in your browser so PDFs stay private.</p>
+              <summary class="cursor-pointer font-semibold" class="text-foreground">Does it process files online?</summary>
+              <p class="mt-2" class="text-foreground">No, everything runs locally in your browser so PDFs stay private.</p>
             </details>
           </section>
       </div>
