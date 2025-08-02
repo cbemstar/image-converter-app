@@ -743,3 +743,12 @@ tr.error-row td { color:#ffb4b4 !important; }
   border-color: var(--primary);
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
+
+/* Sidebar behavior */
+#sidebar {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+}
