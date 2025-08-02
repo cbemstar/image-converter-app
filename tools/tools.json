@@ -1,0 +1,20 @@
+[
+  { "id": "background-remover", "label": "Background Remover", "href": "/tools/background-remover/" },
+  { "id": "bulk-match-editor", "label": "Bulk Match Editor", "href": "/tools/bulk-match-editor/" },
+  { "id": "campaign-structure", "label": "Campaign Structure", "href": "/tools/campaign-structure/" },
+  { "id": "color-palette", "label": "Color Palette", "href": "/tools/color-palette/" },
+  { "id": "google-ads-rsa-preview", "label": "Google Ads RSA Preview", "href": "/tools/google-ads-rsa-preview/" },
+  { "id": "image-converter", "label": "Image Converter", "href": "/tools/image-converter/" },
+  { "id": "json-formatter", "label": "JSON Formatter", "href": "/tools/json-formatter/" },
+  { "id": "layout-tool", "label": "Layout Tool", "href": "/tools/layout-tool/" },
+  { "id": "meta-tag-generator", "label": "Meta Tag Generator", "href": "/tools/meta-tag-generator/" },
+  { "id": "pdf-merger", "label": "PDF Merger", "href": "/tools/pdf-merger/" },
+  { "id": "pdf-ocr", "label": "PDF OCR", "href": "/tools/pdf-ocr/" },
+  { "id": "qr-generator", "label": "QR Generator", "href": "/tools/qr-generator/" },
+  { "id": "request-tool", "label": "Request Tool", "href": "/tools/request-tool/" },
+  { "id": "robots-txt", "label": "Robots TXT", "href": "/tools/robots-txt/" },
+  { "id": "text-case-converter", "label": "Text Case Converter", "href": "/tools/text-case-converter/" },
+  { "id": "timestamp-converter", "label": "Timestamp Converter", "href": "/tools/timestamp-converter/" },
+  { "id": "utm-builder", "label": "UTM Builder", "href": "/tools/utm-builder/" },
+  { "id": "uuid-generator", "label": "UUID Generator", "href": "/tools/uuid-generator/" }
+]
