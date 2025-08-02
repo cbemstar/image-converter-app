@@ -1,49 +1,42 @@
 /* shadcn/ui Component Bridge for Vanilla HTML */
 
-/* Button Components - Enhanced with proper shadcn spacing */
+/* Button Components - Fixed sizing and consistent colors */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   white-space: nowrap;
-  border-radius: calc(var(--radius) - 2px);
-  font-size: var(--text-sm);
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
   font-weight: 500;
-  letter-spacing: var(--tracking-normal);
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, box-shadow;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
   outline: 2px solid transparent;
   outline-offset: 2px;
   cursor: pointer;
-  /* Default button (primary) with enhanced padding */
-  height: 2.75rem;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  padding-top: 0.625rem;
-  padding-bottom: 0.625rem;
+  /* Default button (primary) with proper sizing */
+  height: 2.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
   background-color: var(--primary);
   color: var(--primary-foreground);
   border: 1px solid var(--primary);
-  box-shadow: var(--shadow-sm);
 }
 
 .btn:hover {
   background-color: var(--primary);
   opacity: 0.9;
-  box-shadow: var(--shadow-md);
 }
 
 .btn:focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
-  box-shadow: var(--shadow-lg);
 }
 
 .btn:disabled {
   pointer-events: none;
   opacity: 0.5;
-  box-shadow: none;
 }
 
 /* Button Variants - Enhanced with proper OKLCH colors */
@@ -61,16 +54,14 @@
 }
 
 .btn-outline {
-  border: 1px solid var(--border);
-  background-color: var(--background);
-  color: var(--foreground);
-  box-shadow: var(--shadow-xs);
+  border: 1px solid var(--primary);
+  background-color: transparent;
+  color: var(--primary);
 }
 
 .btn-outline:hover {
-  background-color: var(--accent);
-  color: var(--accent-foreground);
-  box-shadow: var(--shadow-sm);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
 }
 
 .btn-ghost {
@@ -99,25 +90,21 @@
   box-shadow: var(--shadow-md);
 }
 
-/* Button Sizes - Enhanced with proper shadcn spacing */
+/* Button Sizes - Fixed sizing */
 .btn-sm {
   height: 2.25rem;
-  border-radius: calc(var(--radius) - 4px);
-  padding-left: 1rem;
-  padding-right: 1rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  font-size: var(--text-xs);
+  border-radius: 0.375rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  font-size: 0.75rem;
 }
 
 .btn-lg {
-  height: 3rem;
-  border-radius: var(--radius);
+  height: 2.75rem;
+  border-radius: 0.375rem;
   padding-left: 2rem;
   padding-right: 2rem;
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
-  font-size: var(--text-base);
+  font-size: 1rem;
 }
 
 /* Input Components - Enhanced with proper shadcn spacing and OKLCH colors */
@@ -179,18 +166,29 @@
   opacity: 0.7;
 }
 
-/* Card Components - Enhanced with proper shadcn spacing and OKLCH colors */
+/* Card Components - Enhanced with proper padding and text overflow fixes */
 .card {
-  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  border-radius: 0.5rem;
   border: 1px solid var(--border);
   background-color: var(--card);
   color: var(--card-foreground);
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  padding: 1.5rem;
+  min-height: 120px;
+  box-sizing: border-box;
+  width: 100%;
+  overflow: hidden;
 }
 
 .card:hover {
-  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px 0 rgb(0 0 0 / 0.15), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
 .card-header {
@@ -201,16 +199,65 @@
 }
 
 .card-title {
-  font-size: var(--text-2xl);
+  font-size: 1rem;
   font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: var(--tracking-tight);
+  line-height: 1.4;
+  margin: 0 0 0.75rem 0;
+  padding: 0;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .card-description {
-  font-size: var(--text-sm);
+  font-size: 0.875rem;
   color: var(--muted-foreground);
   line-height: 1.5;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
+/* Fix for card h3 and p elements used in the HTML */
+.card h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0 0 0.75rem 0;
+  padding: 0;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--card-foreground);
+}
+
+.card p {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+  hyphens: auto;
 }
 
 .card-content {
