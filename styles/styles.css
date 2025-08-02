@@ -2,59 +2,59 @@
 @import './shadcn-tokens.css';
 @import './shadcn-bridge.css';
 
-/* --- Global Button, Input, and Label Styles (moved from tool-specific CSS) --- */
+/* --- Legacy Layout Classes (Updated with shadcn tokens) --- */
 .layout-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0.375rem;
-  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) - 2px);
+  border: 1px solid hsl(hsl(var(--border)));
   padding: 0.5rem 1rem;
   font-weight: 500;
-  font-size: 0.875rem;
-  background-color: var(--background);
-  color: var(--foreground);
-  transition: all 0.2s;
+  font-size: var(--text-sm);
+  background-color: hsl(hsl(var(--background)));
+  color: hsl(hsl(var(--foreground)));
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
 }
 .layout-btn:hover {
-  background-color: var(--accent);
-  color: var(--accent-foreground);
+  background-color: hsl(hsl(var(--accent)));
+  color: hsl(var(--accent-foreground));
 }
 .layout-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 .layout-btn.primary {
-  background-color: var(--primary);
-  color: var(--primary-foreground);
-  border-color: var(--primary);
+  background-color: hsl(hsl(var(--primary)));
+  color: hsl(var(--primary-foreground));
+  border-color: hsl(hsl(var(--primary)));
 }
 .layout-btn.primary:hover {
-  background-color: var(--primary);
-  opacity: 0.9;
+  background-color: hsl(hsl(var(--primary)) / 0.9);
 }
 
 .layout-input {
   width: 100%;
-  border-radius: 0.375rem;
-  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) - 2px);
+  border: 1px solid hsl(hsl(var(--border)));
   padding: 0.5rem 0.75rem;
-  background-color: var(--background);
-  color: var(--foreground);
-  font-size: 0.875rem;
+  background-color: hsl(hsl(var(--background)));
+  color: hsl(hsl(var(--foreground)));
+  font-size: var(--text-sm);
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 .layout-input:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px var(--ring);
-  border-color: var(--ring);
+  outline: 2px solid hsl(hsl(var(--ring)));
+  outline-offset: 2px;
+  border-color: hsl(hsl(var(--ring)));
 }
 
 .layout-label {
   display: block;
   font-weight: 500;
-  font-size: 0.875rem;
-  color: var(--foreground);
+  font-size: var(--text-sm);
+  color: hsl(hsl(var(--foreground)));
   margin-bottom: 0.5rem;
 }
 /* --- End Global Button, Input, and Label Styles --- */
@@ -64,7 +64,8 @@
 
 body {
   font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-  background-color:var(--background) !important;
+  background-color: hsl(hsl(var(--background))) !important;
+  color: hsl(hsl(var(--foreground)));
 }
 
 /* Sidebar scroll containment and positioning */
@@ -77,47 +78,45 @@ body {
 }
 
 label, th, .font-medium, .text-blue-900, .text-gray-500, .text-lg, .text-sm, .text-base, .break-words, .whitespace-normal, .max-w-xs, .max-w-5xl, .text-center, .font-bold {
-  color: var(--foreground) !important;
+  color: hsl(hsl(var(--foreground))) !important;
 }
 
 /* Input fields for Max Width, Max Height, Target Size */
 #max-width, #max-height, #target-size, #size-unit {
-  background-color: var(--background) !important;
-  color: var(--foreground) !important;
-  border: 1.5px solid var(--foreground) !important;
-  border-radius: 0.75rem !important;
+  background-color: hsl(hsl(var(--background))) !important;
+  color: hsl(hsl(var(--foreground))) !important;
+  border: 1.5px solid hsl(hsl(var(--border))) !important;
+  border-radius: var(--radius) !important;
   font-weight: 500;
 }
 #max-width:focus, #max-height:focus, #target-size:focus, #size-unit:focus {
-  outline: 2px solid var(--foreground) !important;
-  box-shadow: 0 0 0 2px var(--foreground) !important;
+  outline: 2px solid hsl(hsl(var(--ring))) !important;
+  outline-offset: 2px !important;
 }
 
 /* Select Images button and all main buttons modernized */
 #drop-area button, #convert-images-btn, #bulk-rename-btn, .download-btn {
-  background-color: var(--foreground) !important;
-  color: var(--background) !important;
-  border: 2px solid var(--foreground) !important;
+  background-color: hsl(hsl(var(--primary))) !important;
+  color: hsl(var(--primary-foreground)) !important;
+  border: 2px solid hsl(hsl(var(--primary))) !important;
   box-sizing: border-box;
   padding: 0.75rem 1.5rem;
-  border-radius: 0.75rem !important;
+  border-radius: var(--radius) !important;
   font-weight: 600;
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #drop-area button:hover, #convert-images-btn:hover, #bulk-rename-btn:hover, .download-btn:hover {
-  background: transparent !important;
-  color: var(--foreground) !important;
-  border: 2px solid var(--foreground) !important;
+  background: hsl(hsl(var(--primary)) / 0.9) !important;
 }
 
 /* Custom styles for the download buttons */
 .bg-cde5da {
-  background-color: var(--foreground) !important;
+  background-color: hsl(var(--foreground)) !important;
 }
 
 .text-172f37 {
-  color: var(--background) !important;
+  color: hsl(var(--background)) !important;
 }
 
 .hover\:bg-transparent:hover {
@@ -125,11 +124,11 @@ label, th, .font-medium, .text-blue-900, .text-gray-500, .text-lg, .text-sm, .te
 }
 
 .hover\:text-cde5da:hover {
-  color: var(--foreground) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 .border-cde5da {
-  border-color: var(--foreground) !important;
+  border-color: hsl(var(--foreground)) !important;
 }
 
 #download-link, #download-selected {
@@ -141,9 +140,9 @@ label, th, .font-medium, .text-blue-900, .text-gray-500, .text-lg, .text-sm, .te
   margin: 0.5rem;
   min-width: 200px;
   text-align: center;
-  background-color: var(--foreground) !important;
-  color: var(--background) !important;
-  border: 2px solid var(--foreground) !important;
+  background-color: hsl(var(--foreground)) !important;
+  color: hsl(var(--background)) !important;
+  border: 2px solid hsl(var(--foreground)) !important;
   background-color: #cde5da !important;
   color: #172f37 !important;
   border: 2px solid #cde5da !important;
@@ -152,7 +151,7 @@ label, th, .font-medium, .text-blue-900, .text-gray-500, .text-lg, .text-sm, .te
 
 #download-link:hover, #download-selected:hover {
   background-color: transparent !important;
-  color: var(--foreground) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 #download-link svg, #download-selected svg {
@@ -164,41 +163,41 @@ label, th, .font-medium, .text-blue-900, .text-gray-500, .text-lg, .text-sm, .te
 }
 
 .bg-blue-500, .bg-green-500, .bg-blue-600, .bg-green-600 {
-  background-color: var(--background) !important;
-  color: var(--foreground) !important;
+  background-color: hsl(var(--background)) !important;
+  color: hsl(var(--foreground)) !important;
   border: none;
 }
 
 .bg-blue-500:hover, .bg-green-500:hover, .bg-blue-600:hover, .bg-green-600:hover {
-  background-color: var(--foreground) !important;
-  color: var(--background) !important;
+  background-color: hsl(var(--foreground)) !important;
+  color: hsl(var(--background)) !important;
 }
 
 .text-blue-700, .text-blue-600, .text-blue-500, .text-blue-100 {
-  color: var(--foreground) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 .shadow, .hover\:shadow-lg, .rounded, .border, .border-dashed, .border-blue-400 {
   box-shadow: none !important;
-  border-color: var(--foreground) !important;
+  border-color: hsl(var(--foreground)) !important;
 }
 
 input, select, textarea {
-  color: var(--background) !important;
-  background-color: var(--foreground) !important;
-  border: 1px solid var(--foreground) !important;
+  color: hsl(var(--background)) !important;
+  background-color: hsl(var(--foreground)) !important;
+  border: 1px solid hsl(var(--foreground)) !important;
 }
 
 input:focus, select:focus, textarea:focus {
-  outline: 2px solid var(--foreground) !important;
-  box-shadow: 0 0 0 2px var(--foreground) !important;
+  outline: 2px solid hsl(var(--foreground)) !important;
+  box-shadow: 0 0 0 2px hsl(var(--foreground)) !important;
 }
 
 /* Remove white background and add border for controls, modernized */
 #controls > div {
   background: none !important;
-  border: 1.5px solid var(--foreground) !important;
-  color: var(--foreground) !important;
+  border: 1.5px solid hsl(var(--foreground)) !important;
+  color: hsl(var(--foreground)) !important;
   border-radius: 0.75rem !important;
   font-weight: 500;
 }
@@ -206,8 +205,8 @@ input:focus, select:focus, textarea:focus {
 /* Remove white background and add border for drop area, modernized */
 #drop-area {
   background: none !important;
-  border: 2px dashed var(--foreground) !important;
-  color: var(--foreground) !important;
+  border: 2px dashed hsl(var(--foreground)) !important;
+  color: hsl(var(--foreground)) !important;
   border-radius: 1.25rem !important;
 }
 
@@ -216,7 +215,7 @@ input:focus, select:focus, textarea:focus {
   display: none;
   height: 12px;
   padding: 0.25rem;
-  border: 2px solid var(--foreground);
+  border: 2px solid hsl(var(--foreground));
   border: 2px solid #cde5da;
   border-radius: 0.75rem;
   background: none;
@@ -316,7 +315,7 @@ img.preview {
     flex-direction: row;
     flex-wrap: nowrap;
     margin-bottom: clamp(1rem, 3vw, 1.5rem);
-    border: 1px solid var(--foreground);
+    border: 1px solid hsl(var(--foreground));
     border-radius: 0.75rem;
     padding: clamp(0.75rem, 2vw, 1rem);
     background: rgba(0,0,0,0.9);
@@ -360,7 +359,7 @@ img.preview {
   #preview-table td[data-label="Filename"]::before, #preview-table td[data-label="Rename"]::before, #preview-table td[data-label="Size"]::before {
     content: attr(data-label);
     font-weight: 600;
-    color: var(--primary);
+    color: hsl(var(--primary));
     margin-bottom: 0.25rem;
   }
   #preview-table td[data-label="Actions"] .convert-single-btn, #preview-table td[data-label="Actions"] .download-btn {
@@ -453,7 +452,7 @@ img.preview {
 .magnify-icon svg {
   width: 20px;
   height: 20px;
-  fill: var(--foreground);
+  fill: hsl(var(--foreground));
   opacity: 0.8;
 }
 
@@ -472,9 +471,9 @@ img.preview {
 }
 
 #convert-images-btn {
-  background-color: var(--foreground) !important;
-  color: var(--background) !important;
-  border: 2px solid var(--foreground) !important;
+  background-color: hsl(var(--foreground)) !important;
+  color: hsl(var(--background)) !important;
+  border: 2px solid hsl(var(--foreground)) !important;
   box-sizing: border-box;
   padding: 0.75rem 1.5rem;
   border-radius: 0.375rem !important;
@@ -484,8 +483,8 @@ img.preview {
 
 #convert-images-btn:hover {
   background: transparent !important;
-  color: var(--foreground) !important;
-  border: 2px solid var(--foreground) !important;
+  color: hsl(var(--foreground)) !important;
+  border: 2px solid hsl(var(--foreground)) !important;
 }
 
 /* Preview image hover effect */
@@ -496,8 +495,8 @@ img.preview {
 
 .preview-img-container:hover .preview {
   transform: scale(1.06);
-  border: 2px solid var(--primary);
-  box-shadow: 0 0 0 2px var(--primary);
+  border: 2px solid hsl(var(--primary));
+  box-shadow: 0 0 0 2px hsl(var(--primary));
 }
 
 /* Card grid layout for previews */
@@ -508,7 +507,7 @@ img.preview {
 }
 
 .preview-card {
-  border: 2px solid var(--foreground);
+  border: 2px solid hsl(var(--foreground));
   border-radius: 0.75rem;
   padding: 1rem;
   display: flex;
@@ -535,8 +534,8 @@ img.preview {
 .download-btn.hidden { display: none; }
 
 /* Table header and cell color consistency */
-#preview-table th { background-color:var(--background) !important; color:var(--foreground) !important; border-bottom:2px solid var(--foreground); font-weight:600; }
-#preview-table td { color:var(--foreground) !important; }
+#preview-table th { background-color:hsl(var(--background)) !important; color:hsl(var(--foreground)) !important; border-bottom:2px solid hsl(var(--foreground)); font-weight:600; }
+#preview-table td { color:hsl(var(--foreground)) !important; }
 #preview-table tbody tr:hover { background:rgba(125,255,220,0.08); }
 
 /* Error row styling */
@@ -576,149 +575,93 @@ tr.error-row td { color:#ffb4b4 !important; }
 }
 
 .notification {
-  background: var(--background);
-  color: var(--foreground);
+  background: hsl(hsl(var(--background)));
+  color: hsl(hsl(var(--foreground)));
+  border: 1px solid hsl(hsl(var(--border)));
   padding: 1rem 1.5rem;
-  border-radius: 8px;
+  border-radius: var(--radius);
   margin-bottom: 1rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px 0 rgb(0 0 0 / 0.15), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   display: flex;
   align-items: center;
   gap: 1rem;
 }
 
 .notification.info {
-  border-left: 4px solid var(--primary);
+  border-left: 4px solid hsl(hsl(var(--primary)));
+}
+
+.notification.success {
+  border-left: 4px solid #22c55e;
 }
 
 .notification.warning {
-  border-left: 4px solid #ffb347;
+  border-left: 4px solid #f59e0b;
 }
 
 .notification.error {
-  border-left: 4px solid #ff6b6b;
+  border-left: 4px solid hsl(hsl(var(--destructive)));
 }
 
 .notification .icon {
-  font-size: 1.25rem;
+  font-size: var(--text-lg);
 }
 
 .notification .close-btn {
   cursor: pointer;
-  color: var(--foreground);
-  font-size: 1.25rem;
+  color: hsl(hsl(var(--muted-foreground)));
+  font-size: var(--text-lg);
+  transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Shadcn inspired component styles */
-:root {
-  --background: #ffffff;
-  --foreground: #0f172a;
-  --card: #ffffff;
-  --card-foreground: #0f172a;
-  --popover: #ffffff;
-  --popover-foreground: #0f172a;
-  --primary: #0f172a;
-  --primary-foreground: #f8fafc;
-  --secondary: #f1f5f9;
-  --secondary-foreground: #0f172a;
-  --muted: #f8fafc;
-  --muted-foreground: #64748b;
-  --accent: #f1f5f9;
-  --accent-foreground: #0f172a;
-  --destructive: #ef4444;
-  --destructive-foreground: #f8fafc;
-  --border: #e2e8f0;
-  --input: #e2e8f0;
-  --ring: #0f172a;
-  --radius: 0.5rem;
+.notification .close-btn:hover {
+  color: hsl(hsl(var(--foreground)));
 }
 
-[data-theme="dark"] {
-  --background: #101624;
-  --foreground: #f3f6fa;
-  --card: #181f2e;
-  --card-foreground: #f3f6fa;
-  --popover: #181f2e;
-  --popover-foreground: #f3f6fa;
-  --primary: #3b82f6;
-  --primary-foreground: #f3f6fa;
-  --secondary: #232b3d;
-  --secondary-foreground: #f3f6fa;
-  --muted: #232b3d;
-  --muted-foreground: #b6c2d6;
-  --accent: #232b3d;
-  --accent-foreground: #f3f6fa;
-  --destructive: #ef4444;
-  --destructive-foreground: #f3f6fa;
-  --border: #2d3748;
-  --input: #2d3748;
-  --ring: #3b82f6;
-}
-
-[data-theme="light"] {
-  --background: #ffffff;
-  --foreground: #0f172a;
-  --card: #ffffff;
-  --card-foreground: #0f172a;
-  --popover: #ffffff;
-  --popover-foreground: #0f172a;
-  --primary: #0f172a;
-  --primary-foreground: #f8fafc;
-  --secondary: #f1f5f9;
-  --secondary-foreground: #0f172a;
-  --muted: #f8fafc;
-  --muted-foreground: #64748b;
-  --accent: #f1f5f9;
-  --accent-foreground: #0f172a;
-  --destructive: #ef4444;
-  --destructive-foreground: #f8fafc;
-  --border: #e2e8f0;
-  --input: #e2e8f0;
-  --ring: #0f172a;
-}
+/* Legacy color variables removed - now using shadcn-tokens.css */
 
 .shad-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border-radius: 0.375rem;
-  border: 1px solid var(--border);
+  border: 1px solid hsl(var(--border));
   padding: 0.5rem 1rem;
   font-weight: 600;
-  background-color: var(--background);
-  color: var(--foreground);
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
   transition: background-color 0.2s, color 0.2s;
 }
 
 .shad-btn:hover {
   background-color: transparent;
-  color: var(--foreground) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 #nav-login-btn.shad-btn,
 #nav-logout-btn.shad-btn {
-  color: var(--background);
+  color: hsl(var(--background));
 }
 
 #nav-login-btn.shad-btn:hover,
 #nav-logout-btn.shad-btn:hover {
-  color: var(--foreground);
+  color: hsl(var(--foreground));
   background-color: transparent;
 }
 .shad-input {
   width: 100%;
   border-radius: 0.375rem;
-  border: 1px solid var(--border);
+  border: 1px solid hsl(var(--border));
   padding: 0.5rem 0.75rem;
-  background-color: var(--background) !important;
-  color: var(--foreground) !important;
+  background-color: hsl(var(--background)) !important;
+  color: hsl(var(--foreground)) !important;
 }
 .shad-input:focus {
   outline: none;
-  box-shadow: 0 0 0 2px var(--primary);
+  box-shadow: 0 0 0 2px hsl(var(--primary));
 }
 /* JSON syntax highlighting */
-.json-key { color: var(--primary); }
+.json-key { color: hsl(var(--primary)); }
 .json-string { color: #65a30d; }
 .json-number { color: #d97706; }
 .json-boolean { color: #db2777; }
@@ -726,35 +669,51 @@ tr.error-row td { color:#ffb4b4 !important; }
 
 /* range input for PDF merger */
 .range-input {
-  border: 1px solid var(--foreground);
-  background-color: var(--background) !important;
-  color: var(--foreground) !important;
+  border: 1px solid hsl(var(--foreground));
+  background-color: hsl(var(--background)) !important;
+  color: hsl(var(--foreground)) !important;
   border-radius: 4px;
   padding: 2px 4px;
 }
 .range-input::placeholder {
-  color: var(--muted-foreground);
+  color: hsl(var(--muted-foreground));
   background: transparent;
   border-radius: 4px;
   padding: 2px 4px;
-  color: var(--foreground);
+  color: hsl(var(--foreground));
 }
 
-/* Card style for home page tools */
+/* Card style for home page tools - Updated to match shadcn */
 .tool-card {
   display: block;
-  background: var(--card);
-  color: var(--card-foreground);
-  border: 1px solid var(--border);
+  background: hsl(hsl(var(--card)));
+  color: hsl(var(--card-foreground));
+  border: 1px solid hsl(hsl(var(--border)));
   border-radius: var(--radius);
-  padding: 1rem;
-  transition: transform 0.18s, box-shadow 0.18s, border 0.18s;
+  padding: 1.5rem;
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  text-decoration: none;
 }
 
 .tool-card:hover {
   transform: translateY(-2px);
-  border-color: var(--primary);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border-color: hsl(hsl(var(--primary)));
+  box-shadow: 0 4px 12px 0 rgb(0 0 0 / 0.15), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.tool-card h3 {
+  color: hsl(var(--card-foreground));
+  font-size: var(--text-lg);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.025em;
+  margin-bottom: 0.375rem;
+}
+
+.tool-card p {
+  color: hsl(hsl(var(--muted-foreground)));
+  font-size: var(--text-sm);
 }
 
 /* Sidebar behavior */

@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <!-- Google Tag Manager -->
-  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-NFJTSQ3N');</script>
+  <script>(function (w, d, s, l, i) { w[l] = w[l] || []; w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' }); var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f); })(window, document, 'script', 'dataLayer', 'GTM-NFJTSQ3N');</script>
   <!-- End Google Tag Manager -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,26 +17,31 @@
   <script type="module" src="layout.js"></script>
   <script type="module" src="home.js"></script>
 </head>
+
 <body class="bg-transparent min-h-screen flex flex-col">
-  <a href="#main-content" class="sr-only focus:not-sr-only absolute left-2 top-2 bg-[var(--background)] text-[var(--foreground)] p-2 z-50">Skip to main content</a>
+  <a href="#main-content"
+    class="sr-only focus:not-sr-only absolute left-2 top-2 bg-background text-foreground p-2 z-50">Skip
+    to main content</a>
   <!-- Google Tag Manager (noscript) -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0"
+      style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
-  <nav class="bg-[var(--background)] shadow-md border-b border-border" role="navigation" aria-label="Main navigation">
+  <nav class="bg-background shadow-md border-b border-border" role="navigation" aria-label="Main navigation">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
         <div class="flex items-center gap-4">
-            <button id="sidebar-toggle" class="btn btn-outline p-2" aria-label="Open sidebar" aria-controls="sidebar" aria-expanded="false">
-              <i class="fas fa-bars"></i>
-            </button>
+          <button id="sidebar-toggle" class="btn btn-outline btn-sm" aria-label="Open sidebar" aria-controls="sidebar"
+            aria-expanded="false">
+            <i class="fas fa-bars"></i>
+          </button>
           <a href="index.html" class="flex items-center gap-2">
-            <span class="text-[var(--foreground)] text-xl font-bold">reformately</span>
+            <span class="text-foreground text-xl font-bold">reformately</span>
           </a>
         </div>
         <div class="flex items-center gap-2">
-            <button id="theme-toggle" class="btn btn-outline p-2" aria-label="Toggle theme">
-              <span id="theme-toggle-icon">🌙</span>
-            </button>
+          <button id="theme-toggle" class="btn btn-outline btn-sm" aria-label="Toggle theme">
+            <span id="theme-toggle-icon">🌙</span>
+          </button>
         </div>
       </div>
     </div>
@@ -43,10 +49,12 @@
 
   <div class="flex flex-grow">
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
-    <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-border/20 p-4 transform -translate-x-full transition-transform z-40" role="complementary" aria-label="Sidebar" tabindex="-1">
+    <aside id="sidebar"
+      class="fixed top-0 left-0 w-64 h-full bg-background border-r border-border/20 p-4 transform -translate-x-full transition-transform z-40"
+      role="complementary" aria-label="Sidebar" tabindex="-1">
       <div class="flex justify-between items-center mb-4">
         <a href="index.html" class="text-xl font-bold" style="color:var(--foreground);">reformately</a>
-        <button id="sidebar-close" class="btn btn-outline p-2" aria-label="Close sidebar">
+        <button id="sidebar-close" class="btn btn-outline btn-sm" aria-label="Close sidebar">
           <i class="fas fa-times"></i>
         </button>
       </div>
@@ -54,129 +62,165 @@
       <label for="tool-search" class="sr-only">Search tools</label>
       <input id="tool-search" type="text" placeholder="Search" class="input w-full mb-4" />
       <ul id="tool-list" class="space-y-2" role="list">
-        <li><a href="tools/image-converter/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Image Converter</a></li>
-        <li><a href="tools/background-remover/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Background Remover</a></li>
-        <li><a href="tools/google-ads-rsa-preview/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Google Ads RSA Preview</a></li>
-        <li><a href="tools/campaign-structure/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Campaign Structure</a></li>
-        <li><a href="tools/bulk-match-editor/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Bulk Match Type Editor</a></li>
-        <li><a href="tools/json-formatter/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">JSON Formatter</a></li>
-        <li><a href="tools/color-palette/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Colour Palette Extractor</a></li>
-        <li><a href="tools/pdf-merger/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">PDF Merger</a></li>
-        <li><a href="tools/utm-builder/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">UTM Builder</a></li>
-        <li><a href="tools/qr-generator/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">QR Code Generator</a></li>
-        <li><a href="tools/pdf-ocr/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">PDF OCR</a></li>
-        <li><a href="tools/uuid-generator/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">UUID Generator</a></li>
-        <li><a href="tools/timestamp-converter/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Timestamp Converter</a></li>
-        <li><a href="tools/meta-tag-generator/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Meta Tag Generator</a></li>
-        <li><a href="tools/robots-txt/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Robots.txt Tool</a></li>
-        <li><a href="tools/text-case-converter/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Text Case Converter</a></li>
-        <li><a href="tools/layout-tool/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Layout Generator</a></li>
-        <li><a href="#" class="text-[var(--foreground)] hover:text-[var(--primary)]">More coming soon</a></li>
+        <li><a href="tools/image-converter/index.html"
+            class="text-foreground hover:text-primary">Image Converter</a></li>
+        <li><a href="tools/background-remover/index.html"
+            class="text-foreground hover:text-primary">Background Remover</a></li>
+        <li><a href="tools/google-ads-rsa-preview/index.html"
+            class="text-foreground hover:text-primary">Google Ads RSA Preview</a></li>
+        <li><a href="tools/campaign-structure/index.html"
+            class="text-foreground hover:text-primary">Campaign Structure</a></li>
+        <li><a href="tools/bulk-match-editor/index.html"
+            class="text-foreground hover:text-primary">Bulk Match Type Editor</a></li>
+        <li><a href="tools/json-formatter/index.html" class="text-foreground hover:text-primary">JSON
+            Formatter</a></li>
+        <li><a href="tools/color-palette/index.html" class="text-foreground hover:text-primary">Colour
+            Palette Extractor</a></li>
+        <li><a href="tools/pdf-merger/index.html" class="text-foreground hover:text-primary">PDF
+            Merger</a></li>
+        <li><a href="tools/utm-builder/index.html" class="text-foreground hover:text-primary">UTM
+            Builder</a></li>
+        <li><a href="tools/qr-generator/index.html" class="text-foreground hover:text-primary">QR Code
+            Generator</a></li>
+        <li><a href="tools/pdf-ocr/index.html" class="text-foreground hover:text-primary">PDF OCR</a>
+        </li>
+        <li><a href="tools/uuid-generator/index.html" class="text-foreground hover:text-primary">UUID
+            Generator</a></li>
+        <li><a href="tools/timestamp-converter/index.html"
+            class="text-foreground hover:text-primary">Timestamp Converter</a></li>
+        <li><a href="tools/meta-tag-generator/index.html"
+            class="text-foreground hover:text-primary">Meta Tag Generator</a></li>
+        <li><a href="tools/robots-txt/index.html"
+            class="text-foreground hover:text-primary">Robots.txt Tool</a></li>
+        <li><a href="tools/text-case-converter/index.html"
+            class="text-foreground hover:text-primary">Text Case Converter</a></li>
+        <li><a href="tools/layout-tool/index.html" class="text-foreground hover:text-primary">Layout
+            Generator</a></li>
+        <li><a href="#" class="text-foreground hover:text-primary">More coming soon</a></li>
       </ul>
       <div class="mt-6 pt-6 border-t border-border/20">
-        <a href="tools/request-tool/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Request a Tool</a>
+        <a href="tools/request-tool/index.html" class="text-foreground hover:text-primary">Request a
+          Tool</a>
       </div>
     </aside>
 
     <main id="main-content" class="flex-grow p-4" tabindex="-1">
       <div class="max-w-7xl mx-auto">
-      <section class="text-center py-12">
-        <h1 class="text-4xl font-bold mb-2">Welcome to reformately</h1>
-        <p class="text-lg">A collection of handy online tools</p>
-      </section>
+        <section class="text-center py-12">
+          <h1 class="text-4xl font-bold mb-2">Welcome to reformately</h1>
+          <p class="text-lg">A collection of handy online tools</p>
+        </section>
 
-      <div class="max-w-md mx-auto mb-4 space-y-2">
-        <label for="home-search" class="sr-only">Search tools</label>
-        <input id="home-search" type="text" placeholder="Search tools" class="input w-full" />
-        <div class="flex gap-2">
-          <label for="category-filter" class="sr-only">Filter by category</label>
-          <select id="category-filter" class="input flex-grow">
-            <option value="All">All Categories</option>
-            <option value="Images">Images</option>
-            <option value="Marketing">Marketing</option>
-            <option value="Writing">Writing</option>
-            <option value="Utilities">Utilities</option>
-          </select>
-          <label for="sort-select" class="sr-only">Sort tools</label>
-          <select id="sort-select" class="input">
-            <option value="az">A-Z</option>
-            <option value="visits">Most Visited</option>
-          </select>
+        <div class="max-w-md mx-auto mb-4 space-y-2">
+          <label for="home-search" class="sr-only">Search tools</label>
+          <input id="home-search" type="text" placeholder="Search tools" class="input w-full" />
+          <div class="flex gap-2">
+            <label for="category-filter" class="sr-only">Filter by category</label>
+            <select id="category-filter" class="input flex-grow">
+              <option value="All">All Categories</option>
+              <option value="Images">Images</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Writing">Writing</option>
+              <option value="Utilities">Utilities</option>
+            </select>
+            <label for="sort-select" class="sr-only">Sort tools</label>
+            <select id="sort-select" class="input">
+              <option value="az">A-Z</option>
+              <option value="visits">Most Visited</option>
+            </select>
+          </div>
         </div>
-      </div>
 
-      <div id="home-tools" class="grid gap-4 md:grid-cols-2 max-w-2xl mx-auto">
-        <a href="tools/image-converter/index.html" class="card" data-name="Image Converter" data-category="Images" data-slug="image-converter">
-          <h3 class="font-semibold mb-1">Image Converter</h3>
-          <p class="text-sm">Convert images between formats.</p>
-        </a>
-        <a href="tools/background-remover/index.html" class="card" data-name="Background Remover" data-category="Images" data-slug="background-remover">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Background Remover</h3>
-          <p class="text-sm" style="color:var(--foreground);">Remove the background from images.</p>
-        </a>
-        <a href="tools/google-ads-rsa-preview/index.html" class="card" data-name="Google Ads RSA Preview" data-category="Marketing" data-slug="google-ads-rsa-preview">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Google Ads RSA Preview</h3>
-          <p class="text-sm" style="color:var(--foreground);">Visualize responsive search ads.</p>
-        </a>
-        <a href="tools/campaign-structure/index.html" class="card" data-name="Campaign Structure" data-category="Marketing" data-slug="campaign-structure">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Campaign Structure</h3>
-          <p class="text-sm" style="color:var(--foreground);">Visualize ad campaign hierarchy.</p>
-        </a>
-        <a href="tools/bulk-match-editor/index.html" class="card" data-name="Bulk Match Type Editor" data-category="Marketing" data-slug="bulk-match-editor">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Bulk Match Type Editor</h3>
-          <p class="text-sm" style="color:var(--foreground);">Convert keywords to phrase and exact match.</p>
-        </a>
-        <a href="tools/json-formatter/index.html" class="card" data-name="JSON Formatter" data-category="Utilities" data-slug="json-formatter">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">JSON Formatter</h3>
-          <p class="text-sm" style="color:var(--foreground);">Format or minify JSON easily.</p>
-        </a>
-        <a href="tools/color-palette/index.html" class="card" data-name="Colour Palette Extractor" data-category="Images" data-slug="color-palette">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Colour Palette Extractor</h3>
-          <p class="text-sm" style="color:var(--foreground);">Extract dominant colours from images.</p>
-        </a>
-        <a href="tools/pdf-merger/index.html" class="card" data-name="PDF Merger" data-category="Utilities" data-slug="pdf-merger">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">PDF Merger</h3>
-          <p class="text-sm" style="color:var(--foreground);">Combine PDFs easily.</p>
-        </a>
-        <a href="tools/utm-builder/index.html" class="card" data-name="UTM Builder" data-category="Marketing" data-slug="utm-builder">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">UTM Builder</h3>
-          <p class="text-sm" style="color:var(--foreground);">Create tracking URLs quickly.</p>
-        </a>
-        <a href="tools/qr-generator/index.html" class="card" data-name="QR Code Generator" data-category="Utilities" data-slug="qr-generator">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">QR Code Generator</h3>
-          <p class="text-sm" style="color:var(--foreground);">Create customizable QR codes.</p>
-        </a>
-        <a href="tools/pdf-ocr/index.html" class="card" data-name="PDF OCR" data-category="Utilities" data-slug="pdf-ocr">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">PDF OCR</h3>
-          <p class="text-sm" style="color:var(--foreground);">Extract text from PDFs using OCR.</p>
-        </a>
-        <a href="tools/uuid-generator/index.html" class="card" data-name="UUID Generator" data-category="Utilities" data-slug="uuid-generator">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">UUID Generator</h3>
-          <p class="text-sm" style="color:var(--foreground);">Create v1, v3, v4 or v5 IDs.</p>
-        </a>
-        <a href="tools/timestamp-converter/index.html" class="card" data-name="Timestamp Converter" data-category="Utilities" data-slug="timestamp-converter">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Timestamp Converter</h3>
-          <p class="text-sm" style="color:var(--foreground);">Convert between Unix time and dates.</p>
-        </a>
-        <a href="tools/meta-tag-generator/index.html" class="card" data-name="Meta Tag Generator" data-category="Marketing" data-slug="meta-tag-generator">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Meta Tag Generator</h3>
-          <p class="text-sm" style="color:var(--foreground);">Generate SEO meta tags easily.</p>
-        </a>
-        <a href="tools/text-case-converter/index.html" class="card" data-name="Text Case Converter" data-category="Utilities" data-slug="text-case-converter">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Text Case Converter</h3>
-          <p class="text-sm" style="color:var(--foreground);">Switch text between cases.</p>
-        </a>
-        <a href="tools/robots-txt/index.html" class="card" data-name="Robots.txt Tool" data-category="Marketing" data-slug="robots-txt">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Robots.txt Tool</h3>
-          <p class="text-sm" style="color:var(--foreground);">Generate and validate robots directives.</p>
-        </a>
-        <a href="tools/layout-tool/index.html" class="card" data-name="Layout Generator" data-category="Images" data-slug="layout-tool">
-          <h3 class="font-semibold mb-1" style="color:var(--foreground);">Layout Generator</h3>
-          <p class="text-sm" style="color:var(--foreground);">Generate multi-size layouts.</p>
-        </a>
-      </div>
+        <div id="home-tools" class="grid gap-4 md:grid-cols-2 max-w-2xl mx-auto">
+          <a href="tools/image-converter/index.html" class="card" data-name="Image Converter" data-category="Images"
+            data-slug="image-converter">
+            <h3 class="font-semibold mb-1">Image Converter</h3>
+            <p class="text-sm">Convert images between formats.</p>
+          </a>
+          <a href="tools/background-remover/index.html" class="card" data-name="Background Remover"
+            data-category="Images" data-slug="background-remover">
+            <h3 class="font-semibold mb-1" style="color:var(--foreground);">Background Remover</h3>
+            <p class="text-sm" style="color:var(--foreground);">Remove the background from images.</p>
+          </a>
+          <a href="tools/google-ads-rsa-preview/index.html" class="card" data-name="Google Ads RSA Preview"
+            data-category="Marketing" data-slug="google-ads-rsa-preview">
+            <h3 class="font-semibold mb-1" style="color:var(--foreground);">Google Ads RSA Preview</h3>
+            <p class="text-sm" style="color:var(--foreground);">Visualize responsive search ads.</p>
+          </a>
+          <a href="tools/campaign-structure/index.html" class="card" data-name="Campaign Structure"
+            data-category="Marketing" data-slug="campaign-structure">
+            <h3 class="font-semibold mb-1" style="color:var(--foreground);">Campaign Structure</h3>
+            <p class="text-sm" style="color:var(--foreground);">Visualize ad campaign hierarchy.</p>
+          </a>
+          <a href="tools/bulk-match-editor/index.html" class="card" data-name="Bulk Match Type Editor"
+            data-category="Marketing" data-slug="bulk-match-editor">
+            <h3 class="font-semibold mb-1" style="color:var(--foreground);">Bulk Match Type Editor</h3>
+            <p class="text-sm" style="color:var(--foreground);">Convert keywords to phrase and exact match.</p>
+          </a>
+          <a href="tools/json-formatter/index.html" class="card" data-name="JSON Formatter" data-category="Utilities"
+            data-slug="json-formatter">
+            <h3 class="font-semibold mb-1" style="color:var(--foreground);">JSON Formatter</h3>
+            <p class="text-sm" style="color:var(--foreground);">Format or minify JSON easily.</p>
+          </a>
+          <a href="tools/color-palette/index.html" class="card" data-name="Colour Palette Extractor"
+            data-category="Images" data-slug="color-palette">
+            <h3 class="font-semibold mb-1" style="color:var(--foreground);">Colour Palette Extractor</h3>
+            <p class="text-sm" style="color:var(--foreground);">Extract dominant colours from images.</p>
+          </a>
+          <a href="tools/pdf-merger/index.html" class="card" data-name="PDF Merger" data-category="Utilities"
+            data-slug="pdf-merger">
+            <h3 class="font-semibold mb-1" style="color:var(--foreground);">PDF Merger</h3>
+            <p class="text-sm" style="color:var(--foreground);">Combine PDFs easily.</p>
+          </a>
+          <a href="tools/utm-builder/index.html" class="card" data-name="UTM Builder" data-category="Marketing"
+            data-slug="utm-builder">
+            <h3 class="font-semibold mb-1" style="color:var(--foreground);">UTM Builder</h3>
+            <p class="text-sm" style="color:var(--foreground);">Create tracking URLs quickly.</p>
+          </a>
+          <a href="tools/qr-generator/index.html" class="card" data-name="QR Code Generator" data-category="Utilities"
+            data-slug="qr-generator">
+            <h3 class="font-semibold mb-1" style="color:var(--foreground);">QR Code Generator</h3>
+            <p class="text-sm" style="color:var(--foreground);">Create customizable QR codes.</p>
+          </a>
+          <a href="tools/pdf-ocr/index.html" class="card" data-name="PDF OCR" data-category="Utilities"
+            data-slug="pdf-ocr">
+            <h3 class="font-semibold mb-1" style="color:var(--foreground);">PDF OCR</h3>
+            <p class="text-sm" style="color:var(--foreground);">Extract text from PDFs using OCR.</p>
+          </a>
+          <a href="tools/uuid-generator/index.html" class="card" data-name="UUID Generator" data-category="Utilities"
+            data-slug="uuid-generator">
+            <h3 class="font-semibold mb-1" style="color:var(--foreground);">UUID Generator</h3>
+            <p class="text-sm" style="color:var(--foreground);">Create v1, v3, v4 or v5 IDs.</p>
+          </a>
+          <a href="tools/timestamp-converter/index.html" class="card" data-name="Timestamp Converter"
+            data-category="Utilities" data-slug="timestamp-converter">
+            <h3 class="font-semibold mb-1" style="color:var(--foreground);">Timestamp Converter</h3>
+            <p class="text-sm" style="color:var(--foreground);">Convert between Unix time and dates.</p>
+          </a>
+          <a href="tools/meta-tag-generator/index.html" class="card" data-name="Meta Tag Generator"
+            data-category="Marketing" data-slug="meta-tag-generator">
+            <h3 class="font-semibold mb-1" style="color:var(--foreground);">Meta Tag Generator</h3>
+            <p class="text-sm" style="color:var(--foreground);">Generate SEO meta tags easily.</p>
+          </a>
+          <a href="tools/text-case-converter/index.html" class="card" data-name="Text Case Converter"
+            data-category="Utilities" data-slug="text-case-converter">
+            <h3 class="font-semibold mb-1" style="color:var(--foreground);">Text Case Converter</h3>
+            <p class="text-sm" style="color:var(--foreground);">Switch text between cases.</p>
+          </a>
+          <a href="tools/robots-txt/index.html" class="card" data-name="Robots.txt Tool" data-category="Marketing"
+            data-slug="robots-txt">
+            <h3 class="font-semibold mb-1" style="color:var(--foreground);">Robots.txt Tool</h3>
+            <p class="text-sm" style="color:var(--foreground);">Generate and validate robots directives.</p>
+          </a>
+          <a href="tools/layout-tool/index.html" class="card" data-name="Layout Generator" data-category="Images"
+            data-slug="layout-tool">
+            <h3 class="font-semibold mb-1" style="color:var(--foreground);">Layout Generator</h3>
+            <p class="text-sm" style="color:var(--foreground);">Generate multi-size layouts.</p>
+          </a>
+        </div>
       </div>
     </main>
   </div>
 </body>
+
 </html>
