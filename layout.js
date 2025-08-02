@@ -21,8 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (sidebar && sidebarToggle) {
-    // Start closed on all screen sizes for consistent behavior.
-    closeSidebar();
 
     sidebarToggle.addEventListener('click', () => {
       const isOpen = !sidebar.classList.contains('-translate-x-full');
