@@ -22,11 +22,11 @@
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
-  <nav class="bg-[var(--background)] shadow-md border-b border-[var(--foreground)]/30">
+  <nav class="bg-[var(--background)] shadow-md border-b border-border">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
         <div class="flex items-center gap-4">
-          <button id="sidebar-toggle" class="layout-btn p-2" aria-label="Open sidebar">
+          <button id="sidebar-toggle" class="btn btn-outline p-2" aria-label="Open sidebar">
             <i class="fas fa-bars"></i>
           </button>
           <a href="../../index.html" class="flex items-center gap-2">
@@ -34,7 +34,7 @@
           </a>
         </div>
         <div class="flex items-center gap-2">
-          <button id="theme-toggle" class="layout-btn p-2" aria-label="Toggle theme">
+          <button id="theme-toggle" class="btn btn-outline p-2" aria-label="Toggle theme">
             <span id="theme-toggle-icon">🌙</span>
           </button>
         </div>
@@ -44,15 +44,15 @@
 
   <div class="flex flex-grow">
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
-    <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full transition-transform z-40">
+    <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-border/20 p-4 transform -translate-x-full transition-transform z-40">
       <div class="flex justify-between items-center mb-4">
         <a href="../../index.html" class="text-xl font-bold" style="color:var(--foreground);">reformately</a>
-        <button id="sidebar-close" class="layout-btn p-2" aria-label="Close sidebar">
+        <button id="sidebar-close" class="btn btn-outline p-2" aria-label="Close sidebar">
           <i class="fas fa-times"></i>
         </button>
       </div>
       <h2 class="text-lg font-bold mb-4" style="color:var(--foreground);">Tools</h2>
-      <input id="tool-search" type="text" placeholder="Search" class="layout-input w-full mb-4" />
+      <input id="tool-search" type="text" placeholder="Search" class="input w-full mb-4" />
       <ul id="tool-list" class="space-y-2">
         <li><a href="../image-converter/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Image Converter</a></li>
         <li><a href="../background-remover/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Background Remover</a></li>
@@ -67,7 +67,7 @@
         <li><a href="../layout-tool/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Layout Generator</a></li>
         <li><a href="#" class="text-[var(--foreground)] hover:text-[var(--primary)]">More coming soon</a></li>
       </ul>
-      <div class="mt-6 pt-6 border-t border-[var(--foreground)]/20">
+      <div class="mt-6 pt-6 border-t border-border/20">
         <a href="../request-tool/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Request a Tool</a>
       </div>
     </aside>
@@ -76,7 +76,7 @@
       <div class="max-w-2xl mx-auto space-y-4">
         <h1 class="text-3xl font-bold" style="color:var(--foreground);">Background Remover</h1>
         <p style="color:var(--foreground);">Upload a PNG or JPG image to remove its background. The result will be a transparent PNG.</p>
-        <input id="image-input" type="file" accept="image/png,image/jpeg" class="shad-input" />
+        <input id="image-input" type="file" accept="image/png,image/jpeg" class="input" />
         <img id="result-preview" class="mt-4 max-w-full rounded" alt="Result preview" />
         <a id="download-btn" href="#" download="background.png" class="download-btn mt-2" style="display:none;">Download PNG</a>
 
@@ -89,7 +89,7 @@
     </main>
   </div>
 
-  <footer class="bg-[var(--background)] border-t border-[var(--foreground)]/30 mt-8">
+  <footer class="bg-[var(--background)] border-t border-border mt-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <div class="text-center">
         <p class="text-[var(--foreground)]/70">&copy; 2024 reformately. All rights reserved.</p>

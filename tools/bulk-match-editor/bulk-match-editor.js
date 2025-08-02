@@ -78,8 +78,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function makeRow(text) {
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td class="border border-[var(--foreground)]/20 p-2 kw">${text}</td>
-      <td class="border border-[var(--foreground)]/20 p-2 text-center">
+      <td class="border border-border/20 p-2 kw">${text}</td>
+      <td class="border border-border/20 p-2 text-center">
         <input type="checkbox" class="kw-select">
         <button class="copy-single ml-2" title="Copy"><i class="fas fa-copy"></i></button>
       </td>`;

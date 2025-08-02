@@ -20,11 +20,11 @@
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
-  <nav class="bg-[var(--background)] shadow-md border-b border-[var(--foreground)]/30">
+  <nav class="bg-[var(--background)] shadow-md border-b border-border">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
         <div class="flex items-center gap-4">
-          <button id="sidebar-toggle" class="shad-btn p-2" aria-label="Open sidebar">
+          <button id="sidebar-toggle" class="btn p-2" aria-label="Open sidebar">
             <i class="fas fa-bars"></i>
           </button>
           <a href="../../index.html" class="flex items-center gap-2">
@@ -32,7 +32,7 @@
           </a>
         </div>
         <div class="flex items-center gap-2">
-          <button id="theme-toggle" class="shad-btn p-2" aria-label="Toggle theme">
+          <button id="theme-toggle" class="btn p-2" aria-label="Toggle theme">
             <span id="theme-toggle-icon">🌙</span>
           </button>
         </div>
@@ -42,10 +42,10 @@
 
   <div class="flex flex-grow">
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
-    <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full transition-transform z-40">
+    <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-border/20 p-4 transform -translate-x-full transition-transform z-40">
       <div class="flex justify-between items-center mb-4">
         <a href="../../index.html" class="text-xl font-bold" style="color:var(--foreground);">reformately</a>
-        <button id="sidebar-close" class="shad-btn p-2" aria-label="Close sidebar">
+        <button id="sidebar-close" class="btn p-2" aria-label="Close sidebar">
           <i class="fas fa-times"></i>
         </button>
       </div>
@@ -70,7 +70,7 @@
         <li><a href="../layout-tool/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Layout Generator</a></li>
         <li><a href="#" class="text-[var(--foreground)] hover:text-[var(--primary)]">More coming soon</a></li>
       </ul>
-      <div class="mt-6 pt-6 border-t border-[var(--foreground)]/20">
+      <div class="mt-6 pt-6 border-t border-border/20">
         <a href="../request-tool/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Request a Tool</a>
       </div>
     </aside>
@@ -81,7 +81,7 @@
         <div class="space-y-4">
           <label class="block">
             <span style="color:var(--foreground);">Version</span>
-            <select id="uuid-version" class="shad-input mt-1">
+            <select id="uuid-version" class="input mt-1">
               <option value="v4" selected>v4 - Random</option>
               <option value="v1">v1 - Timestamp</option>
               <option value="v3">v3 - Namespace/MD5</option>
@@ -91,22 +91,22 @@
           <div id="ns-fields" class="space-y-2 hidden">
             <label class="block">
               <span style="color:var(--foreground);">Namespace UUID</span>
-              <input id="uuid-namespace" type="text" class="shad-input mt-1" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
+              <input id="uuid-namespace" type="text" class="input mt-1" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
             </label>
             <label class="block">
               <span style="color:var(--foreground);">Name</span>
-              <input id="uuid-name" type="text" class="shad-input mt-1" />
+              <input id="uuid-name" type="text" class="input mt-1" />
             </label>
           </div>
           <label class="block">
             <span style="color:var(--foreground);">How many?</span>
-            <input id="uuid-count" type="number" min="1" max="50" value="1" class="shad-input mt-1" />
+            <input id="uuid-count" type="number" min="1" max="50" value="1" class="input mt-1" />
           </label>
-          <button id="uuid-generate" class="shad-btn">Generate</button>
+          <button id="uuid-generate" class="btn">Generate</button>
         </div>
-        <textarea id="uuid-output" rows="5" class="shad-input font-mono mt-4" readonly></textarea>
+        <textarea id="uuid-output" rows="5" class="input font-mono mt-4" readonly></textarea>
         <div class="mt-2">
-          <button id="uuid-copy" class="shad-btn">Copy</button>
+          <button id="uuid-copy" class="btn">Copy</button>
         </div>
         <section class="mt-8 space-y-4">
           <h2 class="text-2xl font-bold" style="color:var(--foreground);">About this tool</h2>
@@ -124,7 +124,7 @@
       </div>
     </main>
   </div>
-  <footer class="bg-[var(--background)] border-t border-[var(--foreground)]/30 mt-8">
+  <footer class="bg-[var(--background)] border-t border-border mt-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <div class="text-center">
         <p class="text-[var(--foreground)]/70">&copy; 2024 reformately. All rights reserved.</p>

@@ -21,11 +21,11 @@
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
-  <nav class="bg-[var(--background)] shadow-md border-b border-[var(--foreground)]/30" role="navigation" aria-label="Main navigation">
+  <nav class="bg-[var(--background)] shadow-md border-b border-border" role="navigation" aria-label="Main navigation">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
         <div class="flex items-center gap-4">
-          <button id="sidebar-toggle" class="shad-btn p-2" aria-label="Open sidebar" aria-controls="sidebar" aria-expanded="false">
+          <button id="sidebar-toggle" class="btn p-2" aria-label="Open sidebar" aria-controls="sidebar" aria-expanded="false">
             <i class="fas fa-bars"></i>
           </button>
           <a href="../../index.html" class="flex items-center gap-2">
@@ -33,7 +33,7 @@
           </a>
         </div>
         <div class="flex items-center gap-2">
-          <button id="theme-toggle" class="shad-btn p-2" aria-label="Toggle theme">
+          <button id="theme-toggle" class="btn p-2" aria-label="Toggle theme">
             <span id="theme-toggle-icon">🌙</span>
           </button>
         </div>
@@ -42,10 +42,10 @@
   </nav>
   <div class="flex flex-grow">
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
-    <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-[var(--foreground)]/20 p-4 transform -translate-x-full transition-transform z-40" role="complementary" aria-label="Sidebar" tabindex="-1">
+    <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[var(--background)] border-r border-border/20 p-4 transform -translate-x-full transition-transform z-40" role="complementary" aria-label="Sidebar" tabindex="-1">
       <div class="flex justify-between items-center mb-4">
         <a href="../../index.html" class="text-xl font-bold" style="color:var(--foreground);">reformately</a>
-        <button id="sidebar-close" class="shad-btn p-2" aria-label="Close sidebar">
+        <button id="sidebar-close" class="btn p-2" aria-label="Close sidebar">
           <i class="fas fa-times"></i>
         </button>
       </div>
@@ -68,7 +68,7 @@
         <li><a href="../layout-tool/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Layout Generator</a></li>
         <li><a href="#" class="text-[var(--foreground)] hover:text-[var(--primary)]">More coming soon</a></li>
       </ul>
-      <div class="mt-6 pt-6 border-t border-[var(--foreground)]/20">
+      <div class="mt-6 pt-6 border-t border-border/20">
         <a href="../request-tool/index.html" class="text-[var(--foreground)] hover:text-[var(--primary)]">Request a Tool</a>
       </div>
     </aside>
@@ -78,59 +78,59 @@
         <p class="mb-4" style="color:var(--foreground);">Create SEO and social media meta tags for your webpages.</p>
         <div class="space-y-4">
           <label class="block" style="color:var(--foreground);">Title (max 60 characters)
-            <input id="meta-title" type="text" class="shad-input mt-1" maxlength="60" />
+            <input id="meta-title" type="text" class="input mt-1" maxlength="60" />
           </label>
           <label class="block" style="color:var(--foreground);">Description (max 160 characters)
-            <textarea id="meta-description" class="shad-input mt-1" rows="2" maxlength="160"></textarea>
+            <textarea id="meta-description" class="input mt-1" rows="2" maxlength="160"></textarea>
           </label>
           <label class="block" style="color:var(--foreground);">Author
-            <input id="meta-author" type="text" class="shad-input mt-1" />
+            <input id="meta-author" type="text" class="input mt-1" />
           </label>
           <label class="block" style="color:var(--foreground);">Keywords (comma separated)
-            <input id="meta-keywords" type="text" class="shad-input mt-1" />
+            <input id="meta-keywords" type="text" class="input mt-1" />
           </label>
           <label class="block" style="color:var(--foreground);">Canonical URL
-            <input id="meta-canonical" type="url" class="shad-input mt-1" />
+            <input id="meta-canonical" type="url" class="input mt-1" />
           </label>
           <div class="grid md:grid-cols-2 gap-4">
             <div class="space-y-4">
               <h2 class="text-xl font-semibold" style="color:var(--foreground);">Open Graph</h2>
               <label class="block" style="color:var(--foreground);">og:title
-                <input id="og-title" type="text" class="shad-input mt-1" />
+                <input id="og-title" type="text" class="input mt-1" />
               </label>
               <label class="block" style="color:var(--foreground);">og:description
-                <textarea id="og-description" class="shad-input mt-1" rows="2"></textarea>
+                <textarea id="og-description" class="input mt-1" rows="2"></textarea>
               </label>
               <label class="block" style="color:var(--foreground);">og:image URL
-                <input id="og-image" type="url" class="shad-input mt-1" />
+                <input id="og-image" type="url" class="input mt-1" />
               </label>
               <label class="block" style="color:var(--foreground);">og:url
-                <input id="og-url" type="url" class="shad-input mt-1" />
+                <input id="og-url" type="url" class="input mt-1" />
               </label>
               <label class="block" style="color:var(--foreground);">og:type
-                <input id="og-type" type="text" class="shad-input mt-1" placeholder="website" />
+                <input id="og-type" type="text" class="input mt-1" placeholder="website" />
               </label>
             </div>
             <div class="space-y-4">
               <h2 class="text-xl font-semibold" style="color:var(--foreground);">Twitter Card</h2>
               <label class="block" style="color:var(--foreground);">twitter:card
-                <input id="twitter-card" type="text" class="shad-input mt-1" placeholder="summary_large_image" />
+                <input id="twitter-card" type="text" class="input mt-1" placeholder="summary_large_image" />
               </label>
               <label class="block" style="color:var(--foreground);">twitter:title
-                <input id="twitter-title" type="text" class="shad-input mt-1" />
+                <input id="twitter-title" type="text" class="input mt-1" />
               </label>
               <label class="block" style="color:var(--foreground);">twitter:description
-                <textarea id="twitter-description" class="shad-input mt-1" rows="2"></textarea>
+                <textarea id="twitter-description" class="input mt-1" rows="2"></textarea>
               </label>
               <label class="block" style="color:var(--foreground);">twitter:image
-                <input id="twitter-image" type="url" class="shad-input mt-1" />
+                <input id="twitter-image" type="url" class="input mt-1" />
               </label>
             </div>
           </div>
           <label class="block" style="color:var(--foreground);">Generated Tags
-            <textarea id="meta-code" class="shad-input mt-1" rows="8" readonly></textarea>
+            <textarea id="meta-code" class="input mt-1" rows="8" readonly></textarea>
           </label>
-          <button id="copy-meta" class="shad-btn">Copy Code</button>
+          <button id="copy-meta" class="btn">Copy Code</button>
         </div>
         <section class="my-8 space-y-4">
           <h2 class="text-2xl font-bold" style="color:var(--foreground);">Preview</h2>
@@ -154,7 +154,7 @@
       </div>
     </main>
   </div>
-  <footer class="bg-[var(--background)] border-t border-[var(--foreground)]/30 mt-8">
+  <footer class="bg-[var(--background)] border-t border-border mt-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <div class="text-center">
         <p class="text-[var(--foreground)]/70">&copy; 2024 reformately. All rights reserved.</p>

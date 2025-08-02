@@ -67,9 +67,9 @@ function makeHeader(preset) {
     } × ${preset.height || Math.round(preset.height_mm * 11.811)}px</div>
     </div>
     <div class="flex items-center gap-2">
-      <button id="editor-reset" class="layout-btn"><i class="fas fa-undo mr-2"></i>Reset</button>
-      <button id="editor-save" class="layout-btn primary"><i class="fas fa-save mr-2"></i>Save</button>
-      <button id="editor-close" class="layout-btn"><i class="fas fa-times mr-2"></i>Close</button>
+      <button id="editor-reset" class="btn btn-outline"><i class="fas fa-undo mr-2"></i>Reset</button>
+      <button id="editor-save" class="btn btn-outline primary"><i class="fas fa-save mr-2"></i>Save</button>
+      <button id="editor-close" class="btn btn-outline"><i class="fas fa-times mr-2"></i>Close</button>
     </div>`;
   return h;
 }
@@ -87,22 +87,22 @@ function makeSidebar() {
   sb.className = "w-80 bg-[var(--card)] border-r border-[var(--border)] p-4 overflow-y-auto";
   sb.innerHTML = /*html*/ `
     <div class="space-y-6">
-      <div><h3 class="layout-label mb-3">Elements</h3><div id="element-list" class="space-y-2"></div></div>
+      <div><h3 class="label mb-3">Elements</h3><div id="element-list" class="space-y-2"></div></div>
 
       <div id="element-properties" class="hidden">${propertiesPanel()}</div>
 
       <div id="hero-image-controls" class="space-y-4">
         <div>
-          <h3 class="layout-label mb-3">Hero Image Ratio</h3>
+          <h3 class="label mb-3">Hero Image Ratio</h3>
           <div class="grid grid-cols-2 gap-2">
-            <button id="ratio-1-1" class="layout-btn text-xs" data-ratio="1:1">1:1<br><span class="text-xs opacity-75">Square</span></button>
-            <button id="ratio-3-2" class="layout-btn text-xs" data-ratio="3:2">3:2<br><span class="text-xs opacity-75">Photo</span></button>
-            <button id="ratio-4-3" class="layout-btn text-xs" data-ratio="4:3">4:3<br><span class="text-xs opacity-75">Classic</span></button>
-            <button id="ratio-16-9" class="layout-btn text-xs" data-ratio="16:9">16:9<br><span class="text-xs opacity-75">Widescreen</span></button>
-            <button id="ratio-5-4" class="layout-btn text-xs" data-ratio="5:4">5:4<br><span class="text-xs opacity-75">Print</span></button>
-            <button id="ratio-7-5" class="layout-btn text-xs" data-ratio="7:5">7:5<br><span class="text-xs opacity-75">Portrait</span></button>
-            <button id="ratio-16-10" class="layout-btn text-xs" data-ratio="16:10">16:10<br><span class="text-xs opacity-75">Monitor</span></button>
-            <button id="ratio-original" class="layout-btn text-xs" data-ratio="original">Original<br><span class="text-xs opacity-75">No crop</span></button>
+            <button id="ratio-1-1" class="btn btn-outline text-xs" data-ratio="1:1">1:1<br><span class="text-xs opacity-75">Square</span></button>
+            <button id="ratio-3-2" class="btn btn-outline text-xs" data-ratio="3:2">3:2<br><span class="text-xs opacity-75">Photo</span></button>
+            <button id="ratio-4-3" class="btn btn-outline text-xs" data-ratio="4:3">4:3<br><span class="text-xs opacity-75">Classic</span></button>
+            <button id="ratio-16-9" class="btn btn-outline text-xs" data-ratio="16:9">16:9<br><span class="text-xs opacity-75">Widescreen</span></button>
+            <button id="ratio-5-4" class="btn btn-outline text-xs" data-ratio="5:4">5:4<br><span class="text-xs opacity-75">Print</span></button>
+            <button id="ratio-7-5" class="btn btn-outline text-xs" data-ratio="7:5">7:5<br><span class="text-xs opacity-75">Portrait</span></button>
+            <button id="ratio-16-10" class="btn btn-outline text-xs" data-ratio="16:10">16:10<br><span class="text-xs opacity-75">Monitor</span></button>
+            <button id="ratio-original" class="btn btn-outline text-xs" data-ratio="original">Original<br><span class="text-xs opacity-75">No crop</span></button>
           </div>
           <div class="text-xs text-[var(--muted-foreground)] mt-2">
             <p><strong>Current:</strong> <span id="current-ratio">Original</span></p>
@@ -110,14 +110,14 @@ function makeSidebar() {
         </div>
 
         <div>
-          <h3 class="layout-label mb-3">Image Fit Mode</h3>
+          <h3 class="label mb-3">Image Fit Mode</h3>
           <div class="grid grid-cols-2 gap-2">
-            <button id="fit-cover" class="layout-btn text-xs primary" data-fit="cover">Cover<br><span class="text-xs opacity-75">Fill & crop</span></button>
-            <button id="fit-contain" class="layout-btn text-xs" data-fit="contain">Contain<br><span class="text-xs opacity-75">Fit all</span></button>
-            <button id="fit-fill" class="layout-btn text-xs" data-fit="fill">Fill<br><span class="text-xs opacity-75">Stretch</span></button>
-            <button id="fit-scale-down" class="layout-btn text-xs" data-fit="scale-down">Scale Down<br><span class="text-xs opacity-75">Shrink only</span></button>
-            <button id="fit-none" class="layout-btn text-xs" data-fit="none">None<br><span class="text-xs opacity-75">Original size</span></button>
-            <button id="fit-crop" class="layout-btn text-xs" data-fit="crop">Crop<br><span class="text-xs opacity-75">Center crop</span></button>
+            <button id="fit-cover" class="btn btn-outline text-xs primary" data-fit="cover">Cover<br><span class="text-xs opacity-75">Fill & crop</span></button>
+            <button id="fit-contain" class="btn btn-outline text-xs" data-fit="contain">Contain<br><span class="text-xs opacity-75">Fit all</span></button>
+            <button id="fit-fill" class="btn btn-outline text-xs" data-fit="fill">Fill<br><span class="text-xs opacity-75">Stretch</span></button>
+            <button id="fit-scale-down" class="btn btn-outline text-xs" data-fit="scale-down">Scale Down<br><span class="text-xs opacity-75">Shrink only</span></button>
+            <button id="fit-none" class="btn btn-outline text-xs" data-fit="none">None<br><span class="text-xs opacity-75">Original size</span></button>
+            <button id="fit-crop" class="btn btn-outline text-xs" data-fit="crop">Crop<br><span class="text-xs opacity-75">Center crop</span></button>
           </div>
           <div class="text-xs text-[var(--muted-foreground)] mt-2">
             <p><strong>Current:</strong> <span id="current-fit">Cover</span></p>
@@ -133,31 +133,31 @@ function makeSidebar() {
         </div>
       </div>
 
-      <div><h3 class="layout-label mb-3">Add Elements</h3><div class="space-y-2"><button id="add-text-editor" class="layout-btn w-full"><i class="fas fa-font mr-2"></i>Add Text</button><button id="add-logo-editor" class="layout-btn w-full"><i class="fas fa-image mr-2"></i>Add Logo</button></div></div>
+      <div><h3 class="label mb-3">Add Elements</h3><div class="space-y-2"><button id="add-text-editor" class="btn btn-outline w-full"><i class="fas fa-font mr-2"></i>Add Text</button><button id="add-logo-editor" class="btn btn-outline w-full"><i class="fas fa-image mr-2"></i>Add Logo</button></div></div>
     </div>`;
   return sb;
 }
 
 function propertiesPanel() {
   return /*html*/ `
-    <h3 class="layout-label mb-3">Properties</h3>
+    <h3 class="label mb-3">Properties</h3>
     <div class="space-y-3">
-      <div><label class="layout-label text-sm">Position X</label><input id="prop-x" type="number" class="layout-input"></div>
-      <div><label class="layout-label text-sm">Position Y</label><input id="prop-y" type="number" class="layout-input"></div>
+      <div><label class="label text-sm">Position X</label><input id="prop-x" type="number" class="input"></div>
+      <div><label class="label text-sm">Position Y</label><input id="prop-y" type="number" class="input"></div>
       <div id="text-properties" class="hidden space-y-3">
-        <div><label class="layout-label text-sm">Text</label><textarea id="prop-text" rows="2" class="layout-input"></textarea></div>
-        <div class="grid grid-cols-2 gap-2"><div><label class="layout-label text-sm">Font Size</label><input id="prop-size" type="number" class="layout-input" value="24"></div><div><label class="layout-label text-sm">Line Height</label><input id="prop-line-height" type="number" step="0.1" class="layout-input" value="1.2"></div></div>
-        <div><label class="layout-label text-sm">Font Family</label><select id="prop-font-family" class="layout-input">${["Arial", "Helvetica", "Times New Roman", "Georgia", "Verdana", "Trebuchet MS", "Impact", "Comic Sans MS", "Courier New", "Lucida Console"].map(f => `<option>${f}</option>`).join("")}</select></div>
+        <div><label class="label text-sm">Text</label><textarea id="prop-text" rows="2" class="input"></textarea></div>
+        <div class="grid grid-cols-2 gap-2"><div><label class="label text-sm">Font Size</label><input id="prop-size" type="number" class="input" value="24"></div><div><label class="label text-sm">Line Height</label><input id="prop-line-height" type="number" step="0.1" class="input" value="1.2"></div></div>
+        <div><label class="label text-sm">Font Family</label><select id="prop-font-family" class="input">${["Arial", "Helvetica", "Times New Roman", "Georgia", "Verdana", "Trebuchet MS", "Impact", "Comic Sans MS", "Courier New", "Lucida Console"].map(f => `<option>${f}</option>`).join("")}</select></div>
         <div class="grid grid-cols-3 gap-2"><div>${select("weight", ["normal", "bold", "lighter", "bolder"])}</div><div>${select("style", ["normal", "italic", "oblique"], "font-")}</div><div>${select("text-align", ["left", "center", "right"], "text-")}</div></div>
-        <div class="grid grid-cols-2 gap-2"><div><label class="layout-label text-sm">Text Color</label><input id="prop-color" type="color" class="layout-input" value="#000000"></div><div><label class="layout-label text-sm">Background</label><input id="prop-bg-color" type="color" class="layout-input" value="#ffffff"></div></div>
-        <div><label class="layout-label text-sm">Text Effects</label><div class="grid grid-cols-2 gap-2"><label class="flex items-center gap-2"><input id="prop-text-shadow" type="checkbox" class="w-4 h-4"><span class="text-sm">Text Shadow</span></label><label class="flex items-center gap-2"><input id="prop-text-outline" type="checkbox" class="w-4 h-4"><span class="text-sm">Outline</span></label></div></div>
+        <div class="grid grid-cols-2 gap-2"><div><label class="label text-sm">Text Color</label><input id="prop-color" type="color" class="input" value="#000000"></div><div><label class="label text-sm">Background</label><input id="prop-bg-color" type="color" class="input" value="#ffffff"></div></div>
+        <div><label class="label text-sm">Text Effects</label><div class="grid grid-cols-2 gap-2"><label class="flex items-center gap-2"><input id="prop-text-shadow" type="checkbox" class="w-4 h-4"><span class="text-sm">Text Shadow</span></label><label class="flex items-center gap-2"><input id="prop-text-outline" type="checkbox" class="w-4 h-4"><span class="text-sm">Outline</span></label></div></div>
       </div>
-      <div id="logo-properties" class="hidden space-y-3"><div><label class="layout-label text-sm">Width</label><input id="prop-width" type="number" class="layout-input" min="10"></div><div><label class="layout-label text-sm">Height</label><input id="prop-height" type="number" class="layout-input" min="10"></div></div>
+      <div id="logo-properties" class="hidden space-y-3"><div><label class="label text-sm">Width</label><input id="prop-width" type="number" class="input" min="10"></div><div><label class="label text-sm">Height</label><input id="prop-height" type="number" class="input" min="10"></div></div>
     </div>`;
 }
 
 function select(id, opts, prefix = "") {
-  return `<label class=\"layout-label text-sm\">${prefix.replace(/(^.|-)/g, m => m.toUpperCase().replace("-", ""))}</label><select id="prop-${prefix}${id}" class="layout-input">${opts.map(o => `<option value="${o}">${o}</option>`).join("")}</select>`;
+  return `<label class=\"label text-sm\">${prefix.replace(/(^.|-)/g, m => m.toUpperCase().replace("-", ""))}</label><select id="prop-${prefix}${id}" class="input">${opts.map(o => `<option value="${o}">${o}</option>`).join("")}</select>`;
 }
 
 function makeCanvasArea() {

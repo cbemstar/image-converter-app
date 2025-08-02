@@ -142,7 +142,7 @@ function generateArtboards(selectedNames) {
 
     // Add edit button
     const editBtn = document.createElement('button');
-    editBtn.className = 'layout-btn text-xs flex-1';
+    editBtn.className = 'btn btn-outline text-xs flex-1';
     editBtn.innerHTML = '<i class="fas fa-edit mr-1"></i>Edit';
     editBtn.addEventListener('click', () => {
       // Find the current artboard data
@@ -191,7 +191,7 @@ function generateArtboards(selectedNames) {
 
     // Add download button for individual artboard
     const downloadBtn = document.createElement('button');
-    downloadBtn.className = 'layout-btn text-xs flex-1';
+    downloadBtn.className = 'btn btn-outline text-xs flex-1';
     downloadBtn.innerHTML = '<i class="fas fa-download mr-1"></i>Download';
     downloadBtn.addEventListener('click', async () => {
       try {
@@ -589,7 +589,7 @@ async function init() {
           <div class="text-red-500 text-6xl mb-4">⚠️</div>
           <h3 class="text-lg font-semibold text-[var(--foreground)] mb-2">Initialization Failed</h3>
           <p class="text-sm text-[var(--muted-foreground)] mb-4">The layout tool failed to load properly.</p>
-          <button onclick="window.location.reload()" class="layout-btn primary">
+          <button onclick="window.location.reload()" class="btn btn-outline primary">
             <i class="fas fa-refresh mr-2"></i>Refresh Page
           </button>
         </div>

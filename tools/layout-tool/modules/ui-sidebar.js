@@ -10,7 +10,7 @@ export function initSidebar(el, props) {
   const heroSection = document.createElement('div');
   heroSection.className = 'control-group';
   heroSection.innerHTML = `
-    <h3 class="layout-label">Hero Image</h3>
+    <h3 class="label">Hero Image</h3>
     <div class="upload-area" id="hero-upload">
       <div class="upload-text">
         <i class="fas fa-cloud-upload-alt mb-2" style="font-size: 1.5rem; color: var(--muted-foreground);"></i>
@@ -58,13 +58,13 @@ export function initSidebar(el, props) {
   const elementsSection = document.createElement('div');
   elementsSection.className = 'control-group';
   elementsSection.innerHTML = `
-    <h3 class="layout-label">Add Elements</h3>
+    <h3 class="label">Add Elements</h3>
     <div class="space-y-2">
-      <button id="add-text-btn" class="layout-btn w-full">
+      <button id="add-text-btn" class="btn btn-outline w-full">
         <i class="fas fa-font mr-2"></i>
         Add Text
       </button>
-      <button id="add-logo-btn" class="layout-btn w-full">
+      <button id="add-logo-btn" class="btn btn-outline w-full">
         <i class="fas fa-image mr-2"></i>
         Add Logo
       </button>
@@ -95,7 +95,7 @@ export function initSidebar(el, props) {
   const presetsSection = document.createElement('div');
   presetsSection.className = 'control-group';
   presetsSection.innerHTML = `
-    <h3 class="layout-label">Layout Presets</h3>
+    <h3 class="label">Layout Presets</h3>
     <div class="preset-grid" id="preset-list"></div>
   `;
   
@@ -120,15 +120,15 @@ export function initSidebar(el, props) {
   const searchInput = document.createElement('input');
   searchInput.type = 'text';
   searchInput.placeholder = 'Search presets...';
-  searchInput.className = 'layout-input mb-3';
+  searchInput.className = 'input mb-3';
   presetList.appendChild(searchInput);
   
   // Add select all/none buttons
   const selectButtons = document.createElement('div');
   selectButtons.className = 'flex gap-2 mb-3';
   selectButtons.innerHTML = `
-    <button class="layout-btn text-xs flex-1" id="select-all-presets">Select All</button>
-    <button class="layout-btn text-xs flex-1" id="select-none-presets">Select None</button>
+    <button class="btn btn-outline text-xs flex-1" id="select-all-presets">Select All</button>
+    <button class="btn btn-outline text-xs flex-1" id="select-none-presets">Select None</button>
   `;
   presetList.appendChild(selectButtons);
   
@@ -259,7 +259,7 @@ export function initSidebar(el, props) {
   const generateSection = document.createElement('div');
   generateSection.className = 'control-group';
   generateSection.innerHTML = `
-    <button id="generate-btn" class="layout-btn primary w-full">
+    <button id="generate-btn" class="btn btn-outline primary w-full">
       <i class="fas fa-magic mr-2"></i>
       Generate Layouts
     </button>
