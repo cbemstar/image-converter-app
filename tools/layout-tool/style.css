@@ -2,8 +2,8 @@
 
 /* Master Canvas Styling */
 #master-canvas {
-  background-color: var(--background);
-  border: 2px solid var(--border);
+  background-color: hsl(var(--background));
+  border: 2px solid hsl(var(--border));
   border-radius: 0.5rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   max-width: 100%;
@@ -15,13 +15,13 @@
 
 /* Tool Sidebar Styling */
 #tool-sidebar {
-  background-color: var(--card);
-  border: 1px solid var(--border);
+  background-color: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
   color: var(--card-foreground);
 }
 
 #tool-sidebar h3 {
-  color: var(--foreground);
+  color: hsl(var(--foreground));
   font-weight: 600;
   margin-bottom: 0.75rem;
 }
@@ -32,15 +32,15 @@
 
 #tool-sidebar .control-group:last-child {
   padding: 0.5rem 0.75rem;
-  background-color: var(--background);
-  color: var(--foreground);
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
   font-size: 0.875rem;
 }
 
 .layout-input:focus {
   outline: none;
-  box-shadow: 0 0 0 2px var(--ring);
-  border-color: var(--ring);
+  box-shadow: 0 0 0 2px hsl(var(--ring));
+  border-color: hsl(var(--ring));
 }
 
 /* Layout Tool Labels */
@@ -48,7 +48,7 @@
   display: block;
   font-weight: 500;
   font-size: 0.875rem;
-  color: var(--foreground);
+  color: hsl(var(--foreground));
   margin-bottom: 0.5rem;
 }
 
@@ -66,28 +66,28 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem;
-  border: 1px solid var(--border);
+  border: 1px solid hsl(var(--border));
   border-radius: 0.375rem;
-  background-color: var(--background);
+  background-color: hsl(var(--background));
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .preset-item:hover {
-  background-color: var(--accent);
-  border-color: var(--primary);
+  background-color: hsl(var(--accent));
+  border-color: hsl(var(--primary));
 }
 
 .preset-item.selected {
-  background-color: var(--primary);
+  background-color: hsl(var(--primary));
   color: var(--primary-foreground);
-  border-color: var(--primary);
+  border-color: hsl(var(--primary));
 }
 
 .preset-checkbox {
   width: 1rem;
   height: 1rem;
-  accent-color: var(--primary);
+  accent-color: hsl(var(--primary));
 }
 
 .preset-name {
@@ -97,7 +97,7 @@
 
 .preset-dimensions {
   font-size: 0.75rem;
-  color: var(--muted-foreground);
+  color: hsl(var(--muted-foreground));
   margin-left: auto;
 }
 
@@ -109,8 +109,8 @@
 }
 
 .artboard-item {
-  background-color: var(--card);
-  border: 1px solid var(--border);
+  background-color: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
   border-radius: 0.5rem;
   padding: 1rem;
   text-align: center;
@@ -120,15 +120,15 @@
 }
 
 .artboard-item:hover {
-  border-color: var(--primary);
+  border-color: hsl(var(--primary));
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .artboard-canvas {
-  border: 1px solid var(--border);
+  border: 1px solid hsl(var(--border));
   border-radius: 0.375rem;
   margin-bottom: 0.75rem;
-  background-color: var(--background);
+  background-color: hsl(var(--background));
   max-width: 100%;
   height: auto;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -137,13 +137,13 @@
 .artboard-title {
   font-weight: 600;
   font-size: 0.875rem;
-  color: var(--foreground);
+  color: hsl(var(--foreground));
   margin-bottom: 0.25rem;
 }
 
 .artboard-dimensions {
   font-size: 0.75rem;
-  color: var(--muted-foreground);
+  color: hsl(var(--muted-foreground));
   margin-bottom: 0.25rem;
 }
 
@@ -153,40 +153,40 @@
 
 .artboard-info span {
   font-size: 0.75rem;
-  color: var(--muted-foreground);
+  color: hsl(var(--muted-foreground));
   text-transform: capitalize;
 }
 
 /* File Upload Area */
 .upload-area {
-  border: 2px dashed var(--border);
+  border: 2px dashed hsl(var(--border));
   border-radius: 0.5rem;
   padding: 2rem;
   text-align: center;
-  background-color: var(--background);
+  background-color: hsl(var(--background));
   transition: all 0.2s;
   cursor: pointer;
 }
 
 .upload-area:hover {
-  border-color: var(--primary);
-  background-color: var(--accent);
+  border-color: hsl(var(--primary));
+  background-color: hsl(var(--accent));
 }
 
 .upload-area.dragover {
-  border-color: var(--primary);
-  background-color: var(--primary);
+  border-color: hsl(var(--primary));
+  background-color: hsl(var(--primary));
   color: var(--primary-foreground);
 }
 
 .upload-text {
-  color: var(--foreground);
+  color: hsl(var(--foreground));
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
 }
 
 .upload-hint {
-  color: var(--muted-foreground);
+  color: hsl(var(--muted-foreground));
   font-size: 0.75rem;
 }
 
@@ -201,7 +201,7 @@
 
 .progress-fill {
   height: 100%;
-  background-color: var(--primary);
+  background-color: hsl(var(--primary));
   transition: width 0.3s ease;
 }
 
@@ -272,8 +272,8 @@
   width: 20px;
   height: 20px;
   margin: -10px 0 0 -10px;
-  border: 2px solid var(--border);
-  border-top-color: var(--primary);
+  border: 2px solid hsl(var(--border));
+  border-top-color: hsl(var(--primary));
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -586,9 +586,9 @@ ed Preset List Styles */
   align-items: flex-start;
   gap: 0.5rem;
   padding: 0.75rem;
-  border: 1px solid var(--border);
+  border: 1px solid hsl(var(--border));
   border-radius: 0.375rem;
-  background-color: var(--background);
+  background-color: hsl(var(--background));
   cursor: pointer;
   transition: all 0.2s;
   margin-bottom: 0.5rem;
@@ -602,13 +602,13 @@ ed Preset List Styles */
 .preset-item .preset-name {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--foreground);
+  color: hsl(var(--foreground));
   line-height: 1.2;
 }
 
 .preset-item .preset-dimensions {
   font-size: 0.75rem;
-  color: var(--muted-foreground);
+  color: hsl(var(--muted-foreground));
   margin-top: 0.25rem;
   line-height: 1;
 }
@@ -628,8 +628,8 @@ ed Preset List Styles */
 
 /* Category headers */
 .preset-grid .text-sm.font-bold {
-  color: var(--foreground);
-  border-bottom: 1px solid var(--border);
+  color: hsl(var(--foreground));
+  border-bottom: 1px solid hsl(var(--border));
   padding-bottom: 0.25rem;
   margin-bottom: 0.5rem;
   margin-top: 1rem;
@@ -641,7 +641,7 @@ ed Preset List Styles */
 
 /* Subcategory headers */
 .preset-grid .text-xs.font-semibold {
-  color: var(--muted-foreground);
+  color: hsl(var(--muted-foreground));
   margin-left: 0.5rem;
   margin-top: 0.75rem;
   margin-bottom: 0.5rem;
@@ -667,12 +667,12 @@ ed Preset List Styles */
 }
 
 .preset-grid::-webkit-scrollbar-thumb {
-  background: var(--muted-foreground);
+  background: hsl(var(--muted-foreground));
   border-radius: 3px;
 }
 
 .preset-grid::-webkit-scrollbar-thumb:hover {
-  background: var(--foreground);
+  background: hsl(var(--foreground));
 }
 
 /* Responsive improvements for preset list */
