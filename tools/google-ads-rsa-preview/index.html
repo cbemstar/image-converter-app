@@ -156,7 +156,7 @@
             margin: 0 0 var(--space-3) 0;
             font-size: clamp(1.875rem, 4vw, 2.5rem);
             font-weight: 700;
-            letter-spacing: -0.025em;
+            letter-spacing: var(--tracking-tight);
             position: relative;
             z-index: 1;
         }
@@ -586,7 +586,7 @@
         .ad-preview-text {
             flex: 1;
             min-width: 0;
-            padding-right: calc(72px + var(--space-6)); /* Reserve space for image on right */
+            padding-right: calc(72px + var(--space-6); /* Reserve space for image on right */
         }
         .ad-image {
             width: 72px;
@@ -822,15 +822,15 @@ function updateCharCounter(input, counter, limit) {
 }
 
 function removeElement(btn, container) {
-    btn.addEventListener('click', () => container.remove());
+    btn.addEventListener('click', () => container.remove();
 }
 
 function applyDynamicParams(text) {
     // Countdown replacement
     text = text.replace(/\{Countdown\(([^)]+)\)\}/gi, (_, dateStr) => {
         const target = new Date(dateStr);
-        if (isNaN(target)) return '';
-        const diff = Math.ceil((target - new Date()) / (1000 * 60 * 60 * 24));
+        if (isNaN(target) return '';
+        const diff = Math.ceil((target - new Date() / (1000 * 60 * 60 * 24);
         return diff > 0 ? diff + ' days' : '0 days';
     });
     // Keyword insertion
@@ -1168,7 +1168,7 @@ function renderPreview(mode) {
     Array.from(headlineGroups).forEach(g => {
         const text = g.querySelector('input').value;
         const pin = g.querySelector('.pin-select').value;
-        if (text.trim()) {
+        if (text.trim() {
             const processed = applyDynamicParams(text);
             if (pin) orderedHeadlines[parseInt(pin)-1] = processed;
             else unpinnedHeads.push(processed);
@@ -1187,7 +1187,7 @@ function renderPreview(mode) {
         const textarea = g.querySelector('textarea');
         const pin = g.querySelector('.pin-select').value;
         const text = textarea.value;
-        if (text.trim()) {
+        if (text.trim() {
             const processed = applyDynamicParams(text);
             if (pin) orderedDescs[parseInt(pin)-1] = processed;
             else unpinnedDescs.push(processed);
@@ -1218,7 +1218,7 @@ function renderPreview(mode) {
     const snippetGroups = document.querySelectorAll('#snippets-container .form-group');
     const snippets = Array.from(snippetGroups).map(g => {
         const header = g.querySelector('input').value;
-        const values = Array.from(g.querySelectorAll('.snippet-values input')).map(i => i.value).filter(Boolean);
+        const values = Array.from(g.querySelectorAll('.snippet-values input').map(i => i.value).filter(Boolean);
         return { header, values };
     }).filter(s => s.header && s.values.length);
     
@@ -1297,7 +1297,7 @@ function renderValidation() {
     // Headlines
     const headlineInputs = document.querySelectorAll('#headlines-container input');
     const headlines = Array.from(headlineInputs).map(i => i.value);
-    const filledHeadlines = headlines.filter(h => h.trim());
+    const filledHeadlines = headlines.filter(h => h.trim();
     if (filledHeadlines.length < 3) {
         validations.push({icon:'warning', text:'At least 3 headlines recommended (max 15).'});
     } else {
@@ -1310,7 +1310,7 @@ function renderValidation() {
     // Descriptions
     const descInputs = document.querySelectorAll('#descriptions-container textarea');
     const descriptions = Array.from(descInputs).map(i => i.value);
-    const filledDescs = descriptions.filter(d => d.trim());
+    const filledDescs = descriptions.filter(d => d.trim();
     if (filledDescs.length < 2) {
         validations.push({icon:'warning', text:'At least 2 descriptions recommended (max 4).'});
     } else {
@@ -1338,7 +1338,7 @@ function renderValidation() {
     Array.from(snippetGroups).forEach((g, i) => {
         const header = g.querySelector('input').value;
         if (header.length > SNIPPET_HEADER_LIMIT) validations.push({icon:'invalid', text:`Snippet header ${i+1} exceeds ${SNIPPET_HEADER_LIMIT} characters.`});
-        const values = Array.from(g.querySelectorAll('.snippet-values input'));
+        const values = Array.from(g.querySelectorAll('.snippet-values input');
         values.forEach((v, j) => {
             if (v.value.length > SNIPPET_VALUE_LIMIT) validations.push({icon:'invalid', text:`Snippet value ${j+1} in header ${i+1} exceeds ${SNIPPET_VALUE_LIMIT} characters.`});
         });
@@ -1356,7 +1356,7 @@ function renderValidation() {
     
     // Call extension
     const callExtension = document.getElementById('callExtension').value;
-    if (callExtension && !/^\+?[0-9\-\s()]+$/.test(callExtension)) validations.push({icon:'invalid', text:'Call extension phone number format is invalid.'});
+    if (callExtension && !/^\+?[0-9\-\s()]+$/.test(callExtension) validations.push({icon:'invalid', text:'Call extension phone number format is invalid.'});
     
     // Render
     summary.innerHTML = validations.map(v =>
@@ -1366,7 +1366,7 @@ function renderValidation() {
 
 function renderAdStrength(headlines, descriptions) {
     const container = document.getElementById('ad-strength');
-    const unique = new Set([...headlines, ...descriptions].filter(Boolean)).size;
+    const unique = new Set([...headlines, ...descriptions].filter(Boolean).size;
     let rating = 'poor';
     if (unique >= 15) rating = 'excellent';
     else if (unique >= 10) rating = 'good';
