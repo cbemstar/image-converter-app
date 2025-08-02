@@ -1,39 +1,45 @@
+const CACHE_KEY = 'reform-tools';
+const EXPIRY_KEY = `${CACHE_KEY}-expiry`;
+const TTL_MS = 12 * 60 * 60 * 1000; // 12 hours
 let toolsPromise;
 
+function getCachedTools() {
+  const cached = localStorage.getItem(CACHE_KEY);
+  const expiry = Number(localStorage.getItem(EXPIRY_KEY));
+  if (!cached || !expiry || Date.now() >= expiry) return null;
+  try {
+    return JSON.parse(cached);
+  } catch {
+    return null;
+  }
+}
+
+function saveTools(data) {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+    localStorage.setItem(EXPIRY_KEY, String(Date.now() + TTL_MS));
+  } catch {
+    // ignore storage errors
+  }
+}
+
 /**
- * Fetches the tools manifest with caching.
+ * Fetches the tools manifest from the server and caches it.
  * @returns {Promise<Array<{id:string,label:string,href:string}>>} Resolves to the list of tools.
  */
 export function fetchTools() {
-  const CACHE_KEY = 'reform-tools';
-  const EXPIRY_KEY = `${CACHE_KEY}-expiry`;
-  const TTL_MS = 12 * 60 * 60 * 1000; // 12 hours
-  const now = Date.now();
-
-  const cached = localStorage.getItem(CACHE_KEY);
-  const expiry = Number(localStorage.getItem(EXPIRY_KEY));
-  if (cached && expiry && now < expiry) {
-    try {
-      return Promise.resolve(JSON.parse(cached));
-    } catch (err) {
-      // fall through to fetch
-    }
-  }
-
-  if (!toolsPromise || !expiry || now >= expiry) {
+  if (!toolsPromise) {
     toolsPromise = fetch('/tools/tools.json')
       .then((res) => {
         if (!res.ok) throw new Error('Failed to load tools');
         return res.json();
       })
       .then((data) => {
-        try {
-          localStorage.setItem(CACHE_KEY, JSON.stringify(data));
-          localStorage.setItem(EXPIRY_KEY, String(now + TTL_MS));
-        } catch (e) {
-          // ignore storage errors
-        }
+        saveTools(data);
         return data;
+      })
+      .finally(() => {
+        toolsPromise = undefined;
       });
   }
   return toolsPromise;
@@ -51,12 +57,21 @@ export class ReformSidebar extends HTMLElement {
 
   async connectedCallback() {
     if (this.rendered) return;
+    const cached = getCachedTools();
+    if (cached) {
+      this.render(cached);
+      this.rendered = true;
+    }
+
     try {
       const tools = await fetchTools();
-      this.render(tools);
-      this.rendered = true;
+      if (!cached || JSON.stringify(cached) !== JSON.stringify(tools)) {
+        this.shadowRoot.innerHTML = '';
+        this.render(tools);
+        this.rendered = true;
+      }
     } catch (err) {
-      this.remove();
+      if (!this.rendered) this.remove();
     }
   }
 
