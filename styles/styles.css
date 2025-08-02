@@ -60,7 +60,16 @@
 
 body {
   font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-  background-color:var(--background) !important; 
+  background-color:var(--background) !important;
+}
+
+/* Sidebar scroll containment and positioning */
+#sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 label, th, .font-medium, .text-blue-900, .text-gray-500, .text-lg, .text-sm, .text-base, .break-words, .whitespace-normal, .max-w-xs, .max-w-5xl, .text-center, .font-bold {
