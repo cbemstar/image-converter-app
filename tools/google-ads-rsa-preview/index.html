@@ -73,6 +73,20 @@
     .ad-image { width:72px; height:72px; object-fit:cover; background:oklch(var(--muted)); border:1.5px solid oklch(var(--border)); border-radius:12px; position:absolute; top:0; right:0; }
     @media(max-width:768px){ .ad-preview-row{flex-direction:column; padding-right:0;} .ad-image{position:static; width:100%; height:180px; border-radius:16px; margin-bottom:var(--space-4);} }
 
+    /* mimic Google ads appearance */
+    .ad-sponsored-row { font-size:0.875rem; color:#4d5156; margin-bottom:0.25rem; display:flex; gap:0.25rem; align-items:center; }
+    .ad-sponsored-row span:first-child { color:#202124; font-weight:600; }
+    .ad-sponsored-row span:nth-child(3) { color:#006621; }
+    .ad-title { font-size:1.125rem; line-height:1.3; font-weight:400; }
+    .ad-title a { color:#1a0dab; text-decoration:none; }
+    .ad-title a:hover { text-decoration:underline; }
+    .ad-description { font-size:0.875rem; color:#4d5156; line-height:1.58; }
+    .sitelink { display:block; margin-right:1.5rem; color:#1a0dab; font-size:0.875rem; text-decoration:none; }
+    .sitelink:hover { text-decoration:underline; }
+    .callouts, .structured-snippets, .call-extension { font-size:0.875rem; color:#4d5156; }
+    .call-extension a { color:#1a0dab; text-decoration:none; }
+    .call-extension a:hover { text-decoration:underline; }
+
     .validation-summary { @apply bg-muted border border-border rounded p-6 text-sm mt-6; }
     .validation-item { @apply flex items-center gap-2 mb-2; }
     .validation-icon { font-weight:600; }
@@ -323,10 +337,11 @@
       html+='<div class="ad-preview-row">';
       if(mobile){ html+=imageAssetDataUrl?`<img class="ad-image" src="${imageAssetDataUrl}" alt="ad">`:`<div class="ad-image flex items-center justify-center text-4xl text-muted-foreground">🖼️</div>`; }
       html+='<div class="ad-preview-text">';
-      html+=`<div class="ad-title">${heads.slice(0,3).join(' | ')||'<span class="text-muted-foreground">Your ad title...</span>'}</div>`;
+      const title=heads.slice(0,3).join(' | ');
+      html+=`<div class="ad-title">${title?`<a href="${finalUrl}" target="_blank">${title}</a>`:'<span class="text-muted-foreground">Your ad title...</span>'}</div>`;
       html+=`<div class="ad-description mt-1">${descs.slice(0,2).join(' ')||'<span class="text-muted-foreground">Your ad description...</span>'}</div>`;
       html+='<div class="ad-extensions mt-2">';
-      if(sitelinks.length){ html+='<div class="sitelinks flex flex-wrap gap-x-6 gap-y-1 mt-2">'+sitelinks.map(s=>`<span class="sitelink">${s.text}</span>`).join('')+'</div>'; }
+      if(sitelinks.length){ html+='<div class="sitelinks flex flex-wrap gap-x-6 gap-y-1 mt-2">'+sitelinks.map(s=>`<a class="sitelink" href="${s.url||finalUrl}" target="_blank">${s.text}</a>`).join('')+'</div>'; }
       if(callouts.length){ html+='<div class="callouts flex flex-wrap gap-3 mt-2">'+callouts.map(c=>`<span class="callout">${c}</span>`).join('')+'</div>'; }
       if(snippets.length){ html+='<div class="structured-snippets flex flex-wrap gap-3 mt-2">'+snippets.map(sn=>`<span class="structured-snippet"><b>${sn.header}:</b> ${sn.values.join(', ')}</span>`).join('')+'</div>'; }
       if(phone){ html+=`<div class="call-extension mt-2">Call: <a href="tel:${phone}">${phone}</a></div>`; }
