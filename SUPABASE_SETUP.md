@@ -102,6 +102,12 @@ AGENCY_LIMIT_API_CALLS=500000
 AGENCY_LIMIT_MAX_FILE_SIZE=262144000
 ```
 
+Generate the runtime configuration file (do not commit the output):
+
+```bash
+npm run build:config
+```
+
 ## Step 4: Run Database Migrations
 
 ### For Production

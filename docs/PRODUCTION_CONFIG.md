@@ -79,8 +79,8 @@ SUPPORT_EMAIL=support@yourapp.com
 
 # Supabase Production Configuration
 SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-SUPABASE_SERVICE_ROLE=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE=your-service-role-key
 
 # Stripe Production Configuration
 STRIPE_SECRET_KEY=sk_live_51234567890abcdef...
