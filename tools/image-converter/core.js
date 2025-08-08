@@ -31,6 +31,11 @@ import {
 let _selectedFiles = [];
 window._selectedFiles = _selectedFiles; // Expose to window for other modules
 
+// Sanitize filenames to prevent XSS
+function sanitizeFilename(name) {
+  return name.replace(/[<>&"'`]/g, '');
+}
+
 // DOM elements - These will be initialized when DOM is loaded
 let dropArea;
 let fileElem;
@@ -224,106 +229,151 @@ async function handleFiles(files) {
       reader.onload = e => {
         const tr = document.createElement('tr');
         tr.dataset.rowIndex = i + 1;
-        tr.innerHTML = `
-        <td data-label="Select"><input type="checkbox" class="select-image" data-index="${i+1}" checked></td>
-        <td data-label="#">${i+1}</td>
-        <td data-label="Preview">
-          <span class="preview-img-container">
-            <img class="preview" src="${e.target.result}" alt="preview">
-            <span class="magnify-icon" data-img="${e.target.result}">
-              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" stroke="#cde5da" stroke-width="2" fill="none"/><line x1="16.5" y1="16.5" x2="21" y2="21" stroke="#cde5da" stroke-width="2"/></svg>
-            </span>
-          </span>
-        </td>
-        <td data-label="Filename" class="break-words whitespace-normal max-w-[180px] sm:max-w-xs filename-cell">${_selectedFiles[i].filename || file.name}</td>
-        <td data-label="Rename"><button class="rename-btn" data-index="${i+1}">Rename</button></td>
-        <td data-label="Size" class="size-cell">-</td>
-        <td data-label="Actions">
-          <button class="convert-single-btn" data-index="${i+1}">Convert</button>
-          <a class="download-btn ml-2" data-index="${i+1}" style="display: none;">Download</a>
-        </td>`;
+
+        // Select checkbox cell
+        const selectCell = document.createElement('td');
+        selectCell.setAttribute('data-label', 'Select');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'select-image';
+        checkbox.dataset.index = i + 1;
+        checkbox.checked = true;
+        selectCell.appendChild(checkbox);
+        tr.appendChild(selectCell);
+
+        // Index cell
+        const indexCell = document.createElement('td');
+        indexCell.setAttribute('data-label', '#');
+        indexCell.textContent = i + 1;
+        tr.appendChild(indexCell);
+
+        // Preview cell with magnify icon
+        const previewCell = document.createElement('td');
+        previewCell.setAttribute('data-label', 'Preview');
+        const previewContainer = document.createElement('span');
+        previewContainer.className = 'preview-img-container';
+        const img = document.createElement('img');
+        img.className = 'preview';
+        img.src = e.target.result;
+        img.alt = 'preview';
+        const magnifyIcon = document.createElement('span');
+        magnifyIcon.className = 'magnify-icon';
+        magnifyIcon.dataset.img = e.target.result;
+        magnifyIcon.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" stroke="#cde5da" stroke-width="2" fill="none"/><line x1="16.5" y1="16.5" x2="21" y2="21" stroke="#cde5da" stroke-width="2"/></svg>';
+        previewContainer.appendChild(img);
+        previewContainer.appendChild(magnifyIcon);
+        previewCell.appendChild(previewContainer);
+        tr.appendChild(previewCell);
+
+        // Filename cell
+        const filenameCell = document.createElement('td');
+        filenameCell.setAttribute('data-label', 'Filename');
+        filenameCell.className = 'break-words whitespace-normal max-w-[180px] sm:max-w-xs filename-cell';
+        const displayName = sanitizeFilename(_selectedFiles[i].filename || file.name);
+        filenameCell.textContent = displayName;
+        tr.appendChild(filenameCell);
+
+        // Rename cell
+        const renameCell = document.createElement('td');
+        renameCell.setAttribute('data-label', 'Rename');
+        const renameBtn = document.createElement('button');
+        renameBtn.className = 'rename-btn';
+        renameBtn.dataset.index = i + 1;
+        renameBtn.textContent = 'Rename';
+        renameCell.appendChild(renameBtn);
+        tr.appendChild(renameCell);
+
+        // Size cell
+        const sizeCell = document.createElement('td');
+        sizeCell.setAttribute('data-label', 'Size');
+        sizeCell.className = 'size-cell';
+        sizeCell.textContent = '-';
+        tr.appendChild(sizeCell);
+
+        // Actions cell
+        const actionsCell = document.createElement('td');
+        actionsCell.setAttribute('data-label', 'Actions');
+        const convertBtn = document.createElement('button');
+        convertBtn.className = 'convert-single-btn';
+        convertBtn.dataset.index = i + 1;
+        convertBtn.textContent = 'Convert';
+        const downloadBtn = document.createElement('a');
+        downloadBtn.className = 'download-btn ml-2';
+        downloadBtn.dataset.index = i + 1;
+        downloadBtn.style.display = 'none';
+        downloadBtn.textContent = 'Download';
+        actionsCell.appendChild(convertBtn);
+        actionsCell.appendChild(downloadBtn);
+        tr.appendChild(actionsCell);
+
         previewTbody.appendChild(tr);
 
         // Add magnify icon click handler
-        const magnifyIcon = tr.querySelector('.magnify-icon');
-        if (magnifyIcon) {
-          magnifyIcon.addEventListener('click', function() {
-            openImageModal(e.target.result, file.name, i);
-          });
-        }
+        magnifyIcon.addEventListener('click', function() {
+          openImageModal(e.target.result, sanitizeFilename(file.name), i);
+        });
 
         // Make row clickable to toggle checkbox
         tr.style.cursor = 'pointer';
-        tr.addEventListener('click', function(e) {
-          // Don't toggle if clicking on interactive elements
-          if (e.target.tagName === 'BUTTON' || 
-              e.target.tagName === 'A' || 
-              e.target.tagName === 'INPUT' ||
-              e.target.closest('.magnify-icon') ||
-              e.target.tagName === 'SVG' ||
-              e.target.tagName === 'CIRCLE' ||
-              e.target.tagName === 'LINE') {
+        tr.addEventListener('click', function(ev) {
+          if (ev.target.tagName === 'BUTTON' ||
+              ev.target.tagName === 'A' ||
+              ev.target.tagName === 'INPUT' ||
+              ev.target.closest('.magnify-icon') ||
+              ev.target.tagName === 'SVG' ||
+              ev.target.tagName === 'CIRCLE' ||
+              ev.target.tagName === 'LINE') {
             return;
           }
-          
-          // Toggle checkbox
-          const checkbox = this.querySelector('.select-image');
-          if (checkbox) {
-            checkbox.checked = !checkbox.checked;
-            
-            // Trigger change event to update UI
+          const cb = this.querySelector('.select-image');
+          if (cb) {
+            cb.checked = !cb.checked;
             const event = new Event('change', { bubbles: true });
-            checkbox.dispatchEvent(event);
+            cb.dispatchEvent(event);
           }
         });
 
         // Add rename button handler
-        const renameBtn = tr.querySelector('.rename-btn');
-        if (renameBtn) {
-          renameBtn.addEventListener('click', function() {
-            const cell = tr.querySelector('.filename-cell');
-            const currentName = cell.textContent;
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.value = currentName;
-            input.className = 'border rounded px-2 py-1 w-full';
-            input.style.backgroundColor = '#172f37';
-            input.style.color = '#cde5da';
-            input.style.border = '1px solid #cde5da';
-            
-            cell.textContent = '';
-            cell.appendChild(input);
-            input.focus();
-            
-            function saveRename() {
-              const newName = input.value.trim();
-              if (newName && newName !== currentName) {
-                _selectedFiles[i].filename = newName;
-                cell.textContent = newName;
-              } else {
-                cell.textContent = currentName;
-              }
+        renameBtn.addEventListener('click', function() {
+          const cell = tr.querySelector('.filename-cell');
+          const currentName = cell.textContent;
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.value = currentName;
+          input.className = 'border rounded px-2 py-1 w-full';
+          input.style.backgroundColor = '#172f37';
+          input.style.color = '#cde5da';
+          input.style.border = '1px solid #cde5da';
+
+          cell.textContent = '';
+          cell.appendChild(input);
+          input.focus();
+
+          function saveRename() {
+            const newName = sanitizeFilename(input.value.trim());
+            if (newName && newName !== currentName) {
+              _selectedFiles[i].filename = newName;
+              cell.textContent = newName;
+            } else {
+              cell.textContent = currentName;
             }
-            
-            input.addEventListener('blur', saveRename);
-            input.addEventListener('keypress', function(e) {
-              if (e.key === 'Enter') {
-                saveRename();
-              }
-            });
+          }
+
+          input.addEventListener('blur', saveRename);
+          input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+              saveRename();
+            }
           });
-        }
+        });
 
         // Add convert single button handler
-        const convertSingleBtn = tr.querySelector('.convert-single-btn');
-        if (convertSingleBtn) {
-          convertSingleBtn.addEventListener('click', function() {
-            const index = parseInt(this.getAttribute('data-index'), 10) - 1;
-            if (index >= 0 && index < _selectedFiles.length) {
-              processSingleImage(index);
-            }
-          });
-        }
+        convertBtn.addEventListener('click', function() {
+          const index = parseInt(this.getAttribute('data-index'), 10) - 1;
+          if (index >= 0 && index < _selectedFiles.length) {
+            processSingleImage(index);
+          }
+        });
       };
       reader.readAsDataURL(file);
     });
@@ -436,8 +486,9 @@ async function processSingleImage(index) {
     setQuotaInfo(quota);
     updateQuotaStatus();
   } catch (err) {
-    console.error(`Error converting image ${file.name}:`, err);
-    showError(index + 1, file.name, err);
+    const safeName = sanitizeFilename(file.name);
+    console.error(`Error converting image ${safeName}:`, err);
+    showError(index + 1, safeName, err);
     if (convertBtn) convertBtn.textContent = 'Failed';
     if (sizeCell) sizeCell.textContent = 'Error';
   }
@@ -480,7 +531,7 @@ function openImageModal(src, caption, index) {
   allMagnifyIcons.forEach((icon, idx) => {
     galleryImages.push({
       src: icon.getAttribute('data-img'),
-      caption: _selectedFiles[idx]?.name || `Image ${idx + 1}`
+      caption: sanitizeFilename(_selectedFiles[idx]?.filename || _selectedFiles[idx]?.name || `Image ${idx + 1}`)
     });
   });
   
@@ -522,7 +573,7 @@ function setupMagnifyHandlers() {
   document.querySelectorAll('.magnify-icon').forEach((icon, i) => {
     icon.addEventListener('click', function() {
       const img = this.getAttribute('data-img');
-      const filename = _selectedFiles[i]?.name || `Image ${i + 1}`;
+      const filename = sanitizeFilename(_selectedFiles[i]?.filename || _selectedFiles[i]?.name || `Image ${i + 1}`);
       openImageModal(img, filename, i);
     });
   });
@@ -540,7 +591,7 @@ function setupBulkRename() {
   
   // Bulk rename button click handler
   bulkRenameBtn.addEventListener('click', function() {
-    const base = bulkRenameBase.value.trim() || 'Image';
+    const base = sanitizeFilename(bulkRenameBase.value.trim() || 'Image');
     const start = parseInt(bulkRenameStart.value, 10) || 1;
     
     // Get all checkboxes that are checked
@@ -550,7 +601,7 @@ function setupBulkRename() {
       const index = parseInt(checkbox.getAttribute('data-index'), 10) - 1;
       if (index >= 0 && index < _selectedFiles.length) {
         // Create new filename
-        const newName = `${base}_${start + i}`;
+        const newName = sanitizeFilename(`${base}_${start + i}`);
         _selectedFiles[index].filename = newName;
         
         // Update UI
@@ -1262,4 +1313,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   
   console.log('Image conversion app initialized');
-}); 
+});
+
+export { handleFiles, sanitizeFilename };
+export function setPreviewTbody(elem) { previewTbody = elem; }
