@@ -71,7 +71,7 @@
           <div data-auth-required class="flex items-center gap-2" style="display: none;">
             <div class="dropdown dropdown-end relative">
               <button class="btn btn-outline btn-sm dropdown-toggle" aria-label="User menu" aria-expanded="false">
-                <img data-user-info="avatar" class="w-6 h-6 rounded-full mr-2" alt="User avatar" style="display: none;">
+                <img data-user-info="avatar" class="w-6 h-6 rounded-full mr-2 max-w-full h-auto" alt="User avatar" style="display: none;">
                 <span data-user-info="name" class="hidden sm:inline">User</span>
                 <i class="fas fa-chevron-down ml-1"></i>
               </button>
@@ -137,29 +137,29 @@
     <main id="main-content" class="flex-grow">
       <!-- Main Content Area -->
     <h1 class="text-3xl font-bold text-center my-8" style="color: var(--foreground);">Image Conversion Tool</h1>
-    <div id="controls" class="flex flex-wrap justify-center gap-4 mb-8">
-      <div class="bg-white rounded shadow px-3 py-2 flex items-center gap-2">
+    <div id="controls" class="flex flex-col sm:flex-row flex-wrap justify-center gap-4 mb-8">
+      <div class="bg-white rounded shadow px-3 py-2 flex flex-col sm:flex-row items-center gap-2 w-full sm:flex-1">
         <label for="max-width" class="font-medium">Max Width:</label>
-        <input id="max-width" type="number" min="1" max="99999" value="99999" class="w-20 border rounded px-2 py-1 text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+        <input id="max-width" type="number" min="1" max="99999" value="99999" class="w-full sm:flex-1 border rounded px-2 py-1 text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300" />
         <span class="text-gray-500">px</span>
       </div>
-      <div class="bg-white rounded shadow px-3 py-2 flex items-center gap-2">
+      <div class="bg-white rounded shadow px-3 py-2 flex flex-col sm:flex-row items-center gap-2 w-full sm:flex-1">
         <label for="max-height" class="font-medium">Max Height:</label>
-        <input id="max-height" type="number" min="1" max="99999" value="99999" class="w-20 border rounded px-2 py-1 text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+        <input id="max-height" type="number" min="1" max="99999" value="99999" class="w-full sm:flex-1 border rounded px-2 py-1 text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300" />
         <span class="text-gray-500">px</span>
       </div>
-      <div class="bg-white rounded shadow px-3 py-2 flex items-center gap-2">
+      <div class="bg-white rounded shadow px-3 py-2 flex flex-col sm:flex-row items-center gap-2 w-full sm:flex-1">
         <label for="target-size" class="font-medium">Target Size:</label>
-        <input id="target-size" type="number" min="1" value="500" class="w-24 border rounded px-2 py-1 text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300" />
-        <select id="size-unit" class="border rounded px-1 py-1 text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
+        <input id="target-size" type="number" min="1" value="500" class="w-full sm:flex-1 border rounded px-2 py-1 text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+        <select id="size-unit" class="border rounded px-1 py-1 text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 w-full sm:w-auto appearance-none bg-no-repeat bg-right pr-6" style="background-color:var(--background);color:var(--foreground);background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTkgOWwtNyA3LTctNyIvPjwvc3ZnPg==');background-size:1rem;background-position:right 0.5rem center;">
           <option value="KB">KB</option>
           <option value="MB">MB</option>
         </select>
       </div>
     </div>
-    <div id="format-controls" class="flex justify-center mb-4">
-      <label for="output-format" class="font-medium mr-2">Output Format:</label>
-      <select id="output-format" class="border rounded px-2 py-1" style="background-color:var(--background);color:var(--foreground);border:1.5px solid var(--foreground);">
+    <div id="format-controls" class="flex flex-col sm:flex-row justify-center mb-4 items-center gap-2">
+      <label for="output-format" class="font-medium mr-0 sm:mr-2">Output Format:</label>
+      <select id="output-format" class="border rounded px-2 py-1 w-full sm:w-auto appearance-none bg-no-repeat bg-right pr-8" style="background-color:var(--background);color:var(--foreground);border:1.5px solid var(--foreground);background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTkgOWwtNyA3LTctNyIvPjwvc3ZnPg==');background-size:1rem;background-position:right 0.5rem center;">
         <option value="webp">WebP</option>
         <option value="jpeg">JPEG</option>
         <option value="png">PNG</option>
@@ -197,7 +197,7 @@
       </div>
     </div>
     <!-- File Drop Area -->
-    <div id="drop-area" class="border-2 border-dashed border-blue-400 rounded-lg p-8 text-center text-blue-500 mb-8 bg-white shadow hover:shadow-lg transition-shadow cursor-pointer max-w-2xl mx-auto px-4">
+    <div id="drop-area" class="border-2 border-dashed border-blue-400 rounded-lg p-4 sm:p-8 text-center text-blue-500 mb-8 bg-white shadow hover:shadow-lg transition-shadow cursor-pointer max-w-2xl mx-auto px-4">
       <p class="mb-4">Drag & drop your image files here</p>
       <p class="mb-4" style="color: var(--primary); font-size: 0.9rem;">Supports JPEG, PNG, WebP, GIF, AVIF, BMP, TIFF, ICO, HEIC/HEIF and RAW formats (CR2, NEF, ARW, etc)</p>
       <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 10px;">
@@ -290,7 +290,7 @@
 
         <div class="mt-4 flex justify-center">
           <button id="google-login-btn" class="btn w-full flex items-center justify-center gap-2">
-            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5">
+            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5 max-w-full h-auto">
             Continue with Google
           </button>
         </div>
@@ -302,8 +302,8 @@
     </div>
     
     <!-- Download buttons -->
-    <div class="download-btns-responsive mb-6 flex justify-center gap-2 sm:gap-4 flex-wrap" style="display: none;">
-      <a id="download-link" href="#" download="converted_images.zip" class="bg-cde5da text-172f37 hover:bg-transparent hover:text-cde5da border-2 border-cde5da rounded-lg py-2 px-3 sm:py-3 sm:px-6 text-sm sm:text-base font-semibold transition-all">
+    <div class="download-btns-responsive mb-6 flex flex-col sm:flex-row justify-center gap-2 sm:gap-4 flex-wrap" style="display: none;">
+      <a id="download-link" href="#" download="converted_images.zip" class="bg-cde5da text-172f37 hover:bg-transparent hover:text-cde5da border-2 border-cde5da rounded-lg py-2 px-3 sm:py-3 sm:px-6 text-sm sm:text-base font-semibold transition-all w-full sm:w-auto text-center">
         <span style="display: inline-flex; align-items: center; gap: 4px;">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -314,7 +314,7 @@
           <span class="sm:hidden">Download All</span>
         </span>
       </a>
-      <button id="download-selected" class="bg-cde5da text-172f37 hover:bg-transparent hover:text-cde5da border-2 border-cde5da rounded-lg py-2 px-3 sm:py-3 sm:px-6 text-sm sm:text-base font-semibold transition-all">
+      <button id="download-selected" class="bg-cde5da text-172f37 hover:bg-transparent hover:text-cde5da border-2 border-cde5da rounded-lg py-2 px-3 sm:py-3 sm:px-6 text-sm sm:text-base font-semibold transition-all w-full sm:w-auto">
         <span style="display: inline-flex; align-items: center; gap: 4px;">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M22 2v16h-8l-4 4-4-4H2V2z"></path>
@@ -418,7 +418,7 @@
       <button class="close-modal" aria-label="Close" style="position:absolute;top:32px;right:40px;font-size:2.5rem;color:var(--foreground);background:rgba(0,0,0,0.7);border:none;cursor:pointer;width:48px;height:48px;display:flex;align-items:center;justify-content:center;z-index:2;">&times;</button>
       <button id="modal-prev" aria-label="Previous" style="position:absolute;left:32px;top:50%;transform:translateY(-50%);font-size:2.5rem;color:var(--foreground);background:rgba(0,0,0,0.7);border:none;cursor:pointer;width:48px;height:48px;display:flex;align-items:center;justify-content:center;z-index:2;">&#8592;</button>
       <div style="max-width:90vw;max-height:80vh;display:flex;align-items:center;justify-content:center;">
-        <img src="" alt="Preview" style="max-width:90vw;max-height:80vh;border-radius:1.25rem;box-shadow:0 8px 32px rgba(0,0,0,0.25);background:#fff;" />
+        <img src="" alt="Preview" class="max-w-full h-auto" style="max-width:90vw;max-height:80vh;border-radius:1.25rem;box-shadow:0 8px 32px rgba(0,0,0,0.25);background:#fff;" />
       </div>
       <button id="modal-next" aria-label="Next" style="position:absolute;right:32px;top:50%;transform:translateY(-50%);font-size:2.5rem;color:var(--foreground);background:rgba(0,0,0,0.7);border:none;cursor:pointer;width:48px;height:48px;display:flex;align-items:center;justify-content:center;z-index:2;">&#8594;</button>
       <div id="modal-caption" style="margin-top:1.5rem;color:var(--foreground);font-size:1.15rem;text-align:center;max-width:90vw;word-break:break-all;"></div>
