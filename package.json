@@ -13,5 +13,9 @@
   "dependencies": {
     "jest": "^30.0.5",
     "pdf-lib": "^1.17.1"
+  },
+  "devDependencies": {
+    "jsdom": "^26.1.0",
+    "supabase": "^1.191.3"
   }
 }

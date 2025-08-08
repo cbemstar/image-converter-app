@@ -13,9 +13,26 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script type="module" src="styles/theme.js"></script>
-  <script type="module" src="layout.js"></script>
-  <script type="module" src="home.js"></script>
+  <script src="styles/theme.js"></script>
+  <script src="layout.js"></script>
+  <script src="home.js"></script>
+  
+  <!-- Supabase and Authentication -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/auth-manager.js"></script>
+  <script src="js/profile-manager.js"></script>
+  <script src="js/quota-manager.js"></script>
+  <script src="js/file-manager.js"></script>
+  <script src="js/stripe-manager.js"></script>
+  <script src="js/file-upload-component.js"></script>
+  <script src="js/quota-notifications.js"></script>
+  <script src="js/preferences-utils.js"></script>
+  <script src="js/auth-modal.js"></script>
+  <script src="js/auth-guards.js"></script>
+  <script src="js/unified-navigation.js"></script>
+  <script src="js/app-audit.js"></script>
 </head>
 
 <body class="bg-transparent min-h-screen flex flex-col">
@@ -39,6 +56,29 @@
           </a>
         </div>
         <div class="flex items-center gap-2">
+          <!-- Authentication Status -->
+          <div data-guest-only class="flex items-center gap-2">
+            <a href="/auth.html" class="btn btn-outline btn-sm">
+              <i class="fas fa-sign-in-alt mr-1"></i>
+              Sign In
+            </a>
+          </div>
+          
+          <div data-auth-required class="flex items-center gap-2" style="display: none;">
+            <div class="dropdown dropdown-end relative">
+              <button class="btn btn-outline btn-sm dropdown-toggle" aria-label="User menu" aria-expanded="false">
+                <img data-user-info="avatar" class="w-6 h-6 rounded-full mr-2" alt="User avatar" style="display: none;">
+                <span data-user-info="name" class="hidden sm:inline">User</span>
+                <i class="fas fa-chevron-down ml-1"></i>
+              </button>
+              <ul class="dropdown-content menu p-2 shadow bg-background border border-border rounded-lg w-52 absolute right-0 top-full mt-1 z-50" style="display: none;">
+                <li><a href="/dashboard.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded"><i class="fas fa-tachometer-alt"></i>Dashboard</a></li>
+                <li><a href="/profile.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded"><i class="fas fa-user"></i>Profile</a></li>
+                <li><a href="#" id="signOutBtn" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded"><i class="fas fa-sign-out-alt"></i>Sign Out</a></li>
+              </ul>
+            </div>
+          </div>
+          
           <button id="theme-toggle" class="btn btn-outline btn-sm" aria-label="Toggle theme">
             <span id="theme-toggle-icon">🌙</span>
           </button>
@@ -220,6 +260,55 @@
       </div>
     </main>
   </div>
+
+  <script>
+    // Initialize authentication functionality
+    document.addEventListener('DOMContentLoaded', () => {
+      // Handle sign out
+      const signOutBtn = document.getElementById('signOutBtn');
+      if (signOutBtn) {
+        signOutBtn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          if (window.authManager) {
+            try {
+              await window.authManager.signOut();
+            } catch (error) {
+              console.error('Sign out error:', error);
+            }
+          }
+        });
+      }
+
+      // Ensure theme toggle is properly initialized
+      if (window.initializeThemeToggle) {
+        window.initializeThemeToggle();
+      } else {
+        // Fallback theme toggle initialization if theme.js hasn't loaded yet
+        setTimeout(() => {
+          if (window.initializeThemeToggle) {
+            window.initializeThemeToggle();
+          }
+        }, 100);
+      }
+
+      // Add authentication requirement to premium features
+      // This can be expanded as needed for specific tools
+      const premiumTools = document.querySelectorAll('[data-premium="true"]');
+      premiumTools.forEach(tool => {
+        tool.addEventListener('click', (e) => {
+          if (!window.requireAuth) return;
+          
+          if (!window.requireAuth({
+            title: 'Premium Feature',
+            message: 'This tool requires a premium account. Sign in to access advanced features.',
+            feature: 'premium tool'
+          })) {
+            e.preventDefault();
+          }
+        });
+      });
+    });
+  </script>
 </body>
 
 </html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth Redirect Integration Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        input { padding: 8px; margin: 5px; width: 200px; }
+        #test-results { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Authentication Redirect Integration Test</h1>
+    <p>This page tests the enhanced authentication redirect functionality for tool pages.</p>
+    
+    <div class="test-section">
+        <h3>Test Form State Preservation</h3>
+        <input type="text" id="test-input" placeholder="Enter some text" />
+        <input type="number" id="test-number" placeholder="Enter a number" />
+        <select id="test-select">
+            <option value="">Select an option</option>
+            <option value="option1">Option 1</option>
+            <option value="option2">Option 2</option>
+        </select>
+        <input type="file" id="test-file" multiple />
+    </div>
+    
+    <div class="test-section">
+        <h3>Authentication Actions</h3>
+        <button onclick="testStoreRedirect()">Test Store Redirect</button>
+        <button onclick="testPreserveState()">Test Preserve State</button>
+        <button onclick="testRestoreState()">Test Restore State</button>
+        <button onclick="testRequireAuth()">Test Require Auth</button>
+        <button onclick="clearStorage()">Clear Storage</button>
+    </div>
+    
+    <div id="test-results"></div>
+    
+    <!-- Core Dependencies -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/path-resolver.js"></script>
+    <script src="js/auth-manager.js"></script>
+    
+    <script>
+        let testResults = [];
+        
+        function logResult(test, success, message) {
+            testResults.push({ test, success, message, timestamp: new Date().toLocaleTimeString() });
+            updateResultsDisplay();
+        }
+        
+        function updateResultsDisplay() {
+            const resultsDiv = document.getElementById('test-results');
+            resultsDiv.innerHTML = '<h3>Test Results:</h3>' + 
+                testResults.map(result => 
+                    `<div class="test-section ${result.success ? 'success' : 'error'}">
+                        <strong>${result.test}</strong> (${result.timestamp})<br>
+                        ${result.message}
+                    </div>`
+                ).join('');
+        }
+        
+        function testStoreRedirect() {
+            try {
+                if (!window.authManager) {
+                    logResult('Store Redirect', false, 'AuthManager not available');
+                    return;
+                }
+                
+                const currentUrl = window.location.href;
+                window.authManager.storeToolPageForRedirect();
+                
+                const storedUrl = sessionStorage.getItem('auth_redirect');
+                if (storedUrl === currentUrl) {
+                    logResult('Store Redirect', true, `Successfully stored: ${storedUrl}`);
+                } else {
+                    logResult('Store Redirect', false, `Expected: ${currentUrl}, Got: ${storedUrl}`);
+                }
+            } catch (error) {
+                logResult('Store Redirect', false, `Error: ${error.message}`);
+            }
+        }
+        
+        function testPreserveState() {
+            try {
+                if (!window.authManager) {
+                    logResult('Preserve State', false, 'AuthManager not available');
+                    return;
+                }
+                
+                // Set some test values
+                document.getElementById('test-input').value = 'Test Value';
+                document.getElementById('test-number').value = '42';
+                document.getElementById('test-select').value = 'option1';
+                
+                window.authManager.preserveToolPageState();
+                
+                const storedState = sessionStorage.getItem('tool_page_state');
+                if (storedState) {
+                    const state = JSON.parse(storedState);
+                    const hasExpectedValues = state['test-input']?.value === 'Test Value' &&
+                                            state['test-number']?.value === '42' &&
+                                            state['test-select']?.value === 'option1';
+                    
+                    if (hasExpectedValues) {
+                        logResult('Preserve State', true, `Successfully preserved form state: ${Object.keys(state).length} fields`);
+                    } else {
+                        logResult('Preserve State', false, `State preserved but values incorrect: ${JSON.stringify(state)}`);
+                    }
+                } else {
+                    logResult('Preserve State', false, 'No state was preserved');
+                }
+            } catch (error) {
+                logResult('Preserve State', false, `Error: ${error.message}`);
+            }
+        }
+        
+        function testRestoreState() {
+            try {
+                if (!window.authManager) {
+                    logResult('Restore State', false, 'AuthManager not available');
+                    return;
+                }
+                
+                // Clear current values
+                document.getElementById('test-input').value = '';
+                document.getElementById('test-number').value = '';
+                document.getElementById('test-select').value = '';
+                
+                // Set up test state in storage
+                const testState = {
+                    'test-input': { value: 'Restored Value', type: 'text' },
+                    'test-number': { value: '99', type: 'number' },
+                    'test-select': { value: 'option2', type: 'select-one' }
+                };
+                sessionStorage.setItem('tool_page_state', JSON.stringify(testState));
+                
+                window.authManager.restoreToolPageState();
+                
+                const restoredInput = document.getElementById('test-input').value;
+                const restoredNumber = document.getElementById('test-number').value;
+                const restoredSelect = document.getElementById('test-select').value;
+                
+                if (restoredInput === 'Restored Value' && 
+                    restoredNumber === '99' && 
+                    restoredSelect === 'option2') {
+                    logResult('Restore State', true, 'Successfully restored all form values');
+                } else {
+                    logResult('Restore State', false, 
+                        `Values not restored correctly: input="${restoredInput}", number="${restoredNumber}", select="${restoredSelect}"`);
+                }
+                
+                // Check that storage was cleaned up
+                const remainingState = sessionStorage.getItem('tool_page_state');
+                if (remainingState === null) {
+                    logResult('Restore State Cleanup', true, 'Storage cleaned up after restore');
+                } else {
+                    logResult('Restore State Cleanup', false, 'Storage not cleaned up');
+                }
+                
+            } catch (error) {
+                logResult('Restore State', false, `Error: ${error.message}`);
+            }
+        }
+        
+        function testRequireAuth() {
+            try {
+                if (!window.authManager) {
+                    logResult('Require Auth', false, 'AuthManager not available');
+                    return;
+                }
+                
+                // Test when not authenticated
+                const originalUser = window.authManager.currentUser;
+                const originalSession = window.authManager.currentSession;
+                
+                // Temporarily set as not authenticated
+                window.authManager.currentUser = null;
+                window.authManager.currentSession = null;
+                
+                // Mock window.location.href to capture redirect
+                const originalHref = window.location.href;
+                let redirectUrl = null;
+                Object.defineProperty(window.location, 'href', {
+                    set: function(url) { redirectUrl = url; },
+                    get: function() { return originalHref; }
+                });
+                
+                const result = window.authManager.requireAuth();
+                
+                if (result === false && redirectUrl && redirectUrl.includes('auth.html')) {
+                    logResult('Require Auth', true, `Correctly redirected to: ${redirectUrl}`);
+                } else {
+                    logResult('Require Auth', false, `Expected redirect to auth.html, got: ${redirectUrl}`);
+                }
+                
+                // Restore original values
+                window.authManager.currentUser = originalUser;
+                window.authManager.currentSession = originalSession;
+                
+                // Reset location.href
+                Object.defineProperty(window.location, 'href', {
+                    value: originalHref,
+                    writable: true
+                });
+                
+            } catch (error) {
+                logResult('Require Auth', false, `Error: ${error.message}`);
+            }
+        }
+        
+        function clearStorage() {
+            sessionStorage.removeItem('auth_redirect');
+            sessionStorage.removeItem('tool_page_state');
+            logResult('Clear Storage', true, 'Cleared auth_redirect and tool_page_state from sessionStorage');
+        }
+        
+        // Wait for AuthManager to be available
+        function waitForAuthManager() {
+            if (window.authManager) {
+                logResult('Initialization', true, 'AuthManager is available and ready for testing');
+            } else {
+                setTimeout(waitForAuthManager, 100);
+            }
+        }
+        
+        // Start testing when page loads
+        window.addEventListener('load', () => {
+            logResult('Page Load', true, 'Integration test page loaded successfully');
+            waitForAuthManager();
+        });
+    </script>
+</body>
+</html>
