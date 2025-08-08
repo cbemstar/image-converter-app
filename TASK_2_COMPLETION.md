@@ -186,7 +186,7 @@ graph TD
 
 ### Environment Variables
 ```env
-SUPABASE_URL=https://flsgsnupfogaphqdrtqi.supabase.co
+SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_ANON_KEY=your-anon-key
 ```
 

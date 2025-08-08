@@ -13,7 +13,7 @@ class SupabaseClient {
     this.supabaseAnonKey = this.getEnvVar('SUPABASE_ANON_KEY');
     
     if (!this.supabaseUrl || !this.supabaseAnonKey) {
-      console.error('Supabase configuration missing. Please check environment variables.');
+      console.error('Supabase configuration missing: set SUPABASE_URL and SUPABASE_ANON_KEY.');
       return;
     }
 
@@ -40,14 +40,7 @@ class SupabaseClient {
       return process.env[name];
     }
     
-    // For development, you can hardcode values here temporarily
-    // DO NOT commit real credentials to version control
-    const devConfig = {
-      'SUPABASE_URL': 'https://flsgsnupfogaphqdrtqi.supabase.co',
-      'SUPABASE_ANON_KEY': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZsc2dzbnVwZm9nYXBocWRydHFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI5MDU1ODAsImV4cCI6MjA2ODQ4MTU4MH0.tIeLTN7LT9rtKnnPHb18pi4S_jrN0DUZaB0HDhDcyEw'
-    };
-    
-    return devConfig[name];
+    return null;
   }
 
   /**
