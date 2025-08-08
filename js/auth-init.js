@@ -7,12 +7,6 @@
 (function() {
   'use strict';
 
-  // Configuration
-  const AUTH_CONFIG = {
-    supabaseUrl: 'https://flsgsnupfogaphqdrtqi.supabase.co',
-    supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZsc2dzbnVwZm9nYXBocWRydHFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI5MDU1ODAsImV4cCI6MjA2ODQ4MTU4MH0.tIeLTN7LT9rtKnnPHb18pi4S_jrN0DUZaB0HDhDcyEw'
-  };
-
   // Check if already initialized
   if (window.authInitialized) {
     return;
@@ -39,9 +33,6 @@
 
   // Initialize authentication system
   function initializeAuth() {
-    // Set up Supabase configuration
-    window.SUPABASE_CONFIG = AUTH_CONFIG;
-
     // Determine the correct path to JS files based on current location
     const pathDepth = window.location.pathname.split('/').length - 2; // -2 for empty string and filename
     const basePath = '../'.repeat(Math.max(0, pathDepth - 1));
@@ -49,6 +40,7 @@
     // Load required scripts in sequence
     const scripts = [
       'https://unpkg.com/@supabase/supabase-js@2',
+      `${basePath}js/supabase-config.js`,
       `${basePath}js/config.js`,
       `${basePath}js/supabase-client.js`,
       `${basePath}js/auth-manager.js`,
