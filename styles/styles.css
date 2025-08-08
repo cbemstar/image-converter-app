@@ -373,7 +373,7 @@ img.preview {
   }
 
   #controls>div {
-    width: auto;
+    width: 100%;
     justify-content: flex-start;
     padding: var(--spacing-4) var(--spacing-6);
     gap: 0.75rem;
@@ -382,7 +382,7 @@ img.preview {
   #controls input {
     font-size: var(--text-base);
     flex-shrink: 0;
-    width: fit-content;
+    width: 100%;
   }
 
   #controls label {
@@ -423,114 +423,63 @@ img.preview {
     word-break: break-all;
   }
 
-  /* Responsive table for preview-table with improved stacking */
+  /* Responsive table cards */
+  #preview-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
   #preview-table thead {
     display: none;
   }
 
-  #preview-table,
-  #preview-table tbody {
-    display: block;
-    width: 100%;
-  }
-
   #preview-table tr {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    margin-bottom: clamp(1rem, 3vw, 1.5rem);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem 1rem;
+    margin-bottom: 1rem;
     border: 1px solid var(--foreground);
     border-radius: var(--radius);
-    padding: clamp(0.75rem, 2vw, 1rem);
+    padding: 1rem;
     background: rgba(0, 0, 0, 0.9);
-    gap: clamp(0.5rem, 2vw, 1rem);
   }
 
   #preview-table td {
-    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
     padding: 0;
     border: none;
-    position: relative;
-    text-align: left;
-    hyphens: auto;
-    word-wrap: break-word;
   }
 
-  #preview-table td[data-label="Select"],
-  #preview-table td[data-label="#"] {
-    flex: 0 0 auto;
-    min-width: clamp(40px, 10vw, 60px);
-    order: 1;
-  }
-
-  #preview-table td[data-label="Preview"] {
-    flex: 0 0 clamp(80px, 25vw, 120px);
-    order: 3;
-    /* Right side */
-    display: flex;
-    justify-content: flex-end;
-    align-items: flex-start;
-  }
-
-  #preview-table td[data-label="Actions"] {
-    flex: 0 0 clamp(80px, 25vw, 120px);
-    order: 4;
-    /* Below preview on right, but since row is nowrap, adjust */
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-end;
-  }
-
-  #preview-table td[data-label="Filename"],
-  #preview-table td[data-label="Rename"],
-  #preview-table td[data-label="Size"] {
-    flex: 1 1 50%;
-    order: 2;
-    /* Left side */
-    display: flex;
-    flex-direction: column;
-  }
-
-  #preview-table td[data-label="Filename"]::before,
-  #preview-table td[data-label="Rename"]::before,
-  #preview-table td[data-label="Size"]::before {
+  #preview-table td[data-label]::before {
     content: attr(data-label);
     font-weight: 600;
     color: var(--primary);
-    margin-bottom: 0.25rem;
+    margin-right: 0.5rem;
+    flex: 0 0 40%;
   }
 
-  #preview-table td[data-label="Actions"] .convert-single-btn,
-  #preview-table td[data-label="Actions"] .download-btn {
-    padding: clamp(0.5rem, 1.5vw, 0.75rem) clamp(1rem, 3vw, 1.5rem);
-    min-height: 44px;
-    /* Touch-friendly */
-    width: 100%;
-    text-align: center;
+  #preview-table td[data-label="Preview"] {
+    grid-column: span 2;
+    justify-content: center;
+  }
+
+  #preview-table td[data-label="Actions"] {
+    grid-column: span 2;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
   }
 }
 
 @media (max-width: 480px) {
   #preview-table tr {
-    flex-direction: column;
-    /* Stack vertically on small screens */
+    grid-template-columns: 1fr;
   }
 
-  #preview-table td[data-label="Preview"] {
-    order: 1;
-    justify-content: center;
-  }
-
+  #preview-table td[data-label="Preview"],
   #preview-table td[data-label="Actions"] {
-    order: 5;
-    align-items: center;
-  }
-
-  #preview-table td[data-label="Filename"],
-  #preview-table td[data-label="Rename"],
-  #preview-table td[data-label="Size"] {
-    order: 3;
+    grid-column: span 1;
   }
 }
 
