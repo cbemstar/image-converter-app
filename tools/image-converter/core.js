@@ -81,13 +81,21 @@ let closeModalBtn;
 let galleryImages = [];
 let galleryIndex = 0;
 
-// Supabase config (replace with your own project keys)
-const SUPABASE_URL = 'https://ggadqklbeiyccnqzwiac.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdnYWRxa2xiZWl5Y2NucXp3aWFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3ODMwMjQsImV4cCI6MjA2NzM1OTAyNH0.w7PNMVWoyP514d55j1g-yE4aZG7QP_1BfyCT8fphQEY';
+// Supabase config loaded from environment variables or runtime config
+const SUPABASE_URL =
+  (window.SUPABASE_CONFIG && window.SUPABASE_CONFIG.SUPABASE_URL) ||
+  (typeof process !== 'undefined' ? process.env.SUPABASE_URL : undefined);
+const SUPABASE_ANON_KEY =
+  (window.SUPABASE_CONFIG && window.SUPABASE_CONFIG.SUPABASE_ANON_KEY) ||
+  (typeof process !== 'undefined' ? process.env.SUPABASE_ANON_KEY : undefined);
 let supabase;
 
 // Initialize Supabase if available
 function initSupabase() {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    console.error('Supabase credentials are missing. Set SUPABASE_URL and SUPABASE_ANON_KEY.');
+    return false;
+  }
   if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
     const { createClient } = window.supabase;
     supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);

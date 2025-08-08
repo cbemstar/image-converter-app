@@ -2,3 +2,7 @@ node_modules/
 .DS_Store
 
 .vscode/
+
+# Environment and generated config
+.env.local
+js/supabase-config.js
