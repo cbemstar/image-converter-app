@@ -138,6 +138,22 @@
       <!-- Main Content Area -->
     <h1 class="text-3xl font-bold text-center my-8" style="color: var(--foreground);">Image Conversion Tool</h1>
     <div id="controls" class="flex flex-col sm:flex-row flex-wrap justify-center gap-4 mb-8">
+
+      <div class="bg-white rounded shadow px-3 py-2 flex flex-col sm:flex-row items-center gap-2 w-full sm:flex-1">
+        <label for="max-width" class="font-medium">Max Width:</label>
+        <input id="max-width" type="number" min="1" max="99999" value="99999" class="w-full sm:flex-1 border rounded px-2 py-1 text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+        <span class="text-gray-500">px</span>
+      </div>
+      <div class="bg-white rounded shadow px-3 py-2 flex flex-col sm:flex-row items-center gap-2 w-full sm:flex-1">
+        <label for="max-height" class="font-medium">Max Height:</label>
+        <input id="max-height" type="number" min="1" max="99999" value="99999" class="w-full sm:flex-1 border rounded px-2 py-1 text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+        <span class="text-gray-500">px</span>
+      </div>
+      <div class="bg-white rounded shadow px-3 py-2 flex flex-col sm:flex-row items-center gap-2 w-full sm:flex-1">
+        <label for="target-size" class="font-medium">Target Size:</label>
+        <input id="target-size" type="number" min="1" value="500" class="w-full sm:flex-1 border rounded px-2 py-1 text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+        <select id="size-unit" class="border rounded px-1 py-1 text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 w-full sm:w-auto appearance-none bg-no-repeat bg-right pr-6" style="background-color:var(--background);color:var(--foreground);background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTkgOWwtNyA3LTctNyIvPjwvc3ZnPg==');background-size:1rem;background-position:right 0.5rem center;">
+
       <div class="bg-white rounded shadow px-3 py-2 flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
         <label for="max-width" class="font-medium">Max Width:</label>
         <input id="max-width" type="number" min="1" max="99999" value="99999" class="w-full sm:w-20 border rounded px-2 py-1 text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300" />
@@ -152,6 +168,7 @@
         <label for="target-size" class="font-medium">Target Size:</label>
         <input id="target-size" type="number" min="1" value="500" class="w-full sm:w-24 border rounded px-2 py-1 text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300" />
         <select id="size-unit" class="border rounded px-1 py-1 text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 w-full sm:w-auto">
+
           <option value="KB">KB</option>
           <option value="MB">MB</option>
         </select>
@@ -159,7 +176,11 @@
     </div>
     <div id="format-controls" class="flex flex-col sm:flex-row justify-center mb-4 items-center gap-2">
       <label for="output-format" class="font-medium mr-0 sm:mr-2">Output Format:</label>
+
+      <select id="output-format" class="border rounded px-2 py-1 w-full sm:w-auto appearance-none bg-no-repeat bg-right pr-8" style="background-color:var(--background);color:var(--foreground);border:1.5px solid var(--foreground);background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTkgOWwtNyA3LTctNyIvPjwvc3ZnPg==');background-size:1rem;background-position:right 0.5rem center;">
+
       <select id="output-format" class="border rounded px-2 py-1 w-full sm:w-auto" style="background-color:var(--background);color:var(--foreground);border:1.5px solid var(--foreground);">
+
         <option value="webp">WebP</option>
         <option value="jpeg">JPEG</option>
         <option value="png">PNG</option>
