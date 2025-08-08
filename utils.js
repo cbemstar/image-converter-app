@@ -14,7 +14,7 @@ export function showNotification(message, type = 'info') {
     notifContainer.style.maxWidth = '300px';
     document.body.appendChild(notifContainer);
   }
-  
+
   // Create notification element
   const notif = document.createElement('div');
   notif.className = 'notification';
@@ -29,21 +29,36 @@ export function showNotification(message, type = 'info') {
   notif.style.display = 'flex';
   notif.style.alignItems = 'center';
   notif.style.justifyContent = 'space-between';
-  
+
   // Add icon based on type
   const icon = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
-  
-  // Add content
-  notif.innerHTML = `
-    <div style="display:flex;align-items:center;">
-      <span style="margin-right:8px;font-size:16px;">${icon}</span>
-      <span>${message}</span>
-    </div>
-    <button style="background:none;border:none;color:#cde5da;cursor:pointer;font-size:16px;margin-left:10px;">×</button>
-  `;
-  
+
+  // Build content elements
+  const content = document.createElement('div');
+  content.style.display = 'flex';
+  content.style.alignItems = 'center';
+
+  const iconSpan = document.createElement('span');
+  iconSpan.style.marginRight = '8px';
+  iconSpan.style.fontSize = '16px';
+  iconSpan.textContent = icon;
+
+  const messageSpan = document.createElement('span');
+  messageSpan.textContent = message;
+
+  content.appendChild(iconSpan);
+  content.appendChild(messageSpan);
+
+  const closeBtn = document.createElement('button');
+  closeBtn.style.background = 'none';
+  closeBtn.style.border = 'none';
+  closeBtn.style.color = '#cde5da';
+  closeBtn.style.cursor = 'pointer';
+  closeBtn.style.fontSize = '16px';
+  closeBtn.style.marginLeft = '10px';
+  closeBtn.textContent = '×';
+
   // Add close button functionality
-  const closeBtn = notif.querySelector('button');
   closeBtn.addEventListener('click', () => {
     notif.style.opacity = '0';
     setTimeout(() => {
@@ -52,17 +67,20 @@ export function showNotification(message, type = 'info') {
       }
     }, 300);
   });
-  
+
+  notif.appendChild(content);
+  notif.appendChild(closeBtn);
+
   // Add to container
   notifContainer.appendChild(notif);
-  
+
   // Add animation
   notif.style.transition = 'opacity 0.3s ease';
   notif.style.opacity = '0';
   setTimeout(() => {
     notif.style.opacity = '1';
   }, 10);
-  
+
   // Auto-remove after 5 seconds
   setTimeout(() => {
     if (notif.parentNode) {
@@ -80,11 +98,22 @@ export function showNotification(message, type = 'info') {
 export function showError(index, filename, err) {
   const previewTbody = document.getElementById('preview-tbody');
   if (!previewTbody) return;
-  
+
   const tr = document.createElement('tr');
   tr.classList.add('error-row');
-  tr.innerHTML = `
-    <td colspan="7" class="py-2 px-4 text-left break-words">❌ <strong>${filename}</strong> – ${err && err.message ? err.message : err}</td>`;
+
+  const td = document.createElement('td');
+  td.colSpan = 7;
+  td.className = 'py-2 px-4 text-left break-words';
+
+  const strong = document.createElement('strong');
+  strong.textContent = filename;
+
+  td.appendChild(document.createTextNode('❌ '));
+  td.appendChild(strong);
+  td.appendChild(document.createTextNode(' – ' + (err && err.message ? err.message : err)));
+
+  tr.appendChild(td);
   previewTbody.appendChild(tr);
 }
 
