@@ -7,7 +7,7 @@ class ToolIntegration {
   constructor(toolConfig = {}) {
     this.toolName = toolConfig.name || this.detectToolName();
     this.toolType = toolConfig.type || 'utility';
-    this.requiresAuth = toolConfig.requiresAuth !== false; // Default to true
+    this.requiresAuth = toolConfig.requiresAuth === true; // Default to false
     this.quotaType = toolConfig.quotaType || 'conversions';
     this.trackUsage = toolConfig.trackUsage !== false; // Default to true
     
@@ -28,7 +28,7 @@ class ToolIntegration {
       // Wait for core managers to be available
       await this.waitForManagers();
       
-      // Set up authentication check
+      // Set up authentication check only if explicitly required
       if (this.requiresAuth) {
         this.setupAuthenticationCheck();
       }
@@ -99,13 +99,7 @@ class ToolIntegration {
    */
   setupAuthenticationCheck() {
     if (!this.authManager) return;
-    
-    // Check if user is authenticated
-    if (!this.authManager.isAuthenticated()) {
-      this.showAuthPrompt();
-      return;
-    }
-    
+
     // Listen for auth state changes
     this.authManager.addAuthStateListener((event, session) => {
       if (event === 'SIGNED_OUT') {
@@ -114,9 +108,11 @@ class ToolIntegration {
         this.handleSignIn(session);
       }
     });
-    
-    // Show user info in tool
-    this.displayUserInfo();
+
+    // Show user info if already signed in
+    if (this.authManager.isAuthenticated()) {
+      this.displayUserInfo();
+    }
   }
 
   /**
@@ -235,16 +231,9 @@ class ToolIntegration {
    * Handle user sign out
    */
   handleSignOut() {
-    // Show auth prompt again if required
-    if (this.requiresAuth) {
-      setTimeout(() => {
-        this.showAuthPrompt();
-      }, 1000);
-    }
-    
     // Clear user info
     this.clearUserInfo();
-    
+
     // Track sign out
     this.trackEvent('user_signed_out', { tool: this.toolName });
   }
