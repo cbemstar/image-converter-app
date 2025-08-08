@@ -1065,6 +1065,14 @@ function setupEventListeners() {
     // Convert button click handler
     if (convertImagesBtn) {
       convertImagesBtn.addEventListener('click', async () => {
+        // Check quota before processing
+        if (window.toolIntegration) {
+          const canProceed = await window.toolIntegration.checkQuota('conversion');
+          if (!canProceed) {
+            return; // Quota exceeded, error already shown
+          }
+        }
+        
         // Get selected files
         const selectedIndices = [];
         document.querySelectorAll('.select-image:checked').forEach(checkbox => {
@@ -1090,6 +1098,14 @@ function setupEventListeners() {
           return;
         }
         
+        // Track tool usage
+        if (window.toolIntegration) {
+          window.toolIntegration.trackToolUsage('conversion_started', {
+            file_count: filesToProcess.length,
+            output_format: outputFormatInput.value
+          });
+        }
+        
         // Get conversion parameters
         const maxW = parseInt(maxWidthInput.value, 10) || 99999;
         const maxH = parseInt(maxHeightInput.value, 10) || 99999;
@@ -1097,8 +1113,34 @@ function setupEventListeners() {
         const targetBytes = (sizeUnitSelect.value === 'MB' ? sizeVal * 1024 * 1024 : sizeVal * 1024);
         const format = outputFormatInput.value;
 
-        // Process images
-        await processImages(filesToProcess, maxW, maxH, targetBytes, format);
+        try {
+          // Process images
+          await processImages(filesToProcess, maxW, maxH, targetBytes, format);
+          
+          // Track successful conversion
+          if (window.toolIntegration) {
+            window.toolIntegration.trackToolUsage('conversion_completed', {
+              file_count: filesToProcess.length,
+              output_format: format
+            });
+          }
+        } catch (error) {
+          // Handle and track errors
+          if (window.handleError) {
+            window.handleError(error, {
+              tool: 'image-converter',
+              operation: 'conversion',
+              file_count: filesToProcess.length
+            });
+          }
+          
+          if (window.toolIntegration) {
+            window.toolIntegration.trackToolUsage('conversion_failed', {
+              file_count: filesToProcess.length,
+              error: error.message
+            });
+          }
+        }
       });
     }
   }
@@ -1207,6 +1249,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupFaqs();
   setupLoginModal();
   setupAuth();
+  
+  // Initialize tool integration
+  if (window.initializeToolIntegration) {
+    window.initializeToolIntegration({
+      name: 'image-converter',
+      type: 'conversion',
+      requiresAuth: false, // Allow guest usage but encourage sign up
+      quotaType: 'conversions',
+      trackUsage: true
+    });
+  }
   
   console.log('Image conversion app initialized');
 }); 

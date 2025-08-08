@@ -64,6 +64,47 @@
   margin-bottom: 0.5rem;
 }
 
+/* --- Consistent Button Hover States --- */
+.btn,
+button,
+#theme-toggle,
+#sidebar-toggle,
+#sidebar-close,
+#mobile-menu-button {
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn:hover,
+button:hover,
+#theme-toggle:hover,
+#sidebar-toggle:hover,
+#sidebar-close:hover,
+#mobile-menu-button:hover {
+  background-color: var(--muted) !important;
+  border-color: var(--border) !important;
+}
+
+.btn-outline:hover {
+  background-color: var(--muted) !important;
+  color: var(--foreground) !important;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary) !important;
+  opacity: 0.9;
+}
+
+/* Dropdown and menu hovers */
+.dropdown-content a:hover,
+.menu li a:hover {
+  background-color: var(--muted) !important;
+}
+
+/* Navigation link hovers */
+nav a:hover {
+  color: var(--primary) !important;
+}
+
 /* --- End Global Button, Input, and Label Styles --- */
 @tailwind base;
 @tailwind components;
@@ -900,4 +941,162 @@ tr.error-row td {
   position: fixed;
   top: 0;
   bottom: 0;
+}
+
+/* Navigation and Dropdown Fixes */
+nav .flex.items-center.gap-2 {
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Dropdown styling */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  background-color: var(--background);
+  color: var(--foreground);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dropdown-toggle:hover {
+  background-color: var(--muted);
+  border-color: var(--border);
+}
+
+.dropdown-content {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  min-width: 200px;
+  z-index: 1000;
+  padding: 0.5rem 0;
+  margin-top: 0.25rem;
+}
+
+.dropdown-content a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  color: var(--foreground);
+  text-decoration: none;
+  transition: background-color 0.2s;
+  border-radius: 0.25rem;
+  margin: 0 0.25rem;
+}
+
+.dropdown-content a:hover {
+  background-color: var(--muted);
+}
+
+/* User avatar styling */
+[data-user-info="avatar"] {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Theme toggle alignment */
+#theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  background-color: var(--background);
+  color: var(--foreground);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#theme-toggle:hover {
+  background-color: var(--muted);
+}
+
+#theme-toggle-icon {
+  font-size: 1rem;
+}
+
+/* Sign in button styling */
+[data-guest-only] a {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  background-color: var(--background);
+  color: var(--foreground);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+[data-guest-only] a:hover {
+  background-color: var(--muted);
+}
+
+/* Responsive navigation */
+@media (max-width: 640px) {
+  [data-user-info="name"] {
+    display: none !important;
+  }
+  
+  .dropdown-content {
+    right: 0;
+    left: auto;
+    min-width: 180px;
+  }
+}
+
+/* Fix button alignment issues */
+.btn-sm {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  border-radius: 0.375rem;
+}
+
+.btn-outline {
+  border: 1px solid var(--border);
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+.btn-outline:hover {
+  background-color: var(--muted);
+  border-color: var(--border);
+}
+
+/* Ensure consistent spacing */
+nav .flex.justify-between {
+  align-items: center;
+}
+
+nav .flex.items-center {
+  align-items: center;
+}
+
+/* Fix any z-index issues */
+.dropdown-content {
+  z-index: 9999;
 }

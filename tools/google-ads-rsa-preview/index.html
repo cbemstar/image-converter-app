@@ -1,6 +1,7 @@
 <!-- google-ads-rsa-preview/index.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -25,8 +26,22 @@
   <link rel="stylesheet" href="../../styles/styles.css" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <script type="module" src="../../styles/theme.js"></script>
+  <script src="../../styles/theme.js"></script>
   <script type="module" src="../../layout.js"></script>
+
+  <!-- Core Dependencies -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="../../js/config.js"></script>
+  <script src="../../js/supabase-client.js"></script>
+  <script src="../../js/path-resolver.js"></script>
+  <script src="../../js/auth-manager.js"></script>
+  <script src="../../js/auth-state-sync.js"></script>
+  <script src="../../js/quota-manager.js"></script>
+  <script src="../../js/analytics-manager.js"></script>
+  <script src="../../js/error-handler.js"></script>
+  <script src="../../js/tool-integration.js"></script>
+  <script src="../../js/unified-navigation.js"></script>
+  <script src="../../js/auto-navigation.js"></script>
 
   <!-- THEME INIT -->
   <script>
@@ -40,39 +55,122 @@
   <style>
     /* ------- GENERAL UTILS ------- */
     .btn {
-      @apply inline-flex items-center justify-center gap-2 rounded font-medium text-sm px-4 py-2 transition border border-transparent whitespace-nowrap; }
-    .btn-primary { @apply bg-primary text-primary-foreground hover:bg-primary/90; }
-    .btn-secondary { @apply bg-secondary text-secondary-foreground hover:bg-secondary/80; }
-    .btn-destructive { @apply bg-destructive text-destructive-foreground hover:bg-destructive/90; }
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      border-radius: 0.375rem;
+      font-weight: 500;
+      font-size: 0.875rem;
+      padding: 0.5rem 1rem;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+      white-space: nowrap;
+      cursor: pointer;
+    }
 
-    .card { @apply bg-card border border-border rounded shadow-sm; }
-    .input { @apply w-full bg-background border border-input rounded px-4 py-3 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-ring; }
-    .char-counter { @apply text-xs text-muted-foreground text-right font-medium mt-1; }
+    .btn-primary {
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary);
+      opacity: 0.9;
+    }
+
+    .btn-secondary {
+      background-color: var(--secondary);
+      color: var(--secondary-foreground);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--secondary);
+      opacity: 0.8;
+    }
+
+    .btn-destructive {
+      background-color: var(--destructive);
+      color: var(--destructive-foreground);
+    }
+
+    .btn-destructive:hover {
+      background-color: var(--destructive);
+      opacity: 0.9;
+    }
+
+    .card {
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 0.375rem;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    }
+
+    .input {
+      width: 100%;
+      background-color: var(--background);
+      border: 1px solid var(--input);
+      border-radius: 0.375rem;
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+      color: var(--foreground);
+    }
+
+    .input::placeholder {
+      color: var(--muted-foreground);
+    }
+
+    .input:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+      border-color: #3b82f6;
+    }
+
+    .char-counter {
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+      text-align: right;
+      font-weight: 500;
+      margin-top: 0.25rem;
+    }
 
     /* ------- HEADER ------- */
     .header {
-      background: linear-gradient(135deg, oklch(var(--primary)) 0%, oklch(var(--primary)/0.8) 100%);
-      color: oklch(var(--primary-foreground));
-      padding: var(--space-12) var(--space-8) var(--space-8);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary) 100%);
+      color: var(--primary-foreground);
+      padding: 3rem 2rem 2rem;
       position: relative;
     }
+
     .header::before {
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, oklch(var(--primary)/0.1) 0%, oklch(var(--accent)/0.1) 100%);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
       pointer-events: none;
     }
 
     /* ------- PREVIEW ELEMENTS ------- */
-    .preview-tab { @apply bg-transparent text-muted-foreground flex-1 rounded-md py-2 px-4 cursor-pointer font-medium text-sm transition; border:none; }
-    .preview-tab.active { @apply bg-background text-foreground shadow; }
+    .preview-tab {
+      background-color: transparent;
+      color: var(--muted-foreground);
+      flex: 1;
+      border-radius: 0.375rem;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.875rem;
+      transition: all 0.2s;
+      border: none;
+    }
 
-    .ad-preview-row { position:relative; display:flex; gap:var(--space-6); align-items:flex-start; }
-    .ad-preview-text { flex:1; min-width:0; padding-right:calc(72px + var(--space-6)); }
-    .ad-image { width:72px; height:72px; object-fit:cover; background:oklch(var(--muted)); border:1.5px solid oklch(var(--border)); border-radius:12px; position:absolute; top:0; right:0; }
-    @media(max-width:768px){ .ad-preview-row{flex-direction:column; padding-right:0;} .ad-image{position:static; width:100%; height:180px; border-radius:16px; margin-bottom:var(--space-4);} }
+    .preview-tab.active {
+      background-color: var(--background);
+      color: var(--foreground);
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    }
 
+<<<<<<< HEAD
     /* mimic Google ads appearance */
     .ad-sponsored-row { font-size:0.875rem; color:#4d5156; margin-bottom:0.25rem; display:flex; gap:0.25rem; align-items:center; }
     .ad-sponsored-row span:first-child { color:#202124; font-weight:600; }
@@ -93,52 +191,268 @@
     .validation-icon.valid { color:#10b981; }
     .validation-icon.invalid { color: hsl(var(--destructive)); }
     .validation-icon.warning { color:#f59e0b; }
+=======
+    .ad-preview-row {
+      position: relative;
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-start;
+    }
+>>>>>>> 40058ad (Sign-in Dasboard)
 
+    .ad-preview-text {
+      flex: 1;
+      min-width: 0;
+      padding-right: calc(72px + 1.5rem);
+    }
+
+    .ad-image {
+      width: 72px;
+      height: 72px;
+      object-fit: cover;
+      background: var(--muted);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+
+    @media(max-width:768px) {
+      .ad-preview-row {
+        flex-direction: column;
+        padding-right: 0;
+      }
+
+      .ad-image {
+        position: static;
+        width: 100%;
+        height: 180px;
+        border-radius: 16px;
+        margin-bottom: 1rem;
+      }
+    }
+
+    .validation-summary {
+      background-color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 0.375rem;
+      padding: 1.5rem;
+      font-size: 0.875rem;
+      margin-top: 1.5rem;
+    }
+
+    .validation-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .validation-icon {
+      font-weight: 600;
+    }
+
+    .validation-icon.valid {
+      color: #10b981;
+    }
+
+    .validation-icon.invalid {
+      color: hsl(var(--destructive));
+    }
+
+    .validation-icon.warning {
+      color: #f59e0b;
+    }
+
+    /* Additional button styles for consistency */
+    .btn-outline {
+      background-color: transparent;
+      border: 1px solid var(--border);
+      color: var(--foreground);
+    }
+
+    .btn-outline:hover {
+      background-color: var(--muted);
+    }
+
+    .btn-sm {
+      padding: 0.375rem 0.75rem;
+      font-size: 0.75rem;
+    }
+
+    /* Ad preview styles */
+    .ad-sponsored-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+      margin-bottom: 0.5rem;
+    }
+
+    .ad-sponsored-dot {
+      color: var(--muted-foreground);
+    }
+
+    .ad-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #1a0dab;
+      line-height: 1.3;
+    }
+
+    .ad-description {
+      color: var(--muted-foreground);
+      line-height: 1.4;
+    }
+
+    .ad-extensions {
+      font-size: 0.875rem;
+    }
+
+    .sitelink {
+      color: #1a0dab;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .callout {
+      color: var(--foreground);
+    }
+
+    .structured-snippet {
+      color: var(--foreground);
+    }
+
+    .call-extension a {
+      color: #1a0dab;
+      text-decoration: none;
+    }
+
+    /* Ad strength indicator */
+    .ad-strength {
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .ad-strength.poor {
+      background-color: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+    }
+
+    .ad-strength.average {
+      background-color: #fffbeb;
+      color: #d97706;
+      border: 1px solid #fed7aa;
+    }
+
+    .ad-strength.good {
+      background-color: #f0fdf4;
+      color: #16a34a;
+      border: 1px solid #bbf7d0;
+    }
+
+    .ad-strength.excellent {
+      background-color: #ecfdf5;
+      color: #059669;
+      border: 1px solid #a7f3d0;
+    }
   </style>
 </head>
+
 <body data-slug="google-ads-rsa-preview" class="bg-transparent min-h-screen flex flex-col">
+  <a href="#main-content" class="sr-only focus:not-sr-only absolute left-2 top-2 bg-background text-foreground p-2 z-50">Skip to main content</a>
 
   <!-- Google Tag Manager (noscript) -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0"
+      style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
 
   <!-- NAVBAR -->
-  <nav class="bg-background shadow-md border-b border-border">
+  <nav class="bg-background shadow-md border-b border-border" role="navigation" aria-label="Main navigation">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
         <div class="flex items-center gap-4">
-          <button id="sidebar-toggle" class="btn btn-outline btn-sm" aria-label="Open sidebar"><i class="fas fa-bars"></i></button>
-          <a href="../../index.html" class="flex items-center gap-2"><span class="text-foreground text-xl font-bold">reformately</span></a>
+          <button id="sidebar-toggle" class="btn btn-outline btn-sm" aria-label="Open sidebar" aria-controls="sidebar" aria-expanded="false">
+            <i class="fas fa-bars"></i>
+          </button>
+          <a href="../../index.html" class="flex items-center gap-2">
+            <span class="text-foreground text-xl font-bold">reformately</span>
+          </a>
         </div>
-        <div class="flex items-center gap-2"><button id="theme-toggle" class="btn btn-outline btn-sm" aria-label="Toggle theme"><span id="theme-toggle-icon">🌙</span></button></div>
+        <div class="flex items-center gap-2">
+          <!-- Guest User -->
+          <div data-guest-only class="flex items-center gap-2">
+            <a href="../../auth.html" class="btn btn-outline btn-sm" data-nav-link="auth">
+              <i class="fas fa-sign-in-alt mr-1"></i>
+              Sign In
+            </a>
+          </div>
+          
+          <!-- Authenticated User -->
+          <div data-auth-required class="flex items-center gap-2" style="display: none;">
+            <div class="dropdown dropdown-end relative">
+              <button class="btn btn-outline btn-sm dropdown-toggle" aria-label="User menu" aria-expanded="false">
+                <img data-user-info="avatar" class="w-6 h-6 rounded-full mr-2" alt="User avatar" style="display: none;">
+                <span data-user-info="name" class="hidden sm:inline">User</span>
+                <i class="fas fa-chevron-down ml-1"></i>
+              </button>
+              <ul class="dropdown-content menu p-2 shadow bg-background border border-border rounded-lg w-52 absolute right-0 top-full mt-1 z-50" style="display: none;" role="menu">
+                <li role="none"><a href="../../dashboard.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded" data-nav-link="dashboard" data-dashboard-access="true" role="menuitem"><i class="fas fa-tachometer-alt"></i>Dashboard</a></li>
+                <li role="none"><a href="../../profile.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded" data-nav-link="profile" role="menuitem"><i class="fas fa-user"></i>Profile</a></li>
+                <li role="none"><a href="#" data-action="signout" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded" role="menuitem"><i class="fas fa-sign-out-alt"></i>Sign Out</a></li>
+              </ul>
+            </div>
+          </div>
+          
+          <button id="theme-toggle" class="btn btn-outline btn-sm" aria-label="Toggle theme">
+            <span id="theme-toggle-icon">🌙</span>
+          </button>
+        </div>
       </div>
     </div>
   </nav>
 
   <!-- SIDEBAR -->
   <div class="flex flex-grow">
-    <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 hidden z-30"></div>
-    <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-background border-r border-border/20 p-4 transform -translate-x-full transition-transform z-40 overflow-y-auto overscroll-contain">
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
+    <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-background border-r border-border/20 p-4 transform -translate-x-full transition-transform z-40" role="complementary" aria-label="Sidebar" tabindex="-1">
       <div class="flex justify-between items-center mb-4">
-        <span class="text-xl font-bold text-foreground">reformately</span>
-        <button id="sidebar-close" class="btn btn-outline btn-sm" aria-label="Close sidebar"><i class="fas fa-times"></i></button>
+        <a href="../../index.html" class="text-xl font-bold text-foreground">reformately</a>
+        <button id="sidebar-close" class="btn btn-outline btn-sm" aria-label="Close sidebar">
+          <i class="fas fa-times"></i>
+        </button>
       </div>
-      <input id="tool-search" type="text" placeholder="Search" class="input mb-4" />
-      <ul id="tool-list" class="space-y-2 text-foreground text-sm">
-        <li><a href="../image-converter/index.html" class="hover:text-primary">Image Converter</a></li>
-        <li><a href="../background-remover/index.html" class="hover:text-primary">Background Remover</a></li>
-        <li><a href="../google-ads-rsa-preview/index.html" class="hover:text-primary">Google Ads RSA Preview</a></li>
-        <li><a href="../campaign-structure/index.html" class="hover:text-primary">Campaign Structure</a></li>
-        <li><a href="../bulk-match-editor/index.html" class="hover:text-primary">Bulk Match Type Editor</a></li>
-        <li><a href="../json-formatter/index.html" class="hover:text-primary">JSON Formatter</a></li>
-        <li><a href="../color-palette/index.html" class="hover:text-primary">Colour Palette Extractor</a></li>
-        <li><a href="../pdf-merger/index.html" class="hover:text-primary">PDF Merger</a></li>
-        <li><a href="../pdf-ocr/index.html" class="hover:text-primary">PDF OCR</a></li>
-        <li><a href="../meta-tag-generator/index.html" class="hover:text-primary">Meta Tag Generator</a></li>
-        <li><a href="../layout-tool/index.html" class="hover:text-primary">Layout Generator</a></li>
-        <li><a href="#" class="hover:text-primary">More coming soon</a></li>
+      <h2 class="text-lg font-bold mb-4 text-foreground">Tools</h2>
+      <label for="tool-search" class="sr-only">Search tools</label>
+      <input id="tool-search" type="text" placeholder="Search" class="input w-full mb-4" />
+      <ul id="tool-list" class="space-y-2" role="list">
+        <li><a href="../image-converter/index.html" class="text-foreground hover:text-primary">Image Converter</a></li>
+        <li><a href="../background-remover/index.html" class="text-foreground hover:text-primary">Background Remover</a></li>
+        <li><a href="../google-ads-rsa-preview/index.html" class="text-foreground hover:text-primary">Google Ads RSA Preview</a></li>
+        <li><a href="../campaign-structure/index.html" class="text-foreground hover:text-primary">Campaign Structure</a></li>
+        <li><a href="../bulk-match-editor/index.html" class="text-foreground hover:text-primary">Bulk Match Type Editor</a></li>
+        <li><a href="../json-formatter/index.html" class="text-foreground hover:text-primary">JSON Formatter</a></li>
+        <li><a href="../color-palette/index.html" class="text-foreground hover:text-primary">Colour Palette Extractor</a></li>
+        <li><a href="../pdf-merger/index.html" class="text-foreground hover:text-primary">PDF Merger</a></li>
+        <li><a href="../pdf-ocr/index.html" class="text-foreground hover:text-primary">PDF OCR</a></li>
+        <li><a href="../meta-tag-generator/index.html" class="text-foreground hover:text-primary">Meta Tag Generator</a></li>
+        <li><a href="../layout-tool/index.html" class="text-foreground hover:text-primary">Layout Generator</a></li>
+        <li><a href="../qr-generator/index.html" class="text-foreground hover:text-primary">QR Code Generator</a></li>
+        <li><a href="../utm-builder/index.html" class="text-foreground hover:text-primary">UTM Builder</a></li>
+        <li><a href="../uuid-generator/index.html" class="text-foreground hover:text-primary">UUID Generator</a></li>
+        <li><a href="../text-case-converter/index.html" class="text-foreground hover:text-primary">Text Case Converter</a></li>
+        <li><a href="../timestamp-converter/index.html" class="text-foreground hover:text-primary">Timestamp Converter</a></li>
+        <li><a href="../robots-txt/index.html" class="text-foreground hover:text-primary">Robots.txt Generator</a></li>
+        <li><a href="#" class="text-foreground hover:text-primary">More coming soon</a></li>
       </ul>
-      <div class="mt-6 pt-6 border-t border-border/20"><a href="../request-tool/index.html" class="text-foreground hover:text-primary">Request a Tool</a></div>
+      <div class="mt-6 pt-6 border-t border-border/20">
+        <a href="../request-tool/index.html" class="text-foreground hover:text-primary">Request a Tool</a>
+      </div>
     </aside>
 
     <!-- MAIN CONTENT -->
@@ -148,7 +462,8 @@
         <!-- HEADER -->
         <header class="header text-center rounded-lg mb-8">
           <h1 class="text-3xl font-bold mb-4">Google Ads RSA Comprehensive Preview Tool</h1>
-          <p class="opacity-90">Simulate and preview your Responsive Search Ads with all major features and extensions.</p>
+          <p class="opacity-90">Simulate and preview your Responsive Search Ads with all major features and extensions.
+          </p>
         </header>
 
         <!-- GRID -->
@@ -160,7 +475,8 @@
             <div class="space-y-6">
               <div>
                 <label class="block text-sm font-medium mb-2">Final URL</label>
-                <input id="finalUrl" type="url" class="input" placeholder="https://example.com" value="https://example.com" />
+                <input id="finalUrl" type="url" class="input" placeholder="https://example.com"
+                  value="https://example.com" />
               </div>
               <div>
                 <label class="block text-sm font-medium mb-2">Display URL</label>
@@ -184,7 +500,10 @@
 
             <!-- Headlines -->
             <div>
-              <div class="flex items-center justify-between mb-4"><h2 class="text-lg font-semibold">Headlines <span class="text-xs font-normal text-muted-foreground">(up to 15)</span></h2><button id="add-headline" class="btn btn-primary btn-sm">+ Add Headline</button></div>
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold">Headlines <span class="text-xs font-normal text-muted-foreground">(up
+                    to 15)</span></h2><button id="add-headline" class="btn btn-primary btn-sm">+ Add Headline</button>
+              </div>
               <div id="headlines-container"></div>
             </div>
 
@@ -192,7 +511,11 @@
 
             <!-- Descriptions -->
             <div>
-              <div class="flex items-center justify-between mb-4"><h2 class="text-lg font-semibold">Descriptions <span class="text-xs font-normal text-muted-foreground">(up to 4)</span></h2><button id="add-description" class="btn btn-primary btn-sm">+ Add Description</button></div>
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold">Descriptions <span
+                    class="text-xs font-normal text-muted-foreground">(up to 4)</span></h2><button id="add-description"
+                  class="btn btn-primary btn-sm">+ Add Description</button>
+              </div>
               <div id="descriptions-container"></div>
             </div>
 
@@ -200,7 +523,10 @@
 
             <!-- Sitelinks -->
             <div>
-              <div class="flex items-center justify-between mb-4"><h2 class="text-lg font-semibold">Sitelinks <span class="text-xs font-normal text-muted-foreground">(up to 4)</span></h2><button id="add-sitelink" class="btn btn-primary btn-sm">+ Add Sitelink</button></div>
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold">Sitelinks <span class="text-xs font-normal text-muted-foreground">(up
+                    to 4)</span></h2><button id="add-sitelink" class="btn btn-primary btn-sm">+ Add Sitelink</button>
+              </div>
               <div id="sitelinks-container"></div>
             </div>
 
@@ -208,7 +534,11 @@
 
             <!-- Callouts -->
             <div>
-              <div class="flex items-center justify-between mb-4"><h2 class="text-lg font-semibold">Callout Extensions <span class="text-xs font-normal text-muted-foreground">(up to 4)</span></h2><button id="add-callout" class="btn btn-primary btn-sm">+ Add Callout</button></div>
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold">Callout Extensions <span
+                    class="text-xs font-normal text-muted-foreground">(up to 4)</span></h2><button id="add-callout"
+                  class="btn btn-primary btn-sm">+ Add Callout</button>
+              </div>
               <div id="callouts-container"></div>
             </div>
 
@@ -216,7 +546,11 @@
 
             <!-- Structured Snippets -->
             <div>
-              <div class="flex items-center justify-between mb-4"><h2 class="text-lg font-semibold">Structured Snippets <span class="text-xs font-normal text-muted-foreground">(2 headers, 10 values ea.)</span></h2><button id="add-snippet" class="btn btn-primary btn-sm">+ Add Structured Snippet</button></div>
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold">Structured Snippets <span
+                    class="text-xs font-normal text-muted-foreground">(2 headers, 10 values ea.)</span></h2><button
+                  id="add-snippet" class="btn btn-primary btn-sm">+ Add Structured Snippet</button>
+              </div>
               <div id="snippets-container"></div>
             </div>
 
@@ -224,7 +558,8 @@
 
             <!-- Image Asset -->
             <div>
-              <h2 class="text-lg font-semibold mb-4">Image Asset <span class="text-xs font-normal text-muted-foreground">(1:1 or 1.91:1)</span></h2>
+              <h2 class="text-lg font-semibold mb-4">Image Asset <span
+                  class="text-xs font-normal text-muted-foreground">(1:1 or 1.91:1)</span></h2>
               <input id="imageAsset" type="file" class="input" accept="image/png, image/jpeg" />
               <div class="text-xs text-muted-foreground mt-1" id="imageAsset-info">No image uploaded</div>
             </div>
@@ -254,10 +589,19 @@
         <!-- ABOUT / FAQ -->
         <section class="max-w-2xl mx-auto mt-16 space-y-6 text-foreground">
           <h2 class="text-2xl font-bold">About this tool</h2>
-          <p>Use the RSA preview to craft your responsive search ads before launching them in Google Ads. Test different headlines, descriptions, and assets to ensure everything fits Google’s guidelines.</p>
+          <p>Use the RSA preview to craft your responsive search ads before launching them in Google Ads. Test different
+            headlines, descriptions, and assets to ensure everything fits Google’s guidelines.</p>
           <h3 class="text-xl font-semibold">FAQs</h3>
-          <details class="border p-3 rounded-md"><summary class="cursor-pointer font-semibold">Why preview RSAs?</summary><p class="mt-2">Previewing ads helps you verify character counts and extensions so your final ad looks polished when it serves.</p></details>
-          <details class="border p-3 rounded-md"><summary class="cursor-pointer font-semibold">Does this create the ad in Google Ads?</summary><p class="mt-2">No. This tool only simulates the look and validates text length. You’ll still create the ad in your Google Ads account.</p></details>
+          <details class="border p-3 rounded-md">
+            <summary class="cursor-pointer font-semibold">Why preview RSAs?</summary>
+            <p class="mt-2">Previewing ads helps you verify character counts and extensions so your final ad looks
+              polished when it serves.</p>
+          </details>
+          <details class="border p-3 rounded-md">
+            <summary class="cursor-pointer font-semibold">Does this create the ad in Google Ads?</summary>
+            <p class="mt-2">No. This tool only simulates the look and validates text length. You’ll still create the ad
+              in your Google Ads account.</p>
+          </details>
         </section>
       </div>
     </main>
@@ -265,74 +609,90 @@
 
   <!-- FOOTER -->
   <footer class="bg-background border-t border-border mt-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 text-center text-foreground/70">© 2024 reformately. All rights reserved.</div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 text-center text-foreground/70">© 2024 reformately. All
+      rights reserved.</div>
   </footer>
 
   <!-- ================= JS LOGIC ================= -->
   <script>
     /* ---------------- CONSTANTS ---------------- */
-    const MAX_HEADLINES=15, MAX_DESCRIPTIONS=4, MAX_SITELINKS=4, MAX_CALLOUTS=4, MAX_SNIPPETS=2, MAX_SNIPPET_VALUES=10;
-    const HEADLINE_LIMIT=30, DESCRIPTION_LIMIT=90, SITELINK_LIMIT=25, CALLOUT_LIMIT=25, SNIPPET_HEADER_LIMIT=25, SNIPPET_VALUE_LIMIT=25;
+    const MAX_HEADLINES = 15, MAX_DESCRIPTIONS = 4, MAX_SITELINKS = 4, MAX_CALLOUTS = 4, MAX_SNIPPETS = 2, MAX_SNIPPET_VALUES = 10;
+    const HEADLINE_LIMIT = 30, DESCRIPTION_LIMIT = 90, SITELINK_LIMIT = 25, CALLOUT_LIMIT = 25, SNIPPET_HEADER_LIMIT = 25, SNIPPET_VALUE_LIMIT = 25;
 
     /* ---------------- HELPERS ---------------- */
-    const q=(sel,parent=document)=>parent.querySelector(sel);
-    const qa=(sel,parent=document)=>Array.from(parent.querySelectorAll(sel));
-    function createInput(type,val,ph,max){ const el=document.createElement(type==='textarea'?'textarea':'input'); if(type!=='textarea') el.type=type; el.value=val||''; el.placeholder=ph||''; if(max) el.maxLength=max; el.className='input'; return el; }
-    function createCounter(limit){ const d=document.createElement('div'); d.className='char-counter'; d.textContent=`0 / ${limit}`; return d; }
-    function setCounter(inp,cnt,limit){ cnt.textContent=`${inp.value.length} / ${limit}`; cnt.style.color=inp.value.length>limit?'hsl(var(--destructive))':'var(--muted-foreground)'; }
-    function dynamic(text){ return text.replace(/\{Countdown\(([^)]+)\)\}/gi,(_,date)=>{const t=new Date(date); if(isNaN(t)) return ''; const diff=Math.ceil((t-new Date())/864e5); return diff>0?diff+' days':'0 days';}).replace(/\{Keyword:([^}]+)\}/gi,(_,d)=>d);}  
+    const q = (sel, parent = document) => parent.querySelector(sel);
+    const qa = (sel, parent = document) => Array.from(parent.querySelectorAll(sel));
+    function createInput(type, val, ph, max) { const el = document.createElement(type === 'textarea' ? 'textarea' : 'input'); if (type !== 'textarea') el.type = type; el.value = val || ''; el.placeholder = ph || ''; if (max) el.maxLength = max; el.className = 'input'; return el; }
+    function createCounter(limit) { const d = document.createElement('div'); d.className = 'char-counter'; d.textContent = `0 / ${limit}`; return d; }
+    function setCounter(inp, cnt, limit) { cnt.textContent = `${inp.value.length} / ${limit}`; cnt.style.color = inp.value.length > limit ? 'hsl(var(--destructive))' : 'var(--muted-foreground)'; }
+    function dynamic(text) { return text.replace(/\{Countdown\(([^)]+)\)\}/gi, (_, date) => { const t = new Date(date); if (isNaN(t)) return ''; const diff = Math.ceil((t - new Date()) / 864e5); return diff > 0 ? diff + ' days' : '0 days'; }).replace(/\{Keyword:([^}]+)\}/gi, (_, d) => d); }
 
-    let imageAssetDataUrl='';
+    let imageAssetDataUrl = '';
 
     /* ---------------- FIELD BUILDERS ---------------- */
-    function addHeadline(v=''){ const cont=q('#headlines-container'); if(cont.children.length>=MAX_HEADLINES) return; const wrap=document.createElement('div'); wrap.className='mb-4'; const lbl=document.createElement('label'); lbl.className='block text-sm font-medium mb-2'; lbl.textContent=`Headline ${cont.children.length+1}`; const inp=createInput('text',v,`Headline`,HEADLINE_LIMIT); const cnt=createCounter(HEADLINE_LIMIT); inp.oninput=()=>{ setCounter(inp,cnt,HEADLINE_LIMIT); render(); validate(); }; setCounter(inp,cnt,HEADLINE_LIMIT); wrap.append(lbl,inp,cnt); if(cont.children.length>2){ const rem=document.createElement('button'); rem.className='btn btn-destructive btn-sm mt-1'; rem.textContent='Remove'; rem.onclick=e=>{e.preventDefault(); wrap.remove(); render(); validate();}; wrap.append(rem);} cont.append(wrap);}  
-    function addDescription(v=''){ const cont=q('#descriptions-container'); if(cont.children.length>=MAX_DESCRIPTIONS) return; const wrap=document.createElement('div'); wrap.className='mb-4'; const lbl=document.createElement('label'); lbl.className='block text-sm font-medium mb-2'; lbl.textContent=`Description ${cont.children.length+1}`; const inp=createInput('textarea',v,'Description',DESCRIPTION_LIMIT); inp.rows=2; const cnt=createCounter(DESCRIPTION_LIMIT); inp.oninput=()=>{ setCounter(inp,cnt,DESCRIPTION_LIMIT); render(); validate(); }; setCounter(inp,cnt,DESCRIPTION_LIMIT); wrap.append(lbl,inp,cnt); if(cont.children.length>1){ const rem=document.createElement('button'); rem.className='btn btn-destructive btn-sm mt-1'; rem.textContent='Remove'; rem.onclick=e=>{e.preventDefault(); wrap.remove(); render(); validate();}; wrap.append(rem);} cont.append(wrap);}  
+    function addHeadline(v = '') { const cont = q('#headlines-container'); if (cont.children.length >= MAX_HEADLINES) return; const wrap = document.createElement('div'); wrap.className = 'mb-4'; const lbl = document.createElement('label'); lbl.className = 'block text-sm font-medium mb-2'; lbl.textContent = `Headline ${cont.children.length + 1}`; const inp = createInput('text', v, `Headline`, HEADLINE_LIMIT); const cnt = createCounter(HEADLINE_LIMIT); inp.oninput = () => { setCounter(inp, cnt, HEADLINE_LIMIT); render(); validate(); }; setCounter(inp, cnt, HEADLINE_LIMIT); wrap.append(lbl, inp, cnt); if (cont.children.length > 2) { const rem = document.createElement('button'); rem.className = 'btn btn-destructive btn-sm mt-1'; rem.textContent = 'Remove'; rem.onclick = e => { e.preventDefault(); wrap.remove(); render(); validate(); }; wrap.append(rem); } cont.append(wrap); }
+    function addDescription(v = '') { const cont = q('#descriptions-container'); if (cont.children.length >= MAX_DESCRIPTIONS) return; const wrap = document.createElement('div'); wrap.className = 'mb-4'; const lbl = document.createElement('label'); lbl.className = 'block text-sm font-medium mb-2'; lbl.textContent = `Description ${cont.children.length + 1}`; const inp = createInput('textarea', v, 'Description', DESCRIPTION_LIMIT); inp.rows = 2; const cnt = createCounter(DESCRIPTION_LIMIT); inp.oninput = () => { setCounter(inp, cnt, DESCRIPTION_LIMIT); render(); validate(); }; setCounter(inp, cnt, DESCRIPTION_LIMIT); wrap.append(lbl, inp, cnt); if (cont.children.length > 1) { const rem = document.createElement('button'); rem.className = 'btn btn-destructive btn-sm mt-1'; rem.textContent = 'Remove'; rem.onclick = e => { e.preventDefault(); wrap.remove(); render(); validate(); }; wrap.append(rem); } cont.append(wrap); }
 
-    function addSitelink(obj={text:'',url:'',desc1:'',desc2:''}){ const cont=q('#sitelinks-container'); if(cont.children.length>=MAX_SITELINKS) return; const wrap=document.createElement('div'); wrap.className='mb-4 space-y-2'; const lbl=document.createElement('label'); lbl.className='block font-medium'; lbl.textContent=`Sitelink ${cont.children.length+1}`; const txt=createInput('text',obj.text,'Text',SITELINK_LIMIT); const url=createInput('text',obj.url,'URL',1024); const d1=createInput('text',obj.desc1,'Description 1',SITELINK_LIMIT); const d2=createInput('text',obj.desc2,'Description 2',SITELINK_LIMIT); const cnt=createCounter(SITELINK_LIMIT); txt.oninput=()=>{ setCounter(txt,cnt,SITELINK_LIMIT); render(); validate(); }; setCounter(txt,cnt,SITELINK_LIMIT); wrap.append(lbl,txt,cnt,url,d1,d2); if(cont.children.length>0){ const rem=document.createElement('button'); rem.className='btn btn-destructive btn-sm'; rem.textContent='Remove'; rem.onclick=e=>{e.preventDefault(); wrap.remove(); render(); validate();}; wrap.append(rem);} cont.append(wrap);}  
+    function addSitelink(obj = { text: '', url: '', desc1: '', desc2: '' }) { const cont = q('#sitelinks-container'); if (cont.children.length >= MAX_SITELINKS) return; const wrap = document.createElement('div'); wrap.className = 'mb-4 space-y-2'; const lbl = document.createElement('label'); lbl.className = 'block font-medium'; lbl.textContent = `Sitelink ${cont.children.length + 1}`; const txt = createInput('text', obj.text, 'Text', SITELINK_LIMIT); const url = createInput('text', obj.url, 'URL', 1024); const d1 = createInput('text', obj.desc1, 'Description 1', SITELINK_LIMIT); const d2 = createInput('text', obj.desc2, 'Description 2', SITELINK_LIMIT); const cnt = createCounter(SITELINK_LIMIT); txt.oninput = () => { setCounter(txt, cnt, SITELINK_LIMIT); render(); validate(); }; setCounter(txt, cnt, SITELINK_LIMIT); wrap.append(lbl, txt, cnt, url, d1, d2); if (cont.children.length > 0) { const rem = document.createElement('button'); rem.className = 'btn btn-destructive btn-sm'; rem.textContent = 'Remove'; rem.onclick = e => { e.preventDefault(); wrap.remove(); render(); validate(); }; wrap.append(rem); } cont.append(wrap); }
 
-    function addCallout(v=''){ const cont=q('#callouts-container'); if(cont.children.length>=MAX_CALLOUTS) return; const wrap=document.createElement('div'); wrap.className='mb-4'; const lbl=document.createElement('label'); lbl.className='block font-medium mb-1'; lbl.textContent=`Callout ${cont.children.length+1}`; const inp=createInput('text',v,'Callout',CALLOUT_LIMIT); const cnt=createCounter(CALLOUT_LIMIT); inp.oninput=()=>{ setCounter(inp,cnt,CALLOUT_LIMIT); render(); validate(); }; setCounter(inp,cnt,CALLOUT_LIMIT); wrap.append(lbl,inp,cnt); if(cont.children.length>0){ const rem=document.createElement('button'); rem.className='btn btn-destructive btn-sm mt-1'; rem.textContent='Remove'; rem.onclick=e=>{e.preventDefault(); wrap.remove(); render(); validate();}; wrap.append(rem);} cont.append(wrap);}  
+    function addCallout(v = '') { const cont = q('#callouts-container'); if (cont.children.length >= MAX_CALLOUTS) return; const wrap = document.createElement('div'); wrap.className = 'mb-4'; const lbl = document.createElement('label'); lbl.className = 'block font-medium mb-1'; lbl.textContent = `Callout ${cont.children.length + 1}`; const inp = createInput('text', v, 'Callout', CALLOUT_LIMIT); const cnt = createCounter(CALLOUT_LIMIT); inp.oninput = () => { setCounter(inp, cnt, CALLOUT_LIMIT); render(); validate(); }; setCounter(inp, cnt, CALLOUT_LIMIT); wrap.append(lbl, inp, cnt); if (cont.children.length > 0) { const rem = document.createElement('button'); rem.className = 'btn btn-destructive btn-sm mt-1'; rem.textContent = 'Remove'; rem.onclick = e => { e.preventDefault(); wrap.remove(); render(); validate(); }; wrap.append(rem); } cont.append(wrap); }
 
-    function addSnippet(obj={header:'',values:[]}){ const cont=q('#snippets-container'); if(cont.children.length>=MAX_SNIPPETS) return; const wrap=document.createElement('div'); wrap.className='mb-4 space-y-2'; const lbl=document.createElement('label'); lbl.className='block font-medium'; lbl.textContent=`Snippet ${cont.children.length+1} Header`; const header=createInput('text',obj.header,'Header',SNIPPET_HEADER_LIMIT); const hc=createCounter(SNIPPET_HEADER_LIMIT); header.oninput=()=>{ setCounter(header,hc,SNIPPET_HEADER_LIMIT); render(); validate(); }; setCounter(header,hc,SNIPPET_HEADER_LIMIT); const valuesDiv=document.createElement('div'); valuesDiv.className='space-y-2'; function addVal(v=''){ if(valuesDiv.children.length>=MAX_SNIPPET_VALUES) return; const row=document.createElement('div'); row.className='flex items-center gap-2'; const inp=createInput('text',v,'Value',SNIPPET_VALUE_LIMIT); const cnt=createCounter(SNIPPET_VALUE_LIMIT); inp.oninput=()=>{ setCounter(inp,cnt,SNIPPET_VALUE_LIMIT); render(); validate(); }; setCounter(inp,cnt,SNIPPET_VALUE_LIMIT); row.append(inp,cnt); if(valuesDiv.children.length>0){ const rm=document.createElement('button'); rm.className='btn btn-destructive btn-sm'; rm.textContent='Remove'; rm.onclick=e=>{e.preventDefault(); row.remove(); render(); validate();}; row.append(rm);} valuesDiv.append(row);}  (obj.values.length?obj.values:['']).forEach(addVal);
-      const addValBtn=document.createElement('button'); addValBtn.className='btn btn-secondary btn-sm'; addValBtn.textContent='+ Add Value'; addValBtn.onclick=e=>{e.preventDefault(); addVal();};
-      wrap.append(lbl,header,hc,valuesDiv,addValBtn); if(cont.children.length>0){ const rem=document.createElement('button'); rem.className='btn btn-destructive btn-sm'; rem.textContent='Remove'; rem.onclick=e=>{e.preventDefault(); wrap.remove(); render(); validate();}; wrap.append(rem);} cont.append(wrap);}  
+    function addSnippet(obj = { header: '', values: [] }) {
+      const cont = q('#snippets-container'); if (cont.children.length >= MAX_SNIPPETS) return; const wrap = document.createElement('div'); wrap.className = 'mb-4 space-y-2'; const lbl = document.createElement('label'); lbl.className = 'block font-medium'; lbl.textContent = `Snippet ${cont.children.length + 1} Header`; const header = createInput('text', obj.header, 'Header', SNIPPET_HEADER_LIMIT); const hc = createCounter(SNIPPET_HEADER_LIMIT); header.oninput = () => { setCounter(header, hc, SNIPPET_HEADER_LIMIT); render(); validate(); }; setCounter(header, hc, SNIPPET_HEADER_LIMIT); const valuesDiv = document.createElement('div'); valuesDiv.className = 'space-y-2'; function addVal(v = '') { if (valuesDiv.children.length >= MAX_SNIPPET_VALUES) return; const row = document.createElement('div'); row.className = 'flex items-center gap-2'; const inp = createInput('text', v, 'Value', SNIPPET_VALUE_LIMIT); const cnt = createCounter(SNIPPET_VALUE_LIMIT); inp.oninput = () => { setCounter(inp, cnt, SNIPPET_VALUE_LIMIT); render(); validate(); }; setCounter(inp, cnt, SNIPPET_VALUE_LIMIT); row.append(inp, cnt); if (valuesDiv.children.length > 0) { const rm = document.createElement('button'); rm.className = 'btn btn-destructive btn-sm'; rm.textContent = 'Remove'; rm.onclick = e => { e.preventDefault(); row.remove(); render(); validate(); }; row.append(rm); } valuesDiv.append(row); } (obj.values.length ? obj.values : ['']).forEach(addVal);
+      const addValBtn = document.createElement('button'); addValBtn.className = 'btn btn-secondary btn-sm'; addValBtn.textContent = '+ Add Value'; addValBtn.onclick = e => { e.preventDefault(); addVal(); };
+      wrap.append(lbl, header, hc, valuesDiv, addValBtn); if (cont.children.length > 0) { const rem = document.createElement('button'); rem.className = 'btn btn-destructive btn-sm'; rem.textContent = 'Remove'; rem.onclick = e => { e.preventDefault(); wrap.remove(); render(); validate(); }; wrap.append(rem); } cont.append(wrap);
+    }
 
     /* ---------------- INIT ---------------- */
-    document.addEventListener('DOMContentLoaded',()=>{
+    document.addEventListener('DOMContentLoaded', () => {
       // default fields
-      [...Array(3)].forEach(()=>addHeadline()); [...Array(2)].forEach(()=>addDescription()); addSitelink(); addCallout(); addSnippet();
+      [...Array(3)].forEach(() => addHeadline());[...Array(2)].forEach(() => addDescription()); addSitelink(); addCallout(); addSnippet();
 
       // add-btn listeners
-      q('#add-headline').onclick=e=>{e.preventDefault(); addHeadline(); render(); validate();};
-      q('#add-description').onclick=e=>{e.preventDefault(); addDescription(); render(); validate();};
-      q('#add-sitelink').onclick=e=>{e.preventDefault(); addSitelink(); render(); validate();};
-      q('#add-callout').onclick=e=>{e.preventDefault(); addCallout(); render(); validate();};
-      q('#add-snippet').onclick=e=>{e.preventDefault(); addSnippet(); render(); validate();};
+      q('#add-headline').onclick = e => { e.preventDefault(); addHeadline(); render(); validate(); };
+      q('#add-description').onclick = e => { e.preventDefault(); addDescription(); render(); validate(); };
+      q('#add-sitelink').onclick = e => { e.preventDefault(); addSitelink(); render(); validate(); };
+      q('#add-callout').onclick = e => { e.preventDefault(); addCallout(); render(); validate(); };
+      q('#add-snippet').onclick = e => { e.preventDefault(); addSnippet(); render(); validate(); };
 
       // basic inputs
-      ['finalUrl','displayUrl','path1','path2','callExtension'].forEach(id=>q('#'+id).oninput=()=>{if(id.includes('path')) setCounter(q('#'+id), q('#'+id+'-counter'),15); render(); validate();});
+      ['finalUrl', 'displayUrl', 'path1', 'path2', 'callExtension'].forEach(id => q('#' + id).oninput = () => { if (id.includes('path')) setCounter(q('#' + id), q('#' + id + '-counter'), 15); render(); validate(); });
 
       // image upload
-      const img=q('#imageAsset'), info=q('#imageAsset-info'); img.onchange=e=>{ const file=e.target.files[0]; if(file){ const r=new FileReader(); r.onload=ev=>{ imageAssetDataUrl=ev.target.result; info.textContent=`${file.name} (${Math.round(file.size/1024)} KB)`; render(); }; r.readAsDataURL(file);} else { imageAssetDataUrl=''; info.textContent='No image uploaded'; render(); }};
+      const img = q('#imageAsset'), info = q('#imageAsset-info'); img.onchange = e => { const file = e.target.files[0]; if (file) { const r = new FileReader(); r.onload = ev => { imageAssetDataUrl = ev.target.result; info.textContent = `${file.name} (${Math.round(file.size / 1024)} KB)`; render(); }; r.readAsDataURL(file); } else { imageAssetDataUrl = ''; info.textContent = 'No image uploaded'; render(); } };
 
       // tabs
-      q('#desktop-tab').onclick=()=>{q('#desktop-tab').classList.add('active'); q('#mobile-tab').classList.remove('active'); render('desktop');};
-      q('#mobile-tab').onclick=()=>{q('#mobile-tab').classList.add('active'); q('#desktop-tab').classList.remove('active'); render('mobile');};
+      q('#desktop-tab').onclick = () => { q('#desktop-tab').classList.add('active'); q('#mobile-tab').classList.remove('active'); render('desktop'); };
+      q('#mobile-tab').onclick = () => { q('#mobile-tab').classList.add('active'); q('#desktop-tab').classList.remove('active'); render('mobile'); };
 
       render(); validate();
+
+      // Initialize tool integration
+      if (window.initializeToolIntegration) {
+        window.initializeToolIntegration({
+          name: 'google-ads-rsa-preview',
+          type: 'utility',
+          requiresAuth: false,
+          quotaType: 'conversions',
+          trackUsage: true
+        });
+      }
     });
 
     /* ---------------- RENDER PREVIEW ---------------- */
-    function render(mode){ const mobile=mode==='mobile'||q('#mobile-tab').classList.contains('active');
-      const finalUrl=q('#finalUrl').value||'https://example.com'; const displayUrl=q('#displayUrl').value||'example.com'; const p1=q('#path1').value; const p2=q('#path2').value;
+    function render(mode) {
+      const mobile = mode === 'mobile' || q('#mobile-tab').classList.contains('active');
+      const finalUrl = q('#finalUrl').value || 'https://example.com'; const displayUrl = q('#displayUrl').value || 'example.com'; const p1 = q('#path1').value; const p2 = q('#path2').value;
 
       // collect headlines
-      const heads=qa('#headlines-container input').map(i=>i.value.trim()).filter(Boolean).map(dynamic);
-      const descs=qa('#descriptions-container textarea').map(i=>i.value.trim()).filter(Boolean).map(dynamic);
-      const sitelinks=qa('#sitelinks-container > div').map(g=>{const f=qa('input',g); return{ text:f[0].value,url:f[1].value,desc1:f[2].value,desc2:f[3].value};}).filter(s=>s.text);
-      const callouts=qa('#callouts-container input').map(i=>i.value.trim()).filter(Boolean);
-      const snippets=qa('#snippets-container > div').map(g=>{const header=q('input',g).value; const values=qa('.snippet-values input',g).map(i=>i.value.trim()).filter(Boolean); return{header,values};}).filter(s=>s.header&&s.values.length);
-      const phone=q('#callExtension').value.trim();
+      const heads = qa('#headlines-container input').map(i => i.value.trim()).filter(Boolean).map(dynamic);
+      const descs = qa('#descriptions-container textarea').map(i => i.value.trim()).filter(Boolean).map(dynamic);
+      const sitelinks = qa('#sitelinks-container > div').map(g => { const f = qa('input', g); return { text: f[0].value, url: f[1].value, desc1: f[2].value, desc2: f[3].value }; }).filter(s => s.text);
+      const callouts = qa('#callouts-container input').map(i => i.value.trim()).filter(Boolean);
+      const snippets = qa('#snippets-container > div').map(g => { const header = q('input', g).value; const values = qa('.snippet-values input', g).map(i => i.value.trim()).filter(Boolean); return { header, values }; }).filter(s => s.header && s.values.length);
+      const phone = q('#callExtension').value.trim();
 
+<<<<<<< HEAD
       let html=`<div class="ad-sponsored-row"><span>Sponsored</span><span class="ad-sponsored-dot">•</span><span>${displayUrl}${p1?'/'+p1:''}${p2?'/'+p2:''}</span></div>`;
       html+='<div class="ad-preview-row">';
       if(mobile){ html+=imageAssetDataUrl?`<img class="ad-image" src="${imageAssetDataUrl}" alt="ad">`:`<div class="ad-image flex items-center justify-center text-4xl text-muted-foreground">🖼️</div>`; }
@@ -350,23 +710,43 @@
       html+='</div>'; // row
       q('#ad-preview').innerHTML=html;
       adStrength(heads,descs);
+=======
+      let html = `<div class="ad-sponsored-row"><span>Sponsored</span><span class="ad-sponsored-dot">•</span><span>${displayUrl}${p1 ? '/' + p1 : ''}${p2 ? '/' + p2 : ''}</span></div>`;
+      html += '<div class="ad-preview-row">';
+      if (mobile) { html += imageAssetDataUrl ? `<img class="ad-image" src="${imageAssetDataUrl}" alt="ad">` : `<div class="ad-image flex items-center justify-center text-4xl text-muted-foreground">🖼️</div>`; }
+      html += '<div class="ad-preview-text">';
+      html += `<div class="ad-title">${heads.slice(0, 3).join(' | ') || '<span class="text-muted-foreground">Your ad title...</span>'}</div>`;
+      html += `<div class="ad-description mt-1">${descs.slice(0, 2).join(' ') || '<span class="text-muted-foreground">Your ad description...</span>'}</div>`;
+      html += '<div class="ad-extensions mt-2">';
+      if (sitelinks.length) { html += '<div class="sitelinks flex flex-wrap gap-x-6 gap-y-1 mt-2">' + sitelinks.map(s => `<span class="sitelink">${s.text}</span>`).join('') + '</div>'; }
+      if (callouts.length) { html += '<div class="callouts flex flex-wrap gap-3 mt-2">' + callouts.map(c => `<span class="callout">${c}</span>`).join('') + '</div>'; }
+      if (snippets.length) { html += '<div class="structured-snippets flex flex-wrap gap-3 mt-2">' + snippets.map(sn => `<span class="structured-snippet"><b>${sn.header}:</b> ${sn.values.join(', ')}</span>`).join('') + '</div>'; }
+      if (phone) { html += `<div class="call-extension mt-2">Call: <a href="tel:${phone}">${phone}</a></div>`; }
+      html += '</div>'; // text
+      if (!mobile) { html += imageAssetDataUrl ? `<img class="ad-image" src="${imageAssetDataUrl}" alt="ad">` : `<div class="ad-image flex items-center justify-center text-4xl text-muted-foreground">🖼️</div>`; }
+      html += '</div>'; // row
+      q('#ad-preview').innerHTML = html;
+      adStrength(heads, descs);
+>>>>>>> 40058ad (Sign-in Dasboard)
     }
 
     /* ---------------- VALIDATION ---------------- */
-    function validate(){ const list=[];
-      const heads=qa('#headlines-container input'); const filledH=heads.filter(i=>i.value.trim()); if(filledH.length<3) list.push({t:'At least 3 headlines recommended.',i:'warning'}); else list.push({t:`${filledH.length} headlines added.`,i:'valid'}); heads.forEach((h,i)=>{ if(h.value.length>HEADLINE_LIMIT) list.push({t:`Headline ${i+1} exceeds ${HEADLINE_LIMIT} chars.`,i:'invalid'});});
-      const descs=qa('#descriptions-container textarea'); const filledD=descs.filter(i=>i.value.trim()); if(filledD.length<2) list.push({t:'At least 2 descriptions recommended.',i:'warning'}); else list.push({t:`${filledD.length} descriptions added.`,i:'valid'}); descs.forEach((d,i)=>{ if(d.value.length>DESCRIPTION_LIMIT) list.push({t:`Description ${i+1} exceeds ${DESCRIPTION_LIMIT} chars.`,i:'invalid'});});
-      qa('#sitelinks-container input:nth-child(2)').forEach((s,i)=>{ if(s.value.length>SITELINK_LIMIT) list.push({t:`Sitelink ${i+1} exceeds ${SITELINK_LIMIT} chars.`,i:'invalid'});});
-      qa('#callouts-container input').forEach((c,i)=>{ if(c.value.length>CALLOUT_LIMIT) list.push({t:`Callout ${i+1} exceeds ${CALLOUT_LIMIT} chars.`,i:'invalid'});});
-      qa('#snippets-container > div').forEach((g,i)=>{ const h=q('input',g); if(h.value.length>SNIPPET_HEADER_LIMIT) list.push({t:`Snippet header ${i+1} exceeds ${SNIPPET_HEADER_LIMIT} chars.`,i:'invalid'}); qa('.snippet-values input',g).forEach((v,j)=>{ if(v.value.length>SNIPPET_VALUE_LIMIT) list.push({t:`Snippet value ${j+1} in header ${i+1} exceeds ${SNIPPET_VALUE_LIMIT} chars.`,i:'invalid'});}); });
-      const p1=q('#path1').value, p2=q('#path2').value; if(p1.length>15) list.push({t:'Path 1 exceeds 15 chars.',i:'invalid'}); if(p2.length>15) list.push({t:'Path 2 exceeds 15 chars.',i:'invalid'});
-      if(!q('#finalUrl').value.trim()) list.push({t:'Final URL is required.',i:'invalid'}); if(!q('#displayUrl').value.trim()) list.push({t:'Display URL is required.',i:'invalid'});
-      const phone=q('#callExtension').value.trim(); if(phone && !/^\+?[\d\s()\-]+$/.test(phone)) list.push({t:'Phone format invalid.',i:'invalid'});
-      q('#validation-summary').innerHTML=list.length?list.map(v=>`<div class="validation-item"><span class="validation-icon ${v.i}">${v.i==='valid'?'✓':v.i==='invalid'?'✗':'⚠'}</span>${v.t}</div>`).join(''):`<div class="validation-item"><span class="validation-icon valid">✓</span>Ready to preview</div>`;
+    function validate() {
+      const list = [];
+      const heads = qa('#headlines-container input'); const filledH = heads.filter(i => i.value.trim()); if (filledH.length < 3) list.push({ t: 'At least 3 headlines recommended.', i: 'warning' }); else list.push({ t: `${filledH.length} headlines added.`, i: 'valid' }); heads.forEach((h, i) => { if (h.value.length > HEADLINE_LIMIT) list.push({ t: `Headline ${i + 1} exceeds ${HEADLINE_LIMIT} chars.`, i: 'invalid' }); });
+      const descs = qa('#descriptions-container textarea'); const filledD = descs.filter(i => i.value.trim()); if (filledD.length < 2) list.push({ t: 'At least 2 descriptions recommended.', i: 'warning' }); else list.push({ t: `${filledD.length} descriptions added.`, i: 'valid' }); descs.forEach((d, i) => { if (d.value.length > DESCRIPTION_LIMIT) list.push({ t: `Description ${i + 1} exceeds ${DESCRIPTION_LIMIT} chars.`, i: 'invalid' }); });
+      qa('#sitelinks-container input:nth-child(2)').forEach((s, i) => { if (s.value.length > SITELINK_LIMIT) list.push({ t: `Sitelink ${i + 1} exceeds ${SITELINK_LIMIT} chars.`, i: 'invalid' }); });
+      qa('#callouts-container input').forEach((c, i) => { if (c.value.length > CALLOUT_LIMIT) list.push({ t: `Callout ${i + 1} exceeds ${CALLOUT_LIMIT} chars.`, i: 'invalid' }); });
+      qa('#snippets-container > div').forEach((g, i) => { const h = q('input', g); if (h.value.length > SNIPPET_HEADER_LIMIT) list.push({ t: `Snippet header ${i + 1} exceeds ${SNIPPET_HEADER_LIMIT} chars.`, i: 'invalid' }); qa('.snippet-values input', g).forEach((v, j) => { if (v.value.length > SNIPPET_VALUE_LIMIT) list.push({ t: `Snippet value ${j + 1} in header ${i + 1} exceeds ${SNIPPET_VALUE_LIMIT} chars.`, i: 'invalid' }); }); });
+      const p1 = q('#path1').value, p2 = q('#path2').value; if (p1.length > 15) list.push({ t: 'Path 1 exceeds 15 chars.', i: 'invalid' }); if (p2.length > 15) list.push({ t: 'Path 2 exceeds 15 chars.', i: 'invalid' });
+      if (!q('#finalUrl').value.trim()) list.push({ t: 'Final URL is required.', i: 'invalid' }); if (!q('#displayUrl').value.trim()) list.push({ t: 'Display URL is required.', i: 'invalid' });
+      const phone = q('#callExtension').value.trim(); if (phone && !/^\+?[\d\s()\-]+$/.test(phone)) list.push({ t: 'Phone format invalid.', i: 'invalid' });
+      q('#validation-summary').innerHTML = list.length ? list.map(v => `<div class="validation-item"><span class="validation-icon ${v.i}">${v.i === 'valid' ? '✓' : v.i === 'invalid' ? '✗' : '⚠'}</span>${v.t}</div>`).join('') : `<div class="validation-item"><span class="validation-icon valid">✓</span>Ready to preview</div>`;
     }
 
     /* ---------------- AD STRENGTH ---------------- */
-    function adStrength(heads,descs){ const set=new Set([...heads,...descs]); let rating='poor'; if(set.size>=15) rating='excellent'; else if(set.size>=10) rating='good'; else if(set.size>=5) rating='average'; const el=q('#ad-strength'); el.textContent=`Ad Strength: ${rating[0].toUpperCase()+rating.slice(1)}`; el.className=`ad-strength ${rating}`; }
+    function adStrength(heads, descs) { const set = new Set([...heads, ...descs]); let rating = 'poor'; if (set.size >= 15) rating = 'excellent'; else if (set.size >= 10) rating = 'good'; else if (set.size >= 5) rating = 'average'; const el = q('#ad-strength'); el.textContent = `Ad Strength: ${rating[0].toUpperCase() + rating.slice(1)}`; el.className = `ad-strength ${rating}`; }
   </script>
 </body>
+
 </html>

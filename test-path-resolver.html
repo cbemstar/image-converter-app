@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PathResolver Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .result { background: #f5f5f5; padding: 10px; margin: 10px 0; border-radius: 3px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        button { padding: 8px 16px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>PathResolver Test Page</h1>
+    <p>This page demonstrates the PathResolver utility working in different scenarios.</p>
+
+    <div class="test-section">
+        <h2>Current Page Information</h2>
+        <div id="current-info" class="result"></div>
+        <button onclick="updateCurrentInfo()">Refresh Info</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Path Resolution Tests</h2>
+        <div>
+            <label>Test Path: <input type="text" id="test-path" value="/tools/image-converter/index.html" style="width: 300px;"></label>
+            <button onclick="testPathResolution()">Test Resolution</button>
+        </div>
+        <div id="resolution-results" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Navigation Links Test</h2>
+        <p>These links should be correctly resolved based on current page location:</p>
+        <nav>
+            <a href="auth.html" id="auth-link">Sign In</a> |
+            <a href="dashboard.html" id="dashboard-link">Dashboard</a> |
+            <a href="profile.html" id="profile-link">Profile</a> |
+            <a href="index.html" id="home-link">Home</a>
+        </nav>
+        <button onclick="updateNavigationLinks()">Update Links</button>
+        <button onclick="validateNavigation()">Validate Links</button>
+        <div id="navigation-results" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Debug Information</h2>
+        <button onclick="showDebugInfo()">Show Debug Info</button>
+        <div id="debug-info" class="result"></div>
+    </div>
+
+    <!-- Load PathResolver -->
+    <script src="js/path-resolver.js"></script>
+    <script src="js/path-resolver-integration.js"></script>
+
+    <script>
+        function updateCurrentInfo() {
+            const info = PathResolver.getAllPaths();
+            const currentPath = window.location.pathname;
+            
+            document.getElementById('current-info').innerHTML = `
+                <strong>Current Path:</strong> ${currentPath}<br>
+                <strong>Depth:</strong> ${PathResolver.getCurrentDepth()}<br>
+                <strong>Is Tool Page:</strong> ${PathResolver.isToolPage()}<br>
+                <strong>Tool Name:</strong> ${PathResolver.getToolName() || 'N/A'}<br>
+                <strong>Base Path:</strong> ${info.paths.base}<br>
+                <strong>All Paths Valid:</strong> ${info.isValid ? '✓' : '✗'}
+            `;
+        }
+
+        function testPathResolution() {
+            const testPath = document.getElementById('test-path').value;
+            const info = PathResolver.getAllPaths(testPath);
+            
+            let html = `<strong>Testing path:</strong> ${testPath}<br>`;
+            html += `<strong>Depth:</strong> ${PathResolver.getCurrentDepth(testPath)}<br>`;
+            html += `<strong>Resolved paths:</strong><br>`;
+            html += `&nbsp;&nbsp;Auth: ${info.paths.auth}<br>`;
+            html += `&nbsp;&nbsp;Dashboard: ${info.paths.dashboard}<br>`;
+            html += `&nbsp;&nbsp;Profile: ${info.paths.profile}<br>`;
+            html += `&nbsp;&nbsp;Home: ${info.paths.home}<br>`;
+            html += `<strong>Validation:</strong><br>`;
+            html += `&nbsp;&nbsp;Auth: ${info.validation.auth ? '✓' : '✗'}<br>`;
+            html += `&nbsp;&nbsp;Dashboard: ${info.validation.dashboard ? '✓' : '✗'}<br>`;
+            html += `&nbsp;&nbsp;Profile: ${info.validation.profile ? '✓' : '✗'}<br>`;
+            html += `&nbsp;&nbsp;Home: ${info.validation.home ? '✓' : '✗'}<br>`;
+            
+            document.getElementById('resolution-results').innerHTML = html;
+        }
+
+        function updateNavigationLinks() {
+            NavigationPathHelper.updateNavigationPaths();
+            document.getElementById('navigation-results').innerHTML = 
+                '<span class="success">Navigation links updated successfully!</span>';
+        }
+
+        function validateNavigation() {
+            const isValid = NavigationPathHelper.validateCurrentNavigation();
+            const resultClass = isValid ? 'success' : 'error';
+            const resultText = isValid ? 'All navigation links are valid!' : 'Navigation validation failed - check console for details';
+            
+            document.getElementById('navigation-results').innerHTML = 
+                `<span class="${resultClass}">${resultText}</span>`;
+        }
+
+        function showDebugInfo() {
+            const debugInfo = NavigationPathHelper.getNavigationDebugInfo();
+            
+            let html = '<pre>' + JSON.stringify(debugInfo, null, 2) + '</pre>';
+            document.getElementById('debug-info').innerHTML = html;
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCurrentInfo();
+            updateNavigationLinks();
+        });
+    </script>
+</body>
+</html>

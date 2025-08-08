@@ -20,43 +20,69 @@
   <script src="https://cdn.jsdelivr.net/npm/libheif-js@1.19.8/libheif/libheif.js"></script>
   <!-- RAW image processing -->
   <script src="https://cdn.jsdelivr.net/npm/raw-wasm@1.0.0/dist/raw-wasm.min.js"></script>
-  <!-- Supabase auth -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Core Dependencies -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="../../js/config.js"></script>
+  <script src="../../js/supabase-client.js"></script>
+  <script src="../../js/path-resolver.js"></script>
+  <script src="../../js/auth-manager.js"></script>
+  <script src="../../js/auth-state-sync.js"></script>
+  <script src="../../js/quota-manager.js"></script>
+  <script src="../../js/analytics-manager.js"></script>
+  <script src="../../js/error-handler.js"></script>
+  <script src="../../js/tool-integration.js"></script>
+  <script src="../../js/unified-navigation.js"></script>
+  <script src="../../js/auto-navigation.js"></script>
+  
   <!-- JS files -->
   <script type="module" src="core.js"></script>
-  <script type="module" src="../../styles/theme.js"></script>
+  <script src="../../styles/theme.js"></script>
   <script type="module" src="../../layout.js"></script>
 </head>
 <body data-slug="image-converter" class="bg-transparent min-h-screen flex flex-col">
+  <a href="#main-content" class="sr-only focus:not-sr-only absolute left-2 top-2 bg-background text-foreground p-2 z-50">Skip to main content</a>
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
   <!-- Navigation Bar -->
-  <nav class="bg-background shadow-md border-b border-border">
+  <nav class="bg-background shadow-md border-b border-border" role="navigation" aria-label="Main navigation">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
-        <!-- Logo and site name -->
         <div class="flex items-center gap-4">
-          <button id="sidebar-toggle" class="btn btn-outline btn-sm" aria-label="Open sidebar">
+          <button id="sidebar-toggle" class="btn btn-outline btn-sm" aria-label="Open sidebar" aria-controls="sidebar" aria-expanded="false">
             <i class="fas fa-bars"></i>
           </button>
           <a href="../../index.html" class="flex items-center gap-2">
             <span class="text-foreground text-xl font-bold">reformately</span>
           </a>
         </div>
-       
-        <!-- Navigation links 
-        <div class="hidden md:flex items-center space-x-4">
-          <a href="../image-converter/index.html" class="text-foreground hover:text-primary px-3 py-2 rounded-md font-medium">Home</a>
-        <li><a href="../background-remover/index.html" class="text-foreground hover:text-primary">Background Remover</a></li>
-          <a href="#" class="text-foreground hover:text-primary px-3 py-2 rounded-md font-medium">Features</a>
-          <a href="#" class="text-foreground hover:text-primary px-3 py-2 rounded-md font-medium">Pricing</a>
-          <a href="#" class="text-foreground hover:text-primary px-3 py-2 rounded-md font-medium">Support</a>
-        </div> -->
-        
         <div class="flex items-center gap-2">
+          <!-- Guest User -->
+          <div data-guest-only class="flex items-center gap-2">
+            <a href="../../auth.html" class="btn btn-outline btn-sm" data-nav-link="auth">
+              <i class="fas fa-sign-in-alt mr-1"></i>
+              Sign In
+            </a>
+          </div>
+          
+          <!-- Authenticated User -->
+          <div data-auth-required class="flex items-center gap-2" style="display: none;">
+            <div class="dropdown dropdown-end relative">
+              <button class="btn btn-outline btn-sm dropdown-toggle" aria-label="User menu" aria-expanded="false">
+                <img data-user-info="avatar" class="w-6 h-6 rounded-full mr-2" alt="User avatar" style="display: none;">
+                <span data-user-info="name" class="hidden sm:inline">User</span>
+                <i class="fas fa-chevron-down ml-1"></i>
+              </button>
+              <ul class="dropdown-content menu p-2 shadow bg-background border border-border rounded-lg w-52 absolute right-0 top-full mt-1 z-50" style="display: none;" role="menu">
+                <li role="none"><a href="../../dashboard.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded" data-nav-link="dashboard" data-dashboard-access="true" role="menuitem"><i class="fas fa-tachometer-alt"></i>Dashboard</a></li>
+                <li role="none"><a href="../../profile.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded" data-nav-link="profile" role="menuitem"><i class="fas fa-user"></i>Profile</a></li>
+                <li role="none"><a href="#" data-action="signout" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded" role="menuitem"><i class="fas fa-sign-out-alt"></i>Sign Out</a></li>
+              </ul>
+            </div>
+          </div>
+          
           <button id="theme-toggle" class="btn btn-outline btn-sm" aria-label="Toggle theme">
             <span id="theme-toggle-icon">🌙</span>
           </button>
@@ -68,16 +94,17 @@
   <!-- Page Layout -->
   <div class="flex flex-grow">
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
-    <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-background border-r border-border/20 p-4 transform -translate-x-full transition-transform z-40">
+    <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-background border-r border-border/20 p-4 transform -translate-x-full transition-transform z-40" role="complementary" aria-label="Sidebar" tabindex="-1">
       <div class="flex justify-between items-center mb-4">
-        <a href="../../index.html" class="text-xl font-bold" class="text-foreground">reformately</a>
+        <a href="../../index.html" class="text-xl font-bold text-foreground">reformately</a>
         <button id="sidebar-close" class="btn btn-outline btn-sm" aria-label="Close sidebar">
           <i class="fas fa-times"></i>
         </button>
       </div>
-      <h2 class="text-lg font-bold mb-4" class="text-foreground">Tools</h2>
+      <h2 class="text-lg font-bold mb-4 text-foreground">Tools</h2>
+      <label for="tool-search" class="sr-only">Search tools</label>
       <input id="tool-search" type="text" placeholder="Search" class="input w-full mb-4" />
-      <ul id="tool-list" class="space-y-2">
+      <ul id="tool-list" class="space-y-2" role="list">
         <li><a href="../image-converter/index.html" class="text-foreground hover:text-primary">Image Converter</a></li>
         <li><a href="../background-remover/index.html" class="text-foreground hover:text-primary">Background Remover</a></li>
         <li><a href="../google-ads-rsa-preview/index.html" class="text-foreground hover:text-primary">Google Ads RSA Preview</a></li>
@@ -89,6 +116,12 @@
         <li><a href="../pdf-ocr/index.html" class="text-foreground hover:text-primary">PDF OCR</a></li>
         <li><a href="../meta-tag-generator/index.html" class="text-foreground hover:text-primary">Meta Tag Generator</a></li>
         <li><a href="../layout-tool/index.html" class="text-foreground hover:text-primary">Layout Generator</a></li>
+        <li><a href="../qr-generator/index.html" class="text-foreground hover:text-primary">QR Code Generator</a></li>
+        <li><a href="../utm-builder/index.html" class="text-foreground hover:text-primary">UTM Builder</a></li>
+        <li><a href="../uuid-generator/index.html" class="text-foreground hover:text-primary">UUID Generator</a></li>
+        <li><a href="../text-case-converter/index.html" class="text-foreground hover:text-primary">Text Case Converter</a></li>
+        <li><a href="../timestamp-converter/index.html" class="text-foreground hover:text-primary">Timestamp Converter</a></li>
+        <li><a href="../robots-txt/index.html" class="text-foreground hover:text-primary">Robots.txt Generator</a></li>
         <li><a href="#" class="text-foreground hover:text-primary">More coming soon</a></li>
       </ul>
       <div class="mt-6 pt-6 border-t border-border/20">

@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔍 Bug Audit & Testing Tool - reformately</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .test-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .test-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+            border: 2px solid transparent;
+        }
+
+        .test-card.pass {
+            border-color: #10b981;
+            background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+        }
+
+        .test-card.fail {
+            border-color: #ef4444;
+            background: linear-gradient(135deg, #fef2f2 0%, #fef2f2 100%);
+        }
+
+        .test-card.warning {
+            border-color: #f59e0b;
+            background: linear-gradient(135deg, #fffbeb 0%, #fefce8 100%);
+        }
+
+        .test-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .test-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+        }
+
+        .test-icon.pass { background: #10b981; }
+        .test-icon.fail { background: #ef4444; }
+        .test-icon.warning { background: #f59e0b; }
+        .test-icon.pending { background: #6b7280; }
+
+        .test-description {
+            color: #6b7280;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .test-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .test-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .test-btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .test-btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .test-btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+
+        .test-btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .test-results {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .test-results.show {
+            display: block;
+        }
+
+        .test-results.pass {
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .test-results.fail {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .test-results.warning {
+            background: #fffbeb;
+            color: #92400e;
+            border: 1px solid #fed7aa;
+        }
+
+        .overall-status {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .status-indicator {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+            margin: 0 auto 16px;
+        }
+
+        .demo-navigation {
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+
+        .demo-nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+
+        .demo-nav-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .demo-nav-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .test-log {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 16px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 16px;
+            display: none;
+        }
+
+        .test-log.show {
+            display: block;
+        }
+
+        .log-entry {
+            margin-bottom: 4px;
+            padding: 2px 0;
+        }
+
+        .log-entry.success { color: #10b981; }
+        .log-entry.error { color: #ef4444; }
+        .log-entry.warning { color: #f59e0b; }
+        .log-entry.info { color: #3b82f6; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Test Navigation (Demo) -->
+    <nav class="bg-background shadow-md border-b border-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center gap-4">
+                    <a href="/" class="flex items-center gap-2">
+                        <span class="text-foreground text-xl font-bold">reformately</span>
+                    </a>
+                </div>
+                <div class="flex items-center gap-2">
+                    <!-- Guest User -->
+                    <div data-guest-only class="flex items-center gap-2">
+                        <a href="/auth.html" class="btn btn-outline btn-sm">
+                            <i class="fas fa-sign-in-alt mr-1"></i>
+                            Sign In
+                        </a>
+                    </div>
+                    
+                    <!-- Authenticated User -->
+                    <div data-auth-required class="flex items-center gap-2" style="display: none;">
+                        <div class="dropdown dropdown-end relative">
+                            <button class="btn btn-outline btn-sm dropdown-toggle" aria-label="User menu" aria-expanded="false">
+                                <img data-user-info="avatar" class="w-6 h-6 rounded-full mr-2" alt="User avatar" style="display: none;">
+                                <span data-user-info="name" class="hidden sm:inline">Test User</span>
+                                <i class="fas fa-chevron-down ml-1"></i>
+                            </button>
+                            <ul class="dropdown-content menu p-2 shadow bg-background border border-border rounded-lg w-52 absolute right-0 top-full mt-1 z-50" style="display: none;">
+                                <li><a href="/dashboard.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded"><i class="fas fa-tachometer-alt"></i>Dashboard</a></li>
+                                <li><a href="/profile.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded"><i class="fas fa-user"></i>Profile</a></li>
+                                <li><a href="#" data-action="signout" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded"><i class="fas fa-sign-out-alt"></i>Sign Out</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <button id="theme-toggle" class="btn btn-outline btn-sm" aria-label="Toggle theme">
+                        <span id="theme-toggle-icon">🌙</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="test-container">
+        <!-- Header -->
+        <div class="test-header">
+            <h1 class="text-3xl font-bold mb-2">🔍 Bug Audit & Testing Tool</h1>
+            <p class="text-lg opacity-90">Comprehensive testing suite for reformately app fixes</p>
+        </div>
+
+        <!-- Overall Status -->
+        <div class="overall-status">
+            <div id="overallStatusIndicator" class="status-indicator" style="background: #6b7280;">
+                <i class="fas fa-clock"></i>
+            </div>
+            <h2 id="overallStatusText" class="text-xl font-semibold mb-2">Ready to Test</h2>
+            <p id="overallStatusDescription" class="text-gray-600">Click "Run All Tests" to begin comprehensive audit</p>
+            <div class="mt-4">
+                <button id="runAllTestsBtn" class="test-btn test-btn-primary">
+                    <i class="fas fa-play"></i>
+                    Run All Tests
+                </button>
+                <button id="clearResultsBtn" class="test-btn test-btn-secondary">
+                    <i class="fas fa-trash"></i>
+                    Clear Results
+                </button>
+                <button id="toggleLogBtn" class="test-btn test-btn-secondary">
+                    <i class="fas fa-terminal"></i>
+                    Show Log
+                </button>
+            </div>
+            <div id="testLog" class="test-log">
+                <div class="log-entry info">[INFO] Bug audit testing tool initialized</div>
+            </div>
+        </div>
+
+        <!-- Test Grid -->
+        <div class="test-grid">
+            <!-- Theme Toggle Test -->
+            <div class="test-card" id="themeToggleTest">
+                <div class="test-title">
+                    <div class="test-icon pending">
+                        <i class="fas fa-moon"></i>
+                    </div>
+                    Theme Toggle Functionality
+                </div>
+                <div class="test-description">
+                    Tests if the dark/light mode toggle works correctly across all pages and persists user preference.
+                </div>
+                <div class="test-actions">
+                    <button class="test-btn test-btn-primary" onclick="testThemeToggle()">
+                        <i class="fas fa-play"></i>
+                        Test Theme
+                    </button>
+                    <button class="test-btn test-btn-seconhtml></body>
+<//script>
+ });
+    <    er();
+   ugAuditTestster = new Bw.bugTe       windo {
+     =>, () tLoaded'onten('DOMCistenerventLt.addEmen   docu    s
+ ge loadster when paize te // Initial
+           }
+}
+               ble');
+ lanot avai metrics nceormalert('Perf       a{
+          else   }        sage);
+   + mescs:\n\n' Metrierformance   alert('P           
+                     \n');
+ n('joi        .            ue}`)
+: ${val `${name} value]) =>e,([nam      .map(        
+      rics)meties(ct.entrje = Ob messagenst  co                 
+                 };
+           
+ Start}ms`navigationt - timing.Starg.responsetiminint': `${ Parst     'Fi           
+    Start}ms`,vigation- timing.natEnd LoadedEven.domContentming`${ti': DOM Ready      '        ,
+      Start}ms`navigation timing.End -ventdE{timing.load': `$ge Loa      'Pa          s = {
+     metric  const              g;
+.timincemaning = perforonst tim          c   ing) {
+   rmance.timerfo pce &&(performan     if   ) {
+     rics(howMet function s    
+   
+
+        }   }        vior');
+ gation beha. Test navi\n4obile deviceect m3. Selicon\nlbar ice too Click dev2)\n2.(F1ev tools rowser den bile:\n1. Opest mob tToools.\n\nrowser dev tequire bon would rulatisime 'Mobil      alert(          ols
+e dev touireqting would r mobile tesemo - real is just a dis       // Th{
+         ort) (viewp  if          ;
+ rt"]')e="viewpoor('meta[namectelment.queryS docuwport =  const vie
+          bile() {mulateMoction si      fun }
+
+      info');
+   d', ' cleareConsoleester.log('gTndow.buwi         
+   ();.clear console          nsole() {
+ clearCofunction 
+                }
+es);
+\n' + valubles:\n'CSS Varia alert(
+                      \n');
+ n(' }).joi      `;
+     t'}not se|| 'e}: ${value riabl `${va return       );
+        im(able).trlue(variVatyer.getPropue = styleconst val                > {
+e =variablables.map(ues = varit val      cons  
+          
+           ];y'
+       primar    '--            '--muted',
+          
+      '--border',           
+      round', '--foreg           d',
+    '--backgroun         
+        [s =ableonst vari      c      ment);
+ntEledocumet.e(documenutedStyl= getCompnst style           co
+  ) {wCSSValues(tion sho   func}
+
+          e);
+   t(messag   aler      
+              
+     '<br>');n(  .joi           ount}`)
+   me}: ${c => `${naunt]), comap(([name   .             ounts)
+s(crieObject.entage = ess const m            
+  ;
+                   }gth
+  ('a').lenctorAllerySele.quntks': docume   'Lin            .length,
+ ')ll('buttonlectorAent.querySeocumns': dButto '        
+       th,nly]').lengguest-o], [data-edauth-requirdata-ll('[ctorAnt.querySeleme docuts':emen   'Auth el  
+           ength,opdown').lAll('.drSelectorument.query docopdowns':        'Dr        
+length,e').theme-togglctorAll('#querySeleument.oggles': doc'Theme t                gth,
+l('nav').lenelectorAl.queryS documentts':emengation elNavi       '    = {
+      st counts        con{
+    () untowElementCoshn unctio    f }
+
+          );
+    }        ;
+ 0)     }, 300  
+         ffset = '';yle.outlineO el.st              ;
+     e = ''yle.outlin.st el              => {
+     t(() eou     setTim             
+            x';
+  Offset = '2putline.ostyle    el.         444'}`;
+   ' : '#ef4 ? '#3b82f6 2 === 0${index %lid 2px sotline = `tyle.ou  el.s              => {
+) l, indexforEach((es.     element');
+        .dropdownon, nav a,('nav buttrAllquerySelectoument.doc= t elements      cons  s() {
+     tElement highlighunction      f   }
+
+    });
+                User';
+'Test = extContentame.t     n          name => {
+ mes.forEach(na              
+
+                  });ock';
+    = 'blle.display atar.sty     av          e=32';
+ sizor=fff&&cold=3b82f6&backgrounme=Test+Usernacom/api/?i-avatars.//uhttps:r.src = '   avata        
+     tar => {Each(avas.for     avatar             
+  "]');
+    "nameser-info=a-ul('[datctorAl.querySeledocument= s amest ncon      );
+      "avatar"]'-user-info=All('[datarySelectordocument.que = avatarsonst          c  fo
+ indemo user      // Set        
+        lex');
+    lay = 'fe.displ.stylh(el => euired.forEac    authReq
+        one');lay = 'nle.dispel => el.styach(orE.fly    guestOn
+                   ired]');
+ equh-rl('[data-autelectorAlent.querySired = docum authRequnst      co]');
+      t-only'[data-guesrAll(ectot.querySeldocumen = stOnlyuet g    cons
+        ) {tate(AuthSulaten sim functio
+
+              }}
+            ();
+ oggle.clickhemeT  t         le) {
+     meTogg   if (the         le');
+ggId('theme-toElementByment.get= docule st themeTogg     con      ggle() {
+ emeToeThon simulatti func      }
+
+   ;
+      e()rmancPerfor.testbugTestedow.        win  ance() {
+  tPerformtion tes func}
+
+       
+        ;ive()onsr.testRespsteow.bugTe wind   
+        sive() {Responon test functi
+
+       
+        };JSErrors()gTester.testwindow.bu            ) {
+rors(tJSErtes  function         }
+
+
+      riables();tCSSVagTester.tesndow.bu  wi        les() {
+  CSSVariabunction test f
+
+             }cates();
+  plir.testDusteugTe.bdow         win
+   ates() {n testDuplicfunctio
+          }
+t();
+      nmenr.testAligstegTew.buindo       w     ) {
+nment(estAlig  function t         }
+
+     pdown();
+estDrogTester.twindow.bu         
+   ropdown() {ction testD     fun
+        }
+;
+   e()ogglr.testThemeTow.bugTeste   wind     
+    () {ggletestThemeToction       funons
+  ctitest fun Global         //}
+
+         }
+      ));
+     lve, ms(resoetTimeoutresolve => se(ew Promis   return n            y(ms) {
+  dela                }
+
+             }
+          ';
+> Hide Log"></iinala-termlass="fas f c<iHTML = 'n.inner   bt           ');
+      how.add('sassList log.cl           
+         {se } el        
+       og';w L"></i> Sho fa-terminalass="fasi clHTML = '<  btn.inner               );
+   e('show'st.removssLi  log.cla                 ow')) {
+ s('shontain.classList.c   if (log          
+                 ');
+  BtnLogtogglementById('letEent.ge = documconst btn        );
+        estLog'd('tementByIElment.getog = docunst l          co {
+      g() toggleLo          }
+
+     );
+         'info'd',reealts clest resus.log('T  thi       
+                     ;
+  t run</div>'w tesready for nets cleared,  ResulO]nfo">[INFentry ilog-class="iv  = '<derHTMLr.innnetai logCon            );
+   Log''testlementById(tEument.ge= docr  logContaine       const     g
+     Clear lo   //        
+                   audit');
+  rehensive begin comp Tests" to  "Run All 'Clicko Test',g', 'Ready tdintus('penerallStaateOvpdhis.u         t    tus
+   verall staReset o        //         
+                
+  });           ;
+   nerHTML = ''lts.inresu               ;
+     est-results'ssName = 'tclaresults.                   ');
+ results'.test-ector(elerySqu = card.lts  const resu                
+               
+       i>';lock"></s fa-css="fa '<i cla =on.innerHTML         ic           ding';
+est-icon pen= 'tame lassN icon.c          
+         icon');test-tor('..querySelecard icon = c const               ;
+    rd'test-ca 'e =sNam card.clas                  d => {
+ ach(car.forE-card')est('.trAllSelectoerycument.qu     do        t cards
+   all tes Reset      //         
+                  s = [];
+ntrie   this.logE             lts = {};
+esus.testR thi             {
+  esults()   clearR
+          
+        }   ption;
+ nt = descriextConteon.tDescriptius     stat        
+   t;ent = text.textContusTex     stat
+           "></i>`;icon}nfig.lass="${coHTML = `<i ccator.inner       indi       
+  g.bg;= confibackground tor.style.    indica        
+    g[status];tusConfifig = stacon  const                        
+
+               }; }
+        n-triangle'clamatioa-excon: 'fas f'#f59e0b', ibg: ing: {     warn            ,
+    mes' }-ti fa icon: 'fas: '#ef4444',bg  fail: {         
+          ' },fas fa-check 'b981', icon: '#10 { bg:ass:         p        ' },
+   -spininner fas fa-spon: 'fa', icg: '#3b82f6ng: { bnni         ru            {
+Config = statusst     con                 
+   
+       iption');DescrrallStatus'oveElementById(ent.getocum= dtion crip statusDesnst co           ');
+    lStatusTextyId('overaltElementBocument.getusText = donst sta          c);
+      dicator'InerallStatusmentById('ovElent.getmeocundicator = d ionst   c            {
+ ption) text, descris, tus(statuOverallStaate         upd}
+
+               n);
+ptiostatusDescritusText,  staus,taterallSus(ovrallStatupdateOvethis.                     
+          }
+                 sfully`;
+succesmpleted } tests co{passCount `$ription =tusDesc      sta           ed!';
+   l Tests Passext = 'AlstatusT                ass';
+    us = 'pStat     overall            {
+    else    }            eview`;
+ to r} warnings Countwarning${sed, tests pas} Countsstion = `${paipsDescratu     st           ;
+    ngs Found`arni Wunt}rningCot = `${wa statusTex           
+        rning';tus = 'wata    overallS               0) {
+  unt >ngCo(warniif  } else               s`;
+ ingnt} warnCouingiled, ${warnnt} fa${failCou passed,  testsunt}ssCotion = `${paatusDescrip st                   `;
+ Foundl IssuesicaitailCount} Cr `${fxt =  statusTe               l';
+   us = 'failStatral  ove          
+        ) { 0ailCount >(f    if     
+                  ;
+      iptionstatusDescrext, usTstatllStatus, era    let ov               
+         h;
+    ng').lengtnis === 'war> r.status.filter(r =resultt = ningCoun war const           
+    ).length;== 'fail' r.status =ilter(r =>= results.ft failCount        cons;
+         length=== 'pass').tatus er(r => r.sresults.filtount = st passCcon       
+         Results);es(this.testvalut.ts = Objecnst resul        co     s() {
+   allStatuOverte    calcula  
+
+            }   g');
+   'warnin 'error' : == 'fail' ? =atus sts' :cess' ? 'suc === 'pas}`, statusust: ${statestName} tes`${t  this.log(         
+                 age;
+     = messinnerHTMLts.estResul    t         w`;
+   sho{status} results $= `test-sName esults.clas testR              results
+  // Update            
+                 /i>`;
+   atus]}"><ns[sts="${icoi clasnerHTML = `<in testIcon.             };
+                 ock'
+ a-cls fng: 'fa       pendi   
+          ngle',-triaations fa-exclaming: 'fa  warn             es',
+      fa-timfasil: ' fa        
+           eck', 'fas fa-ch  pass:            {
+      st icons =          con      icon
+  Update   //            
+            s}`;
+      icon ${statutest- `ame =sN.clastIcontes              }`;
+  tatust-card ${sme = `tesNaassard.cl  testC         e
+     ncappearaate card   // Upd        
+                    ults`);
+  Name}Res{testementById(`$t.getElocumens = dtResultnst tes co              icon');
+ test-elector('.tCard.querySstIcon = tes  const te          est`);
+    estName}TById(`${tt.getElement = documenCardconst test            
+              e };
+      tus, messag= { stastName] ults[teestRes  this.t           {
+   ) sagemesus, e, stat(testNamultsetTestRes                 }
+
+
+       ;('<br>'))joinults. 'pass', resrning' :rnings ? 'wasWa' : haors ? 'failasErr, hformance'('persult.setTestRe  this           ));
+   ncludes('⚠️'ome(r => r.ilts.snings = resuWaronst has         c;
+       des('❌'))=> r.inclume(r s.soresultors = nst hasErr     co                }
+
+          
+ `);etectedscripts dal ternh} large ex.lengtpts ${largeScris.push(`⚠️ult    res           
+     ngth > 0) {eScripts.lelargif (                      
+
+                   );      m')
+ core..cloudfla'cdnjscludes(pt.src.in     scri          
+     om') || dcss.cs('tailwinc.includept.sr        scri            > 
+pt =filter(scrim(scripts).y.frorapts = Arst largeScrion    c            rces
+oue res largorheck f// C               );
+
+ .length}`ylesheetss: ${stsheetyle(`📋 Stlts.push   resu             gth}`);
+len ${scripts.scripts:nal sh(`📋 Exter results.pu           h}`);
+    .lengtages{imImages: $ush(`📋 s.p    result         
+                  eet"]');
+ "styleshk[rel=rAll('linSelectont.queryume docts =shee const style              c]');
+ pt[srAll('scriySelectorocument.querscripts = dnst         co      
+  mg');orAll('ielectuerySment.qcues = do const imag               g
+adin resource lockChe    //         
+    
+           }        }
+              ce');
+   ad performanlow page loh('❌ Ss.pusesult     r           
+        e {    } els            ce');
+    orman load perfe page('⚠️ Moderatushsults.p         re           {
+    5000) adTime <  else if (lo           }
+         nce');d performapage loa Good sh('✅s.pusult re                      000) {
+ Time < 3   if (load                          
+     s`);
+      dy}me: ${domRea ready timDOMh(`📋 us  results.p               ;
+   oadTime}ms`) time: ${lage loadpush(`📋 Presults.                 
+               t;
+        arationStnavig timing.ventEnd -adedEntentLoing.domCody = timea const domR                ;
+   ationStartavig.ntimingntEnd - veg.loadE = timinst loadTime     con              
+ g;ance.timinerformtiming = p     const           ) {
+     mingmance.tior&& perfformance  if (per            nce
+   maorperfload ck page      // Che             
+             
+ lts = [];  const resu     {
+         ce() tPerformanasync tes       }
+
+                 
+'));('<br>.joinresults' : 'pass', ? 'warningrnings l' : hasWa 'faihasErrors ?sponsive', 'result(is.setTestRe         th;
+       ))ncludes('⚠️' => r.i(rme= results.sornings hasWat      cons
+           udes('❌'));r => r.inclme(ults.sors = resst hasErro     con      }
+
+                
+     );d' founty classesve utilinsi'⚠️ No respos.push(lt     resu          {
+        } else         ts`);
+     lemenresponsive eength} Elements.ld ${mobileh(`✅ Founusts.pesul      r           
+   h > 0) {ents.lengt (mobileElem        if        ');
+"]"lg:=class*:"], [="md, [class*:"]ass*="smcl'[SelectorAll(nt.query documeements = mobileEl       const       ts
+  cific elemenmobile-speheck for  C     //     
+
+         }             }`);
+splayyle.diedSt ${comput display: Navigation.push(`📋tsresul            );
+        navdStyle(Computew.get= windoStyle ed comput    const           
+     if (nav) {               ;
+ ('nav')torrySelecdocument.queconst nav =          ss
+       esponsivenen rt navigatio // Tes             );
+
+  es`ty classtiliesponsive uts.length} reElemen ${responsiv📋 Found(`esults.push          r;
+      -cols-2')d\\:grid, .flex, .mne, .hiddensm\\:inlitorAll('.ecrySelcument.ques = dolementresponsiveE  const          s
+     sselaponsive c Test res    //           
+    }
+             ng');
+sig mismeta ta❌ Viewport ults.push('     res            {
+          } else          ntent}`);
+ort.co: ${viewpnt Contepush(`📋s.ult       res       ;
+      g present')rt meta ta('✅ Viewporesults.push          
+          port) {view  if (            ');
+  iewport"]"va[name=mettor('t.querySelecdocumenrt = poconst view            
+    rt meta tag viewpost   // Te                
+           
+  [];results =   const             {
+  ve() estResponsi async t        }
+
+             ));
+  r>'oin('<bs.jss', resultil' : 'parrors ? 'fa hasE',rrorssE('jetTestResult.s       this   '));
+      s('❌r.include => some(r results.s = hasErrorconst             
+   }
+       
+         dling');ent hans evggle hae to Them.push('✅    results              eners);
+  EventListmeToggle.getr && theneEventListeeToggle.add     (them          
+         ck || e.oncli= themeTogglListener sClickonst ha         c           e) {
+meToggl if (the     
+          le');'theme-toggtById(nt.getElemenle = documeToggonst theme         c
+       istenerst lest even       // T    
+
+           }        ;
+  ized')nitialon not inavigatid ❌ Unifieh('.pussults      re            {
+       } else        
+    zed');liation initianified navig('✅ Usults.push  re                ) {
+  edNavigationindow.unifi     if (w           rking
+n is wo navigatioified/ Test if un          /
+
+      });            
+          }           `);
+   sing ${name} mis(`❌ Functionresults.push                  
+       else {        }           `);
+ name} existsnction ${h(`✅ Fults.pus        resu         {
+        unction')me] === 'ff obj[na   if (typeo                => {
+  bj })(({ name, oachns.forE     functio         ];
+
+         
+         ndow }wime', obj: Theerredef'getPr    { name:              },
+   w doin, obj: wme'etThe{ name: 's               s = [
+     nst function   co        st
+     ions exiif key funct   // Test   
+           ty...');
+onalitiipt func JavaScrhecking fors.push('📋 Clt        resu       )
+ in scopelimited is ors (this nsole error co // Check f              
+              [];
+   s = st result     con  
+         rrors() {estJSE    async t         }
+
+           r>'));
+oin('<b, results.j 'pass'? 'fail' :hasErrors s', iablelt('cssVartResutTesse  this.         ;
+     s('❌'))denclur.ir => .some(results = sErrorshat   cons               }
+
+         ;
+      me)(currentThesetTheme   window.                 tore theme
+ Res  //                   
+                  }
+                    ');
+ menge with the chales do notS variab('❌ CSs.pushult   res                     else {
+         }         ;
+    theme')nge withiables cha✅ CSS varsh('.puresults                 
+       Bg) {nitialnewBg !== i   if (             ;
+    und').trim()('--backgroValuegetPropertyElement).documentent.yle(documutedStCompBg = getconst new           
+                            
+ lay(100);.dehist t        awai          wTheme);
+  eme(nendow.setTh wi                  
+ me) {The (window.set    if            
+                : 'dark';
+ight'  'dark' ? 'l ===rrentThemeTheme = cu   const new      
+       ;ta-theme')('daibutement.getAttrdocumentEleocument. d =entThemet curr      cons         e theme
+ gl// Tog                       
+;
+         d').trim()ounue('--backgralrtyVropeetPStyle.ged = computitialBginonst        c         es
+cts variablfetching afwist theme s     // Te
+                });
+                }
+               ed`);
+definiable}: not ar ${v.push(`❌     results                 } else {
+                    alue}`);
+  le}: ${v`✅ ${variabesults.push(   r                    alue) {
+  (v          if     im();
+     iable).trvaralue(pertyVroe.getPStyledomputalue = cnst v    co               le => {
+ h(variabbles.forEacquiredVaria        re         
+               lement);
+entEnt.documdocumeStyle( getComputeddStyle =ompute const c        ;
+
+        ]             eground'
+  ary-forprim         '--          primary',
+ '--               ',
+     --muted '                ,
+    '--border'             ',
+      --foreground     '            d',
+   oun--backgr           '     s = [
+    leiabrequiredVar    const               
+           s = [];
+   onst result       c        les() {
+ tCSSVariabtesc    asyn         
+
+ }           );
+<br>')sults.join('re, s'g' : 'pass ? 'warninhasWarningil' :  'fahasErrors ?icates', upl'dstResult(.setTehis     t           '⚠️'));
+es(r.includs.some(r => s = resulthasWarningconst           );
+      '❌')cludes((r => r.inme results.so =asErrorsnst h    co                 }
+
+        ');
+   ripts foundduplicate scush('✅ No results.p          
+          else {     }      
+      ngth}`);teScripts.le{duplicacripts: $ ste️ Duplicaush(`⚠esults.p   r                 {
+ length > 0)pts.Scriuplicate    if (d          1);
+   => count >t]) [src, coun(().filterptSrcsscritries(ents = Object.licateScrip const dup               });
+
+               }
+              ;
+       [src] = 1ptSrcs        scri           {
+          } else             +;
+   c]+ptSrcs[sr      scri          
+        Srcs[src]) {ipt if (scr            ;
+       pt.src = scriconst src         
+           cript => {s.forEach(sript    sc            
+tSrcs = {};onst scrip      c    ;
+      rc]')ipt[sorAll('scrlectment.querySedocut scripts = ns  co           s
+   scriptuplicate ck for d     // Che      
+            }
+       ;
+  gth})`)lenemeToggles.ound (${thoggles fiple theme t`❌ Multults.push(      res         {
+     length > 1) gles. (themeTog      if        }
+
+         
+         `);gth})enus.lend (${userMfounenus ser m❌ Multiple uts.push(`resul           
+         1) {s.length > nuserMe if (u                     }
+
+
+          h})`);ngtns.lenButto${signIund (ons fosign in butttiple h(`⚠️ Mulusesults.p      r            h > 1) {
+  tons.lengtgnInButsi   if (      
+       ngth}`);
+Toggles.le${themetoggles: me `📋 Thes.push(ult    res      }`);
+      s.lengthenuerM ${us User menus:s.push(`📋     result         ;
+  }`)ngthles.tonnButns: ${signIttobu in igns.push(`📋 S     result           e');
+
+ggleme-toll('#thySelectorAcument.quer = dothemeToggles     const           wn');
+ .dropdoequired] th-rl('[data-aurySelectorAlent.que docums =enuerMt usons         c);
+       ] a'guest-onlyll('[data-torAt.querySelecmenons = docut signInButt        cons       lements
+ tion eigalicate navck for dupChe  //                  }
+
+         
+    ound');ate IDs f No duplic'✅s.push(lt resu            {
+       e      } els
+           );}`(', ')}x)`).joincountd} (${> `${it]) =(([id, counds.mapicateIund: ${dupls foplicate IDs.push(`❌ Du    result          
+      th > 0) {cateIds.leng(dupli       if 
+          count > 1);t]) =>([id, counilter(ries(ids).ft.ents = Objec duplicateId       const   
+        });
+               }
+             = 1;
+      ] [idids                      } else {
+                    
+  ids[id]++;                    
+    [id]) {  if (ids          
+        d;el.iconst id =               {
+       ach(el =>rE]').fol('[idAlctornt.querySelecume         do       = {};
+nst ids           co IDs
+      duplicateor   // Check f                      
+
+        ults = [];es r     const          tes() {
+ estDuplica   async t        
+
+   }
+          br>'));in('<sults.jo 'pass', re :l'? 'fai hasErrors gnment',alit('tResulis.setTes  th           ❌'));
+   includes('r.e(r => s.som = resultorsst hasErron        c    }
+
+                    
+    }             
+   );nt centered'e conte Theme togglults.push('✅    res              ) {
+      = 'center'gnItems ==    if (ali                    
+                 }
+                   ');
+es flexboxggle useme to✅ Thsh(' results.pu                   ex') {
+    y === 'flif (displa               
+     display}`);ay: ${le displ Theme togglts.push(`📋esu  r                   
+                 Items;
+  tyle.alignputedS com =emsst alignIt         con           splay;
+dStyle.diompute= csplay   const di            
+      Toggle);themetedStyle(.getCompuwindow= tedStyle pust com   con             ) {
+    ggle(themeTo if              );
+  heme-toggle'Id('tetElementByent.gocumle = doggemeTt th    cons         gnment
+   e aliglk theme tog Chec        //  
+
+            }         );
+  found'element noton ❌ Navigatis.push('    result            
+    e {     } els              }
+                 sing');
+ntainer misgation covie naht sidpush('❌ Rig    results.              se {
+       } el           
+         }                   ;
+    n sizing')uttosistent bInconush('❌ s.p      result                    
+      } else {                    ;
+sses')sizing clasistent s have conton'✅ Butsults.push(   re                   {
+       Sizing)onsistentf (c     i                
+                  ;
+             })                  
+    }                     ;
+     zing = falseonsistentSi  c                     {
+         )) ins('btn-sm'List.conta.class   if (!btn                      {
+    (btn =>chttons.forEa          bu            
+  ue;zing = trtSit consisten le                    sses
+   stent clansicottons have  bu Check if       //               
+                      `);
+     buttonson} navigatingth{buttons.le`📋 Found $ults.push(     res                 a');
+  'button, orAll(erySelecthtSide.qu rigbuttons =nst        co                    
+                 d');
+    ountainer figation conght side nav✅ Ripush('lts.       resu               tSide) {
+   (righ      if         -2');
+     er.gapitems-centx.le.fctor('querySeleav.tSide = n const righ                   side
+ ent in right alignmtoneck but       // Ch    
+         }
+                   ng');
+ ure missictnment struation alig❌ Navigush('s.pultes         r         
+      else {          }       
+    ');y-betweenjustif flexbox igation usesavsh('✅ N.putssul      re             
+     t) { (navContenif                 en');
+   ustify-betweex.jelector('.fl nav.querySontent = const navC                   (nav) {
+         if    ;
+    v')ctor('naSelecument.querydo =    const nav       
+      nttion alignmeeck naviga// Ch              
+                  = [];
+sults st re         con    {
+    ()menttAligntesasync          }
+
+              r>'));
+ .join('<bults res' : 'pass',? 'warningings asWarnail' : h? 'fasErrors n', hopdowResult('drtTestse this.            
+   '⚠️'));includes( r.=>some(r  results.ings =arnnst hasW      co
+          es('❌'));nclude(r => r.iesults.som = rasErrors h     const
+           }
+           
+     ound');opdown fgle auth drpush('✅ Sin   results.               {
+  th === 1) .lengopdownsDrauth if (      } else       ;
+   )`)(should be 1owns } auth dropds.lengthdown${authDropsh(`❌ Found s.pu      result             > 1) {
+ owns.length ropd  if (authD            own');
+  .dropd-required] auth'[data-ll(ctorAquerySelecument. doDropdowns =nst authco            ns
+     dropdowlicate dup Check for  //                 }
+
+             est');
+nd to tles foutoggropdown  dpush('⚠️ Nosults.        re           {
+ e ls    } e             }
+               nd');
+    not fou content pdownroush('❌ Dults.p       res            
+     else {}             }
+                       ;
+         side') outen clickingwhose es not cldo'❌ Dropdown sults.push(re                    {
+            } else              );
+       ide'cking outs when cliown closesDropdlts.push('✅ esu       r                  
+   d) {Close if (is                     ne';
+  === 'nodisplay le.ntent.sty = coedisClost        cons                         
+               
+ lay(100); this.de await               ;
+        lick()body.c  document.                       outside
+clickinging by t clos// Tes                        
+        }
+           );
+     pen'ot os n doe'❌ Dropdownesults.push(       r                    
+  else { }                      ;
+  correctly')n opensdowop✅ Drults.push('es       r                   {
+   le)if (isVisib              
+          ck'; === 'blodisplaytyle.= content.sble t isVisi       cons                   
+                   y(100);
+   .delahis  await t              
+        ();icktToggle.clirs   f           
+          opening Test         //         
+       ent) {cont   if (                
+ ntent');
+wn-coor('.dropdoSelectdown?.querydrop = tentst con     con            wn');
+   pdoro('.dclosestirstToggle.= fropdown onst d   c              
+   [0];espdownToggl droe =irstToggl f  const            ) {
+      length > 0ownToggles.   if (dropd           ity
+  ionaldown funct/ Test drop      /     
+
+     ontents`);down clength} dropnContents.ow ${dropdush(`📋 Foundsults.p        re    `);
+    wn togglesropdo} dlengthToggles.d ${dropdown Founh(`📋lts.pus  resu             iners`);
+ contaown th} dropdngdowns.lend ${dropou`📋 Fesults.push(    r    
+
+        ontent');dropdown-cectorAll('.nt.querySelnts = documeonte dropdownC     const       ;
+    e')toggln-('.dropdowectorAllent.querySels = documnTogglepdow   const dro            ');
+ pdowndroAll('.lectorerySedocument.qudowns = t dropons         cnts
+       n elemeopdowk for dr Chec  //               
+            [];
+   lts = resust       con      ) {
+    Dropdown(ync testas             }
+
+          <br>'));
+ ts.join(', resul 'pass'ail' :? 'fErrors le', has'themeToggesult(setTestR     this.           des('❌'));
+lue(r => r.inclts.somesu= rrors nst hasEr    co        
+       }
+       
+          }            e);
+    emlThe(initiatThemindow.se   w                    tTheme) {
+ (window.se         if         theme
+   iginal  Restore or  //               }
+
+                
+       sted');ce not persi preferenush('❌ Themeesults.p         r             else {
+         }             ');
+ edce persiste preferenush('✅ Themlts.p  resu                      heme) {
+ewT=== nme oredThe (st         if           ');
+'themeItem(torage.getlocalS =  storedTheme       const         nce
+    ersisteStorage pk local   // Chec                    }
+
+         );
+         working'e toggle noth('❌ Thempus    results.                    
+    } else {            );
+    correctly'ks oggle worme the✅ T('ults.push   res                  {
+    alTheme)me !== initi(newThe    if           
+      e');a-themte('datt.getAttribuElemenentnt.docum docume newTheme =      const          
+                     0);
+   (10elayis.dait th          aw      
+    e.click();Toggl theme              {
+     ggle) emeTo   if (th             toggle
+ emethSimulate  //           ;
+
+     eme}`)tialTheme: ${iniInitial thsh(`📋 lts.pu      resu          ');
+('data-themeteetAttribument.gocumentEle.dmentcualTheme = doonst initi      c       ching
+   theme swit Test           //
+
+            }     
+     s'); icon existheme toggle✅ Th('results.pus                 se {
+        } el           d');
+unicon not foggle to('❌ Theme pushlts.su re           {
+        !themeIcon)  (       if               }
+
+        ;
+  sts')exiggle button  Theme topush('✅  results.            
+      lse {     } e          ound');
+ button not fe oggl❌ Theme tush('lts.p        resu  
+          e) {Toggl (!theme if              
+              on');
+   gle-ictheme-togntById('lement.getEon = documest themeIc       con   ;
+      eme-toggle')d('thentByIt.getEleme = documen themeToggl      const           exists
+heme toggleck if t// Che                    
+      ];
+      = [ults  resconst        {
+        eToggle() tThemtes   async           }
+
+           cess');
+!', 'sucompleted c('Bug audits.log  thi            tus();
+  allStateOveralcula this.c                }
+
+            
+        }        
+       ssage}`);rror.me: ${eledTest fai `l',t.name, 'faiesResult(tsts.setTe    thi                  ;
+  or')rre}`, 'eor.messagst: ${errt.name} ten ${tesor i.log(`Errhis  t                      ror) {
+catch (er}                     en tests
+lay betwemall de(500); // S.delay this await                     );
+  isall(thnc.cait test.fu       aw              
+   `, 'info');e} test...${test.nam`Running og(is.lth                   {
+       try             s) {
+      est of test(const t        for               ];
+
+          formance }
+testPerc: this., funerformance' { name: 'p             ,
+      e }tResponsivc: this.tesnsive', funpome: 'resna  {                   
+ },stJSErrors this.tenc:', fursjsErro 'name:         {          
+  ables },ritCSSVates this.unc:s', friablessVa{ name: 'c          
+          es },Duplicat this.test, func:'duplicates'ame:       { n              nt },
+.testAlignmeunc: thisnt', f: 'alignme  { name                own },
+  ropdthis.testDc: n', fun'dropdowe:       { nam            ,
+  meToggle }stThetenc: this.ggle', futhemeTo  { name: '               = [
+   t tests     cons     
+
+       ues');bugs and issnts for ll componeg a 'TestinTests...',nning , 'Ruing'Status('runnlleOvera.updat this           ;
+    , 'info')dit...'ve bug auprehensiStarting com.log('     this          () {
+ lTestsrunAlasync      
+         }
+         lHeight;
+ iner.scrol= logContarollTop ntainer.sc      logCo     
+     ;Entry)logendChild(appner.   logContai             
+nt = entry;.textContentry   logE            
+ y ${type}`;`log-entrsName = clas   logEntry.            
+ ;nt('div')leme.createEdocumentry =  logEnt       const
+         ');('testLogtByIdt.getElemenmenocuner = dlogContaiconst       
+                       e });
+    entry, typ{ message:ntries.push(.logE        this      }`;
+  ${messageperCase()}] pe.toUp}] [${tyestampimtry = `[${t en       const        ring();
+ LocaleTimeSt().to= new Datep mestamti     const           
+ {o') type = 'infage,  log(mess                  }
+
+         });
+           leLog();
+ is.togg th                   () => {
+ lick',Listener('centaddEvn').LogBtd('togglelementByIcument.getE    do               });
+
+  
+           s();learResult     this.c         > {
+      () =('click', nerEventListeltsBtn').add'clearResuElementById(nt.getcume  do          );
+
+        }        ();
+    unAllTestss.r     thi         {
+        () =>ck',r('clientListene.addEvllTestsBtn')yId('runAtBlement.getE documen               ners() {
+EventListetup       se }
+
+         
+       o');, 'infialized'er inittestit 'Bug aud   this.log(        rs();
+     ntListeneetupEve     this.s   
+         init() {              }
+
+        .init();
+        this       es = [];
+  his.logEntri       t         ults = {};
+is.testRes       th         {
+tructor() cons        r {
+    gAuditTeste   class Bu   
+  ntatiolemene ImpTest Suit     // ipt>
+   
+
+    <scrscript></ation.js">navigjs/unified-src="t 
+    <scrippt>js"></scries/theme. src="stylcript-->
+    <spts Scri- Load  <!-iv>
+
+   v>
+    </d </di
+         </div>       >
+   /div"><est-resultss="tass" clceResult="performan <div id      >
+            </div             </button>
+                rics
+    et   Show M                    ne"></i>
+ hart-lias fa-ci class="f      <                  trics()">
+"showMey" onclick=artn-second-btn test-bs="testbutton clas          <   n>
+          </butto               nce
+  PerformaTest                     </i>
+    a-play"> fs="fasas      <i cl                ()">
+  anceformtPerick="tesonclry" primatn test-btn-st-bs="teclasbutton      <         s">
+      est-actionv class="t       <di           </div>
+          ics.
+    metrmance all perfor overading, andource lotimes, resad age lo Measures p                
+   ption">scri"test-de <div class=               >
+/div       <
+         Timead rmance & Lo      Perfo      v>
+         </di               /i>
+    t"><-alter fa-tachomefas="ss<i cla                      >
+  ng"on pendi"test-icdiv class=        <          
+  t-title">lass="tesiv c    <d            ceTest">
+rforman="pe-card" idestv class="t  <di
+          Test -->nce rformaage Load Pe      <!-- P  div>
+
+      </         ></div>
+ sults"-re="test classults"siveRes"respon id=     <div
+              </div>         utton>
+    </b                    e View
+ilMob                        
+e"></i>ilmob fa-asss="fla<i c                       >
+ ()"teMobileulasimlick="oncndary" ecoest-btn-s-btn ttestton class="    <but                 </button>
+            ve
+       onsi   Test Resp                     "></i>
+play"fas fa-ss=     <i cla             )">
+      onsive(stResponclick="tery" tn-primatest-btest-btn s="clasn butto        <            >
+"est-actions="tclassiv <d         v>
+        </di             s.
+  icee devild mobes ann sizerent screeff dir ontion behavioTests naviga                on">
+    descripti"test- class=<div              >
+       </div      esign
+     ive Dspons    Re          >
+          </div             i>
+   -alt"></le fa-mobi class="fas     <i                ing">
+   on pend"test-icv class=     <di           tle">
+    est-ticlass="t    <div             ">
+eTestsivspon id="red"test-cars=" <div clas         ->
+  est -ve Design Tesponsi- R       <!-
+     >
+  </div         "></div>
+ lts"test-resus" class=ResultjsErrors"<div id=              iv>
+         </d     
+    on> </butt                   
+lear Conso Cle                   ></i>
+    m"s fa-broo class="fa         <i            >
+   ()"leConsok="clearlicary" oncecondn test-btn-sest-btass="ttton cl        <bu            tton>
+  </bu                rors
+  ck Erhe          C             i>
+ play"></"fas fa-lass=       <i c                
+ s()">tJSErrortesclick="rimary" ontn-pbtn test-b="test-class  <button                   actions">
+t-tes"ss=la<div c             
+   div>         </   sts.
+    ork requeiled netwings, and faonsole warnt errors, cJavaScripitors for on           M        
+ ion">iptescrss="test-dla     <div c             </div>
+           Errors
+   t vaScrip   Ja           iv>
+      </d                 </i>
+   as fa-bug">s="f  <i clas                
+      "> pendingiconss="test- <div cla            ">
+       est-title class="t<div             st">
+   ErrorsTed" id="js"test-cars=<div clas         
+   t -->t Errors Tescrip-- JavaS   <!           </div>
+
+
+          </div>lts">t-resutesass="ts" clblesResulcssVaria  <div id="        >
+      iv         </d      utton>
+  </b              
+     lues Va  Show            
+          e"></i>"fas fa-codclass=<i                         lues()">
+SSVawCck="shocliary" onndsecon test-btn-"test-btton class= <but                 n>
+  /butto       <            Variables
+ st         Te             >
+   play"></iss="fas fa-i cla         <            
+   )">s(ableCSSVari="testclickimary" onbtn-prt-btn tes="test-button class <               
+    -actions">ss="test<div cla       >
+               </div          theming.
+pplied for nd a defined aerly prop areopertiesm pr CSS custoatdates thali    V       
+         scription">s="test-de <div clas      >
+         /div          <es
+      ablheme VariSS T          C         v>
+      </di      
+         te"></i>paletfas fa-lass="   <i c                    nding">
+ n peicotest-="lass    <div c        >
+        title"test-s=" clas  <div       
+       ">ablesTestVari"cssd=ard" i="test-c <div class         >
+  Test --e Variables !-- CSS Them   <         >
+
+    </div
+        iv>ults"></ds="test-res" clastsateResul"duplic  <div id=             </div>
+          >
+       on/butt     <           nt
+    ent Cou       Elem                
+ "></i>fa-list"fas lass=       <i c           >
+      "tCount()howElemen"sk=lic" oncecondary-stest-btnn bt="test-tton class       <bu            utton>
+ </b                   s
+  Duplicate    Scan                  >
+  "></ifas fa-play <i class="                    
+   tes()">ca"testDupli" onclick=rimary-btn-pbtn test="test-button class  <           >
+       st-actions""teclass=     <div     v>
+              </di
+         ion.ust cause confighus that mtons, or menents, butemelgation ate navilic for dup Scans                 ption">
+  "test-descri<div class=               iv>
+        </d      ments
+   e Eleicatupl           D          </div>
+                   "></i>
+fa-copyss="fas       <i cla             ">
+     n pendingt-ico="tesss   <div cla           >
+      e"itl"test-t<div class=        
+        teTest">id="duplica-card" s="testlas <div c        >
+   est -- Elements T Double--          <!/div>
+
+          <  /div>
+  lts"><-resu"testass= clts"mentResul="alignv id   <di            
+      </div>        tton>
+           </bu      ts
+      Elemenighlight    H                     e"></i>
+as fa-eylass="f   <i c            
+         s()">htElement"highligonclick=condary" -btn-sen testt-btass="tes  <button cl                  </button>
+            t
+        Alignmenst Te                 
+       "></i>play"fas fa-<i class=                     
+   ()">lignmentstAnclick="teary" o-primbtn test-btnass="test-<button cl            >
+        s"ctiontest-av class="     <di     >
+             </div      s.
+   hover stateacing and nt spve consisted and halignee properly aons aration buttf navigs i   Check           
+      scription">detest-"ass=iv cl     <d         /div>
+    <         
+     nmentigton Al   But              
+   v>di       </        ></i>
+     ter"fa-align-cen"fas s=clas     <i                >
+    nding"t-icon pe"tes <div class=           >
+        "est-titless="t    <div cla          
+  t">alignmentTes="st-card" idv class="te<di      -->
+      ment Test utton Align!-- B        <>
+
+     </div         </div>
+  t-results">class="tessults" "dropdownRediv id=        <
+           </div>     n>
+        to/but          <        Auth
+   teSimula                       ></i>
+ -user" fa"fasi class=     <              ">
+     tate()uthSimulateAclick="scondary" onst-btn-sest-btn te"te=classutton  <b               
+    n></butto                n
+     Dropdow     Test             
+      </i>">ays fa-plfai class="     <          
+         ">ropdown()"testDck=" onclitn-primarybtn test-bass="test- <button cl            
+       ons">cti="test-aclass  <div           >
+    iv</d       
+         elements.ate plicn't have du and doesrectlyloses cor/copdown opens menu drs that usererifie          V     ">
+     riptiontest-descs=" clas    <div         
+         </div>         n
+ ropdown D   Navigatio                
+ </div>             >
+       ars"></i-bs fa class="fa      <i             
+     ending">-icon psts="teclas  <div               le">
+    t-tit="tes  <div class            >
+  pdownTest""dro-card" id=lass="test   <div c       
+  ->st -wn TeDropdoion vigat<!-- Na      
+
+            </div>iv>
+      ults"></d-restest" class="leResultsToggd="theme  <div i             v>
+   </di              button>
+    </           
+     Toggle Demo                
+        c"></i>-synass="fas fa<i cl                        oggle()">
+eThemeTck="simulat onclidary"
