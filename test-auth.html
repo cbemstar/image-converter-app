@@ -46,7 +46,14 @@
     <script src="js/config.js"></script>
     <script src="js/public-config.js"></script>
     <script type="module" src="js/supabase-client.js"></script>
-    <script src="js/auth-manager.js"></script>
+    <script>
+        // Wait for module to load before loading auth manager
+        setTimeout(() => {
+            const script = document.createElement('script');
+            script.src = 'js/auth-manager.js';
+            document.head.appendChild(script);
+        }, 100);
+    </script>
 
     <script>
         let testResults = {
