@@ -5,4 +5,5 @@ node_modules/
 
 # Environment and generated config
 .env.local
+# Generated Supabase runtime config
 js/supabase-config.js
