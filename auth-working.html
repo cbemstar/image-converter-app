@@ -337,7 +337,7 @@
                 const { data, error } = await supabase.auth.signInWithOAuth({
                     provider: 'google',
                     options: {
-                        redirectTo: `${window.location.origin}/auth-working.html`
+                        redirectTo: `${window.location.origin}/index.html`
                     }
                 });
                 
@@ -359,7 +359,7 @@
                 const { data, error } = await supabase.auth.signInWithOAuth({
                     provider: 'github',
                     options: {
-                        redirectTo: `${window.location.origin}/auth-working.html`
+                        redirectTo: `${window.location.origin}/index.html`
                     }
                 });
                 
@@ -373,9 +373,39 @@
             }
         };
         
+        // Handle authentication callback
+        function handleAuthCallback() {
+            const hashParams = new URLSearchParams(window.location.hash.substring(1));
+            const accessToken = hashParams.get('access_token');
+            const refreshToken = hashParams.get('refresh_token');
+            const type = hashParams.get('type');
+            
+            if (accessToken) {
+                debug(`Auth callback detected: ${type}`);
+                showMessage('Authentication successful! Redirecting to homepage...', 'success');
+                
+                // Clear the hash from URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+                
+                // Redirect to homepage after a short delay
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+                
+                return true;
+            }
+            return false;
+        }
+        
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', () => {
             debug('Page loaded, initializing...');
+            
+            // Check if this is an auth callback first
+            if (handleAuthCallback()) {
+                return; // Don't initialize the form if we're handling a callback
+            }
+            
             setTimeout(initializeAuth, 100);
         });
     </script>

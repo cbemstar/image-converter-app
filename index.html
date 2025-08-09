@@ -267,8 +267,65 @@
   </div>
 
   <script>
+    // Simple toast notification
+    function showToast(message, type = 'info') {
+      const toast = document.createElement('div');
+      toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 4px;
+        color: white;
+        font-weight: 500;
+        z-index: 10000;
+        max-width: 300px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        background-color: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+      `;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.remove();
+      }, 5000);
+    }
+
+    // Handle authentication callback
+    function handleAuthCallback() {
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const accessToken = hashParams.get('access_token');
+      const type = hashParams.get('type');
+      
+      if (accessToken) {
+        console.log('Authentication callback detected:', type);
+        
+        // Clear the hash from URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+        
+        // Show success message
+        showToast('Successfully signed in! Welcome back.', 'success');
+        
+        // Force refresh auth state
+        setTimeout(() => {
+          if (window.authManager) {
+            window.authManager.updateAuthUI();
+          }
+          window.location.reload();
+        }, 1000);
+        
+        return true;
+      }
+      return false;
+    }
+
     // Initialize authentication functionality
     document.addEventListener('DOMContentLoaded', () => {
+      // Handle auth callback first
+      if (handleAuthCallback()) {
+        return;
+      }
+      
       // Handle sign out
       const signOutBtn = document.getElementById('signOutBtn');
       if (signOutBtn) {
