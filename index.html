@@ -17,22 +17,8 @@
   <script src="layout.js"></script>
   <script src="home.js"></script>
 
-  <!-- Supabase and Authentication -->
-  <script src="js/config.js"></script>
-  <script src="js/public-config.js"></script>
-  <script type="module" src="js/supabase-client.js"></script>
-  <script src="js/auth-manager.js"></script>
-  <script src="js/profile-manager.js"></script>
-  <script src="js/quota-manager.js"></script>
-  <script src="js/file-manager.js"></script>
-  <script src="js/stripe-manager.js"></script>
-  <script src="js/file-upload-component.js"></script>
-  <script src="js/quota-notifications.js"></script>
-  <script src="js/preferences-utils.js"></script>
-  <script src="js/auth-modal.js"></script>
-  <script src="js/auth-guards.js"></script>
-  <script src="js/unified-navigation.js"></script>
-  <script src="js/app-audit.js"></script>
+  <!-- Global Authentication System -->
+  <script src="js/auth-loader.js"></script>
 </head>
 
 <body class="bg-transparent min-h-screen flex flex-col">
@@ -274,91 +260,142 @@
   </div>
 
   <script>
-    // Simple toast notification
-    function showToast(message, type = 'info') {
-      const toast = document.createElement('div');
-      toast.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 12px 20px;
-        border-radius: 4px;
-        color: white;
-        font-weight: 500;
-        z-index: 10000;
-        max-width: 300px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        background-color: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
-      `;
-      toast.textContent = message;
-      document.body.appendChild(toast);
-
-      setTimeout(() => {
-        toast.remove();
-      }, 5000);
-    }
-
-    // Handle authentication callback
-    function handleAuthCallback() {
-      const hashParams = new URLSearchParams(window.location.hash.substring(1));
-      const accessToken = hashParams.get('access_token');
-      const type = hashParams.get('type');
-
-      if (accessToken) {
-        console.log('Authentication callback detected:', type);
-
-        // Clear the hash from URL
-        window.history.replaceState({}, document.title, window.location.pathname);
-
-        // Show success message
-        showToast('Successfully signed in! Welcome back.', 'success');
-
-        // Force refresh auth state
-        setTimeout(() => {
-          if (window.authManager) {
-            window.authManager.updateAuthUI();
-          }
-          window.location.reload();
-        }, 1000);
-
-        return true;
-      }
-      return false;
-    }
-
-    // Initialize authentication functionality
+    // Initialize page functionality
     document.addEventListener('DOMContentLoaded', () => {
-      // Handle auth callback first
-      if (handleAuthCallback()) {
-        return;
-      }
-
-      // Initialize sidebar functionality
       initializeSidebar();
+      initializeDropdown();
+      initializeTheme();
+      setupSignOut();
+    });
 
-      // Initialize authentication after a short delay to ensure all scripts are loaded
-      setTimeout(() => {
-        initializeAuthentication();
-      }, 1000);
+    // Wait for global auth to be ready
+    document.addEventListener('authReady', () => {
+      console.log('🎉 Global authentication is ready!');
+      setupAuthFeatures();
+    });
 
-      // Handle sign out
+    // Initialize sidebar functionality
+    function initializeSidebar() {
+      const sidebarToggle = document.getElementById('sidebar-toggle');
+      const sidebar = document.getElementById('sidebar');
+      const sidebarOverlay = document.getElementById('sidebar-overlay');
+      const sidebarClose = document.getElementById('sidebar-close');
+
+      if (sidebarToggle && sidebar && sidebarOverlay) {
+        sidebarToggle.addEventListener('click', () => {
+          sidebar.classList.remove('-translate-x-full');
+          sidebarOverlay.classList.remove('hidden');
+          sidebarToggle.setAttribute('aria-expanded', 'true');
+        });
+
+        const closeSidebar = () => {
+          sidebar.classList.add('-translate-x-full');
+          sidebarOverlay.classList.add('hidden');
+          sidebarToggle.setAttribute('aria-expanded', 'false');
+        };
+
+        if (sidebarClose) {
+          sidebarClose.addEventListener('click', closeSidebar);
+        }
+
+        sidebarOverlay.addEventListener('click', closeSidebar);
+      }
+    }
+
+    // Initialize dropdown functionality
+    function initializeDropdown() {
+      const dropdownToggle = document.querySelector('.dropdown-toggle');
+      const dropdownContent = document.querySelector('.dropdown-content');
+
+      if (dropdownToggle && dropdownContent) {
+        dropdownToggle.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+
+          const isOpen = dropdownContent.style.display === 'block';
+          dropdownContent.style.display = isOpen ? 'none' : 'block';
+          dropdownToggle.setAttribute('aria-expanded', !isOpen);
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+          if (!dropdownToggle.contains(e.target) && !dropdownContent.contains(e.target)) {
+            dropdownContent.style.display = 'none';
+            dropdownToggle.setAttribute('aria-expanded', 'false');
+          }
+        });
+      }
+    }
+
+    // Initialize theme toggle
+    function initializeTheme() {
+      if (window.initializeThemeToggle) {
+        window.initializeThemeToggle();
+      } else {
+        setTimeout(() => {
+          if (window.initializeThemeToggle) {
+            window.initializeThemeToggle();
+          }
+        }, 100);
+      }
+    }
+
+    // Setup sign out functionality
+    function setupSignOut() {
       const signOutBtn = document.getElementById('signOutBtn');
       if (signOutBtn) {
         signOutBtn.addEventListener('click', async (e) => {
           e.preventDefault();
           try {
-            if (window.supabase) {
-              await window.supabase.auth.signOut();
-              showToast('Signed out successfully', 'success');
+            if (window.globalAuth) {
+              await window.globalAuth.signOut();
               setTimeout(() => window.location.reload(), 1000);
             }
           } catch (error) {
             console.error('Sign out error:', error);
-            showToast('Error signing out', 'error');
           }
         });
       }
-    });
+    }
+
+    // Setup authentication-dependent features
+    function setupAuthFeatures() {
+      // Add authentication requirement to premium features
+      const premiumTools = document.querySelectorAll('[data-premium="true"]');
+      premiumTools.forEach(tool => {
+        tool.addEventListener('click', (e) => {
+          if (window.globalAuth && !window.globalAuth.requireAuth({
+            title: 'Premium Feature',
+            message: 'This tool requires a premium account. Sign in to access advanced features.'
+          })) {
+            e.preventDefault();
+          }
+        });
+      });
+    }
+
+    // Global toast function
+    window.showToast = function(message, type = 'info') {
+      if (window.globalAuth) {
+        window.globalAuth.showToast(message, type);
+      } else {
+        console.log(`Toast: ${message}`);
+      }
+    };
+
+    // Debug function
+    window.debugAuth = function() {
+      if (window.globalAuth) {
+        console.log('=== Global Authentication Debug ===');
+        console.log('Authenticated:', window.globalAuth.isAuthenticated());
+        console.log('Current user:', window.globalAuth.getCurrentUser());
+        console.log('Current session:', window.globalAuth.getCurrentSession());
+      } else {
+        console.log('Global auth not available');
+      }
+    };
+
+
 
     // Initialize sidebar functionality
     function initializeSidebar() {
@@ -396,7 +433,7 @@
         // Wait for required dependencies
         let attempts = 0;
         const maxAttempts = 50; // Increase wait time
-        
+
         while ((!window.supabase || !window.PUBLIC_ENV) && attempts < maxAttempts) {
           await new Promise(resolve => setTimeout(resolve, 100));
           attempts++;
@@ -416,7 +453,7 @@
 
         // Check current auth state directly with Supabase
         const { data: { session }, error } = await window.supabase.auth.getSession();
-        
+
         if (error) {
           console.error('Error getting session:', error);
           return;
@@ -441,7 +478,7 @@
     // Direct UI update function
     function updateAuthUIDirectly(isAuthenticated, user) {
       console.log('Updating UI directly:', isAuthenticated, user?.email);
-      
+
       const authRequired = document.querySelectorAll('[data-auth-required]');
       const guestOnly = document.querySelectorAll('[data-guest-only]');
       const userInfo = document.querySelectorAll('[data-user-info]');
@@ -452,7 +489,7 @@
           el.style.display = 'flex';
           el.classList.remove('hidden');
         });
-        
+
         // Hide guest elements
         guestOnly.forEach(el => {
           el.style.display = 'none';
@@ -478,7 +515,7 @@
           el.style.display = 'none';
           el.classList.add('hidden');
         });
-        
+
         // Show guest elements
         guestOnly.forEach(el => {
           el.style.display = 'flex';
