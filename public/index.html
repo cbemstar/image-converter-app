@@ -331,6 +331,11 @@
         return;
       }
       
+      // Initialize authentication after a short delay to ensure all scripts are loaded
+      setTimeout(() => {
+        initializeAuthentication();
+      }, 500);
+      
       // Handle sign out
       const signOutBtn = document.getElementById('signOutBtn');
       if (signOutBtn) {
@@ -345,6 +350,40 @@
           }
         });
       }
+    });
+
+    // Initialize authentication system
+    async function initializeAuthentication() {
+      try {
+        console.log('Initializing authentication system...');
+        
+        // Wait for auth manager to be available
+        let attempts = 0;
+        while (!window.authManager && attempts < 20) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+          attempts++;
+        }
+        
+        if (window.authManager) {
+          console.log('AuthManager found, updating UI...');
+          window.authManager.updateAuthUI();
+          
+          // Set up auth state listener for future changes
+          window.authManager.addAuthStateListener((event, session, user) => {
+            console.log('Auth state changed:', event, user?.email || 'No user');
+            setTimeout(() => {
+              window.authManager.updateAuthUI();
+            }, 100);
+          });
+          
+        } else {
+          console.warn('AuthManager not available after waiting');
+        }
+        
+      } catch (error) {
+        console.error('Error initializing authentication:', error);
+      }
+    }
 
       // Ensure theme toggle is properly initialized
       if (window.initializeThemeToggle) {

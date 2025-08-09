@@ -331,6 +331,11 @@
         return;
       }
       
+      // Initialize authentication after a short delay to ensure all scripts are loaded
+      setTimeout(() => {
+        initializeAuthentication();
+      }, 500);
+      
       // Handle sign out
       const signOutBtn = document.getElementById('signOutBtn');
       if (signOutBtn) {
@@ -345,6 +350,63 @@
           }
         });
       }
+    });
+
+    // Initialize authentication system
+    async function initializeAuthentication() {
+      try {
+        console.log('Initializing authentication system...');
+        
+        // Wait for auth manager to be available
+        let attempts = 0;
+        while (!window.authManager && attempts < 20) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+          attempts++;
+        }
+        
+        if (window.authManager) {
+          console.log('AuthManager found, updating UI...');
+          window.authManager.updateAuthUI();
+          
+          // Set up auth state listener for future changes
+          window.authManager.addAuthStateListener((event, session, user) => {
+            console.log('Auth state changed:', event, user?.email || 'No user');
+            setTimeout(() => {
+              window.authManager.updateAuthUI();
+            }, 100);
+          });
+          
+        } else {
+          console.warn('AuthManager not available after waiting');
+        }
+        
+      } catch (error) {
+        console.error('Error initializing authentication:', error);
+      }
+    }
+
+    // Debug function - you can call this in browser console
+    window.debugAuth = function() {
+      console.log('=== Authentication Debug ===');
+      console.log('AuthManager available:', !!window.authManager);
+      console.log('Supabase available:', !!window.supabase);
+      console.log('PUBLIC_ENV loaded:', !!window.PUBLIC_ENV);
+      
+      if (window.authManager) {
+        console.log('Is authenticated:', window.authManager.isAuthenticated());
+        console.log('Current user:', window.authManager.getCurrentUser());
+        console.log('Current session:', window.authManager.getCurrentSession());
+      }
+      
+      const authElements = document.querySelectorAll('[data-auth-required]');
+      const guestElements = document.querySelectorAll('[data-guest-only]');
+      console.log('Auth required elements:', authElements.length);
+      console.log('Guest only elements:', guestElements.length);
+      
+      authElements.forEach((el, i) => {
+        console.log(`Auth element ${i}:`, el, 'visible:', el.style.display !== 'none');
+      });
+    };
 
       // Ensure theme toggle is properly initialized
       if (window.initializeThemeToggle) {
