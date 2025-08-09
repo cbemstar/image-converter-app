@@ -1,100 +1,16 @@
-/**
- * Supabase Client Configuration
- * Initializes the Supabase client using runtime configuration
- */
+// js/supabase-client.js
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-// Import Supabase client from CDN (will be loaded in HTML)
-// This assumes the Supabase JS library is loaded via CDN in the HTML
-
-class SupabaseClient {
-  constructor() {
-    const config = window.SUPABASE_CONFIG || {};
-    this.supabaseUrl = config.SUPABASE_URL;
-    this.supabaseAnonKey = config.SUPABASE_ANON_KEY;
-
-    if (!this.supabaseUrl || !this.supabaseAnonKey) {
-      console.error('Supabase configuration missing: generate js/supabase-config.js.');
-      return;
-    }
-
-    // Initialize Supabase client
-    this.client = window.supabase.createClient(this.supabaseUrl, this.supabaseAnonKey);
-
-    // Initialize auth state listener
-    this.initAuthListener();
-  }
-
-  /**
-   * Initialize authentication state listener
-   */
-  initAuthListener() {
-    this.client.auth.onAuthStateChange((event, session) => {
-      console.log('Auth state changed:', event, session);
-      
-      // Dispatch custom event for other components to listen to
-      window.dispatchEvent(new CustomEvent('supabase-auth-change', {
-        detail: { event, session }
-      }));
-      
-      // Update UI based on auth state
-      this.updateAuthUI(session);
-    });
-  }
-
-  /**
-   * Update UI elements based on authentication state
-   */
-  updateAuthUI(session) {
-    const authElements = document.querySelectorAll('[data-auth-required]');
-    const guestElements = document.querySelectorAll('[data-guest-only]');
-    
-    if (session) {
-      // User is logged in
-      authElements.forEach(el => el.style.display = 'block');
-      guestElements.forEach(el => el.style.display = 'none');
-    } else {
-      // User is not logged in
-      authElements.forEach(el => el.style.display = 'none');
-      guestElements.forEach(el => el.style.display = 'block');
-    }
-  }
-
-  /**
-   * Get the current Supabase client instance
-   */
-  getClient() {
-    return this.client;
-  }
-
-  /**
-   * Get the current user session
-   */
-  async getCurrentSession() {
-    const { data: { session }, error } = await this.client.auth.getSession();
-    if (error) {
-      console.error('Error getting session:', error);
-      return null;
-    }
-    return session;
-  }
-
-  /**
-   * Get the current user
-   */
-  async getCurrentUser() {
-    const { data: { user }, error } = await this.client.auth.getUser();
-    if (error) {
-      console.error('Error getting user:', error);
-      return null;
-    }
-    return user;
-  }
+if (!window.PUBLIC_ENV) {
+  throw new Error('PUBLIC_ENV not loaded. Include /js/public-config.js before this script.');
 }
 
-// Create global instance
-window.supabaseClient = new SupabaseClient();
+const { SUPABASE_URL, SUPABASE_ANON_KEY } = window.PUBLIC_ENV;
+export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+});
 
-// Export for module usage
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = SupabaseClient;
-}
+// expose for legacy scripts
+window.supabase = supabase;
+window.supabaseClient = { getClient: () => supabase };
+
