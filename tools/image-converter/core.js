@@ -315,6 +315,52 @@ async function handleFiles(files) {
           openImageModal(e.target.result, sanitizeFilename(file.name), i);
         });
 
+        // Add individual convert button handler
+        convertBtn.addEventListener('click', async function(ev) {
+          ev.stopPropagation();
+          
+          // Check usage limit
+          if (!window.canConvert()) {
+            window.showUpgradeModal();
+            return;
+          }
+          
+          const fileIndex = parseInt(this.dataset.index, 10) - 1;
+          const fileToConvert = _selectedFiles[fileIndex];
+          
+          if (!fileToConvert) {
+            showNotification('File not found', 'error');
+            return;
+          }
+          
+          // Get conversion parameters
+          const maxW = parseInt(maxWidthInput.value, 10) || 99999;
+          const maxH = parseInt(maxHeightInput.value, 10) || 99999;
+          const sizeVal = parseFloat(targetSizeInput.value) || 500;
+          const targetBytes = (sizeUnitSelect.value === 'MB' ? sizeVal * 1024 * 1024 : sizeVal * 1024);
+          const format = outputFormatInput.value;
+          
+          try {
+            this.textContent = 'Converting...';
+            this.disabled = true;
+            
+            // Process single image
+            await processImages([fileToConvert], maxW, maxH, targetBytes, format);
+            
+            // Record successful conversion
+            window.recordConversion();
+            
+            this.textContent = 'Convert';
+            this.disabled = false;
+            
+          } catch (error) {
+            console.error('Individual conversion failed:', error);
+            showNotification('Conversion failed: ' + error.message, 'error');
+            this.textContent = 'Convert';
+            this.disabled = false;
+          }
+        });
+
         // Make row clickable to toggle checkbox
         tr.style.cursor = 'pointer';
         tr.addEventListener('click', function(ev) {
@@ -1118,12 +1164,10 @@ function setupEventListeners() {
     // Convert button click handler
     if (convertImagesBtn) {
       convertImagesBtn.addEventListener('click', async () => {
-        // Check quota before processing
-        if (window.toolIntegration) {
-          const canProceed = await window.toolIntegration.checkQuota('conversion');
-          if (!canProceed) {
-            return; // Quota exceeded, error already shown
-          }
+        // Check usage limit before processing
+        if (!window.canConvert()) {
+          window.showUpgradeModal();
+          return;
         }
         
         // Get selected files
@@ -1170,29 +1214,12 @@ function setupEventListeners() {
           // Process images
           await processImages(filesToProcess, maxW, maxH, targetBytes, format);
           
-          // Track successful conversion
-          if (window.toolIntegration) {
-            window.toolIntegration.trackToolUsage('conversion_completed', {
-              file_count: filesToProcess.length,
-              output_format: format
-            });
-          }
-        } catch (error) {
-          // Handle and track errors
-          if (window.handleError) {
-            window.handleError(error, {
-              tool: 'image-converter',
-              operation: 'conversion',
-              file_count: filesToProcess.length
-            });
-          }
+          // Record successful conversion
+          window.recordConversion();
           
-          if (window.toolIntegration) {
-            window.toolIntegration.trackToolUsage('conversion_failed', {
-              file_count: filesToProcess.length,
-              error: error.message
-            });
-          }
+        } catch (error) {
+          console.error('Conversion failed:', error);
+          showNotification('Conversion failed: ' + error.message, 'error');
         }
       });
     }
@@ -1312,6 +1339,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       quotaType: 'conversions',
       trackUsage: true
     });
+  }
+  
+  // Initialize usage tracking display
+  if (window.imageAuth) {
+    window.imageAuth.updateUI();
   }
   
   console.log('Image conversion app initialized');
