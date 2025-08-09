@@ -100,6 +100,7 @@ INTEGRATION CHECKLIST:
    <!-- Core Dependencies -->
    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
    <script src="../../js/config.js"></script>
+   <script src="../../js/supabase-config.js"></script>
    <script src="../../js/supabase-client.js"></script>
    <script src="../../js/auth-manager.js"></script>
    <script src="../../js/quota-manager.js"></script>
