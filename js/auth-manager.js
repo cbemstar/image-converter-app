@@ -228,19 +228,24 @@ class AuthManager {
    */
   async signInWithProvider(provider) {
     try {
-      // Determine redirect URL based on stored redirect or default to homepage
-      let redirectUrl = `${window.location.origin}/index.html`;
+      // Determine redirect URL - use current origin with auth.html for OAuth callback
+      let redirectUrl = `${window.location.origin}/auth.html`;
       
-      // Check if there's a stored redirect URL from a tool page
-      const storedRedirect = sessionStorage.getItem('auth_redirect');
-      if (storedRedirect) {
-        redirectUrl = storedRedirect;
+      // For production, ensure we use the correct domain
+      if (window.location.hostname !== 'localhost') {
+        redirectUrl = `${window.location.origin}/auth.html`;
       }
+      
+      console.log(`Initiating ${provider} OAuth with redirect URL:`, redirectUrl);
       
       const { data, error } = await this.supabase.auth.signInWithOAuth({
         provider: provider,
         options: {
-          redirectTo: redirectUrl
+          redirectTo: redirectUrl,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent'
+          }
         }
       });
 

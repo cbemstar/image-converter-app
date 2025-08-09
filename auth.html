@@ -136,8 +136,8 @@
 
     <!-- Load Supabase and dependencies -->
     <script src="js/config.js"></script>
-    <script src="/js/public-config.js"></script>
-<script type="module" src="/js/supabase-client.js"></script>
+    <script src="js/public-config.js"></script>
+    <script type="module" src="js/supabase-client.js"></script>
     <script src="js/auth-manager.js"></script>
     <script src="js/auth-state-sync.js"></script>
     <script src="styles/theme.js"></script>
@@ -514,6 +514,29 @@
                 authUI.switchTab(preferredTab);
                 sessionStorage.removeItem('auth_tab');
             }
+            
+            // Debug authentication setup
+            setTimeout(() => {
+                console.log('=== Auth Page Debug ===');
+                console.log('AuthUI initialized:', !!authUI);
+                console.log('AuthManager available:', !!window.authManager);
+                console.log('Supabase available:', !!window.supabase);
+                console.log('PUBLIC_ENV loaded:', !!window.PUBLIC_ENV);
+                
+                if (window.PUBLIC_ENV) {
+                    console.log('Supabase URL:', window.PUBLIC_ENV.SUPABASE_URL);
+                    console.log('Anon key present:', !!window.PUBLIC_ENV.SUPABASE_ANON_KEY);
+                }
+                
+                // Test a simple auth operation
+                if (window.supabase) {
+                    window.supabase.auth.getSession()
+                        .then(({ data, error }) => {
+                            console.log('Session check result:', { hasSession: !!data.session, error: error?.message });
+                        })
+                        .catch(err => console.error('Session check failed:', err));
+                }
+            }, 2000);
         });
     </script>
 </body>
