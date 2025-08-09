@@ -108,6 +108,10 @@ Generate the runtime configuration file (do not commit the output):
 npm run build:config
 ```
 
+This creates `js/supabase-config.js`, the sole source of Supabase runtime
+credentials. The frontend client (`js/supabase-client.js`) reads the
+configuration from this file at runtime.
+
 ## Step 4: Run Database Migrations
 
 ### For Production
