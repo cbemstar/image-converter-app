@@ -22,19 +22,8 @@
   <script src="https://cdn.jsdelivr.net/npm/raw-wasm@1.0.0/dist/raw-wasm.min.js"></script>
   <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Core Dependencies -->
-  <script src="../../js/config.js"></script>
-    <script src="/js/public-config.js"></script>
-    <script type="module" src="/js/supabase-client.js"></script>
-  <script src="../../js/path-resolver.js"></script>
-  <script src="../../js/auth-manager.js"></script>
-  <script src="../../js/auth-state-sync.js"></script>
-  <script src="../../js/quota-manager.js"></script>
-  <script src="../../js/analytics-manager.js"></script>
-  <script src="../../js/error-handler.js"></script>
-  <script src="../../js/tool-integration.js"></script>
-  <script src="../../js/unified-navigation.js"></script>
-  <script src="../../js/auto-navigation.js"></script>
+  <!-- Simple Authentication for Usage Tracking -->
+  <script src="auth-simple.js"></script>
   
   <!-- JS files -->
   <script type="module" src="core.js"></script>
@@ -197,6 +186,9 @@
       <div id="progress-bar"></div>
     </div>
     <div id="quota-status" class="text-center text-base font-medium mb-2" style="color:hsl(39 100% 64%);"></div>
+    
+    <!-- Usage Counter -->
+    <div id="usage-counter" class="text-center mb-4"></div>
     
     <!-- Hidden legacy auth controls for backwards compatibility -->
     <div id="auth-controls" class="text-center mb-4" style="display: none;">

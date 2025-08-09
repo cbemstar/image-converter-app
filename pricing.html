@@ -1,864 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pricing - Image Converter App</title>
-    <link rel="stylesheet" href="styles/main.css">
+    <title>Pricing - reformately Tools</title>
+    <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
+    <link rel="stylesheet" href="styles/styles.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .pricing-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .pricing-header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-
-        .pricing-header h1 {
-            font-size: 48px;
-            font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 16px;
-        }
-
-        .pricing-header p {
-            font-size: 20px;
-            color: #6b7280;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .pricing-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 16px;
-            margin: 40px 0;
-        }
-
-        .pricing-toggle-label {
-            font-weight: 500;
-            color: #374151;
-        }
-
-        .pricing-toggle-switch {
-            position: relative;
-            width: 60px;
-            height: 32px;
-            background: #e5e7eb;
-            border-radius: 16px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .pricing-toggle-switch.active {
-            background: #3b82f6;
-        }
-
-        .pricing-toggle-slider {
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 28px;
-            height: 28px;
-            background: white;
-            border-radius: 50%;
-            transition: transform 0.2s;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .pricing-toggle-switch.active .pricing-toggle-slider {
-            transform: translateX(28px);
-        }
-
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 30px;
-            margin-bottom: 60px;
-        }
-
-        .pricing-card {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            padding: 40px 32px;
-            position: relative;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .pricing-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
-        }
-
-        .pricing-card.popular {
-            border: 2px solid #3b82f6;
-            transform: scale(1.05);
-        }
-
-        .pricing-card.popular::before {
-            content: 'Most Popular';
-            position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #3b82f6;
-            color: white;
-            padding: 6px 20px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .pricing-card.current-plan {
-            border: 2px solid #10b981;
-        }
-
-        .pricing-card.current-plan::before {
-            content: 'Current Plan';
-            background: #10b981;
-        }
-
-        .pricing-plan-name {
-            font-size: 24px;
-            font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 8px;
-        }
-
-        .pricing-plan-description {
-            color: #6b7280;
-            margin-bottom: 24px;
-            line-height: 1.5;
-        }
-
-        .pricing-plan-price {
-            margin-bottom: 32px;
-        }
-
-        .pricing-price-amount {
-            font-size: 48px;
-            font-weight: 700;
-            color: #1f2937;
-            line-height: 1;
-        }
-
-        .pricing-price-currency {
-            font-size: 24px;
-            color: #6b7280;
-        }
-
-        .pricing-price-interval {
-            color: #6b7280;
-            font-size: 16px;
-            margin-left: 4px;
-        }
-
-        .pricing-features {
-            list-style: none;
-            padding: 0;
-            margin-bottom: 32px;
-        }
-
-        .pricing-feature {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
-            color: #374151;
-        }
-
-        .pricing-feature-icon {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #dcfce7;
-            color: #16a34a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            flex-shrink: 0;
-        }
-
-        .pricing-feature.limitation .pricing-feature-icon {
-            background: #fef2f2;
-            color: #dc2626;
-        }
-
-        .pricing-cta {
-            width: 100%;
-            padding: 16px 24px;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .pricing-cta-primary {
-            background: #3b82f6;
-            color: white;
-        }
-
-        .pricing-cta-primary:hover:not(:disabled) {
-            background: #2563eb;
-        }
-
-        .pricing-cta-secondary {
-            background: #f3f4f6;
-            color: #374151;
-            border: 1px solid #d1d5db;
-        }
-
-        .pricing-cta-secondary:hover:not(:disabled) {
-            background: #e5e7eb;
-        }
-
-        .pricing-cta-current {
-            background: #10b981;
-            color: white;
-        }
-
-        .pricing-cta:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .pricing-cta.loading {
-            position: relative;
-            color: transparent;
-        }
-
-        .pricing-cta.loading::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 20px;
-            height: 20px;
-            border: 2px solid transparent;
-            border-top: 2px solid currentColor;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-
-        .pricing-faq {
-            margin-top: 80px;
-        }
-
-        .pricing-faq h2 {
-            text-align: center;
-            font-size: 32px;
-            font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 40px;
-        }
-
-        .faq-list {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .faq-item {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            margin-bottom: 16px;
-            overflow: hidden;
-        }
-
-        .faq-question {
-            width: 100%;
-            padding: 20px 24px;
-            background: none;
-            border: none;
-            text-align: left;
-            font-size: 16px;
-            font-weight: 600;
-            color: #1f2937;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .faq-question:hover {
-            background: #f9fafb;
-        }
-
-        .faq-answer {
-            padding: 0 24px 20px;
-            color: #6b7280;
-            line-height: 1.6;
-            display: none;
-        }
-
-        .faq-item.active .faq-answer {
-            display: block;
-        }
-
-        .faq-icon {
-            transition: transform 0.2s;
-        }
-
-        .faq-item.active .faq-icon {
-            transform: rotate(180deg);
-        }
-
-        .back-nav {
-            margin-bottom: 20px;
-        }
-
-        .back-nav a {
-            color: #3b82f6;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 500;
-        }
-
-        .back-nav a:hover {
-            text-decoration: underline;
-        }
-
-        .pricing-guarantee {
-            text-align: center;
-            margin-top: 40px;
-            padding: 24px;
-            background: #f0fdf4;
-            border-radius: 12px;
-            border: 1px solid #bbf7d0;
-        }
-
-        .pricing-guarantee h3 {
-            color: #166534;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .pricing-guarantee p {
-            color: #15803d;
-            margin: 0;
-        }
-
-        /* Responsive design */
-        @media (max-width: 768px) {
-            .pricing-container {
-                padding: 10px;
-            }
-
-            .pricing-header h1 {
-                font-size: 36px;
-            }
-
-            .pricing-header p {
-                font-size: 18px;
-            }
-
-            .pricing-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .pricing-card {
-                padding: 30px 24px;
-            }
-
-            .pricing-card.popular {
-                transform: none;
-            }
-
-            .pricing-price-amount {
-                font-size: 40px;
-            }
-        }
-    </style>
+    <script src="styles/theme.js"></script>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <div class="pricing-container">
-        <div class="back-nav">
-            <a href="/">
-                <i class="fas fa-arrow-left"></i>
-                Back to Home
-            </a>
-        </div>
 
-        <!-- Pricing Header -->
-        <div class="pricing-header">
-            <h1>Choose Your Plan</h1>
-            <p>Start free and upgrade as you grow. All plans include our core tools with different usage limits.</p>
-        </div>
-
-        <!-- Pricing Toggle (for future annual billing) -->
-        <div class="pricing-toggle" style="display: none;">
-            <span class="pricing-toggle-label">Monthly</span>
-            <div class="pricing-toggle-switch" id="billingToggle">
-                <div class="pricing-toggle-slider"></div>
-            </div>
-            <span class="pricing-toggle-label">Annual <span class="text-green-600">(Save 20%)</span></span>
-        </div>
-
-        <!-- Pricing Cards -->
-        <div class="pricing-grid" id="pricingGrid">
-            <!-- Pricing cards will be rendered here -->
-        </div>
-
-        <!-- Money-back Guarantee -->
-        <div class="pricing-guarantee">
-            <h3><i class="fas fa-shield-alt mr-2"></i>30-Day Money-Back Guarantee</h3>
-            <p>Try any paid plan risk-free. If you're not satisfied, we'll refund your money within 30 days.</p>
-        </div>
-
-        <!-- FAQ Section -->
-        <div class="pricing-faq">
-            <h2>Frequently Asked Questions</h2>
-            <div class="faq-list">
-                <div class="faq-item">
-                    <button class="faq-question" onclick="toggleFAQ(this)">
-                        Can I change my plan anytime?
-                        <i class="fas fa-chevron-down faq-icon"></i>
-                    </button>
-                    <div class="faq-answer">
-                        Yes! You can upgrade or downgrade your plan at any time. Changes take effect immediately, and we'll prorate any billing differences.
-                    </div>
+<body class="bg-background min-h-screen flex flex-col">
+    <nav class="bg-background shadow-md border-b border-border" role="navigation" aria-label="Main navigation">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center gap-4">
+                    <a href="index.html" class="flex items-center gap-2">
+                        <span class="text-foreground text-xl font-bold">reformately</span>
+                    </a>
                 </div>
-
-                <div class="faq-item">
-                    <button class="faq-question" onclick="toggleFAQ(this)">
-                        What happens if I exceed my plan limits?
-                        <i class="fas fa-chevron-down faq-icon"></i>
+                <div class="flex items-center gap-2">
+                    <button id="theme-toggle" class="btn btn-outline btn-sm" aria-label="Toggle theme">
+                        <span id="theme-toggle-icon">🌙</span>
                     </button>
-                    <div class="faq-answer">
-                        We'll notify you when you approach your limits. If you exceed them, you'll be prompted to upgrade. Your existing files and data remain safe.
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <button class="faq-question" onclick="toggleFAQ(this)">
-                        Is my payment information secure?
-                        <i class="fas fa-chevron-down faq-icon"></i>
-                    </button>
-                    <div class="faq-answer">
-                        Absolutely. We use Stripe for payment processing, which is PCI DSS compliant and trusted by millions of businesses worldwide. We never store your payment information.
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <button class="faq-question" onclick="toggleFAQ(this)">
-                        Can I cancel my subscription anytime?
-                        <i class="fas fa-chevron-down faq-icon"></i>
-                    </button>
-                    <div class="faq-answer">
-                        Yes, you can cancel your subscription at any time through the Customer Portal. You'll continue to have access to paid features until the end of your billing period.
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <button class="faq-question" onclick="toggleFAQ(this)">
-                        Do you offer refunds?
-                        <i class="fas fa-chevron-down faq-icon"></i>
-                    </button>
-                    <div class="faq-answer">
-                        We offer a 30-day money-back guarantee for all paid plans. If you're not satisfied, contact us within 30 days for a full refund.
-                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </nav>
 
-    <!-- Load dependencies -->
-    <script src="js/config.js"></script>
-    <script src="/js/public-config.js"></script>
-    <script type="module" src="/js/supabase-client.js"></script>
-    <script src="js/auth-manager.js"></script>
-    <script src="js/profile-manager.js"></script>
-    <script src="js/quota-manager.js"></script>
-    <script src="js/stripe-manager.js"></script>
-    <script src="js/auth-guards.js"></script>
+    <main class="flex-grow container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-bold mb-4">Simple, Fair Pricing</h1>
+                <p class="text-lg text-muted-foreground">Choose the plan that works best for you</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <!-- Free Plan -->
+                <div class="card p-8 text-center">
+                    <h3 class="text-2xl font-bold mb-4">Free</h3>
+                    <div class="text-4xl font-bold mb-4">$0</div>
+                    <p class="text-muted-foreground mb-6">Perfect for trying out our tools</p>
+                    
+                    <ul class="text-left space-y-3 mb-8">
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500"></i>
+                            <span>10 image conversions per day</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500"></i>
+                            <span>All basic tools access</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500"></i>
+                            <span>Standard formats (JPEG, PNG, WebP)</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-times text-red-500"></i>
+                            <span>No priority support</span>
+                        </li>
+                    </ul>
+                    
+                    <button class="btn btn-outline w-full" disabled>Current Plan</button>
+                </div>
+
+                <!-- Pro Plan -->
+                <div class="card p-8 text-center border-primary bg-primary/5">
+                    <div class="inline-block bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-medium mb-4">
+                        Most Popular
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Pro</h3>
+                    <div class="text-4xl font-bold mb-4">$9<span class="text-lg font-normal">/month</span></div>
+                    <p class="text-muted-foreground mb-6">For power users and professionals</p>
+                    
+                    <ul class="text-left space-y-3 mb-8">
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500"></i>
+                            <span>Unlimited image conversions</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500"></i>
+                            <span>All tools access</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500"></i>
+                            <span>Advanced formats (AVIF, HEIC, RAW)</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500"></i>
+                            <span>Batch processing</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500"></i>
+                            <span>Priority support</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500"></i>
+                            <span>No ads</span>
+                        </li>
+                    </ul>
+                    
+                    <button class="btn btn-primary w-full" onclick="alert('Payment integration coming soon! For now, enjoy the free tier.')">
+                        <i class="fas fa-crown mr-2"></i>
+                        Upgrade to Pro
+                    </button>
+                </div>
+            </div>
+
+            <div class="text-center mt-12">
+                <h2 class="text-2xl font-bold mb-4">Frequently Asked Questions</h2>
+                <div class="max-w-2xl mx-auto space-y-4">
+                    <div class="card p-4 text-left">
+                        <h3 class="font-semibold mb-2">Can I cancel anytime?</h3>
+                        <p class="text-muted-foreground">Yes, you can cancel your subscription at any time. You'll continue to have access until the end of your billing period.</p>
+                    </div>
+                    <div class="card p-4 text-left">
+                        <h3 class="font-semibold mb-2">What payment methods do you accept?</h3>
+                        <p class="text-muted-foreground">We accept all major credit cards and PayPal through our secure payment processor.</p>
+                    </div>
+                    <div class="card p-4 text-left">
+                        <h3 class="font-semibold mb-2">Is there a free trial?</h3>
+                        <p class="text-muted-foreground">Yes! You get 10 free image conversions every day to try out our service.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-8">
+                <a href="index.html" class="btn btn-outline">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Back to Tools
+                </a>
+            </div>
+        </div>
+    </main>
 
     <script>
-        class PricingUI {
-            constructor() {
-                this.authManager = null;
-                this.stripeManager = null;
-                this.profileManager = null;
-                this.currentPlan = 'free';
-                this.isAnnual = false;
-                this.init();
-            }
-
-            async init() {
-                // Wait for managers to be available
-                await this.waitForManagers();
-                
-                // Get current user plan
-                await this.loadCurrentPlan();
-                
-                // Render pricing cards
-                this.renderPricingCards();
-                
-                // Set up event listeners
-                this.setupEventListeners();
-                
-                // Handle URL parameters
-                this.handleURLParameters();
-            }
-
-            async waitForManagers() {
-                return new Promise((resolve) => {
-                    const checkManagers = () => {
-                        if (window.stripeManager) {
-                            this.authManager = window.authManager;
-                            this.stripeManager = window.stripeManager;
-                            this.profileManager = window.profileManager;
-                            resolve();
-                        } else {
-                            setTimeout(checkManagers, 100);
-                        }
-                    };
-                    checkManagers();
-                });
-            }
-
-            async loadCurrentPlan() {
-                try {
-                    if (this.authManager?.isAuthenticated()) {
-                        const status = await this.stripeManager.getSubscriptionStatus();
-                        this.currentPlan = status.plan;
-                    }
-                } catch (error) {
-                    console.error('Error loading current plan:', error);
+        // Initialize theme toggle
+        if (window.initializeThemeToggle) {
+            window.initializeThemeToggle();
+        } else {
+            setTimeout(() => {
+                if (window.initializeThemeToggle) {
+                    window.initializeThemeToggle();
                 }
-            }
-
-            renderPricingCards() {
-                const pricingGrid = document.getElementById('pricingGrid');
-                const planFeatures = this.stripeManager.getAllPlanFeatures();
-
-                pricingGrid.innerHTML = Object.entries(planFeatures).map(([planType, features]) => {
-                    const isCurrentPlan = planType === this.currentPlan;
-                    const isPopular = features.popular;
-                    const price = this.isAnnual ? features.price * 10 : features.price; // 20% discount for annual
-                    
-                    return `
-                        <div class="pricing-card ${isPopular ? 'popular' : ''} ${isCurrentPlan ? 'current-plan' : ''}">
-                            <div class="pricing-plan-name">${features.name}</div>
-                            <div class="pricing-plan-description">
-                                ${this.getPlanDescription(planType)}
-                            </div>
-                            
-                            <div class="pricing-plan-price">
-                                <span class="pricing-price-amount">
-                                    <span class="pricing-price-currency">$</span>${price}
-                                </span>
-                                <span class="pricing-price-interval">
-                                    ${planType === 'free' ? '' : `/${features.interval}`}
-                                </span>
-                            </div>
-
-                            <ul class="pricing-features">
-                                ${features.features.map(feature => `
-                                    <li class="pricing-feature">
-                                        <div class="pricing-feature-icon">
-                                            <i class="fas fa-check"></i>
-                                        </div>
-                                        ${feature}
-                                    </li>
-                                `).join('')}
-                                ${features.limitations ? features.limitations.map(limitation => `
-                                    <li class="pricing-feature limitation">
-                                        <div class="pricing-feature-icon">
-                                            <i class="fas fa-times"></i>
-                                        </div>
-                                        ${limitation}
-                                    </li>
-                                `).join('') : ''}
-                            </ul>
-
-                            ${this.renderPlanCTA(planType, isCurrentPlan)}
-                        </div>
-                    `;
-                }).join('');
-            }
-
-            getPlanDescription(planType) {
-                const descriptions = {
-                    free: 'Perfect for trying out our tools and light usage.',
-                    pro: 'Great for individuals and small teams with regular usage.',
-                    agency: 'Perfect for agencies and teams with high-volume needs.'
-                };
-                return descriptions[planType] || '';
-            }
-
-            renderPlanCTA(planType, isCurrentPlan) {
-                if (planType === 'free') {
-                    if (isCurrentPlan) {
-                        return `
-                            <button class="pricing-cta pricing-cta-current" disabled>
-                                <i class="fas fa-check"></i>
-                                Current Plan
-                            </button>
-                        `;
-                    } else {
-                        return `
-                            <button class="pricing-cta pricing-cta-secondary" onclick="pricingUI.downgradeToPlan('free')">
-                                <i class="fas fa-arrow-down"></i>
-                                Downgrade
-                            </button>
-                        `;
-                    }
-                }
-
-                if (isCurrentPlan) {
-                    return `
-                        <button class="pricing-cta pricing-cta-current" disabled>
-                            <i class="fas fa-check"></i>
-                            Current Plan
-                        </button>
-                        <button class="pricing-cta pricing-cta-secondary mt-2" onclick="pricingUI.manageSubscription()" style="margin-top: 8px;">
-                            <i class="fas fa-cog"></i>
-                            Manage Subscription
-                        </button>
-                    `;
-                }
-
-                const isUpgrade = this.isPlanUpgrade(planType);
-                return `
-                    <button class="pricing-cta pricing-cta-primary" onclick="pricingUI.selectPlan('${planType}')" id="cta-${planType}">
-                        <i class="fas fa-${isUpgrade ? 'arrow-up' : 'arrow-down'}"></i>
-                        ${isUpgrade ? 'Upgrade' : 'Change'} to ${planType.charAt(0).toUpperCase() + planType.slice(1)}
-                    </button>
-                `;
-            }
-
-            isPlanUpgrade(planType) {
-                const planOrder = { free: 0, pro: 1, agency: 2 };
-                return planOrder[planType] > planOrder[this.currentPlan];
-            }
-
-            setupEventListeners() {
-                // Billing toggle (for future use)
-                const billingToggle = document.getElementById('billingToggle');
-                if (billingToggle) {
-                    billingToggle.addEventListener('click', () => {
-                        this.isAnnual = !this.isAnnual;
-                        billingToggle.classList.toggle('active', this.isAnnual);
-                        this.renderPricingCards();
-                    });
-                }
-
-                // Listen for Stripe events
-                if (this.stripeManager) {
-                    this.stripeManager.addPaymentListener((event, data) => {
-                        this.handleStripeEvent(event, data);
-                    });
-                }
-            }
-
-            handleURLParameters() {
-                const urlParams = new URLSearchParams(window.location.search);
-                
-                if (urlParams.get('success') === 'true') {
-                    this.showSuccessMessage();
-                }
-                
-                if (urlParams.get('canceled') === 'true') {
-                    this.showCancelMessage();
-                }
-            }
-
-            async selectPlan(planType) {
-                try {
-                    // Check if user is authenticated
-                    if (!this.authManager?.isAuthenticated()) {
-                        // Store intended plan and redirect to auth
-                        sessionStorage.setItem('intended_plan', planType);
-                        window.location.href = '/auth.html';
-                        return;
-                    }
-
-                    // Show loading state
-                    this.setButtonLoading(`cta-${planType}`, true);
-
-                    // Create checkout session and redirect
-                    await this.stripeManager.purchasePlan(planType, {
-                        successUrl: `${window.location.origin}/pricing.html?success=true`,
-                        cancelUrl: `${window.location.origin}/pricing.html?canceled=true`
-                    });
-
-                } catch (error) {
-                    console.error('Error selecting plan:', error);
-                    this.showErrorMessage('Failed to start checkout. Please try again.');
-                } finally {
-                    this.setButtonLoading(`cta-${planType}`, false);
-                }
-            }
-
-            async downgradeToPlan(planType) {
-                if (planType !== 'free') {
-                    return;
-                }
-
-                if (!confirm('Are you sure you want to downgrade to the free plan? This will cancel your current subscription.')) {
-                    return;
-                }
-
-                try {
-                    // Redirect to Customer Portal for cancellation
-                    await this.manageSubscription();
-                } catch (error) {
-                    console.error('Error downgrading plan:', error);
-                    this.showErrorMessage('Failed to access subscription management. Please try again.');
-                }
-            }
-
-            async manageSubscription() {
-                try {
-                    if (!this.authManager?.isAuthenticated()) {
-                        window.location.href = '/auth.html';
-                        return;
-                    }
-
-                    await this.stripeManager.redirectToCustomerPortal({
-                        returnUrl: `${window.location.origin}/pricing.html`
-                    });
-
-                } catch (error) {
-                    console.error('Error opening Customer Portal:', error);
-                    this.showErrorMessage('Failed to open subscription management. Please try again.');
-                }
-            }
-
-            handleStripeEvent(event, data) {
-                switch (event) {
-                    case 'checkout_session_created':
-                        console.log('Checkout session created:', data.sessionId);
-                        break;
-                    case 'checkout_error':
-                        this.showErrorMessage(data.error);
-                        break;
-                    case 'payment_success':
-                        this.showSuccessMessage();
-                        break;
-                    case 'payment_cancelled':
-                        this.showCancelMessage();
-                        break;
-                }
-            }
-
-            showSuccessMessage() {
-                this.showMessage(
-                    'Payment Successful!',
-                    'Your subscription is now active. You can start using your new plan features immediately.',
-                    'success'
-                );
-                
-                // Reload current plan
-                setTimeout(() => {
-                    this.loadCurrentPlan().then(() => {
-                        this.renderPricingCards();
-                    });
-                }, 2000);
-            }
-
-            showCancelMessage() {
-                this.showMessage(
-                    'Payment Cancelled',
-                    'Your payment was cancelled. You can try again anytime.',
-                    'info'
-                );
-            }
-
-            showErrorMessage(message) {
-                this.showMessage(
-                    'Error',
-                    message,
-                    'error'
-                );
-            }
-
-            showMessage(title, message, type) {
-                // Try to use existing notification system
-                if (window.quotaNotifications) {
-                    window.quotaNotifications.showNotification({
-                        type: type,
-                        title: title,
-                        message: message,
-                        autoClose: type === 'success' ? 5000 : false
-                    });
-                } else {
-                    alert(`${title}: ${message}`);
-                }
-            }
-
-            setButtonLoading(buttonId, loading) {
-                const button = document.getElementById(buttonId);
-                if (button) {
-                    if (loading) {
-                        button.classList.add('loading');
-                        button.disabled = true;
-                    } else {
-                        button.classList.remove('loading');
-                        button.disabled = false;
-                    }
-                }
-            }
+            }, 100);
         }
-
-        // Global functions for onclick handlers
-        function toggleFAQ(button) {
-            const faqItem = button.closest('.faq-item');
-            const isActive = faqItem.classList.contains('active');
-            
-            // Close all FAQ items
-            document.querySelectorAll('.faq-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            
-            // Open clicked item if it wasn't active
-            if (!isActive) {
-                faqItem.classList.add('active');
-            }
-        }
-
-        // Initialize pricing UI when page loads
-        let pricingUI;
-        document.addEventListener('DOMContentLoaded', () => {
-            pricingUI = new PricingUI();
-        });
-
-        // Handle intended plan after authentication
-        window.addEventListener('load', () => {
-            const intendedPlan = sessionStorage.getItem('intended_plan');
-            if (intendedPlan && window.authManager?.isAuthenticated()) {
-                sessionStorage.removeItem('intended_plan');
-                setTimeout(() => {
-                    if (pricingUI) {
-                        pricingUI.selectPlan(intendedPlan);
-                    }
-                }, 2000);
-            }
-        });
     </script>
 </body>
+
 </html>
