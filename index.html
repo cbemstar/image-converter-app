@@ -82,7 +82,9 @@
                       class="fas fa-user"></i>Profile</a></li>
                 <li><a href="pricing.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded"><i
                       class="fas fa-credit-card"></i>Pricing</a></li>
-                <li><hr class="my-1 border-border"></li>
+                <li>
+                  <hr class="my-1 border-border">
+                </li>
                 <li><a href="#" id="signOutBtn" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded"><i
                       class="fas fa-sign-out-alt"></i>Sign Out</a></li>
               </ul>
@@ -290,7 +292,7 @@
       `;
       toast.textContent = message;
       document.body.appendChild(toast);
-      
+
       setTimeout(() => {
         toast.remove();
       }, 5000);
@@ -301,16 +303,16 @@
       const hashParams = new URLSearchParams(window.location.hash.substring(1));
       const accessToken = hashParams.get('access_token');
       const type = hashParams.get('type');
-      
+
       if (accessToken) {
         console.log('Authentication callback detected:', type);
-        
+
         // Clear the hash from URL
         window.history.replaceState({}, document.title, window.location.pathname);
-        
+
         // Show success message
         showToast('Successfully signed in! Welcome back.', 'success');
-        
+
         // Force refresh auth state
         setTimeout(() => {
           if (window.authManager) {
@@ -318,7 +320,7 @@
           }
           window.location.reload();
         }, 1000);
-        
+
         return true;
       }
       return false;
@@ -330,12 +332,12 @@
       if (handleAuthCallback()) {
         return;
       }
-      
+
       // Initialize authentication after a short delay to ensure all scripts are loaded
       setTimeout(() => {
         initializeAuthentication();
       }, 500);
-      
+
       // Handle sign out
       const signOutBtn = document.getElementById('signOutBtn');
       if (signOutBtn) {
@@ -356,18 +358,18 @@
     async function initializeAuthentication() {
       try {
         console.log('Initializing authentication system...');
-        
+
         // Wait for auth manager to be available
         let attempts = 0;
         while (!window.authManager && attempts < 20) {
           await new Promise(resolve => setTimeout(resolve, 100));
           attempts++;
         }
-        
+
         if (window.authManager) {
           console.log('AuthManager found, updating UI...');
           window.authManager.updateAuthUI();
-          
+
           // Set up auth state listener for future changes
           window.authManager.addAuthStateListener((event, session, user) => {
             console.log('Auth state changed:', event, user?.email || 'No user');
@@ -375,89 +377,88 @@
               window.authManager.updateAuthUI();
             }, 100);
           });
-          
+
         } else {
           console.warn('AuthManager not available after waiting');
         }
-        
+
       } catch (error) {
         console.error('Error initializing authentication:', error);
       }
     }
 
     // Debug function - you can call this in browser console
-    window.debugAuth = function() {
+    window.debugAuth = function () {
       console.log('=== Authentication Debug ===');
       console.log('AuthManager available:', !!window.authManager);
       console.log('Supabase available:', !!window.supabase);
       console.log('PUBLIC_ENV loaded:', !!window.PUBLIC_ENV);
-      
+
       if (window.authManager) {
         console.log('Is authenticated:', window.authManager.isAuthenticated());
         console.log('Current user:', window.authManager.getCurrentUser());
         console.log('Current session:', window.authManager.getCurrentSession());
       }
-      
+
       const authElements = document.querySelectorAll('[data-auth-required]');
       const guestElements = document.querySelectorAll('[data-guest-only]');
       console.log('Auth required elements:', authElements.length);
       console.log('Guest only elements:', guestElements.length);
-      
+
       authElements.forEach((el, i) => {
         console.log(`Auth element ${i}:`, el, 'visible:', el.style.display !== 'none');
       });
     };
 
-      // Ensure theme toggle is properly initialized
-      if (window.initializeThemeToggle) {
-        window.initializeThemeToggle();
-      } else {
-        // Fallback theme toggle initialization if theme.js hasn't loaded yet
-        setTimeout(() => {
-          if (window.initializeThemeToggle) {
-            window.initializeThemeToggle();
-          }
-        }, 100);
-      }
+    // Ensure theme toggle is properly initialized
+    if (window.initializeThemeToggle) {
+      window.initializeThemeToggle();
+    } else {
+      // Fallback theme toggle initialization if theme.js hasn't loaded yet
+      setTimeout(() => {
+        if (window.initializeThemeToggle) {
+          window.initializeThemeToggle();
+        }
+      }, 100);
+    }
 
-      // Setup dropdown functionality
-      const dropdownToggle = document.querySelector('.dropdown-toggle');
-      const dropdownContent = document.querySelector('.dropdown-content');
-      
-      if (dropdownToggle && dropdownContent) {
-        dropdownToggle.addEventListener('click', (e) => {
+    // Setup dropdown functionality
+    const dropdownToggle = document.querySelector('.dropdown-toggle');
+    const dropdownContent = document.querySelector('.dropdown-content');
+
+    if (dropdownToggle && dropdownContent) {
+      dropdownToggle.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const isOpen = dropdownContent.style.display === 'block';
+        dropdownContent.style.display = isOpen ? 'none' : 'block';
+        dropdownToggle.setAttribute('aria-expanded', !isOpen);
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!dropdownToggle.contains(e.target) && !dropdownContent.contains(e.target)) {
+          dropdownContent.style.display = 'none';
+          dropdownToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+
+    // Add authentication requirement to premium features
+    // This can be expanded as needed for specific tools
+    const premiumTools = document.querySelectorAll('[data-premium="true"]');
+    premiumTools.forEach(tool => {
+      tool.addEventListener('click', (e) => {
+        if (!window.requireAuth) return;
+
+        if (!window.requireAuth({
+          title: 'Premium Feature',
+          message: 'This tool requires a premium account. Sign in to access advanced features.',
+          feature: 'premium tool'
+        })) {
           e.preventDefault();
-          e.stopPropagation();
-          
-          const isOpen = dropdownContent.style.display === 'block';
-          dropdownContent.style.display = isOpen ? 'none' : 'block';
-          dropdownToggle.setAttribute('aria-expanded', !isOpen);
-        });
-        
-        // Close dropdown when clicking outside
-        document.addEventListener('click', (e) => {
-          if (!dropdownToggle.contains(e.target) && !dropdownContent.contains(e.target)) {
-            dropdownContent.style.display = 'none';
-            dropdownToggle.setAttribute('aria-expanded', 'false');
-          }
-        });
-      }
-
-      // Add authentication requirement to premium features
-      // This can be expanded as needed for specific tools
-      const premiumTools = document.querySelectorAll('[data-premium="true"]');
-      premiumTools.forEach(tool => {
-        tool.addEventListener('click', (e) => {
-          if (!window.requireAuth) return;
-
-          if (!window.requireAuth({
-            title: 'Premium Feature',
-            message: 'This tool requires a premium account. Sign in to access advanced features.',
-            feature: 'premium tool'
-          })) {
-            e.preventDefault();
-          }
-        });
+        }
       });
     });
   </script>
