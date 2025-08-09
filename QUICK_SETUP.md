@@ -3,13 +3,19 @@
 Your Supabase project is configured! Here's how to get it running:
 
 ## Your Project Details
-- **Project ID**: flsgsnupfogaphqdrtqi
-- **URL**: https://flsgsnupfogaphqdrtqi.supabase.co
-- **Anon Key**: Already configured in your files ✅
+- **Project ID**: your-project-id
+- **URL**: https://your-project.supabase.co
+- **Anon Key**: configure via environment variables
+
+Generate the runtime config after setting your environment variables:
+
+```bash
+npm run build:config
+```
 
 ## Step 1: Set Up Database Tables
 
-1. Go to your [Supabase Dashboard](https://supabase.com/dashboard/project/flsgsnupfogaphqdrtqi)
+1. Go to your [Supabase Dashboard](https://supabase.com/dashboard/project/your-project-id)
 2. Click on **SQL Editor** in the left sidebar
 3. Click **New Query**
 4. Copy and paste the contents of `setup-database.sql` into the editor

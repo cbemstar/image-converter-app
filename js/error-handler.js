@@ -538,7 +538,7 @@ class ErrorHandler {
 
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
-    
+
     const icons = {
       success: '✓',
       error: '✕',
@@ -546,21 +546,64 @@ class ErrorHandler {
       info: 'ℹ'
     };
 
-    toast.innerHTML = `
-      <div class="toast-icon">${icons[type] || 'ℹ'}</div>
-      <div class="toast-content">
-        <div class="toast-title">${title}</div>
-        <div class="toast-message">${message}</div>
-        ${options.actions ? `
-          <div class="toast-actions">
-            ${options.actions.map(action => 
-              `<button class="toast-btn toast-btn-primary" onclick="this.closest('.toast').remove(); (${action.action.toString()})()">${action.label}</button>`
-            ).join('')}
-          </div>
-        ` : ''}
-      </div>
-      <button class="toast-close" onclick="this.closest('.toast').remove()">×</button>
-    `;
+    // Icon element
+    const iconEl = document.createElement('div');
+    iconEl.className = 'toast-icon';
+    iconEl.textContent = icons[type] || 'ℹ';
+
+    // Content wrapper
+    const contentEl = document.createElement('div');
+    contentEl.className = 'toast-content';
+
+    const titleEl = document.createElement('div');
+    titleEl.className = 'toast-title';
+    titleEl.textContent = title;
+
+    const messageEl = document.createElement('div');
+    messageEl.className = 'toast-message';
+    messageEl.textContent = message;
+
+    contentEl.appendChild(titleEl);
+    contentEl.appendChild(messageEl);
+
+    if (Array.isArray(options.actions) && options.actions.length > 0) {
+      const actionsEl = document.createElement('div');
+      actionsEl.className = 'toast-actions';
+
+      options.actions.forEach(actionObj => {
+        if (!actionObj || typeof actionObj.action !== 'function') return;
+
+        const btn = document.createElement('button');
+        btn.className = 'toast-btn toast-btn-primary';
+
+        const label = typeof actionObj.label === 'string' ? actionObj.label : '';
+        btn.textContent = label;
+
+        btn.addEventListener('click', () => {
+          this.removeToast(toast);
+          try {
+            actionObj.action();
+          } catch (err) {
+            console.error('Toast action error:', err);
+          }
+        });
+
+        actionsEl.appendChild(btn);
+      });
+
+      if (actionsEl.childNodes.length > 0) {
+        contentEl.appendChild(actionsEl);
+      }
+    }
+
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'toast-close';
+    closeBtn.textContent = '×';
+    closeBtn.addEventListener('click', () => this.removeToast(toast));
+
+    toast.appendChild(iconEl);
+    toast.appendChild(contentEl);
+    toast.appendChild(closeBtn);
 
     container.appendChild(toast);
 

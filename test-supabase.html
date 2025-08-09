@@ -148,11 +148,7 @@
         let supabase = null;
         let currentUser = null;
 
-        // Configuration for your Supabase project
-        window.SUPABASE_CONFIG = {
-            'SUPABASE_URL': 'https://flsgsnupfogaphqdrtqi.supabase.co',
-            'SUPABASE_ANON_KEY': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZsc2dzbnVwZm9nYXBocWRydHFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI5MDU1ODAsImV4cCI6MjA2ODQ4MTU4MH0.tIeLTN7LT9rtKnnPHb18pi4S_jrN0DUZaB0HDhDcyEw'
-        };
+        // Optionally set window.SUPABASE_CONFIG here for testing
 
         function initializeSupabase() {
             const url = document.getElementById('supabaseUrl').value;
@@ -457,13 +453,9 @@
             element.className = `section ${type}`;
         }
 
-        // Auto-initialize with your Supabase project values
+        // Optionally prefill test credentials here
         window.addEventListener('load', () => {
-            // Set your actual Supabase project values
-            document.getElementById('supabaseUrl').value = 'https://flsgsnupfogaphqdrtqi.supabase.co';
-            document.getElementById('supabaseKey').value = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZsc2dzbnVwZm9nYXBocWRydHFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI5MDU1ODAsImV4cCI6MjA2ODQ4MTU4MH0.tIeLTN7LT9rtKnnPHb18pi4S_jrN0DUZaB0HDhDcyEw';
-            
-            showStatus('initStatus', 'Ready to initialize Supabase. Click "Initialize Supabase" to start.', 'info');
+            showStatus('initStatus', 'Ready to initialize Supabase. Enter credentials above.', 'info');
         });
     </script>
 </body>
