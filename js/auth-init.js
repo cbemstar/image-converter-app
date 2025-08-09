@@ -39,10 +39,7 @@
     
     // Load required scripts in sequence
     const scripts = [
-      'https://unpkg.com/@supabase/supabase-js@2',
-      `${basePath}js/supabase-config.js`,
       `${basePath}js/config.js`,
-      `${basePath}js/supabase-client.js`,
       `${basePath}js/auth-manager.js`,
       `${basePath}js/auth-modal.js`,
       `${basePath}js/auth-guards.js`,
