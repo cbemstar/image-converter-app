@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Working Version</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #1a1a1a; 
+            color: white; 
+            min-height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        .auth-container { 
+            background: #2a2a2a; 
+            padding: 2rem; 
+            border-radius: 8px; 
+            width: 100%; 
+            max-width: 400px; 
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        .form-group { margin-bottom: 1rem; }
+        .form-label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+        .form-input { 
+            width: 100%; 
+            padding: 0.75rem; 
+            border: 1px solid #444; 
+            border-radius: 4px; 
+            background: #333; 
+            color: white; 
+        }
+        .form-input:focus { outline: none; border-color: #007bff; }
+        .auth-button { 
+            width: 100%; 
+            padding: 0.75rem; 
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        .auth-button:hover { background: #0056b3; }
+        .auth-button:disabled { background: #666; cursor: not-allowed; }
+        .social-button { 
+            width: 100%; 
+            padding: 0.75rem; 
+            background: #333; 
+            color: white; 
+            border: 1px solid #555; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .social-button:hover { background: #444; }
+        .error-message { color: #ff6b6b; font-size: 0.875rem; margin-top: 0.25rem; }
+        .success-message { color: #51cf66; font-size: 0.875rem; margin-top: 0.25rem; }
+        .tabs { display: flex; margin-bottom: 1.5rem; }
+        .tab { 
+            flex: 1; 
+            padding: 0.75rem; 
+            background: #333; 
+            border: none; 
+            color: white; 
+            cursor: pointer; 
+        }
+        .tab.active { background: #007bff; }
+        .tab:first-child { border-radius: 4px 0 0 4px; }
+        .tab:last-child { border-radius: 0 4px 4px 0; }
+        .form { display: none; }
+        .form.active { display: block; }
+        #debug { 
+            margin-top: 1rem; 
+            padding: 1rem; 
+            background: #1a1a1a; 
+            border-radius: 4px; 
+            font-size: 0.75rem; 
+            max-height: 200px; 
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <h1 style="text-align: center; margin-bottom: 1.5rem;">Welcome Back</h1>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('signin')">Sign In</button>
+            <button class="tab" onclick="switchTab('signup')">Sign Up</button>
+        </div>
+        
+        <!-- Sign In Form -->
+        <div id="signin-form" class="form active">
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" id="signin-email" class="form-input" placeholder="Enter your email">
+                <div id="signin-email-error" class="error-message"></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" id="signin-password" class="form-input" placeholder="Enter your password">
+                <div id="signin-password-error" class="error-message"></div>
+            </div>
+            <button onclick="handleSignIn()" class="auth-button" id="signin-btn">Sign In</button>
+        </div>
+        
+        <!-- Sign Up Form -->
+        <div id="signup-form" class="form">
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" id="signup-email" class="form-input" placeholder="Enter your email">
+                <div id="signup-email-error" class="error-message"></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" id="signup-password" class="form-input" placeholder="Create a password">
+                <div id="signup-password-error" class="error-message"></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Confirm Password</label>
+                <input type="password" id="signup-confirm" class="form-input" placeholder="Confirm your password">
+                <div id="signup-confirm-error" class="error-message"></div>
+            </div>
+            <button onclick="handleSignUp()" class="auth-button" id="signup-btn">Create Account</button>
+        </div>
+        
+        <div style="text-align: center; margin: 1rem 0; color: #666;">or</div>
+        
+        <button onclick="handleGoogleAuth()" class="social-button">
+            <span>🔍</span> Continue with Google
+        </button>
+        <button onclick="handleGitHubAuth()" class="social-button">
+            <span>🐙</span> Continue with GitHub
+        </button>
+        
+        <div id="message" style="margin-top: 1rem; text-align: center;"></div>
+        
+        <div style="text-align: center; margin-top: 1rem;">
+            <a href="index.html" style="color: #007bff; text-decoration: none;">← Back to Home</a>
+        </div>
+        
+        <div id="debug"></div>
+    </div>
+
+    <!-- Load scripts -->
+    <script src="js/public-config.js"></script>
+    <script type="module">
+        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+        
+        let supabase = null;
+        let debugMessages = [];
+        
+        function debug(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            debugMessages.push(`[${timestamp}] ${message}`);
+            document.getElementById('debug').innerHTML = debugMessages.slice(-10).join('<br>');
+            console.log(message);
+        }
+        
+        function showMessage(message, type = 'info') {
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = `<div class="${type}-message">${message}</div>`;
+            debug(`Message (${type}): ${message}`);
+        }
+        
+        function clearErrors() {
+            document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+        }
+        
+        // Initialize Supabase
+        async function initializeAuth() {
+            try {
+                debug('Initializing authentication...');
+                
+                if (!window.PUBLIC_ENV) {
+                    throw new Error('Configuration not loaded');
+                }
+                
+                debug(`Config loaded: ${window.PUBLIC_ENV.SUPABASE_URL}`);
+                
+                supabase = createClient(
+                    window.PUBLIC_ENV.SUPABASE_URL,
+                    window.PUBLIC_ENV.SUPABASE_ANON_KEY,
+                    {
+                        auth: {
+                            persistSession: true,
+                            autoRefreshToken: true,
+                            detectSessionInUrl: true
+                        }
+                    }
+                );
+                
+                debug('Supabase client created');
+                
+                // Test connection
+                const { data, error } = await supabase.auth.getSession();
+                if (error && error.message !== 'Invalid session') {
+                    throw error;
+                }
+                
+                debug(`Session check: ${data.session ? 'Active session' : 'No session'}`);
+                
+                if (data.session) {
+                    showMessage(`Welcome back, ${data.session.user.email}!`, 'success');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                }
+                
+                showMessage('Authentication system ready', 'success');
+                
+            } catch (error) {
+                debug(`Initialization error: ${error.message}`);
+                showMessage(`Setup error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Tab switching
+        window.switchTab = function(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.form').forEach(f => f.classList.remove('active'));
+            
+            document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
+            document.getElementById(`${tab}-form`).classList.add('active');
+            
+            clearErrors();
+            debug(`Switched to ${tab} tab`);
+        };
+        
+        // Sign In
+        window.handleSignIn = async function() {
+            try {
+                clearErrors();
+                const email = document.getElementById('signin-email').value.trim();
+                const password = document.getElementById('signin-password').value;
+                
+                if (!email || !password) {
+                    showMessage('Please enter both email and password', 'error');
+                    return;
+                }
+                
+                debug(`Attempting sign in for: ${email}`);
+                document.getElementById('signin-btn').disabled = true;
+                document.getElementById('signin-btn').textContent = 'Signing in...';
+                
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) throw error;
+                
+                debug('Sign in successful');
+                showMessage('Sign in successful! Redirecting...', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+                
+            } catch (error) {
+                debug(`Sign in error: ${error.message}`);
+                showMessage(error.message, 'error');
+            } finally {
+                document.getElementById('signin-btn').disabled = false;
+                document.getElementById('signin-btn').textContent = 'Sign In';
+            }
+        };
+        
+        // Sign Up
+        window.handleSignUp = async function() {
+            try {
+                clearErrors();
+                const email = document.getElementById('signup-email').value.trim();
+                const password = document.getElementById('signup-password').value;
+                const confirm = document.getElementById('signup-confirm').value;
+                
+                if (!email || !password || !confirm) {
+                    showMessage('Please fill in all fields', 'error');
+                    return;
+                }
+                
+                if (password !== confirm) {
+                    showMessage('Passwords do not match', 'error');
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    showMessage('Password must be at least 6 characters', 'error');
+                    return;
+                }
+                
+                debug(`Attempting sign up for: ${email}`);
+                document.getElementById('signup-btn').disabled = true;
+                document.getElementById('signup-btn').textContent = 'Creating account...';
+                
+                const { data, error } = await supabase.auth.signUp({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) throw error;
+                
+                debug('Sign up successful');
+                
+                if (data.user && !data.session) {
+                    showMessage('Please check your email to confirm your account', 'success');
+                } else {
+                    showMessage('Account created! Redirecting...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                }
+                
+            } catch (error) {
+                debug(`Sign up error: ${error.message}`);
+                showMessage(error.message, 'error');
+            } finally {
+                document.getElementById('signup-btn').disabled = false;
+                document.getElementById('signup-btn').textContent = 'Create Account';
+            }
+        };
+        
+        // Google Auth
+        window.handleGoogleAuth = async function() {
+            try {
+                debug('Initiating Google authentication');
+                
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        redirectTo: `${window.location.origin}/auth-working.html`
+                    }
+                });
+                
+                if (error) throw error;
+                
+                debug('Google auth initiated');
+                
+            } catch (error) {
+                debug(`Google auth error: ${error.message}`);
+                showMessage(`Google sign in failed: ${error.message}`, 'error');
+            }
+        };
+        
+        // GitHub Auth
+        window.handleGitHubAuth = async function() {
+            try {
+                debug('Initiating GitHub authentication');
+                
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'github',
+                    options: {
+                        redirectTo: `${window.location.origin}/auth-working.html`
+                    }
+                });
+                
+                if (error) throw error;
+                
+                debug('GitHub auth initiated');
+                
+            } catch (error) {
+                debug(`GitHub auth error: ${error.message}`);
+                showMessage(`GitHub sign in failed: ${error.message}`, 'error');
+            }
+        };
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            debug('Page loaded, initializing...');
+            setTimeout(initializeAuth, 100);
+        });
+    </script>
+</body>
+</html>
