@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "build": "npm run copy-files && npm run generate:public-config",
-    "copy-files": "mkdir -p public && cp -r *.html js styles tools api public/ 2>/dev/null || true",
+    "copy-files": "mkdir -p public && cp -r *.html *.js js styles tools api public/ 2>/dev/null || true",
     "build:config": "node scripts/generate-supabase-config.js",
     "generate:public-config": "node scripts/generate-public-config.js && cp js/public-config.js public/js/"
   },

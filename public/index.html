@@ -82,7 +82,9 @@
                       class="fas fa-user"></i>Profile</a></li>
                 <li><a href="pricing.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded"><i
                       class="fas fa-credit-card"></i>Pricing</a></li>
-                <li><hr class="my-1 border-border"></li>
+                <li>
+                  <hr class="my-1 border-border">
+                </li>
                 <li><a href="#" id="signOutBtn" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded"><i
                       class="fas fa-sign-out-alt"></i>Sign Out</a></li>
               </ul>
@@ -290,7 +292,7 @@
       `;
       toast.textContent = message;
       document.body.appendChild(toast);
-      
+
       setTimeout(() => {
         toast.remove();
       }, 5000);
@@ -301,16 +303,16 @@
       const hashParams = new URLSearchParams(window.location.hash.substring(1));
       const accessToken = hashParams.get('access_token');
       const type = hashParams.get('type');
-      
+
       if (accessToken) {
         console.log('Authentication callback detected:', type);
-        
+
         // Clear the hash from URL
         window.history.replaceState({}, document.title, window.location.pathname);
-        
+
         // Show success message
         showToast('Successfully signed in! Welcome back.', 'success');
-        
+
         // Force refresh auth state
         setTimeout(() => {
           if (window.authManager) {
@@ -318,7 +320,7 @@
           }
           window.location.reload();
         }, 1000);
-        
+
         return true;
       }
       return false;
@@ -330,111 +332,242 @@
       if (handleAuthCallback()) {
         return;
       }
-      
+
+      // Initialize sidebar functionality
+      initializeSidebar();
+
       // Initialize authentication after a short delay to ensure all scripts are loaded
       setTimeout(() => {
         initializeAuthentication();
-      }, 500);
-      
+      }, 1000);
+
       // Handle sign out
       const signOutBtn = document.getElementById('signOutBtn');
       if (signOutBtn) {
         signOutBtn.addEventListener('click', async (e) => {
           e.preventDefault();
-          if (window.authManager) {
-            try {
-              await window.authManager.signOut();
-            } catch (error) {
-              console.error('Sign out error:', error);
+          try {
+            if (window.supabase) {
+              await window.supabase.auth.signOut();
+              showToast('Signed out successfully', 'success');
+              setTimeout(() => window.location.reload(), 1000);
             }
+          } catch (error) {
+            console.error('Sign out error:', error);
+            showToast('Error signing out', 'error');
           }
         });
       }
     });
 
+    // Initialize sidebar functionality
+    function initializeSidebar() {
+      const sidebarToggle = document.getElementById('sidebar-toggle');
+      const sidebar = document.getElementById('sidebar');
+      const sidebarOverlay = document.getElementById('sidebar-overlay');
+      const sidebarClose = document.getElementById('sidebar-close');
+
+      if (sidebarToggle && sidebar && sidebarOverlay) {
+        sidebarToggle.addEventListener('click', () => {
+          sidebar.classList.remove('-translate-x-full');
+          sidebarOverlay.classList.remove('hidden');
+          sidebarToggle.setAttribute('aria-expanded', 'true');
+        });
+
+        const closeSidebar = () => {
+          sidebar.classList.add('-translate-x-full');
+          sidebarOverlay.classList.add('hidden');
+          sidebarToggle.setAttribute('aria-expanded', 'false');
+        };
+
+        if (sidebarClose) {
+          sidebarClose.addEventListener('click', closeSidebar);
+        }
+
+        sidebarOverlay.addEventListener('click', closeSidebar);
+      }
+    }
+
     // Initialize authentication system
     async function initializeAuthentication() {
       try {
         console.log('Initializing authentication system...');
-        
-        // Wait for auth manager to be available
+
+        // Wait for required dependencies
         let attempts = 0;
-        while (!window.authManager && attempts < 20) {
+        const maxAttempts = 50; // Increase wait time
+        
+        while ((!window.supabase || !window.PUBLIC_ENV) && attempts < maxAttempts) {
           await new Promise(resolve => setTimeout(resolve, 100));
           attempts++;
         }
-        
-        if (window.authManager) {
-          console.log('AuthManager found, updating UI...');
-          window.authManager.updateAuthUI();
-          
-          // Set up auth state listener for future changes
-          window.authManager.addAuthStateListener((event, session, user) => {
-            console.log('Auth state changed:', event, user?.email || 'No user');
-            setTimeout(() => {
-              window.authManager.updateAuthUI();
-            }, 100);
-          });
-          
-        } else {
-          console.warn('AuthManager not available after waiting');
+
+        if (!window.PUBLIC_ENV) {
+          console.error('PUBLIC_ENV not loaded after waiting');
+          return;
         }
+
+        if (!window.supabase) {
+          console.error('Supabase not loaded after waiting');
+          return;
+        }
+
+        console.log('Dependencies loaded, checking auth state...');
+
+        // Check current auth state directly with Supabase
+        const { data: { session }, error } = await window.supabase.auth.getSession();
         
+        if (error) {
+          console.error('Error getting session:', error);
+          return;
+        }
+
+        console.log('Session check result:', session ? `User: ${session.user.email}` : 'No session');
+
+        // Update UI based on auth state
+        updateAuthUIDirectly(!!session, session?.user);
+
+        // Listen for auth changes
+        window.supabase.auth.onAuthStateChange((event, session) => {
+          console.log('Auth state changed:', event, session?.user?.email || 'No user');
+          updateAuthUIDirectly(!!session, session?.user);
+        });
+
       } catch (error) {
         console.error('Error initializing authentication:', error);
       }
     }
 
-      // Ensure theme toggle is properly initialized
-      if (window.initializeThemeToggle) {
-        window.initializeThemeToggle();
-      } else {
-        // Fallback theme toggle initialization if theme.js hasn't loaded yet
-        setTimeout(() => {
-          if (window.initializeThemeToggle) {
-            window.initializeThemeToggle();
-          }
-        }, 100);
-      }
-
-      // Setup dropdown functionality
-      const dropdownToggle = document.querySelector('.dropdown-toggle');
-      const dropdownContent = document.querySelector('.dropdown-content');
+    // Direct UI update function
+    function updateAuthUIDirectly(isAuthenticated, user) {
+      console.log('Updating UI directly:', isAuthenticated, user?.email);
       
-      if (dropdownToggle && dropdownContent) {
-        dropdownToggle.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          
-          const isOpen = dropdownContent.style.display === 'block';
-          dropdownContent.style.display = isOpen ? 'none' : 'block';
-          dropdownToggle.setAttribute('aria-expanded', !isOpen);
+      const authRequired = document.querySelectorAll('[data-auth-required]');
+      const guestOnly = document.querySelectorAll('[data-guest-only]');
+      const userInfo = document.querySelectorAll('[data-user-info]');
+
+      if (isAuthenticated) {
+        // Show authenticated elements
+        authRequired.forEach(el => {
+          el.style.display = 'flex';
+          el.classList.remove('hidden');
         });
         
-        // Close dropdown when clicking outside
-        document.addEventListener('click', (e) => {
-          if (!dropdownToggle.contains(e.target) && !dropdownContent.contains(e.target)) {
-            dropdownContent.style.display = 'none';
-            dropdownToggle.setAttribute('aria-expanded', 'false');
+        // Hide guest elements
+        guestOnly.forEach(el => {
+          el.style.display = 'none';
+          el.classList.add('hidden');
+        });
+
+        // Update user info
+        userInfo.forEach(el => {
+          const infoType = el.dataset.userInfo;
+          if (infoType === 'name') {
+            el.textContent = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
+          } else if (infoType === 'email') {
+            el.textContent = user?.email || '';
+          } else if (infoType === 'avatar' && el.tagName === 'IMG') {
+            el.src = user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.email || 'User')}&background=0066cc&color=fff`;
+            el.style.display = 'block';
+          }
+        });
+
+      } else {
+        // Hide authenticated elements
+        authRequired.forEach(el => {
+          el.style.display = 'none';
+          el.classList.add('hidden');
+        });
+        
+        // Show guest elements
+        guestOnly.forEach(el => {
+          el.style.display = 'flex';
+          el.classList.remove('hidden');
+        });
+
+        // Clear user info
+        userInfo.forEach(el => {
+          if (el.tagName === 'IMG') {
+            el.style.display = 'none';
+          } else {
+            el.textContent = '';
           }
         });
       }
+    }
 
-      // Add authentication requirement to premium features
-      // This can be expanded as needed for specific tools
-      const premiumTools = document.querySelectorAll('[data-premium="true"]');
-      premiumTools.forEach(tool => {
-        tool.addEventListener('click', (e) => {
-          if (!window.requireAuth) return;
+    // Debug function - you can call this in browser console
+    window.debugAuth = function () {
+      console.log('=== Authentication Debug ===');
+      console.log('AuthManager available:', !!window.authManager);
+      console.log('Supabase available:', !!window.supabase);
+      console.log('PUBLIC_ENV loaded:', !!window.PUBLIC_ENV);
 
-          if (!window.requireAuth({
-            title: 'Premium Feature',
-            message: 'This tool requires a premium account. Sign in to access advanced features.',
-            feature: 'premium tool'
-          })) {
-            e.preventDefault();
-          }
-        });
+      if (window.authManager) {
+        console.log('Is authenticated:', window.authManager.isAuthenticated());
+        console.log('Current user:', window.authManager.getCurrentUser());
+        console.log('Current session:', window.authManager.getCurrentSession());
+      }
+
+      const authElements = document.querySelectorAll('[data-auth-required]');
+      const guestElements = document.querySelectorAll('[data-guest-only]');
+      console.log('Auth required elements:', authElements.length);
+      console.log('Guest only elements:', guestElements.length);
+
+      authElements.forEach((el, i) => {
+        console.log(`Auth element ${i}:`, el, 'visible:', el.style.display !== 'none');
+      });
+    };
+
+    // Ensure theme toggle is properly initialized
+    if (window.initializeThemeToggle) {
+      window.initializeThemeToggle();
+    } else {
+      // Fallback theme toggle initialization if theme.js hasn't loaded yet
+      setTimeout(() => {
+        if (window.initializeThemeToggle) {
+          window.initializeThemeToggle();
+        }
+      }, 100);
+    }
+
+    // Setup dropdown functionality
+    const dropdownToggle = document.querySelector('.dropdown-toggle');
+    const dropdownContent = document.querySelector('.dropdown-content');
+
+    if (dropdownToggle && dropdownContent) {
+      dropdownToggle.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const isOpen = dropdownContent.style.display === 'block';
+        dropdownContent.style.display = isOpen ? 'none' : 'block';
+        dropdownToggle.setAttribute('aria-expanded', !isOpen);
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!dropdownToggle.contains(e.target) && !dropdownContent.contains(e.target)) {
+          dropdownContent.style.display = 'none';
+          dropdownToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+
+    // Add authentication requirement to premium features
+    // This can be expanded as needed for specific tools
+    const premiumTools = document.querySelectorAll('[data-premium="true"]');
+    premiumTools.forEach(tool => {
+      tool.addEventListener('click', (e) => {
+        if (!window.requireAuth) return;
+
+        if (!window.requireAuth({
+          title: 'Premium Feature',
+          message: 'This tool requires a premium account. Sign in to access advanced features.',
+          feature: 'premium tool'
+        })) {
+          e.preventDefault();
+        }
       });
     });
   </script>
