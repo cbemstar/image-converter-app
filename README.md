@@ -101,6 +101,8 @@ To enable enhanced features with user accounts:
 3. Configure Google OAuth in your Supabase dashboard
 4. Ensure your `users` table includes a `full_name` column
 
+> **Deployment Note:** Run `npm run build:config` before deploying to generate `js/supabase-config.js` from your current `SUPABASE_URL` and `SUPABASE_ANON_KEY` values.
+
 ### Analytics (Optional)
 The site includes Google Tag Manager integration (container `GTM-NFJTSQ3N`) for centralized analytics configuration.
 
