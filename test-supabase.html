@@ -141,9 +141,13 @@
         <pre id="functionsResults"></pre>
     </div>
 
-    <!-- Load Supabase from CDN -->
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    
+    <script src="/js/public-config.js"></script>
+    <script type="module" src="/js/supabase-client.js"></script>
+    <script type="module">
+        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+        window.createSupabaseClient = (url, key) => createClient(url, key);
+    </script>
+
     <script>
         let supabase = null;
         let currentUser = null;
@@ -153,14 +157,14 @@
         function initializeSupabase() {
             const url = document.getElementById('supabaseUrl').value;
             const key = document.getElementById('supabaseKey').value;
-            
+
             if (!url || !key) {
                 showStatus('initStatus', 'Please enter both URL and key', 'error');
                 return;
             }
 
             try {
-                supabase = window.supabase.createClient(url, key);
+                supabase = window.createSupabaseClient(url, key);
                 showStatus('initStatus', 'Supabase initialized successfully!', 'success');
                 
                 // Set up auth listener
