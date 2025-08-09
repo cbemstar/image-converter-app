@@ -4,5 +4,8 @@ node_modules/
 .vscode/
 
 # Environment and generated config
+.env
 .env.local
+# Generated Supabase runtime config
 js/supabase-config.js
+js/public-config.js
