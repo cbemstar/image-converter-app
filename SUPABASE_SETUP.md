@@ -102,15 +102,16 @@ AGENCY_LIMIT_API_CALLS=500000
 AGENCY_LIMIT_MAX_FILE_SIZE=262144000
 ```
 
-Generate the runtime configuration file (do not commit the output):
+Generate the runtime configuration files (do not commit the output):
 
 ```bash
 npm run build:config
 ```
 
-This creates `js/supabase-config.js`, the sole source of Supabase runtime
-credentials. The frontend client (`js/supabase-client.js`) reads the
-configuration from this file at runtime.
+This creates `js/supabase-config.js` and `js/public-config.js`, the sole
+sources of Supabase runtime credentials. The frontend client
+(`js/supabase-client.js`) reads the configuration from these files at
+runtime.
 
 ## Step 4: Run Database Migrations
 

@@ -5,7 +5,7 @@
   "main": "background-remover.js",
   "scripts": {
     "test": "jest",
-    "build:config": "node scripts/generate-supabase-config.js",
+    "build:config": "node scripts/generate-supabase-config.js && node scripts/generate-public-config.js",
     "generate:public-config": "node scripts/generate-public-config.js"
   },
   "keywords": [],
