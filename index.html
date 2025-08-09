@@ -58,7 +58,7 @@
         <div class="flex items-center gap-2">
           <!-- Authentication Status -->
           <div data-guest-only class="flex items-center gap-2">
-            <a href="/auth.html" class="btn btn-outline btn-sm">
+            <a href="auth.html" class="btn btn-outline btn-sm">
               <i class="fas fa-sign-in-alt mr-1"></i>
               Sign In
             </a>
@@ -74,10 +74,15 @@
               <ul
                 class="dropdown-content menu p-2 shadow bg-background border border-border rounded-lg w-52 absolute right-0 top-full mt-1 z-50"
                 style="display: none;">
-                <li><a href="/dashboard.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded"><i
+                <li><a href="dashboard.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded"><i
                       class="fas fa-tachometer-alt"></i>Dashboard</a></li>
-                <li><a href="/profile.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded"><i
+                <li><a href="analytics.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded"><i
+                      class="fas fa-chart-bar"></i>Analytics</a></li>
+                <li><a href="profile.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded"><i
                       class="fas fa-user"></i>Profile</a></li>
+                <li><a href="pricing.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded"><i
+                      class="fas fa-credit-card"></i>Pricing</a></li>
+                <li><hr class="my-1 border-border"></li>
                 <li><a href="#" id="signOutBtn" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded"><i
                       class="fas fa-sign-out-alt"></i>Sign Out</a></li>
               </ul>
@@ -351,6 +356,29 @@
             window.initializeThemeToggle();
           }
         }, 100);
+      }
+
+      // Setup dropdown functionality
+      const dropdownToggle = document.querySelector('.dropdown-toggle');
+      const dropdownContent = document.querySelector('.dropdown-content');
+      
+      if (dropdownToggle && dropdownContent) {
+        dropdownToggle.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          const isOpen = dropdownContent.style.display === 'block';
+          dropdownContent.style.display = isOpen ? 'none' : 'block';
+          dropdownToggle.setAttribute('aria-expanded', !isOpen);
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+          if (!dropdownToggle.contains(e.target) && !dropdownContent.contains(e.target)) {
+            dropdownContent.style.display = 'none';
+            dropdownToggle.setAttribute('aria-expanded', 'false');
+          }
+        });
       }
 
       // Add authentication requirement to premium features

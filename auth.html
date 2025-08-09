@@ -1,19 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In - Image Converter App</title>
+    <title>Sign In - reformately Tools</title>
     <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
     <link rel="stylesheet" href="styles/styles.css">
     <link rel="stylesheet" href="styles/auth.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="styles/theme.js"></script>
-    
+    <style>
+        #debug { 
+            margin-top: 1rem; 
+            padding: 1rem; 
+            background: var(--muted); 
+            border-radius: var(--radius); 
+            font-size: 0.75rem; 
+            max-height: 200px; 
+            overflow-y: auto;
+            font-family: monospace;
+            border: 1px solid var(--border);
+        }
+        .success-message { 
+            color: var(--success, #10b981); 
+            font-size: 0.875rem; 
+            margin-top: 0.25rem; 
+        }
+    </style>
 </head>
-
 <body class='bg-background'>
     <div class="auth-container">
         <div class="auth-card">
@@ -23,522 +38,349 @@
             </div>
 
             <div class="auth-tabs">
-                <button class="auth-tab active" data-tab="signin">Sign In</button>
-                <button class="auth-tab" data-tab="signup">Sign Up</button>
+                <button class="auth-tab active" onclick="switchTab('signin')" data-tab="signin">Sign In</button>
+                <button class="auth-tab" onclick="switchTab('signup')" data-tab="signup">Sign Up</button>
             </div>
 
             <!-- Sign In Form -->
-            <form id="signinForm" class="auth-form">
+            <div id="signin-form" class="auth-form">
                 <div class="form-group">
-                    <label for="signinEmail" class="form-label">Email</label>
-                    <input type="email" id="signinEmail" class="form-input" placeholder="Enter your email" required>
-                    <div class="error-message" id="signinEmailError"></div>
+                    <label for="signin-email" class="form-label">Email</label>
+                    <input type="email" id="signin-email" class="form-input" placeholder="Enter your email" required>
+                    <div class="error-message" id="signin-email-error"></div>
                 </div>
 
                 <div class="form-group">
-                    <label for="signinPassword" class="form-label">Password</label>
-                    <input type="password" id="signinPassword" class="form-input" placeholder="Enter your password"
-                        required>
-                    <div class="error-message" id="signinPasswordError"></div>
+                    <label for="signin-password" class="form-label">Password</label>
+                    <input type="password" id="signin-password" class="form-input" placeholder="Enter your password" required>
+                    <div class="error-message" id="signin-password-error"></div>
                 </div>
 
-                <button type="submit" class="auth-button" id="signinButton">
+                <button onclick="handleSignIn()" class="auth-button" id="signin-btn">
                     Sign In
                 </button>
 
                 <div class="forgot-password">
-                    <a href="#" id="forgotPasswordLink">Forgot your password?</a>
+                    <a href="#" onclick="showMessage('Password reset feature coming soon!', 'info')">Forgot your password?</a>
                 </div>
-            </form>
+            </div>
 
             <!-- Sign Up Form -->
-            <form id="signupForm" class="auth-form hidden">
+            <div id="signup-form" class="auth-form hidden">
                 <div class="form-group">
-                    <label for="signupName" class="form-label">Full Name (Optional)</label>
-                    <input type="text" id="signupName" class="form-input" placeholder="Enter your full name">
-                    <div class="error-message" id="signupNameError"></div>
+                    <label for="signup-email" class="form-label">Email</label>
+                    <input type="email" id="signup-email" class="form-input" placeholder="Enter your email" required>
+                    <div class="error-message" id="signup-email-error"></div>
                 </div>
 
                 <div class="form-group">
-                    <label for="signupEmail" class="form-label">Email</label>
-                    <input type="email" id="signupEmail" class="form-input" placeholder="Enter your email" required>
-                    <div class="error-message" id="signupEmailError"></div>
+                    <label for="signup-password" class="form-label">Password</label>
+                    <input type="password" id="signup-password" class="form-input" placeholder="Create a password (min 6 characters)" required>
+                    <div class="error-message" id="signup-password-error"></div>
                 </div>
 
                 <div class="form-group">
-                    <label for="signupPassword" class="form-label">Password</label>
-                    <input type="password" id="signupPassword" class="form-input"
-                        placeholder="Create a password (min 6 characters)" required>
-                    <div class="error-message" id="signupPasswordError"></div>
+                    <label for="signup-confirm" class="form-label">Confirm Password</label>
+                    <input type="password" id="signup-confirm" class="form-input" placeholder="Confirm your password" required>
+                    <div class="error-message" id="signup-confirm-error"></div>
                 </div>
 
-                <div class="form-group">
-                    <label for="signupPasswordConfirm" class="form-label">Confirm Password</label>
-                    <input type="password" id="signupPasswordConfirm" class="form-input"
-                        placeholder="Confirm your password" required>
-                    <div class="error-message" id="signupPasswordConfirmError"></div>
-                </div>
-
-                <button type="submit" class="auth-button" id="signupButton">
+                <button onclick="handleSignUp()" class="auth-button" id="signup-btn">
                     Create Account
                 </button>
-            </form>
-
-            <!-- Password Reset Form -->
-            <form id="resetForm" class="auth-form hidden">
-                <div class="form-group">
-                    <label for="resetEmail" class="form-label">Email</label>
-                    <input type="email" id="resetEmail" class="form-input" placeholder="Enter your email" required>
-                    <div class="error-message" id="resetEmailError"></div>
-                </div>
-
-                <button type="submit" class="auth-button" id="resetButton">
-                    Send Reset Link
-                </button>
-
-                <div class="forgot-password">
-                    <a href="#" id="backToSigninLink">Back to Sign In</a>
-                </div>
-            </form>
+            </div>
 
             <div class="divider">
                 <span>or continue with</span>
             </div>
 
             <div class="social-buttons">
-                <button class="social-button" id="googleSignin">
+                <button class="social-button" onclick="handleGoogleAuth()">
                     <svg width="20" height="20" viewBox="0 0 24 24">
-                        <path fill="#4285f4"
-                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                        <path fill="#34a853"
-                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                        <path fill="#fbbc05"
-                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-                        <path fill="#ea4335"
-                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                        <path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                        <path fill="#34a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                        <path fill="#fbbc05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                        <path fill="#ea4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                     </svg>
                     Google
                 </button>
-                <button class="social-button" id="githubSignin">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="#333">
-                        <path
-                            d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                <button class="social-button" onclick="handleGitHubAuth()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
                     </svg>
                     GitHub
                 </button>
             </div>
 
             <div class="back-home">
-                <a href="/">← Back to Home</a>
+                <a href="index.html">← Back to Home</a>
             </div>
+            
+            <div id="message" style="margin-top: 1rem; text-align: center;"></div>
+            <div id="debug"></div>
         </div>
     </div>
 
-    <!-- Load Supabase and dependencies -->
-    <script src="js/config.js"></script>
+    <!-- Load scripts -->
     <script src="js/public-config.js"></script>
-    <script type="module" src="js/supabase-client.js"></script>
-    <script src="js/auth-manager.js"></script>
-    <script src="js/auth-state-sync.js"></script>
-    <script src="styles/theme.js"></script>
-
-    <script>
-        class AuthUI {
-            constructor() {
-                this.currentTab = 'signin';
-                this.authManager = null;
-                this.init();
-            }
-
-            async init() {
-                // Wait for auth manager to be available
-                await this.waitForAuthManager();
-
-                // Set up event listeners
-                this.setupEventListeners();
-
-                // Check if user is already authenticated
-                if (this.authManager.isAuthenticated()) {
-                    this.authManager.handleAuthRedirect();
+    <script type="module">
+        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+        
+        let supabase = null;
+        let debugMessages = [];
+        
+        function debug(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            debugMessages.push(`[${timestamp}] ${message}`);
+            document.getElementById('debug').innerHTML = debugMessages.slice(-10).join('<br>');
+            console.log(message);
+        }
+        
+        function showMessage(message, type = 'info') {
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = `<div class="${type}-message">${message}</div>`;
+            debug(`Message (${type}): ${message}`);
+        }
+        
+        function clearErrors() {
+            document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+        }
+        
+        // Initialize Supabase
+        async function initializeAuth() {
+            try {
+                debug('Initializing authentication...');
+                
+                if (!window.PUBLIC_ENV) {
+                    throw new Error('Configuration not loaded');
                 }
-            }
-
-            async waitForAuthManager() {
-                return new Promise((resolve) => {
-                    const checkAuthManager = () => {
-                        if (window.authManager) {
-                            this.authManager = window.authManager;
-                            resolve();
-                        } else {
-                            setTimeout(checkAuthManager, 100);
+                
+                debug(`Config loaded: ${window.PUBLIC_ENV.SUPABASE_URL}`);
+                
+                supabase = createClient(
+                    window.PUBLIC_ENV.SUPABASE_URL,
+                    window.PUBLIC_ENV.SUPABASE_ANON_KEY,
+                    {
+                        auth: {
+                            persistSession: true,
+                            autoRefreshToken: true,
+                            detectSessionInUrl: true
                         }
-                    };
-                    checkAuthManager();
-                });
-            }
-
-            setupEventListeners() {
-                // Tab switching
-                document.querySelectorAll('.auth-tab').forEach(tab => {
-                    tab.addEventListener('click', (e) => {
-                        this.switchTab(e.target.dataset.tab);
-                    });
-                });
-
-                // Form submissions
-                document.getElementById('signinForm').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    this.handleSignIn();
-                });
-
-                document.getElementById('signupForm').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    this.handleSignUp();
-                });
-
-                document.getElementById('resetForm').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    this.handlePasswordReset();
-                });
-
-                // Social sign in
-                document.getElementById('googleSignin').addEventListener('click', () => {
-                    this.handleSocialSignIn('google');
-                });
-
-                document.getElementById('githubSignin').addEventListener('click', () => {
-                    this.handleSocialSignIn('github');
-                });
-
-                // Forgot password link
-                document.getElementById('forgotPasswordLink').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    this.showPasswordReset();
-                });
-
-                document.getElementById('backToSigninLink').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    this.switchTab('signin');
-                });
-
-                // Real-time validation
-                this.setupValidation();
-            }
-
-            setupValidation() {
-                // Email validation
-                document.querySelectorAll('input[type="email"]').forEach(input => {
-                    input.addEventListener('blur', () => {
-                        this.validateEmail(input);
-                    });
-                });
-
-                // Password validation
-                document.querySelectorAll('input[type="password"]').forEach(input => {
-                    input.addEventListener('input', () => {
-                        this.validatePassword(input);
-                    });
-                });
-
-                // Password confirmation
-                document.getElementById('signupPasswordConfirm').addEventListener('input', () => {
-                    this.validatePasswordConfirmation();
-                });
-            }
-
-            switchTab(tab) {
-                // Update tab buttons
-                document.querySelectorAll('.auth-tab').forEach(t => {
-                    t.classList.toggle('active', t.dataset.tab === tab);
-                });
-
-                // Show/hide forms
-                document.getElementById('signinForm').classList.toggle('hidden', tab !== 'signin');
-                document.getElementById('signupForm').classList.toggle('hidden', tab !== 'signup');
-                document.getElementById('resetForm').classList.add('hidden');
-
-                this.currentTab = tab;
-                this.clearErrors();
-            }
-
-            showPasswordReset() {
-                document.getElementById('signinForm').classList.add('hidden');
-                document.getElementById('signupForm').classList.add('hidden');
-                document.getElementById('resetForm').classList.remove('hidden');
-
-                // Update tabs
-                document.querySelectorAll('.auth-tab').forEach(t => {
-                    t.classList.remove('active');
-                });
-
-                this.clearErrors();
-            }
-
-            async handleSignIn() {
-                const email = document.getElementById('signinEmail').value.trim();
-                const password = document.getElementById('signinPassword').value;
-                const button = document.getElementById('signinButton');
-
-                if (!this.validateSignInForm(email, password)) {
-                    return;
-                }
-
-                this.setLoading(button, true);
-                this.clearErrors();
-
-                try {
-                    await this.authManager.signIn(email, password);
-                } catch (error) {
-                    this.showError('signinPasswordError', error.message);
-                } finally {
-                    this.setLoading(button, false);
-                }
-            }
-
-            async handleSignUp() {
-                const name = document.getElementById('signupName').value.trim();
-                const email = document.getElementById('signupEmail').value.trim();
-                const password = document.getElementById('signupPassword').value;
-                const passwordConfirm = document.getElementById('signupPasswordConfirm').value;
-                const button = document.getElementById('signupButton');
-
-                if (!this.validateSignUpForm(name, email, password, passwordConfirm)) {
-                    return;
-                }
-
-                this.setLoading(button, true);
-                this.clearErrors();
-
-                try {
-                    const result = await this.authManager.signUp(email, password, {
-                        fullName: name
-                    });
-
-                    if (result.requiresConfirmation) {
-                        // Show confirmation message and switch to sign in
-                        setTimeout(() => {
-                            this.switchTab('signin');
-                        }, 3000);
                     }
-                } catch (error) {
-                    this.showError('signupEmailError', error.message);
-                } finally {
-                    this.setLoading(button, false);
+                );
+                
+                debug('Supabase client created');
+                
+                // Test connection
+                const { data, error } = await supabase.auth.getSession();
+                if (error && error.message !== 'Invalid session') {
+                    throw error;
                 }
-            }
-
-            async handlePasswordReset() {
-                const email = document.getElementById('resetEmail').value.trim();
-                const button = document.getElementById('resetButton');
-
-                if (!this.validateEmail(document.getElementById('resetEmail'))) {
-                    return;
-                }
-
-                this.setLoading(button, true);
-                this.clearErrors();
-
-                try {
-                    await this.authManager.resetPassword(email);
-                    // Switch back to sign in after successful reset
+                
+                debug(`Session check: ${data.session ? 'Active session' : 'No session'}`);
+                
+                if (data.session) {
+                    showMessage(`Welcome back, ${data.session.user.email}!`, 'success');
                     setTimeout(() => {
-                        this.switchTab('signin');
-                    }, 3000);
-                } catch (error) {
-                    this.showError('resetEmailError', error.message);
-                } finally {
-                    this.setLoading(button, false);
+                        window.location.href = 'index.html';
+                    }, 2000);
                 }
-            }
-
-            async handleSocialSignIn(provider) {
-                try {
-                    // Store current auth page URL if no redirect is already stored
-                    // This ensures Google auth redirects to homepage by default
-                    if (!sessionStorage.getItem('auth_redirect')) {
-                        // Don't store auth.html as redirect - let it default to homepage
-                        console.log('No redirect URL stored, will default to homepage after Google auth');
-                    }
-                    
-                    await this.authManager.signInWithProvider(provider);
-                } catch (error) {
-                    console.error(`${provider} sign in error:`, error);
-                    this.showError('signinPasswordError', `Failed to sign in with ${provider}. Please try again.`);
-                }
-            }
-
-            validateSignInForm(email, password) {
-                let isValid = true;
-
-                if (!email) {
-                    this.showError('signinEmailError', 'Email is required');
-                    isValid = false;
-                } else if (!this.isValidEmail(email)) {
-                    this.showError('signinEmailError', 'Please enter a valid email address');
-                    isValid = false;
-                }
-
-                if (!password) {
-                    this.showError('signinPasswordError', 'Password is required');
-                    isValid = false;
-                }
-
-                return isValid;
-            }
-
-            validateSignUpForm(name, email, password, passwordConfirm) {
-                let isValid = true;
-
-                if (!email) {
-                    this.showError('signupEmailError', 'Email is required');
-                    isValid = false;
-                } else if (!this.isValidEmail(email)) {
-                    this.showError('signupEmailError', 'Please enter a valid email address');
-                    isValid = false;
-                }
-
-                if (!password) {
-                    this.showError('signupPasswordError', 'Password is required');
-                    isValid = false;
-                } else if (password.length < 6) {
-                    this.showError('signupPasswordError', 'Password must be at least 6 characters long');
-                    isValid = false;
-                }
-
-                if (password !== passwordConfirm) {
-                    this.showError('signupPasswordConfirmError', 'Passwords do not match');
-                    isValid = false;
-                }
-
-                return isValid;
-            }
-
-            validateEmail(input) {
-                const email = input.value.trim();
-                const errorId = input.id + 'Error';
-
-                if (email && !this.isValidEmail(email)) {
-                    this.showError(errorId, 'Please enter a valid email address');
-                    return false;
-                } else {
-                    this.clearError(errorId);
-                    return true;
-                }
-            }
-
-            validatePassword(input) {
-                const password = input.value;
-                const errorId = input.id + 'Error';
-
-                if (password && password.length < 6) {
-                    this.showError(errorId, 'Password must be at least 6 characters long');
-                    return false;
-                } else {
-                    this.clearError(errorId);
-                    return true;
-                }
-            }
-
-            validatePasswordConfirmation() {
-                const password = document.getElementById('signupPassword').value;
-                const passwordConfirm = document.getElementById('signupPasswordConfirm').value;
-
-                if (passwordConfirm && password !== passwordConfirm) {
-                    this.showError('signupPasswordConfirmError', 'Passwords do not match');
-                    return false;
-                } else {
-                    this.clearError('signupPasswordConfirmError');
-                    return true;
-                }
-            }
-
-            isValidEmail(email) {
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return emailRegex.test(email);
-            }
-
-            showError(errorId, message) {
-                const errorElement = document.getElementById(errorId);
-                const inputElement = document.getElementById(errorId.replace('Error', ''));
-
-                if (errorElement) {
-                    errorElement.textContent = message;
-                    errorElement.classList.add('show');
-                }
-
-                if (inputElement) {
-                    inputElement.classList.add('error');
-                }
-            }
-
-            clearError(errorId) {
-                const errorElement = document.getElementById(errorId);
-                const inputElement = document.getElementById(errorId.replace('Error', ''));
-
-                if (errorElement) {
-                    errorElement.classList.remove('show');
-                }
-
-                if (inputElement) {
-                    inputElement.classList.remove('error');
-                }
-            }
-
-            clearErrors() {
-                document.querySelectorAll('.error-message').forEach(el => {
-                    el.classList.remove('show');
-                });
-                document.querySelectorAll('.form-input').forEach(el => {
-                    el.classList.remove('error');
-                });
-            }
-
-            setLoading(button, loading) {
-                if (loading) {
-                    button.classList.add('loading');
-                    button.disabled = true;
-                } else {
-                    button.classList.remove('loading');
-                    button.disabled = false;
-                }
+                
+                showMessage('Authentication system ready', 'success');
+                
+            } catch (error) {
+                debug(`Initialization error: ${error.message}`);
+                showMessage(`Setup error: ${error.message}`, 'error');
             }
         }
+        
+        // Tab switching
+        window.switchTab = function(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.auth-tab').forEach(t => {
+                t.classList.toggle('active', t.dataset.tab === tab);
+            });
 
-        // Initialize auth UI when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            const authUI = new AuthUI();
+            // Show/hide forms
+            document.getElementById('signin-form').classList.toggle('hidden', tab !== 'signin');
+            document.getElementById('signup-form').classList.toggle('hidden', tab !== 'signup');
+
+            clearErrors();
+            debug(`Switched to ${tab} tab`);
+        };
+        
+        // Sign In
+        window.handleSignIn = async function() {
+            try {
+                clearErrors();
+                const email = document.getElementById('signin-email').value.trim();
+                const password = document.getElementById('signin-password').value;
+                
+                if (!email || !password) {
+                    showMessage('Please enter both email and password', 'error');
+                    return;
+                }
+                
+                debug(`Attempting sign in for: ${email}`);
+                document.getElementById('signin-btn').disabled = true;
+                document.getElementById('signin-btn').textContent = 'Signing in...';
+                
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) throw error;
+                
+                debug('Sign in successful');
+                showMessage('Sign in successful! Redirecting...', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+                
+            } catch (error) {
+                debug(`Sign in error: ${error.message}`);
+                showMessage(error.message, 'error');
+            } finally {
+                document.getElementById('signin-btn').disabled = false;
+                document.getElementById('signin-btn').textContent = 'Sign In';
+            }
+        };
+        
+        // Sign Up
+        window.handleSignUp = async function() {
+            try {
+                clearErrors();
+                const email = document.getElementById('signup-email').value.trim();
+                const password = document.getElementById('signup-password').value;
+                const confirm = document.getElementById('signup-confirm').value;
+                
+                if (!email || !password || !confirm) {
+                    showMessage('Please fill in all fields', 'error');
+                    return;
+                }
+                
+                if (password !== confirm) {
+                    showMessage('Passwords do not match', 'error');
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    showMessage('Password must be at least 6 characters', 'error');
+                    return;
+                }
+                
+                debug(`Attempting sign up for: ${email}`);
+                document.getElementById('signup-btn').disabled = true;
+                document.getElementById('signup-btn').textContent = 'Creating account...';
+                
+                const { data, error } = await supabase.auth.signUp({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) throw error;
+                
+                debug('Sign up successful');
+                
+                if (data.user && !data.session) {
+                    showMessage('Please check your email to confirm your account', 'success');
+                } else {
+                    showMessage('Account created! Redirecting...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                }
+                
+            } catch (error) {
+                debug(`Sign up error: ${error.message}`);
+                showMessage(error.message, 'error');
+            } finally {
+                document.getElementById('signup-btn').disabled = false;
+                document.getElementById('signup-btn').textContent = 'Create Account';
+            }
+        };
+        
+        // Google Auth
+        window.handleGoogleAuth = async function() {
+            try {
+                debug('Initiating Google authentication');
+                
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        redirectTo: `${window.location.origin}/index.html`
+                    }
+                });
+                
+                if (error) throw error;
+                
+                debug('Google auth initiated');
+                
+            } catch (error) {
+                debug(`Google auth error: ${error.message}`);
+                showMessage(`Google sign in failed: ${error.message}`, 'error');
+            }
+        };
+        
+        // GitHub Auth
+        window.handleGitHubAuth = async function() {
+            try {
+                debug('Initiating GitHub authentication');
+                
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'github',
+                    options: {
+                        redirectTo: `${window.location.origin}/index.html`
+                    }
+                });
+                
+                if (error) throw error;
+                
+                debug('GitHub auth initiated');
+                
+            } catch (error) {
+                debug(`GitHub auth error: ${error.message}`);
+                showMessage(`GitHub sign in failed: ${error.message}`, 'error');
+            }
+        };
+        
+        // Handle authentication callback
+        function handleAuthCallback() {
+            const hashParams = new URLSearchParams(window.location.hash.substring(1));
+            const accessToken = hashParams.get('access_token');
+            const refreshToken = hashParams.get('refresh_token');
+            const type = hashParams.get('type');
             
-            // Check for preferred tab from navigation
-            const preferredTab = sessionStorage.getItem('auth_tab');
-            if (preferredTab && (preferredTab === 'signin' || preferredTab === 'signup')) {
-                authUI.switchTab(preferredTab);
-                sessionStorage.removeItem('auth_tab');
+            if (accessToken) {
+                debug(`Auth callback detected: ${type}`);
+                showMessage('Authentication successful! Redirecting to homepage...', 'success');
+                
+                // Clear the hash from URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+                
+                // Redirect to homepage after a short delay
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+                
+                return true;
+            }
+            return false;
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            debug('Page loaded, initializing...');
+            
+            // Check if this is an auth callback first
+            if (handleAuthCallback()) {
+                return; // Don't initialize the form if we're handling a callback
             }
             
-            // Debug authentication setup
-            setTimeout(() => {
-                console.log('=== Auth Page Debug ===');
-                console.log('AuthUI initialized:', !!authUI);
-                console.log('AuthManager available:', !!window.authManager);
-                console.log('Supabase available:', !!window.supabase);
-                console.log('PUBLIC_ENV loaded:', !!window.PUBLIC_ENV);
-                
-                if (window.PUBLIC_ENV) {
-                    console.log('Supabase URL:', window.PUBLIC_ENV.SUPABASE_URL);
-                    console.log('Anon key present:', !!window.PUBLIC_ENV.SUPABASE_ANON_KEY);
-                }
-                
-                // Test a simple auth operation
-                if (window.supabase) {
-                    window.supabase.auth.getSession()
-                        .then(({ data, error }) => {
-                            console.log('Session check result:', { hasSession: !!data.session, error: error?.message });
-                        })
-                        .catch(err => console.error('Session check failed:', err));
-                }
-            }, 2000);
+            setTimeout(initializeAuth, 100);
         });
     </script>
 </body>
-
 </html>
