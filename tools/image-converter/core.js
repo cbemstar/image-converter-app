@@ -81,51 +81,45 @@ let closeModalBtn;
 let galleryImages = [];
 let galleryIndex = 0;
 
-// Supabase config loaded from environment variables or runtime config
-const SUPABASE_URL =
-  (window.SUPABASE_CONFIG && window.SUPABASE_CONFIG.SUPABASE_URL) ||
-  (typeof process !== 'undefined' ? process.env.SUPABASE_URL : undefined);
-const SUPABASE_ANON_KEY =
-  (window.SUPABASE_CONFIG && window.SUPABASE_CONFIG.SUPABASE_ANON_KEY) ||
-  (typeof process !== 'undefined' ? process.env.SUPABASE_ANON_KEY : undefined);
+// Supabase client instance (initialized from supabase-client.js)
 let supabase;
 
 // Initialize Supabase if available
 function initSupabase() {
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-    console.error('Supabase credentials are missing. Set SUPABASE_URL and SUPABASE_ANON_KEY.');
+  if (!window.supabaseClient) {
+    console.error('Supabase client not initialized.');
     return false;
   }
-  if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
-    const { createClient } = window.supabase;
-    supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    
-    // Listen for auth state changes
-    if (supabase && supabase.auth) {
-      supabase.auth.onAuthStateChange((event, session) => {
-        updateAuthUI(!!session);
-        
-        if (session) {
-          // Reset quota for logged in users
-          localStorage.setItem('imgQuota', JSON.stringify({ start: Date.now(), used: 0 }));
-          updateQuotaStatus();
-          
-          // Close login modal if open
-          if (loginModal) {
-            loginModal.style.display = 'none';
-          }
-        }
-      });
-      
-      // Check the current session state
-      supabase.auth.getSession().then(({ data }) => {
-        updateAuthUI(!!data.session);
-      });
-    }
-    
-    return true;
+
+  supabase = window.supabaseClient.getClient();
+
+  if (!supabase) {
+    console.error('Supabase client unavailable.');
+    return false;
   }
-  return false;
+
+  // Listen for auth state changes
+  supabase.auth.onAuthStateChange((event, session) => {
+    updateAuthUI(!!session);
+
+    if (session) {
+      // Reset quota for logged in users
+      localStorage.setItem('imgQuota', JSON.stringify({ start: Date.now(), used: 0 }));
+      updateQuotaStatus();
+
+      // Close login modal if open
+      if (loginModal) {
+        loginModal.style.display = 'none';
+      }
+    }
+  });
+
+  // Check the current session state
+  supabase.auth.getSession().then(({ data }) => {
+    updateAuthUI(!!data.session);
+  });
+
+  return true;
 }
 
 // Update UI based on authentication state

@@ -1,6 +1,6 @@
 /**
  * Supabase Client Configuration
- * Initializes the Supabase client with environment variables
+ * Initializes the Supabase client using runtime configuration
  */
 
 // Import Supabase client from CDN (will be loaded in HTML)
@@ -8,39 +8,20 @@
 
 class SupabaseClient {
   constructor() {
-    // Get environment variables (these should be set in your deployment)
-    this.supabaseUrl = this.getEnvVar('SUPABASE_URL');
-    this.supabaseAnonKey = this.getEnvVar('SUPABASE_ANON_KEY');
-    
+    const config = window.SUPABASE_CONFIG || {};
+    this.supabaseUrl = config.SUPABASE_URL;
+    this.supabaseAnonKey = config.SUPABASE_ANON_KEY;
+
     if (!this.supabaseUrl || !this.supabaseAnonKey) {
-      console.error('Supabase configuration missing: set SUPABASE_URL and SUPABASE_ANON_KEY.');
+      console.error('Supabase configuration missing: generate js/supabase-config.js.');
       return;
     }
 
     // Initialize Supabase client
     this.client = window.supabase.createClient(this.supabaseUrl, this.supabaseAnonKey);
-    
+
     // Initialize auth state listener
     this.initAuthListener();
-  }
-
-  /**
-   * Get environment variable from various sources
-   * In production, these should be set as environment variables
-   * For development, they can be set in a config object
-   */
-  getEnvVar(name) {
-    // Try to get from window config first (for development)
-    if (window.SUPABASE_CONFIG && window.SUPABASE_CONFIG[name]) {
-      return window.SUPABASE_CONFIG[name];
-    }
-    
-    // Try to get from process.env (if available)
-    if (typeof process !== 'undefined' && process.env && process.env[name]) {
-      return process.env[name];
-    }
-    
-    return null;
   }
 
   /**
