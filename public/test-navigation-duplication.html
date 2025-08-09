@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Navigation Duplication Test</title>
+  <link rel="stylesheet" href="styles/styles.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Core Dependencies -->
+  <script src="js/config.js"></script>
+    <script src="/js/public-config.js"></script>
+    <script type="module" src="/js/supabase-client.js"></script>
+  <script src="js/path-resolver.js"></script>
+  <script src="js/auth-manager.js"></script>
+  <script src="js/unified-navigation.js"></script>
+</head>
+<body class="bg-transparent min-h-screen flex flex-col">
+  <!-- First Navigation Bar -->
+  <nav class="bg-background shadow-md border-b border-border" role="navigation" aria-label="Main navigation">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center gap-4">
+          <button id="sidebar-toggle" class="btn btn-outline btn-sm">
+            <i class="fas fa-bars"></i>
+          </button>
+          <a href="index.html" class="flex items-center gap-2">
+            <span class="text-foreground text-xl font-bold">reformately</span>
+          </a>
+        </div>
+        <div class="flex items-center gap-2">
+          <!-- Auth elements will be added here -->
+          <button id="theme-toggle" class="btn btn-outline btn-sm">
+            <span id="theme-toggle-icon">🌙</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Second Navigation Bar (Duplicate) -->
+  <nav class="bg-background shadow-md border-b border-border" role="navigation" aria-label="Duplicate navigation">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center gap-4">
+          <button id="sidebar-toggle-2" class="btn btn-outline btn-sm">
+            <i class="fas fa-bars"></i>
+          </button>
+          <a href="index.html" class="flex items-center gap-2">
+            <span class="text-foreground text-xl font-bold">reformately duplicate</span>
+          </a>
+        </div>
+        <div class="flex items-center gap-2">
+          <!-- Auth elements will be added here too -->
+          <button id="theme-toggle-2" class="btn btn-outline btn-sm">
+            <span>🌙</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="flex-grow p-4">
+    <h1 class="text-2xl font-bold mb-4">Navigation Duplication Test</h1>
+    <p>This page tests the navigation duplication prevention system.</p>
+    <p>Check the console for duplication detection and prevention messages.</p>
+    
+    <div class="mt-4">
+      <button onclick="testDuplication()" class="btn btn-primary">Test Duplication Prevention</button>
+      <button onclick="checkNavigationState()" class="btn btn-outline ml-2">Check Navigation State</button>
+    </div>
+    
+    <div id="test-results" class="mt-4 p-4 bg-muted rounded"></div>
+  </main>
+
+  <script>
+    function testDuplication() {
+      const results = document.getElementById('test-results');
+      const navElements = document.querySelectorAll('nav');
+      const authElements = document.querySelectorAll('[data-auth-required], [data-guest-only]');
+      const dropdowns = document.querySelectorAll('.dropdown-toggle');
+      
+      results.innerHTML = `
+        <h3 class="font-bold mb-2">Duplication Test Results:</h3>
+        <p>Navigation elements found: ${navElements.length}</p>
+        <p>Auth elements found: ${authElements.length}</p>
+        <p>Dropdown toggles found: ${dropdowns.length}</p>
+        <p>Expected: 1 navigation, 2 auth elements (guest + authenticated), 1 dropdown</p>
+        <p class="mt-2 ${navElements.length === 1 ? 'text-green-600' : 'text-red-600'}">
+          Navigation duplication prevention: ${navElements.length === 1 ? 'PASSED' : 'FAILED'}
+        </p>
+      `;
+    }
+    
+    function checkNavigationState() {
+      const results = document.getElementById('test-results');
+      const managedNavs = document.querySelectorAll('nav[data-unified-nav-managed="true"]');
+      const processedNavs = document.querySelectorAll('nav[data-unified-nav-processed="true"]');
+      const instance = window.unifiedNavigationInstance;
+      
+      results.innerHTML = `
+        <h3 class="font-bold mb-2">Navigation State Check:</h3>
+        <p>Managed navigation elements: ${managedNavs.length}</p>
+        <p>Processed navigation elements: ${processedNavs.length}</p>
+        <p>UnifiedNavigation instance exists: ${!!instance}</p>
+        <p>Navigation enhanced: ${instance ? instance.navigationEnhanced : 'N/A'}</p>
+        <p>Duplication prevention active: ${instance ? instance.duplicatePreventionActive : 'N/A'}</p>
+      `;
+    }
+    
+    // Auto-run test after page loads
+    setTimeout(() => {
+      testDuplication();
+    }, 2000);
+  </script>
+</body>
+</html>

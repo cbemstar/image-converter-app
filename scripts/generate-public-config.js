@@ -14,12 +14,18 @@ for (const [k, v] of Object.entries({ SUPABASE_URL, SUPABASE_ANON_KEY })) {
   }
 }
 
+// Create both js and public/js directories
 fs.mkdirSync('js', { recursive: true });
+fs.mkdirSync('public/js', { recursive: true });
+
 const out = `window.PUBLIC_ENV=${JSON.stringify({
   SUPABASE_URL,
   SUPABASE_ANON_KEY,
   STRIPE_PUBLISHABLE_KEY: STRIPE_PUBLISHABLE_KEY || null
 })};`;
+
+// Write to both locations
 fs.writeFileSync(path.join('js', 'public-config.js'), out);
-console.log('[build] Wrote js/public-config.js');
+fs.writeFileSync(path.join('public', 'js', 'public-config.js'), out);
+console.log('[build] Wrote js/public-config.js and public/js/public-config.js');
 

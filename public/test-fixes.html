@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Bug Fixes Test - reformately</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        .test-result {
+            padding: 12px;
+            border-radius: 6px;
+            margin: 8px 0;
+        }
+        .pass { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+        .fail { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+        .warning { background: #fffbeb; color: #92400e; border: 1px solid #fed7aa; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Test Navigation -->
+    <nav class="bg-background shadow-md border-b border-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center gap-4">
+                    <a href="/" class="flex items-center gap-2">
+                        <span class="text-foreground text-xl font-bold">reformately</span>
+                    </a>
+                </div>
+                <div class="flex items-center gap-2">
+                    <!-- Guest User -->
+                    <div data-guest-only class="flex items-center gap-2">
+                        <a href="/auth.html" class="btn btn-outline btn-sm">
+                            <i class="fas fa-sign-in-alt mr-1"></i>
+                            Sign In
+                        </a>
+                    </div>
+                    
+                    <!-- Authenticated User -->
+                    <div data-auth-required class="flex items-center gap-2" style="display: none;">
+                        <div class="dropdown dropdown-end relative">
+                            <button class="btn btn-outline btn-sm dropdown-toggle" aria-label="User menu" aria-expanded="false">
+                                <img data-user-info="avatar" class="w-6 h-6 rounded-full mr-2" alt="User avatar" style="display: none;">
+                                <span data-user-info="name" class="hidden sm:inline">Test User</span>
+                                <i class="fas fa-chevron-down ml-1"></i>
+                            </button>
+                            <ul class="dropdown-content menu p-2 shadow bg-background border border-border rounded-lg w-52 absolute right-0 top-full mt-1 z-50" style="display: none;">
+                                <li><a href="/dashboard.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded"><i class="fas fa-tachometer-alt"></i>Dashboard</a></li>
+                                <li><a href="/profile.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded"><i class="fas fa-user"></i>Profile</a></li>
+                                <li><a href="#" data-action="signout" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded"><i class="fas fa-sign-out-alt"></i>Sign Out</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <button id="theme-toggle" class="btn btn-outline btn-sm" aria-label="Toggle theme">
+                        <span id="theme-toggle-icon">🌙</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="test-container">
+        <div class="test-card">
+            <h1 class="text-2xl font-bold mb-4">🔧 Bug Fixes Verification</h1>
+            <p class="text-gray-600 mb-6">Test all the fixes applied to the reformately app</p>
+            
+            <div class="space-y-4">
+                <button onclick="runAllTests()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    Run All Tests
+                </button>
+                
+                <button onclick="simulateAuth()" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                    Simulate Auth State
+                </button>
+                
+                <button onclick="testTheme()" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">
+                    Test Theme Toggle
+                </button>
+            </div>
+            
+            <div id="test-results" class="mt-6"></div>
+        </div>
+    </div>
+
+    <script src="styles/theme.js"></script>
+    <script src="js/unified-navigation.js"></script>
+    
+    <script>
+        function showResult(message, type = 'pass') {
+            const results = document.getElementById('test-results');
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.innerHTML = message;
+            results.appendChild(div);
+        }
+
+        function clearResults() {
+            document.getElementById('test-results').innerHTML = '';
+        }
+
+        function runAllTests() {
+            clearResults();
+            showResult('🔍 Starting comprehensive bug audit...', 'warning');
+            
+            // Test 1: Theme Toggle
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeIcon = document.getElementById('theme-toggle-icon');
+            
+            if (themeToggle && themeIcon) {
+                showResult('✅ Theme toggle elements found', 'pass');
+            } else {
+                showResult('❌ Theme toggle elements missing', 'fail');
+            }
+            
+            // Test 2: Dropdown Structure
+            const dropdowns = document.querySelectorAll('.dropdown');
+            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+            
+            showResult(`📊 Found ${dropdowns.length} dropdowns, ${dropdownToggles.length} toggles`, 'pass');
+            
+            // Test 3: Navigation Alignment
+            const nav = document.querySelector('nav .flex.justify-between');
+            if (nav) {
+                showResult('✅ Navigation uses proper flexbox alignment', 'pass');
+            } else {
+                showResult('❌ Navigation alignment issues', 'fail');
+            }
+            
+            // Test 4: Duplicate Elements
+            const themeToggles = document.querySelectorAll('#theme-toggle');
+            const userMenus = document.querySelectorAll('[data-auth-required] .dropdown');
+            
+            if (themeToggles.length === 1) {
+                showResult('✅ Single theme toggle found', 'pass');
+            } else {
+                showResult(`❌ ${themeToggles.length} theme toggles found (should be 1)`, 'fail');
+            }
+            
+            if (userMenus.length <= 1) {
+                showResult('✅ No duplicate user menus', 'pass');
+            } else {
+                showResult(`❌ ${userMenus.length} user menus found (should be 1)`, 'fail');
+            }
+            
+            // Test 5: CSS Variables
+            const style = getComputedStyle(document.documentElement);
+            const bgColor = style.getPropertyValue('--background').trim();
+            const fgColor = style.getPropertyValue('--foreground').trim();
+            
+            if (bgColor && fgColor) {
+                showResult('✅ CSS theme variables are defined', 'pass');
+            } else {
+                showResult('❌ CSS theme variables missing', 'fail');
+            }
+            
+            showResult('🎉 Bug audit completed!', 'pass');
+        }
+
+        function simulateAuth() {
+            const guestOnly = document.querySelectorAll('[data-guest-only]');
+            const authRequired = document.querySelectorAll('[data-auth-required]');
+            
+            guestOnly.forEach(el => el.style.display = 'none');
+            authRequired.forEach(el => el.style.display = 'flex');
+            
+            const avatars = document.querySelectorAll('[data-user-info="avatar"]');
+            const names = document.querySelectorAll('[data-user-info="name"]');
+            
+            avatars.forEach(avatar => {
+                avatar.src = 'https://ui-avatars.com/api/?name=Test+User&background=3b82f6&color=fff&size=32';
+                avatar.style.display = 'block';
+            });
+            
+            names.forEach(name => {
+                name.textContent = 'Test User';
+            });
+            
+            showResult('✅ Simulated authenticated state', 'pass');
+        }
+
+        function testTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const themeToggle = document.getElementById('theme-toggle');
+            
+            if (themeToggle) {
+                themeToggle.click();
+                
+                setTimeout(() => {
+                    const newTheme = document.documentElement.getAttribute('data-theme');
+                    if (newTheme !== currentTheme) {
+                        showResult('✅ Theme toggle working correctly', 'pass');
+                    } else {
+                        showResult('❌ Theme toggle not working', 'fail');
+                    }
+                }, 100);
+            }
+        }
+
+        // Set up dropdown functionality
+        document.addEventListener('click', (e) => {
+            const dropdownToggle = e.target.closest('.dropdown-toggle');
+            
+            if (dropdownToggle) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const dropdown = dropdownToggle.closest('.dropdown');
+                const dropdownContent = dropdown.querySelector('.dropdown-content');
+                
+                if (dropdownContent) {
+                    const isVisible = dropdownContent.style.display === 'block';
+                    
+                    // Close all other dropdowns
+                    document.querySelectorAll('.dropdown-content').forEach(content => {
+                        content.style.display = 'none';
+                    });
+                    
+                    // Toggle current dropdown
+                    dropdownContent.style.display = isVisible ? 'none' : 'block';
+                }
+            } else {
+                // Close all dropdowns when clicking outside
+                document.querySelectorAll('.dropdown-content').forEach(content => {
+                    content.style.display = 'none';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

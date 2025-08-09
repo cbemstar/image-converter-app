@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Auth Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .success {
+            background: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+        }
+
+        .info {
+            background: #d1ecf1;
+            border-color: #bee5eb;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Simple Authentication Test</h1>
+
+    <div id="step1" class="test-section">
+        <h3>Step 1: Configuration Loading</h3>
+        <div id="config-result">Testing...</div>
+    </div>
+
+    <div id="step2" class="test-section">
+        <h3>Step 2: Supabase Client</h3>
+        <div id="supabase-result">Waiting for config...</div>
+    </div>
+
+    <div id="step3" class="test-section">
+        <h3>Step 3: Basic Auth Test</h3>
+        <div id="auth-result">Waiting for Supabase...</div>
+        <button onclick="testGoogleAuth()" id="google-btn" disabled>Test Google Auth</button>
+        <button onclick="testEmailAuth()" id="email-btn" disabled>Test Email Auth</button>
+    </div>
+
+    <div id="step4" class="test-section">
+        <h3>Step 4: Debug Information</h3>
+        <pre id="debug-info">Loading...</pre>
+    </div>
+
+    <!-- Load scripts in correct order -->
+    <script src="js/public-config.js"></script>
+    <script type="module">
+        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+        let supabase = null;
+        let testResults = {};
+
+        function updateSection(sectionId, content, type = 'info') {
+            const section = document.getElementById(sectionId);
+            const resultDiv = section.querySelector('div');
+            resultDiv.innerHTML = content;
+            section.className = `test-section ${type}`;
+        }
+
+        function updateDebug() {
+            const debugInfo = {
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent,
+                location: window.location.href,
+                publicEnv: window.PUBLIC_ENV ? 'Loaded' : 'Missing',
+                supabaseClient: supabase ? 'Created' : 'Missing',
+                errors: testResults.errors || []
+            };
+
+            if (window.PUBLIC_ENV) {
+                debugInfo.config = {
+                    supabaseUrl: window.PUBLIC_ENV.SUPABASE_URL,
+                    hasAnonKey: !!window.PUBLIC_ENV.SUPABASE_ANON_KEY,
+                    anonKeyLength: window.PUBLIC_ENV.SUPABASE_ANON_KEY?.length || 0
+                };
+            }
+
+            document.getElementById('debug-info').textContent = JSON.stringify(debugInfo, null, 2);
+        }
+
+        // Step 1: Test configuration
+        function testConfig() {
+            try {
+                if (!window.PUBLIC_ENV) {
+                    throw new Error('PUBLIC_ENV not loaded');
+                }
+
+                if (!window.PUBLIC_ENV.SUPABASE_URL) {
+                    throw new Error('SUPABASE_URL missing');
+                }
+
+                if (!window.PUBLIC_ENV.SUPABASE_ANON_KEY) {
+                    throw new Error('SUPABASE_ANON_KEY missing');
+                }
+
+                testResults.config = true;
+                updateSection('step1', '✅ Configuration loaded successfully', 'success');
+                testSupabase();
+
+            } catch (error) {
+                testResults.config = false;
+                testResults.errors = testResults.errors || [];
+                testResults.errors.push(`Config: ${error.message}`);
+                updateSection('step1', `❌ Configuration failed: ${error.message}`, 'error');
+            }
+            updateDebug();
+        }
+
+        // Step 2: Test Supabase client
+        function testSupabase() {
+            try {
+                if (!window.PUBLIC_ENV) {
+                    throw new Error('Configuration not loaded');
+                }
+
+                supabase = createClient(
+                    window.PUBLIC_ENV.SUPABASE_URL,
+                    window.PUBLIC_ENV.SUPABASE_ANON_KEY,
+                    {
+                        auth: {
+                            persistSession: true,
+                            autoRefreshToken: true,
+                            detectSessionInUrl: true
+                        }
+                    }
+                );
+
+                testResults.supabase = true;
+                updateSection('step2', '✅ Supabase client created successfully', 'success');
+                testAuth();
+
+            } catch (error) {
+                testResults.supabase = false;
+                testResults.errors = testResults.errors || [];
+                testResults.errors.push(`Supabase: ${error.message}`);
+                updateSection('step2', `❌ Supabase client failed: ${error.message}`, 'error');
+            }
+            updateDebug();
+        }
+
+        // Step 3: Test basic auth
+        async function testAuth() {
+            try {
+                if (!supabase) {
+                    throw new Error('Supabase client not available');
+                }
+
+                // Test getting session
+                const { data, error } = await supabase.auth.getSession();
+
+                if (error && error.message !== 'Invalid session') {
+                    throw error;
+                }
+
+                testResults.auth = true;
+                updateSection('step3', `✅ Auth system working. Current session: ${data.session ? 'Active' : 'None'}`, 'success');
+
+                // Enable test buttons
+                document.getElementById('google-btn').disabled = false;
+                document.getElementById('email-btn').disabled = false;
+
+            } catch (error) {
+                testResults.auth = false;
+                testResults.errors = testResults.errors || [];
+                testResults.errors.push(`Auth: ${error.message}`);
+                updateSection('step3', `❌ Auth test failed: ${error.message}`, 'error');
+            }
+            updateDebug();
+        }
+
+        // Test Google OAuth
+        window.testGoogleAuth = async function () {
+            try {
+                updateSection('step3', '🔄 Testing Google OAuth...', 'info');
+
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        redirectTo: `${window.location.origin}/simple-auth-test.html`
+                    }
+                });
+
+                if (error) throw error;
+
+                updateSection('step3', '✅ Google OAuth initiated successfully', 'success');
+
+            } catch (error) {
+                updateSection('step3', `❌ Google OAuth failed: ${error.message}`, 'error');
+                console.error('Google OAuth error:', error);
+            }
+        };
+
+        // Test email auth
+        window.testEmailAuth = async function () {
+            try {
+                updateSection('step3', '🔄 Testing email auth...', 'info');
+
+                // Try to sign in with a test email (this will likely fail, but we can see the error)
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: 'test@example.com',
+                    password: 'testpassword'
+                });
+
+                if (error) {
+                    // Expected to fail, but we want to see what kind of error
+                    updateSection('step3', `ℹ️ Email auth test: ${error.message} (This is expected for test credentials)`, 'info');
+                } else {
+                    updateSection('step3', '✅ Email auth working', 'success');
+                }
+
+            } catch (error) {
+                updateSection('step3', `❌ Email auth failed: ${error.message}`, 'error');
+                console.error('Email auth error:', error);
+            }
+        };
+
+        // Start tests when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(testConfig, 100);
+        });
+
+        // Handle auth state changes
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                if (supabase) {
+                    supabase.auth.onAuthStateChange((event, session) => {
+                        console.log('Auth state change:', event, session);
+                        if (event === 'SIGNED_IN') {
+                            updateSection('step3', `✅ Successfully signed in: ${session.user.email}`, 'success');
+                        }
+                    });
+                }
+            }, 2000);
+        });
+    </script>
+</body>
+
+</html>

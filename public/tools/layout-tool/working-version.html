@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Layout Generator - Working Version</title>
+  <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
+  <link rel="stylesheet" href="../../styles/styles.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script type="module" src="../../styles/theme.js"></script>
+  <script type="module" src="../../layout.js"></script>
+</head>
+<body data-slug="layout-tool" class="bg-transparent min-h-screen flex flex-col">
+  
+  <nav class="bg-background shadow-md border-b border-foreground/30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center gap-4">
+          <button id="sidebar-toggle" class="shad-btn btn-sm" aria-label="Open sidebar">
+            <i class="fas fa-bars"></i>
+          </button>
+          <a href="../../index.html" class="flex items-center gap-2">
+            <span class="text-foreground text-xl font-bold">reformately</span>
+          </a>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="theme-toggle" class="shad-btn btn-sm" aria-label="Toggle theme">
+            <span id="theme-toggle-icon">🌙</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="flex flex-grow">
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
+    <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-background border-r border-foreground/20 p-4 transform -translate-x-full transition-transform z-40">
+      <div class="flex justify-between items-center mb-4">
+        <a href="../../index.html" class="text-xl font-bold" class="text-foreground">reformately</a>
+        <button id="sidebar-close" class="shad-btn btn-sm" aria-label="Close sidebar">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <h2 class="text-lg font-bold mb-4" class="text-foreground">Tools</h2>
+      <input id="tool-search" type="text" placeholder="Search" class="w-full mb-4 px-2 py-1 rounded border border-foreground bg-transparent" />
+      <ul id="tool-list" class="space-y-2">
+        <li><a href="../image-converter/index.html" class="text-foreground hover:text-primary">Image Converter</a></li>
+        <li><a href="../background-remover/index.html" class="text-foreground hover:text-primary">Background Remover</a></li>
+        <li><a href="../layout-tool/index.html" class="text-foreground hover:text-primary">Layout Generator</a></li>
+      </ul>
+    </aside>
+
+    <main id="main-content" class="flex-grow">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Page Header -->
+        <div class="mb-8">
+          <h1 class="text-3xl font-bold mb-2" class="text-foreground">Layout Generator</h1>
+          <p class="text-lg" class="text-foreground">Create multi-size layouts from a single master design</p>
+        </div>
+
+        <!-- Tool Interface -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 min-h-[600px]">
+          <!-- Tool Sidebar -->
+          <div class="lg:col-span-1">
+            <div class="bg-card border border-border rounded-lg p-4">
+              <h3 class="layout-label mb-3">Hero Image</h3>
+              <div class="upload-area mb-4" id="hero-upload">
+                <div class="upload-text">
+                  <i class="fas fa-cloud-upload-alt mb-2" style="font-size: 1.5rem; color: var(--muted-foreground);"></i>
+                  <div>Click to upload hero image</div>
+                </div>
+                <div class="upload-hint">PNG, JPG up to 10MB</div>
+              </div>
+              
+              <h3 class="layout-label mb-3">Add Elements</h3>
+              <div class="space-y-2 mb-4">
+                <button id="add-text-btn" class="layout-btn w-full">
+                  <i class="fas fa-font mr-2"></i>Add Text
+                </button>
+                <button id="add-logo-btn" class="layout-btn w-full">
+                  <i class="fas fa-image mr-2"></i>Add Logo
+                </button>
+              </div>
+              
+              <h3 class="layout-label mb-3">Quick Presets</h3>
+              <div class="space-y-2 mb-4">
+                <label class="flex items-center gap-2">
+                  <input type="checkbox" class="preset-checkbox" data-name="Instagram Feed 1:1">
+                  <span class="text-sm">Instagram Feed 1:1</span>
+                </label>
+                <label class="flex items-center gap-2">
+                  <input type="checkbox" class="preset-checkbox" data-name="Facebook Feed">
+                  <span class="text-sm">Facebook Feed</span>
+                </label>
+                <label class="flex items-center gap-2">
+                  <input type="checkbox" class="preset-checkbox" data-name="Twitter Header">
+                  <span class="text-sm">Twitter Header</span>
+                </label>
+                <label class="flex items-center gap-2">
+                  <input type="checkbox" class="preset-checkbox" data-name="Business Card">
+                  <span class="text-sm">Business Card</span>
+                </label>
+              </div>
+              
+              <button id="generate-btn" class="layout-btn primary w-full">
+                <i class="fas fa-magic mr-2"></i>Generate Layouts
+              </button>
+            </div>
+          </div>
+
+          <!-- Main Canvas Area -->
+          <div class="lg:col-span-3">
+            <div class="space-y-6">
+              <!-- Master Canvas -->
+              <div class="bg-card border border-border rounded-lg p-4">
+                <h3 class="layout-label mb-3">Master Design</h3>
+                <div class="flex justify-center">
+                  <canvas id="master-canvas" width="800" height="600" class="border border-border rounded-lg bg-white"></canvas>
+                </div>
+              </div>
+
+              <!-- Generated Artboards -->
+              <div class="bg-card border border-border rounded-lg p-4">
+                <h3 class="layout-label mb-3">Generated Layouts</h3>
+                <div id="artboards" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                  <div class="text-center text-muted-foreground py-8">
+                    Select presets and click "Generate Layouts" to create artboards
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module">
+    // Simple working version without complex modules
+    let masterCanvas, masterCtx, heroImage = null, elements = [];
+    
+    // Simple presets
+    const presets = {
+      "Instagram Feed 1:1": { width: 1080, height: 1080 },
+      "Facebook Feed": { width: 1200, height: 630 },
+      "Twitter Header": { width: 1500, height: 500 },
+      "Business Card": { width: 1004, height: 649 } // 85x55mm at 300dpi
+    };
+    
+    function init() {
+      masterCanvas = document.getElementById('master-canvas');
+      masterCtx = masterCanvas.getContext('2d');
+      
+      // Draw initial canvas
+      renderMaster();
+      
+      // Setup event listeners
+      setupEventListeners();
+      
+      console.log('Layout tool initialized successfully!');
+    }
+    
+    function renderMaster() {
+      masterCtx.clearRect(0, 0, masterCanvas.width, masterCanvas.height);
+      
+      // Draw background
+      masterCtx.fillStyle = '#ffffff';
+      masterCtx.fillRect(0, 0, masterCanvas.width, masterCanvas.height);
+      
+      // Draw hero image if present
+      if (heroImage) {
+        masterCtx.drawImage(heroImage, 0, 0, masterCanvas.width, masterCanvas.height);
+      }
+      
+      // Draw elements
+      elements.forEach(element => {
+        masterCtx.save();
+        if (element.type === 'text') {
+          masterCtx.fillStyle = element.color || '#000000';
+          masterCtx.font = `${element.size || 24}px Arial`;
+          masterCtx.fillText(element.text, element.x, element.y);
+        }
+        if (element.type === 'logo' && element.image) {
+          masterCtx.drawImage(element.image, element.x, element.y, element.w, element.h);
+        }
+        masterCtx.restore();
+      });
+    }
+    
+    function setupEventListeners() {
+      // Hero image upload
+      const heroUpload = document.getElementById('hero-upload');
+      const heroInput = document.createElement('input');
+      heroInput.type = 'file';
+      heroInput.accept = 'image/*';
+      heroInput.style.display = 'none';
+      
+      heroInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const img = new Image();
+          img.onload = () => {
+            heroImage = img;
+            renderMaster();
+            heroUpload.querySelector('.upload-text div').textContent = file.name;
+          };
+          img.src = URL.createObjectURL(file);
+        }
+      });
+      
+      heroUpload.appendChild(heroInput);
+      heroUpload.addEventListener('click', () => heroInput.click();
+      
+      // Add text button
+      document.getElementById('add-text-btn').addEventListener('click', () => {
+        const text = prompt('Enter text:');
+        if (text) {
+          elements.push({
+            type: 'text',
+            text: text,
+            x: 50,
+            y: 50,
+            size: 24,
+            color: '#000000'
+          });
+          renderMaster();
+        }
+      });
+      
+      // Add logo button
+      document.getElementById('add-logo-btn').addEventListener('click', () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.onchange = (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            const img = new Image();
+            img.onload = () => {
+              elements.push({
+                type: 'logo',
+                image: img,
+                x: 50,
+                y: 100,
+                w: Math.min(img.width, 200),
+                h: Math.min(img.height, 200)
+              });
+              renderMaster();
+            };
+            img.src = URL.createObjectURL(file);
+          }
+        };
+        input.click();
+      });
+      
+      // Generate button
+      document.getElementById('generate-btn').addEventListener('click', generateLayouts);
+    }
+    
+    function generateLayouts() {
+      const selectedPresets = Array.from(document.querySelectorAll('.preset-checkbox:checked')
+        .map(cb => cb.dataset.name);
+      
+      if (selectedPresets.length === 0) {
+        alert('Please select at least one preset');
+        return;
+      }
+      
+      const artboardsContainer = document.getElementById('artboards');
+      artboardsContainer.innerHTML = '';
+      
+      selectedPresets.forEach(presetName => {
+        const preset = presets[presetName];
+        if (!preset) return;
+        
+        // Create artboard
+        const canvas = document.createElement('canvas');
+        canvas.width = preset.width;
+        canvas.height = preset.height;
+        const ctx = canvas.getContext('2d');
+        
+        // Draw background
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw hero image scaled
+        if (heroImage) {
+          ctx.drawImage(heroImage, 0, 0, canvas.width, canvas.height);
+        }
+        
+        // Draw elements scaled
+        const scaleX = canvas.width / masterCanvas.width;
+        const scaleY = canvas.height / masterCanvas.height;
+        
+        elements.forEach(element => {
+          ctx.save();
+          if (element.type === 'text') {
+            ctx.fillStyle = element.color || '#000000';
+            ctx.font = `${(element.size || 24) * Math.min(scaleX, scaleY)}px Arial`;
+            ctx.fillText(element.text, element.x * scaleX, element.y * scaleY);
+          }
+          if (element.type === 'logo' && element.image) {
+            ctx.drawImage(element.image, 
+              element.x * scaleX, element.y * scaleY, 
+              element.w * scaleX, element.h * scaleY);
+          }
+          ctx.restore();
+        });
+        
+        // Create thumbnail for display
+        const displayCanvas = document.createElement('canvas');
+        const maxSize = 300;
+        const scale = Math.min(maxSize / canvas.width, maxSize / canvas.height);
+        displayCanvas.width = canvas.width * scale;
+        displayCanvas.height = canvas.height * scale;
+        displayCanvas.className = 'border border-border rounded bg-white';
+        
+        const displayCtx = displayCanvas.getContext('2d');
+        displayCtx.drawImage(canvas, 0, 0, displayCanvas.width, displayCanvas.height);
+        
+        // Create artboard item
+        const artboardItem = document.createElement('div');
+        artboardItem.className = 'text-center p-4 border border-border rounded-lg bg-background';
+        artboardItem.innerHTML = `
+          <div class="mb-2">
+            <div class="font-semibold text-foreground">${presetName}</div>
+            <div class="text-sm text-muted-foreground">${preset.width}×${preset.height}px</div>
+          </div>
+          <div class="mb-3"></div>
+          <button class="layout-btn text-xs">
+            <i class="fas fa-download mr-1"></i>Download
+          </button>
+        `;
+        
+        // Insert canvas
+        artboardItem.querySelector('.mb-3').appendChild(displayCanvas);
+        
+        // Add download functionality
+        artboardItem.querySelector('button').addEventListener('click', () => {
+          canvas.toBlob(blob => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${presetName.replace(/[^a-zA-Z0-9]/g, '_')}.png`;
+            a.click();
+            URL.revokeObjectURL(url);
+          });
+        });
+        
+        artboardsContainer.appendChild(artboardItem);
+      });
+    }
+    
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

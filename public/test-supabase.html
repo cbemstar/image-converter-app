@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Integration Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .hidden {
+            display: none;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Supabase Integration Test</h1>
+    
+    <div class="section info">
+        <h3>Setup Instructions</h3>
+        <p>Before testing, make sure you have:</p>
+        <ol>
+            <li>Created a Supabase project</li>
+            <li>Run the database migrations</li>
+            <li>Set up your environment variables</li>
+            <li>Updated the configuration below</li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h3>Configuration</h3>
+        <label for="supabaseUrl">Supabase URL:</label>
+        <input type="text" id="supabaseUrl" placeholder="https://your-project.supabase.co" value="http://127.0.0.1:54321">
+        
+        <label for="supabaseKey">Supabase Anon Key:</label>
+        <input type="text" id="supabaseKey" placeholder="your-anon-key">
+        
+        <button onclick="initializeSupabase()">Initialize Supabase</button>
+        <div id="initStatus"></div>
+    </div>
+
+    <div class="section">
+        <h3>Authentication Test</h3>
+        <div id="authSection">
+            <div id="loginForm">
+                <h4>Sign Up / Sign In</h4>
+                <input type="email" id="email" placeholder="Email">
+                <input type="password" id="password" placeholder="Password">
+                <button onclick="signUp()">Sign Up</button>
+                <button onclick="signIn()">Sign In</button>
+                <button onclick="signInWithGoogle()">Sign In with Google</button>
+                <button onclick="signInWithGitHub()">Sign In with GitHub</button>
+            </div>
+            
+            <div id="userInfo" class="hidden">
+                <h4>User Information</h4>
+                <pre id="userDetails"></pre>
+                <button onclick="signOut()">Sign Out</button>
+            </div>
+        </div>
+        <div id="authStatus"></div>
+    </div>
+
+    <div class="section">
+        <h3>Database Test</h3>
+        <button onclick="testDatabase()">Test Database Connection</button>
+        <button onclick="createUserProfile()">Create User Profile</button>
+        <button onclick="getUserProfile()">Get User Profile</button>
+        <div id="dbStatus"></div>
+        <pre id="dbResults"></pre>
+    </div>
+
+    <div class="section">
+        <h3>Storage Test</h3>
+        <input type="file" id="fileInput" accept="image/*">
+        <button onclick="uploadFile()">Upload File</button>
+        <button onclick="listFiles()">List Files</button>
+        <div id="storageStatus"></div>
+        <pre id="storageResults"></pre>
+    </div>
+
+    <div class="section">
+        <h3>Edge Functions Test</h3>
+        <button onclick="testQuotaCheck()">Test Quota Check</button>
+        <div id="functionsStatus"></div>
+        <pre id="functionsResults"></pre>
+    </div>
+
+    <script src="/js/public-config.js"></script>
+    <script type="module" src="/js/supabase-client.js"></script>
+    <script type="module">
+        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+        window.createSupabaseClient = (url, key) => createClient(url, key);
+    </script>
+
+    <script>
+        let supabase = null;
+        let currentUser = null;
+
+        // Optionally set window.SUPABASE_CONFIG here for testing
+
+        function initializeSupabase() {
+            const url = document.getElementById('supabaseUrl').value;
+            const key = document.getElementById('supabaseKey').value;
+
+            if (!url || !key) {
+                showStatus('initStatus', 'Please enter both URL and key', 'error');
+                return;
+            }
+
+            try {
+                supabase = window.createSupabaseClient(url, key);
+                showStatus('initStatus', 'Supabase initialized successfully!', 'success');
+                
+                // Set up auth listener
+                supabase.auth.onAuthStateChange((event, session) => {
+                    console.log('Auth state changed:', event, session);
+                    updateAuthUI(session);
+                });
+                
+                // Check current session
+                supabase.auth.getSession().then(({ data: { session } }) => {
+                    updateAuthUI(session);
+                });
+                
+            } catch (error) {
+                showStatus('initStatus', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function updateAuthUI(session) {
+            const loginForm = document.getElementById('loginForm');
+            const userInfo = document.getElementById('userInfo');
+            const userDetails = document.getElementById('userDetails');
+            
+            if (session) {
+                currentUser = session.user;
+                loginForm.classList.add('hidden');
+                userInfo.classList.remove('hidden');
+                userDetails.textContent = JSON.stringify(session.user, null, 2);
+                showStatus('authStatus', 'User authenticated successfully!', 'success');
+            } else {
+                currentUser = null;
+                loginForm.classList.remove('hidden');
+                userInfo.classList.add('hidden');
+                showStatus('authStatus', 'No user authenticated', 'info');
+            }
+        }
+
+        async function signUp() {
+            if (!supabase) {
+                showStatus('authStatus', 'Please initialize Supabase first', 'error');
+                return;
+            }
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                showStatus('authStatus', 'Please enter email and password', 'error');
+                return;
+            }
+
+            try {
+                const { data, error } = await supabase.auth.signUp({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) throw error;
+                
+                showStatus('authStatus', 'Sign up successful! Check your email for confirmation.', 'success');
+            } catch (error) {
+                showStatus('authStatus', `Sign up error: ${error.message}`, 'error');
+            }
+        }
+
+        async function signIn() {
+            if (!supabase) {
+                showStatus('authStatus', 'Please initialize Supabase first', 'error');
+                return;
+            }
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                showStatus('authStatus', 'Please enter email and password', 'error');
+                return;
+            }
+
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) throw error;
+                
+                showStatus('authStatus', 'Sign in successful!', 'success');
+            } catch (error) {
+                showStatus('authStatus', `Sign in error: ${error.message}`, 'error');
+            }
+        }
+
+        async function signInWithGoogle() {
+            if (!supabase) {
+                showStatus('authStatus', 'Please initialize Supabase first', 'error');
+                return;
+            }
+
+            try {
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google'
+                });
+                
+                if (error) throw error;
+                
+                showStatus('authStatus', 'Redirecting to Google...', 'info');
+            } catch (error) {
+                showStatus('authStatus', `Google sign in error: ${error.message}`, 'error');
+            }
+        }
+
+        async function signInWithGitHub() {
+            if (!supabase) {
+                showStatus('authStatus', 'Please initialize Supabase first', 'error');
+                return;
+            }
+
+            try {
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'github'
+                });
+                
+                if (error) throw error;
+                
+                showStatus('authStatus', 'Redirecting to GitHub...', 'info');
+            } catch (error) {
+                showStatus('authStatus', `GitHub sign in error: ${error.message}`, 'error');
+            }
+        }
+
+        async function signOut() {
+            if (!supabase) return;
+
+            try {
+                const { error } = await supabase.auth.signOut();
+                if (error) throw error;
+                
+                showStatus('authStatus', 'Signed out successfully!', 'success');
+            } catch (error) {
+                showStatus('authStatus', `Sign out error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testDatabase() {
+            if (!supabase) {
+                showStatus('dbStatus', 'Please initialize Supabase first', 'error');
+                return;
+            }
+
+            try {
+                // Test basic database connection
+                const { data, error } = await supabase
+                    .from('user_profiles')
+                    .select('count', { count: 'exact', head: true });
+                
+                if (error) throw error;
+                
+                showStatus('dbStatus', 'Database connection successful!', 'success');
+                document.getElementById('dbResults').textContent = `User profiles count: ${data}`;
+            } catch (error) {
+                showStatus('dbStatus', `Database error: ${error.message}`, 'error');
+                document.getElementById('dbResults').textContent = '';
+            }
+        }
+
+        async function createUserProfile() {
+            if (!supabase || !currentUser) {
+                showStatus('dbStatus', 'Please sign in first', 'error');
+                return;
+            }
+
+            try {
+                const { data, error } = await supabase
+                    .from('user_profiles')
+                    .upsert({
+                        id: currentUser.id,
+                        subscription_plan: 'free',
+                        subscription_status: 'active'
+                    })
+                    .select();
+                
+                if (error) throw error;
+                
+                showStatus('dbStatus', 'User profile created/updated successfully!', 'success');
+                document.getElementById('dbResults').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                showStatus('dbStatus', `Profile creation error: ${error.message}`, 'error');
+            }
+        }
+
+        async function getUserProfile() {
+            if (!supabase || !currentUser) {
+                showStatus('dbStatus', 'Please sign in first', 'error');
+                return;
+            }
+
+            try {
+                const { data, error } = await supabase
+                    .from('user_profiles')
+                    .select('*')
+                    .eq('id', currentUser.id)
+                    .single();
+                
+                if (error) throw error;
+                
+                showStatus('dbStatus', 'User profile retrieved successfully!', 'success');
+                document.getElementById('dbResults').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                showStatus('dbStatus', `Profile retrieval error: ${error.message}`, 'error');
+            }
+        }
+
+        async function uploadFile() {
+            if (!supabase || !currentUser) {
+                showStatus('storageStatus', 'Please sign in first', 'error');
+                return;
+            }
+
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showStatus('storageStatus', 'Please select a file', 'error');
+                return;
+            }
+
+            try {
+                const fileName = `${currentUser.id}/${Date.now()}_${file.name}`;
+                
+                const { data, error } = await supabase.storage
+                    .from('user-files')
+                    .upload(fileName, file);
+                
+                if (error) throw error;
+                
+                showStatus('storageStatus', 'File uploaded successfully!', 'success');
+                document.getElementById('storageResults').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                showStatus('storageStatus', `Upload error: ${error.message}`, 'error');
+            }
+        }
+
+        async function listFiles() {
+            if (!supabase || !currentUser) {
+                showStatus('storageStatus', 'Please sign in first', 'error');
+                return;
+            }
+
+            try {
+                const { data, error } = await supabase.storage
+                    .from('user-files')
+                    .list(currentUser.id);
+                
+                if (error) throw error;
+                
+                showStatus('storageStatus', 'Files listed successfully!', 'success');
+                document.getElementById('storageResults').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                showStatus('storageStatus', `List error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testQuotaCheck() {
+            if (!supabase || !currentUser) {
+                showStatus('functionsStatus', 'Please sign in first', 'error');
+                return;
+            }
+
+            try {
+                const { data, error } = await supabase.functions.invoke('quota-check', {
+                    body: {
+                        user_id: currentUser.id,
+                        action_type: 'api_call'
+                    }
+                });
+                
+                if (error) throw error;
+                
+                showStatus('functionsStatus', 'Quota check successful!', 'success');
+                document.getElementById('functionsResults').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                showStatus('functionsStatus', `Function error: ${error.message}`, 'error');
+            }
+        }
+
+        function showStatus(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `section ${type}`;
+        }
+
+        // Optionally prefill test credentials here
+        window.addEventListener('load', () => {
+            showStatus('initStatus', 'Ready to initialize Supabase. Enter credentials above.', 'info');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Image Converter App</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-welcome {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid white;
+        }
+
+        .dashboard-info h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .dashboard-info p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .plan-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .card-header h2 {
+            color: #1f2937;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+        }
+
+        .icon-storage { background: #3b82f6; }
+        .icon-conversions { background: #10b981; }
+        .icon-api { background: #f59e0b; }
+        .icon-files { background: #8b5cf6; }
+
+        .usage-meter {
+            margin-bottom: 16px;
+        }
+
+        .usage-meter-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .usage-meter-bar {
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .usage-meter-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .usage-meter-success { background: #10b981; }
+        .usage-meter-warning { background: #f59e0b; }
+        .usage-meter-danger { background: #ef4444; }
+
+        .usage-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .upgrade-prompt {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .upgrade-prompt.show {
+            display: block;
+        }
+
+        .upgrade-prompt h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .upgrade-prompt p {
+            margin-bottom: 16px;
+            opacity: 0.9;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-secondary:hover {
+            background: #f9fafb;
+        }
+
+        .btn-upgrade {
+            background: white;
+            color: #f59e0b;
+            border: 2px solid white;
+        }
+
+        .btn-upgrade:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .recent-activity {
+            margin-top: 20px;
+        }
+
+        .activity-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: white;
+            background: #6b7280;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 500;
+            color: #1f2937;
+            margin-bottom: 2px;
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .quick-action {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #374151;
+            transition: all 0.2s;
+        }
+
+        .quick-action:hover {
+            background: #e5e7eb;
+            transform: translateY(-1px);
+        }
+
+        .quick-action-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+            background: #6b7280;
+        }
+
+        .back-nav {
+            margin-bottom: 20px;
+        }
+
+        .back-nav a {
+            color: #3b82f6;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .back-nav a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 10px;
+            }
+
+            .dashboard-header {
+                padding: 30px 20px;
+            }
+
+            .dashboard-welcome {
+                flex-direction: column;
+                text-align: center;
+                gap: 16px;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .usage-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-background shadow-md border-b border-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center gap-4">
+                    <a href="index.html" class="flex items-center gap-2">
+                        <span class="text-foreground text-xl font-bold">reformately</span>
+                    </a>
+                </div>
+                <div class="flex items-center gap-2">
+                    <!-- Guest User -->
+                    <div data-guest-only class="flex items-center gap-2">
+                        <a href="auth.html" class="btn btn-outline btn-sm" data-nav-link="auth">
+                            <i class="fas fa-sign-in-alt mr-1"></i>
+                            Sign In
+                        </a>
+                    </div>
+                    
+                    <!-- Authenticated User -->
+                    <div data-auth-required class="flex items-center gap-2" style="display: none;">
+                        <div class="dropdown dropdown-end relative">
+                            <button class="btn btn-outline btn-sm dropdown-toggle" aria-label="User menu" aria-expanded="false">
+                                <img data-user-info="avatar" class="w-6 h-6 rounded-full mr-2" alt="User avatar" style="display: none;">
+                                <span data-user-info="name" class="hidden sm:inline">User</span>
+                                <i class="fas fa-chevron-down ml-1"></i>
+                            </button>
+                            <ul class="dropdown-content menu p-2 shadow bg-background border border-border rounded-lg w-52 absolute right-0 top-full mt-1 z-50" style="display: none;" role="menu">
+                                <li role="none"><a href="dashboard.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded" data-nav-link="dashboard" data-dashboard-access="true" role="menuitem"><i class="fas fa-tachometer-alt"></i>Dashboard</a></li>
+                                <li role="none"><a href="profile.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded" data-nav-link="profile" role="menuitem"><i class="fas fa-user"></i>Profile</a></li>
+                                <li role="none"><a href="#" data-action="signout" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded" role="menuitem"><i class="fas fa-sign-out-alt"></i>Sign Out</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <button id="theme-toggle" class="btn btn-outline btn-sm" aria-label="Toggle theme">
+                        <span id="theme-toggle-icon">🌙</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <div class="back-nav">
+            <a href="index.html">
+                <i class="fas fa-arrow-left"></i>
+                Back to Home
+            </a>
+        </div>
+
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div class="dashboard-welcome">
+                <img id="dashboardAvatar" class="dashboard-avatar" src="" alt="User Avatar">
+                <div class="dashboard-info">
+                    <h1 id="dashboardWelcome">Welcome back!</h1>
+                    <p id="dashboardEmail">Loading...</p>
+                </div>
+            </div>
+            <div id="planBadge" class="plan-badge">
+                <i class="fas fa-user"></i>
+                Free Plan
+            </div>
+        </div>
+
+        <!-- Upgrade Prompt -->
+        <div id="upgradePrompt" class="upgrade-prompt">
+            <h3><i class="fas fa-exclamation-triangle mr-2"></i>Quota Warning</h3>
+            <p id="upgradeMessage">You're approaching your usage limits. Upgrade to continue using all features.</p>
+            <div class="flex gap-3">
+                <a href="#" class="btn btn-upgrade" id="upgradeBtn">
+                    <i class="fas fa-crown"></i>
+                    Upgrade Now
+                </a>
+                <button class="btn btn-secondary" onclick="document.getElementById('upgradePrompt').classList.remove('show')">
+                    <i class="fas fa-times"></i>
+                    Dismiss
+                </button>
+            </div>
+        </div>
+
+        <!-- Usage Overview -->
+        <div class="dashboard-grid">
+            <!-- Storage Usage -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon icon-storage">
+                        <i class="fas fa-hdd"></i>
+                    </div>
+                    <h2>Storage Usage</h2>
+                </div>
+                <div class="usage-meter">
+                    <div class="usage-meter-label">
+                        <span>Storage</span>
+                        <span id="storageUsageText">0 B / 50 MB</span>
+                    </div>
+                    <div class="usage-meter-bar">
+                        <div id="storageUsageFill" class="usage-meter-fill usage-meter-success" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="usage-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalFiles">0</div>
+                        <div class="stat-label">Total Files</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="storageRemaining">50 MB</div>
+                        <div class="stat-label">Remaining</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conversions Usage -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon icon-conversions">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <h2>Conversions</h2>
+                </div>
+                <div class="usage-meter">
+                    <div class="usage-meter-label">
+                        <span>This Month</span>
+                        <span id="conversionsUsageText">0 / 500</span>
+                    </div>
+                    <div class="usage-meter-bar">
+                        <div id="conversionsUsageFill" class="usage-meter-fill usage-meter-success" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="usage-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="conversionsToday">0</div>
+                        <div class="stat-label">Today</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="conversionsRemaining">500</div>
+                        <div class="stat-label">Remaining</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Calls Usage -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon icon-api">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h2>API Calls</h2>
+                </div>
+                <div class="usage-meter">
+                    <div class="usage-meter-label">
+                        <span>This Month</span>
+                        <span id="apiCallsUsageText">0 / 5,000</span>
+                    </div>
+                    <div class="usage-meter-bar">
+                        <div id="apiCallsUsageFill" class="usage-meter-fill usage-meter-success" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="usage-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="apiCallsToday">0</div>
+                        <div class="stat-label">Today</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="apiCallsRemaining">5,000</div>
+                        <div class="stat-label">Remaining</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions and Recent Activity -->
+        <div class="dashboard-grid">
+            <!-- Quick Actions -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon icon-files">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h2>Quick Actions</h2>
+                </div>
+                <div class="quick-actions">
+                    <a href="tools/image-converter/index.html" class="quick-action">
+                        <div class="quick-action-icon" style="background: #3b82f6;">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div>
+                            <div class="font-medium">Convert Images</div>
+                            <div class="text-sm text-gray-500">Change image formats</div>
+                        </div>
+                    </a>
+                    <a href="tools/pdf-merger/index.html" class="quick-action">
+                        <div class="quick-action-icon" style="background: #ef4444;">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div>
+                            <div class="font-medium">Merge PDFs</div>
+                            <div class="text-sm text-gray-500">Combine PDF files</div>
+                        </div>
+                    </a>
+                    <a href="tools/background-remover/index.html" class="quick-action">
+                        <div class="quick-action-icon" style="background: #10b981;">
+                            <i class="fas fa-cut"></i>
+                        </div>
+                        <div>
+                            <div class="font-medium">Remove Background</div>
+                            <div class="text-sm text-gray-500">AI background removal</div>
+                        </div>
+                    </a>
+                    <a href="profile.html" class="quick-action">
+                        <div class="quick-action-icon" style="background: #8b5cf6;">
+                            <i class="fas fa-user-cog"></i>
+                        </div>
+                        <div>
+                            <div class="font-medium">Profile Settings</div>
+                            <div class="text-sm text-gray-500">Manage your account</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: #6b7280;">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <h2>Recent Activity</h2>
+                </div>
+                <ul class="activity-list" id="recentActivity">
+                    <li class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">Loading activity...</div>
+                            <div class="activity-time">Please wait</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load dependencies -->
+    <script src="js/config.js"></script>
+    <script src="/js/public-config.js"></script>
+    <script type="module" src="/js/supabase-client.js"></script>
+    <script src="js/auth-manager.js"></script>
+    <script src="js/profile-manager.js"></script>
+    <script src="js/quota-manager.js"></script>
+    <script src="js/auth-guards.js"></script>
+    <script src="styles/theme.js"></script>
+    <script src="js/unified-navigation.js"></script>
+
+    <script>
+        class DashboardUI {
+            constructor() {
+                this.authManager = null;
+                this.profileManager = null;
+                this.quotaManager = null;
+                this.refreshInterval = null;
+                this.init();
+            }
+
+            async init() {
+                // Wait for managers to be available
+                await this.waitForManagers();
+                
+                // Check authentication
+                if (!this.authManager.isAuthenticated()) {
+                    window.location.href = 'auth.html';
+                    return;
+                }
+                
+                // Set up event listeners
+                this.setupEventListeners();
+                
+                // Load dashboard data
+                await this.loadDashboardData();
+                
+                // Set up auto-refresh
+                this.setupAutoRefresh();
+            }
+
+            async waitForManagers() {
+                return new Promise((resolve) => {
+                    const checkManagers = () => {
+                        if (window.authManager && window.profileManager && window.quotaManager) {
+                            this.authManager = window.authManager;
+                            this.profileManager = window.profileManager;
+                            this.quotaManager = window.quotaManager;
+                            resolve();
+                        } else {
+                            setTimeout(checkManagers, 100);
+                        }
+                    };
+                    checkManagers();
+                });
+            }
+
+            setupEventListeners() {
+                // Listen for quota changes
+                this.quotaManager.addQuotaListener((event, data) => {
+                    this.handleQuotaUpdate(event, data);
+                });
+
+                // Listen for profile changes
+                this.profileManager.addProfileListener((event, data) => {
+                    this.handleProfileUpdate(event, data);
+                });
+            }
+
+            async loadDashboardData() {
+                try {
+                    // Load profile data
+                    const profile = await this.profileManager.loadUserProfile();
+                    if (profile) {
+                        this.displayUserInfo(profile);
+                    }
+
+                    // Load usage data
+                    await this.loadUsageData();
+
+                    // Load recent activity
+                    await this.loadRecentActivity();
+
+                } catch (error) {
+                    console.error('Error loading dashboard data:', error);
+                    this.showError('Failed to load dashboard data');
+                }
+            }
+
+            displayUserInfo(profile) {
+                // Header info
+                const name = profile.user_metadata?.full_name || profile.email.split('@')[0];
+                document.getElementById('dashboardWelcome').textContent = `Welcome back, ${name}!`;
+                document.getElementById('dashboardEmail').textContent = profile.email;
+                
+                const avatar = document.getElementById('dashboardAvatar');
+                avatar.src = profile.user_metadata?.avatar_url || 
+                           `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.email)}&background=3b82f6&color=fff&size=60`;
+
+                // Plan badge
+                const badge = document.getElementById('planBadge');
+                const plan = profile.subscription_plan || 'free';
+                const planIcons = { free: 'user', pro: 'star', agency: 'crown' };
+                badge.innerHTML = `
+                    <i class="fas fa-${planIcons[plan]}"></i>
+                    ${plan.charAt(0).toUpperCase() + plan.slice(1)} Plan
+                `;
+            }
+
+            async loadUsageData() {
+                try {
+                    const usage = this.quotaManager.getCurrentUsage();
+                    
+                    // Update storage usage
+                    this.updateUsageMeter('storage', usage.storage);
+                    
+                    // Update conversions usage
+                    this.updateUsageMeter('conversions', usage.conversions);
+                    
+                    // Update API calls usage
+                    this.updateUsageMeter('apiCalls', usage.apiCalls);
+
+                    // Check for upgrade suggestions
+                    this.checkUpgradeSuggestions();
+
+                } catch (error) {
+                    console.error('Error loading usage data:', error);
+                }
+            }
+
+            updateUsageMeter(type, usage) {
+                const percentage = Math.min(100, usage.percentage);
+                const colorClass = percentage >= 95 ? 'danger' : percentage >= 85 ? 'warning' : 'success';
+
+                // Update meter fill
+                const fillElement = document.getElementById(`${type}UsageFill`);
+                if (fillElement) {
+                    fillElement.style.width = `${percentage}%`;
+                    fillElement.className = `usage-meter-fill usage-meter-${colorClass}`;
+                }
+
+                // Update text
+                const textElement = document.getElementById(`${type}UsageText`);
+                if (textElement) {
+                    textElement.textContent = this.formatUsageText(type, usage);
+                }
+
+                // Update stats
+                this.updateUsageStats(type, usage);
+            }
+
+            formatUsageText(type, usage) {
+                switch (type) {
+                    case 'storage':
+                        return `${this.formatFileSize(usage.current)} / ${this.formatFileSize(usage.limit)}`;
+                    case 'conversions':
+                    case 'apiCalls':
+                        return `${this.formatNumber(usage.current)} / ${this.formatNumber(usage.limit)}`;
+                    default:
+                        return `${usage.current} / ${usage.limit}`;
+                }
+            }
+
+            updateUsageStats(type, usage) {
+                // Update remaining count
+                const remainingElement = document.getElementById(`${type}Remaining`);
+                if (remainingElement) {
+                    const remaining = Math.max(0, usage.remaining);
+                    remainingElement.textContent = type === 'storage' ? 
+                        this.formatFileSize(remaining) : this.formatNumber(remaining);
+                }
+
+                // Update today's count (placeholder for now)
+                const todayElement = document.getElementById(`${type}Today`);
+                if (todayElement) {
+                    // This would need actual daily tracking
+                    todayElement.textContent = '0';
+                }
+
+                // Update total files for storage
+                if (type === 'storage') {
+                    this.updateFileCount();
+                }
+            }
+
+            async updateFileCount() {
+                try {
+                    const fileStats = await this.profileManager.getUserFileStats();
+                    const totalFilesElement = document.getElementById('totalFiles');
+                    if (totalFilesElement && fileStats) {
+                        totalFilesElement.textContent = this.formatNumber(fileStats.file_count);
+                    }
+                } catch (error) {
+                    console.error('Error updating file count:', error);
+                }
+            }
+
+            checkUpgradeSuggestions() {
+                const suggestions = this.quotaManager.getUpgradeSuggestions();
+                const upgradePrompt = document.getElementById('upgradePrompt');
+                const upgradeMessage = document.getElementById('upgradeMessage');
+
+                if (suggestions.suggestions.length > 0) {
+                    const highUrgency = suggestions.suggestions.filter(s => s.urgency === 'high');
+                    
+                    if (highUrgency.length > 0) {
+                        const quota = highUrgency[0];
+                        upgradeMessage.textContent = 
+                            `You've used ${quota.percentage}% of your ${quota.type} quota. Upgrade now to continue using all features.`;
+                        upgradePrompt.classList.add('show');
+                    }
+                }
+            }
+
+            async loadRecentActivity() {
+                try {
+                    // This would load actual activity data from the database
+                    // For now, showing placeholder
+                    const activityList = document.getElementById('recentActivity');
+                    activityList.innerHTML = `
+                        <li class="activity-item">
+                            <div class="activity-icon" style="background: #10b981;">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Welcome to your dashboard!</div>
+                                <div class="activity-time">Start using tools to see activity here</div>
+                            </div>
+                        </li>
+                    `;
+                } catch (error) {
+                    console.error('Error loading recent activity:', error);
+                }
+            }
+
+            handleQuotaUpdate(event, data) {
+                switch (event) {
+                    case 'storage_updated':
+                        this.updateUsageMeter('storage', data);
+                        break;
+                    case 'conversions_updated':
+                        this.updateUsageMeter('conversions', data);
+                        break;
+                    case 'quota_warning':
+                        this.handleQuotaWarning(data);
+                        break;
+                }
+            }
+
+            handleQuotaWarning(warningData) {
+                // Show upgrade prompt for critical warnings
+                if (warningData.level === 'critical' || warningData.level === 'exceeded') {
+                    const upgradePrompt = document.getElementById('upgradePrompt');
+                    const upgradeMessage = document.getElementById('upgradeMessage');
+                    
+                    upgradeMessage.textContent = 
+                        `You've used ${warningData.percentage}% of your ${warningData.quotaType} quota. Upgrade to continue using all features.`;
+                    upgradePrompt.classList.add('show');
+                }
+            }
+
+            handleProfileUpdate(event, data) {
+                if (event === 'profile_updated') {
+                    this.displayUserInfo(data);
+                }
+            }
+
+            setupAutoRefresh() {
+                // Refresh usage data every 30 seconds
+                this.refreshInterval = setInterval(() => {
+                    this.loadUsageData();
+                }, 30000);
+            }
+
+            formatFileSize(bytes) {
+                if (bytes === 0) return '0 B';
+                const k = 1024;
+                const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+            }
+
+            formatNumber(num) {
+                return new Intl.NumberFormat().format(num);
+            }
+
+            showError(message) {
+                console.error(message);
+                // Could show a toast notification here
+            }
+
+            destroy() {
+                if (this.refreshInterval) {
+                    clearInterval(this.refreshInterval);
+                }
+            }
+        }
+
+        // Initialize dashboard when page loads
+        let dashboardUI;
+        document.addEventListener('DOMContentLoaded', () => {
+            dashboardUI = new DashboardUI();
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (dashboardUI) {
+                dashboardUI.destroy();
+            }
+        });
+    </script>
+</body>
+</html>

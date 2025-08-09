@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>shadcn Styling Test</title>
+  <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
+  <link rel="stylesheet" href="styles/styles.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script type="module" src="styles/theme.js"></script>
+</head>
+<body class="bg-background text-foreground min-h-screen p-8">
+  <div class="max-w-4xl mx-auto space-y-8">
+    <header class="text-center">
+      <h1 class="text-4xl font-bold mb-2">shadcn Styling Test</h1>
+      <p class="text-muted-foreground">Testing all component styles and design tokens</p>
+      <button id="theme-toggle" class="btn btn-outline btn-sm mt-4">
+        <span id="theme-toggle-icon">🌙</span> Toggle Theme
+      </button>
+    </header>
+
+    <!-- Buttons -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold">Buttons</h2>
+      <div class="flex flex-wrap gap-4">
+        <button class="btn">Primary Button</button>
+        <button class="btn btn-secondary">Secondary Button</button>
+        <button class="btn btn-outline">Outline Button</button>
+        <button class="btn btn-ghost">Ghost Button</button>
+        <button class="btn btn-destructive">Destructive Button</button>
+        <button class="btn btn-sm">Small Button</button>
+        <button class="btn btn-lg">Large Button</button>
+        <button class="btn" disabled>Disabled Button</button>
+      </div>
+    </section>
+
+    <!-- Inputs -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold">Form Elements</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="label">Text Input</label>
+          <input type="text" class="input" placeholder="Enter text here...">
+        </div>
+        <div>
+          <label class="label">Select</label>
+          <select class="select">
+            <option>Option 1</option>
+            <option>Option 2</option>
+            <option>Option 3</option>
+          </select>
+        </div>
+        <div class="md:col-span-2">
+          <label class="label">Textarea</label>
+          <textarea class="textarea" placeholder="Enter longer text here..."></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cards -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold">Cards</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Card Title</h3>
+            <p class="card-description">This is a card description with some sample text.</p>
+          </div>
+          <div class="card-content">
+            <p>Card content goes here. This is where you would put the main information.</p>
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-sm">Action</button>
+          </div>
+        </div>
+        
+        <a href="#" class="card hover:shadow-lg transition-shadow">
+          <div class="card-header">
+            <h3 class="card-title">Clickable Card</h3>
+            <p class="card-description">This card is a link and has hover effects.</p>
+          </div>
+          <div class="card-content">
+            <p>Click anywhere on this card to see the hover effect.</p>
+          </div>
+        </a>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Tool Card Style</h3>
+            <p class="card-description">Mimics the style used for tool cards on the homepage.</p>
+          </div>
+          <div class="card-content">
+            <div class="flex gap-2">
+              <span class="badge">New</span>
+              <span class="badge badge-secondary">Popular</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Badges and Alerts -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold">Badges & Alerts</h2>
+      
+      <div class="space-y-2">
+        <h3 class="text-lg font-medium">Badges</h3>
+        <div class="flex flex-wrap gap-2">
+          <span class="badge">Default</span>
+          <span class="badge badge-secondary">Secondary</span>
+          <span class="badge badge-outline">Outline</span>
+          <span class="badge badge-destructive">Destructive</span>
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <h3 class="text-lg font-medium">Alerts</h3>
+        <div class="alert">
+          <div class="alert-title">Info Alert</div>
+          <div class="alert-description">This is an informational alert message.</div>
+        </div>
+        <div class="alert alert-destructive">
+          <div class="alert-title">Error Alert</div>
+          <div class="alert-description">This is an error alert message.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Color Palette -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold">Color Palette</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-background border border-border rounded mx-auto mb-2"></div>
+          <p class="text-sm">Background</p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 bg-foreground rounded mx-auto mb-2"></div>
+          <p class="text-sm">Foreground</p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 bg-primary rounded mx-auto mb-2"></div>
+          <p class="text-sm">Primary</p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 bg-secondary rounded mx-auto mb-2"></div>
+          <p class="text-sm">Secondary</p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 bg-accent rounded mx-auto mb-2"></div>
+          <p class="text-sm">Accent</p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 bg-destructive rounded mx-auto mb-2"></div>
+          <p class="text-sm">Destructive</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Typography -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-semibold">Typography</h2>
+      <div class="space-y-2">
+        <h1 class="text-4xl font-bold">Heading 1 (4xl)</h1>
+        <h2 class="text-3xl font-bold">Heading 2 (3xl)</h2>
+        <h3 class="text-2xl font-semibold">Heading 3 (2xl)</h3>
+        <h4 class="text-xl font-semibold">Heading 4 (xl)</h4>
+        <h5 class="text-lg font-medium">Heading 5 (lg)</h5>
+        <h6 class="text-base font-medium">Heading 6 (base)</h6>
+        <p class="text-base">Regular paragraph text (base)</p>
+        <p class="text-sm">Small text (sm)</p>
+        <p class="text-xs">Extra small text (xs)</p>
+        <p class="text-muted-foreground">Muted text color</p>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Theme toggle functionality
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggle = document.getElementById('theme-toggle');
+      const icon = document.getElementById('theme-toggle-icon');
+      
+      if (toggle && icon) {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        icon.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+        
+        toggle.addEventListener('click', () => {
+          const current = document.documentElement.getAttribute('data-theme');
+          const next = current === 'dark' ? 'light' : 'dark';
+          document.documentElement.setAttribute('data-theme', next);
+          localStorage.setItem('theme', next);
+          icon.textContent = next === 'dark' ? '☀️' : '🌙';
+        });
+      }
+    });
+  </script>
+</body>
+</html>

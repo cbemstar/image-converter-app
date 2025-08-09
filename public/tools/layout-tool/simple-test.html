@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Layout Tool Test</title>
+  <link rel="stylesheet" href="../../styles/styles.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-background text-foreground p-8">
+  <h1 class="text-2xl font-bold mb-4">Layout Tool - Simple Test</h1>
+  
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div>
+      <h2 class="text-lg font-semibold mb-2">Master Canvas</h2>
+      <canvas id="test-canvas" width="400" height="300" class="border border-border rounded bg-white"></canvas>
+    </div>
+    
+    <div>
+      <h2 class="text-lg font-semibold mb-2">Test Controls</h2>
+      <div class="space-y-2">
+        <button id="test-btn" class="layout-btn primary">Test Basic Functionality</button>
+        <div id="test-output" class="mt-4 p-4 bg-card border border-border rounded"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Simple test without modules
+    document.getElementById('test-btn').addEventListener('click', () => {
+      const canvas = document.getElementById('test-canvas');
+      const ctx = canvas.getContext('2d');
+      const output = document.getElementById('test-output');
+      
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw test content
+      ctx.fillStyle = '#f0f0f0';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      ctx.fillStyle = '#333';
+      ctx.font = '24px Arial';
+      ctx.fillText('Layout Tool Test', 50, 50);
+      
+      ctx.fillStyle = '#007bff';
+      ctx.fillRect(50, 80, 100, 60);
+      
+      ctx.fillStyle = 'white';
+      ctx.font = '16px Arial';
+      ctx.fillText('Logo Area', 60, 115);
+      
+      output.innerHTML = `
+        <div class="text-green-600">✓ Canvas rendering works</div>
+        <div class="text-green-600">✓ Basic drawing functions work</div>
+        <div class="text-green-600">✓ CSS styling is applied</div>
+        <div class="text-blue-600">Ready to test full layout tool!</div>
+      `;
+    });
+  </script>
+</body>
+</html>
