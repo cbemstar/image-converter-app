@@ -11,7 +11,8 @@
   const CONFIG = {
     scriptsToLoad: [
       'js/public-config.js',
-      'js/global-auth.js'
+      'js/global-auth.js',
+      'js/universal-nav.js'
     ],
     loadTimeout: 10000 // 10 seconds
   };
