@@ -97,11 +97,11 @@ npm test
 To enable enhanced features with user accounts:
 
 1. Create a Supabase project
-2. Set `SUPABASE_URL` and `SUPABASE_ANON_KEY` as environment variables (e.g., in a `.env.local` file) and run `npm run build:config` to generate the runtime configuration
+2. Set `SUPABASE_URL` and `SUPABASE_ANON_KEY` as environment variables (e.g., in a `.env.local` file) and run `npm run build:config` to generate the runtime configuration files
 3. Configure Google OAuth in your Supabase dashboard
 4. Ensure your `users` table includes a `full_name` column
 
-> **Deployment Note:** Run `npm run build:config` before deploying to generate `js/supabase-config.js` from your current `SUPABASE_URL` and `SUPABASE_ANON_KEY` values.
+> **Deployment Note:** Run `npm run build:config` before deploying to generate `js/supabase-config.js` and `js/public-config.js` from your current `SUPABASE_URL` and `SUPABASE_ANON_KEY` values.
 
 ### Analytics (Optional)
 The site includes Google Tag Manager integration (container `GTM-NFJTSQ3N`) for centralized analytics configuration.

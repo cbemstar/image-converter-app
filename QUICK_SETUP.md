@@ -7,11 +7,13 @@ Your Supabase project is configured! Here's how to get it running:
 - **URL**: https://your-project.supabase.co
 - **Anon Key**: configure via environment variables
 
-Generate the runtime config after setting your environment variables:
+Generate the runtime config files after setting your environment variables:
 
 ```bash
 npm run build:config
 ```
+
+This creates `js/supabase-config.js` and `js/public-config.js`.
 
 ## Step 1: Set Up Database Tables
 
