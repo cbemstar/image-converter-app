@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Auth Redirect - reformately</title>
+    <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
+    <link rel="stylesheet" href="styles/styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-background min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-2xl mx-auto">
+            <h1 class="text-3xl font-bold text-center mb-8 text-foreground">Auth Redirect Test</h1>
+            
+            <div class="bg-card border border-border rounded-lg p-6 mb-6">
+                <h2 class="text-xl font-semibold mb-4 text-foreground">Test Authentication Redirect</h2>
+                <p class="text-muted-foreground mb-4">
+                    This page demonstrates the fixed authentication redirect functionality. 
+                    When you click "Sign In" below, you'll be redirected to the auth page, 
+                    and after signing in, you'll be brought back to this exact page.
+                </p>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2">
+                        <span class="text-foreground">Current URL:</span>
+                        <code class="bg-muted px-2 py-1 rounded text-sm" id="current-url"></code>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <span class="text-foreground">Stored Redirect URL:</span>
+                        <code class="bg-muted px-2 py-1 rounded text-sm" id="stored-url">None</code>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-card border border-border rounded-lg p-6 mb-6">
+                <h3 class="text-lg font-semibold mb-4 text-foreground">Authentication Status</h3>
+                
+                <!-- Guest User -->
+                <div data-guest-only class="space-y-4">
+                    <p class="text-muted-foreground">You are not signed in.</p>
+                    <button onclick="redirectToAuth()" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        Sign In (Test Redirect)
+                    </button>
+                </div>
+                
+                <!-- Authenticated User -->
+                <div data-auth-required class="space-y-4" style="display: none;">
+                    <p class="text-foreground">
+                        Welcome back, <span data-user-info="email" class="font-semibold"></span>!
+                    </p>
+                    <p class="text-success">✅ Authentication redirect worked correctly!</p>
+                    <button onclick="signOut()" class="btn btn-outline">
+                        <i class="fas fa-sign-out-alt mr-2"></i>
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-card border border-border rounded-lg p-6">
+                <h3 class="text-lg font-semibold mb-4 text-foreground">How It Works</h3>
+                <ol class="list-decimal list-inside space-y-2 text-muted-foreground">
+                    <li>When you click "Sign In", the current URL is stored in sessionStorage</li>
+                    <li>You're redirected to the auth page (auth.html)</li>
+                    <li>After successful authentication, the auth page checks for the stored URL</li>
+                    <li>If found, you're redirected back to the original page (this page)</li>
+                    <li>If not found, you're redirected to the homepage as a fallback</li>
+                </ol>
+            </div>
+
+            <div class="text-center mt-8">
+                <a href="index.html" class="text-primary hover:underline">
+                    ← Back to Homepage
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Supabase and Auth -->
+    <script src="js/public-config.js"></script>
+    <script type="module">
+        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+        let supabase = null;
+
+        // Initialize Supabase
+        async function initializeAuth() {
+            try {
+                if (!window.PUBLIC_ENV) {
+                    throw new Error('Configuration not loaded');
+                }
+
+                supabase = createClient(
+                    window.PUBLIC_ENV.SUPABASE_URL,
+                    window.PUBLIC_ENV.SUPABASE_ANON_KEY,
+                    {
+                        auth: {
+                            persistSession: true,
+                            autoRefreshToken: true,
+                            detectSessionInUrl: true
+                        }
+                    }
+                );
+
+                // Check current session
+                const { data, error } = await supabase.auth.getSession();
+                if (error && error.message !== 'Invalid session') {
+                    throw error;
+                }
+
+                updateAuthUI(data.session);
+
+                // Listen for auth changes
+                supabase.auth.onAuthStateChange((event, session) => {
+                    console.log('Auth state changed:', event);
+                    updateAuthUI(session);
+                });
+
+            } catch (error) {
+                console.error('Auth initialization error:', error);
+            }
+        }
+
+        // Update UI based on auth state
+        function updateAuthUI(session) {
+            const authRequiredElements = document.querySelectorAll('[data-auth-required]');
+            const guestOnlyElements = document.querySelectorAll('[data-guest-only]');
+            const userInfoElements = document.querySelectorAll('[data-user-info]');
+
+            if (session && session.user) {
+                // Show auth-required elements
+                authRequiredElements.forEach(el => {
+                    el.style.display = 'block';
+                });
+
+                // Hide guest-only elements
+                guestOnlyElements.forEach(el => {
+                    el.style.display = 'none';
+                });
+
+                // Update user info
+                userInfoElements.forEach(el => {
+                    const infoType = el.dataset.userInfo;
+                    switch (infoType) {
+                        case 'email':
+                            el.textContent = session.user.email || '';
+                            break;
+                        case 'name':
+                            el.textContent = session.user.user_metadata?.full_name || 
+                                           session.user.email?.split('@')[0] || 
+                                           'User';
+                            break;
+                    }
+                });
+
+            } else {
+                // Hide auth-required elements
+                authRequiredElements.forEach(el => {
+                    el.style.display = 'none';
+                });
+
+                // Show guest-only elements
+                guestOnlyElements.forEach(el => {
+                    el.style.display = 'block';
+                });
+
+                // Clear user info
+                userInfoElements.forEach(el => {
+                    el.textContent = '';
+                });
+            }
+        }
+
+        // Sign out function
+        window.signOut = async function() {
+            try {
+                const { error } = await supabase.auth.signOut();
+                if (error) throw error;
+                
+                console.log('Signed out successfully');
+            } catch (error) {
+                console.error('Sign out error:', error);
+                alert('Error signing out: ' + error.message);
+            }
+        };
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(initializeAuth, 100);
+        });
+    </script>
+
+    <script>
+        // Redirect to auth page while preserving current URL
+        function redirectToAuth() {
+            // Store current URL for redirect after authentication
+            const currentUrl = window.location.href;
+            sessionStorage.setItem('auth_redirect', currentUrl);
+            
+            console.log('Storing redirect URL:', currentUrl);
+            
+            // Update display
+            updateStoredUrlDisplay();
+            
+            // Redirect to auth page after a short delay to show the stored URL
+            setTimeout(() => {
+                window.location.href = 'auth.html';
+            }, 1000);
+        }
+
+        // Update the display of stored URL
+        function updateStoredUrlDisplay() {
+            const storedUrl = sessionStorage.getItem('auth_redirect');
+            document.getElementById('stored-url').textContent = storedUrl || 'None';
+        }
+
+        // Update current URL display
+        function updateCurrentUrlDisplay() {
+            document.getElementById('current-url').textContent = window.location.href;
+        }
+
+        // Initialize displays
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCurrentUrlDisplay();
+            updateStoredUrlDisplay();
+            
+            // Update stored URL display every second to show changes
+            setInterval(updateStoredUrlDisplay, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Checkout Integration</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <style>
+        .test-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .plan-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            background: #f8fafc;
+        }
+        
+        .plan-card h3 {
+            margin: 0 0 0.5rem 0;
+            color: #1e293b;
+        }
+        
+        .plan-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #3b82f6;
+            margin: 0.5rem 0;
+        }
+        
+        .plan-features {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0;
+        }
+        
+        .plan-features li {
+            padding: 0.25rem 0;
+            color: #64748b;
+        }
+        
+        .plan-features li:before {
+            content: "✓ ";
+            color: #10b981;
+            font-weight: bold;
+        }
+        
+        .btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.2s;
+        }
+        
+        .btn:hover {
+            background: #2563eb;
+        }
+        
+        .btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+        
+        .status-message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: none;
+        }
+        
+        .status-message.success {
+            background: #ecfdf5;
+            border: 1px solid #10b981;
+            color: #065f46;
+        }
+        
+        .status-message.error {
+            background: #fef2f2;
+            border: 1px solid #ef4444;
+            color: #991b1b;
+        }
+        
+        .status-message.info {
+            background: #eff6ff;
+            border: 1px solid #3b82f6;
+            color: #1e40af;
+        }
+        
+        .auth-status {
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">
+                        <a href="index.html">
+                            <h1>Image Converter</h1>
+                        </a>
+                    </div>
+                    <nav class="nav" id="main-nav">
+                        <!-- Navigation will be populated by JavaScript -->
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <div class="test-container">
+                    <h2>Test Checkout Integration</h2>
+                    <p>This page tests the Stripe checkout integration with session ID reconciliation and callback URL preservation.</p>
+                    
+                    <!-- Auth Status -->
+                    <div class="auth-status">
+                        <h3>Authentication Status</h3>
+                        <p id="auth-status">Checking authentication...</p>
+                        <button id="sign-in-btn" class="btn" style="display: none;">Sign In</button>
+                    </div>
+                    
+                    <!-- Status Messages -->
+                    <div id="status-message" class="status-message"></div>
+                    
+                    <!-- Plan Cards -->
+                    <div id="plans-container">
+                        <div class="plan-card">
+                            <h3>Pro Plan</h3>
+                            <div class="plan-price">$9.99/month</div>
+                            <ul class="plan-features">
+                                <li>500 conversions per month</li>
+                                <li>100MB max file size</li>
+                                <li>Priority support</li>
+                                <li>Batch processing</li>
+                            </ul>
+                            <button class="btn checkout-btn" data-plan="pro">
+                                Subscribe to Pro
+                            </button>
+                        </div>
+                        
+                        <div class="plan-card">
+                            <h3>Unlimited Plan</h3>
+                            <div class="plan-price">$29.99/month</div>
+                            <ul class="plan-features">
+                                <li>Unlimited conversions</li>
+                                <li>250MB max file size</li>
+                                <li>24/7 priority support</li>
+                                <li>API access</li>
+                                <li>White-label options</li>
+                            </ul>
+                            <button class="btn checkout-btn" data-plan="unlimited">
+                                Subscribe to Unlimited
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Test Information -->
+                    <div style="margin-top: 2rem; padding: 1rem; background: #fef3c7; border-radius: 8px;">
+                        <h4>Test Information</h4>
+                        <p><strong>Current URL:</strong> <span id="current-url"></span></p>
+                        <p><strong>Callback URL:</strong> <span id="callback-url"></span></p>
+                        <p><strong>Test Mode:</strong> This will use Stripe test mode. Use test card 4242424242424242.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <p>&copy; 2024 Image Converter. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/env-config.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/auth-manager.js"></script>
+    <script src="js/profile-manager.js"></script>
+    <script src="js/stripe-manager.js"></script>
+    <script src="js/stripe-checkout-handler.js"></script>
+    <script src="js/unified-navigation.js"></script>
+    
+    <script>
+        class CheckoutTestPage {
+            constructor() {
+                this.authManager = null;
+                this.checkoutHandler = null;
+                this.isProcessing = false;
+                
+                this.init();
+            }
+            
+            async init() {
+                try {
+                    // Display current URL info
+                    document.getElementById('current-url').textContent = window.location.href;
+                    document.getElementById('callback-url').textContent = this.getCallbackUrl();
+                    
+                    // Wait for dependencies
+                    await this.waitForDependencies();
+                    
+                    // Set up auth status
+                    this.setupAuthStatus();
+                    
+                    // Set up checkout buttons
+                    this.setupCheckoutButtons();
+                    
+                } catch (error) {
+                    console.error('Test page initialization error:', error);
+                    this.showMessage('Failed to initialize test page: ' + error.message, 'error');
+                }
+            }
+            
+            async waitForDependencies() {
+                return new Promise((resolve) => {
+                    const checkDependencies = () => {
+                        if (window.authManager && window.stripeCheckoutHandler) {
+                            this.authManager = window.authManager;
+                            this.checkoutHandler = window.stripeCheckoutHandler;
+                            resolve();
+                        } else {
+                            setTimeout(checkDependencies, 100);
+                        }
+                    };
+                    checkDependencies();
+                });
+            }
+            
+            setupAuthStatus() {
+                const user = this.authManager.getCurrentUser();
+                const statusElement = document.getElementById('auth-status');
+                const signInBtn = document.getElementById('sign-in-btn');
+                
+                if (user) {
+                    statusElement.textContent = `Signed in as: ${user.email}`;
+                    signInBtn.style.display = 'none';
+                } else {
+                    statusElement.textContent = 'Not signed in. Please sign in to test checkout.';
+                    signInBtn.style.display = 'inline-block';
+                    signInBtn.onclick = () => this.signIn();
+                }
+                
+                // Listen for auth changes
+                this.authManager.addAuthStateListener((event, session) => {
+                    if (event === 'SIGNED_IN') {
+                        statusElement.textContent = `Signed in as: ${session.user.email}`;
+                        signInBtn.style.display = 'none';
+                        this.enableCheckoutButtons();
+                    } else if (event === 'SIGNED_OUT') {
+                        statusElement.textContent = 'Not signed in. Please sign in to test checkout.';
+                        signInBtn.style.display = 'inline-block';
+                        this.disableCheckoutButtons();
+                    }
+                });
+            }
+            
+            setupCheckoutButtons() {
+                const buttons = document.querySelectorAll('.checkout-btn');
+                buttons.forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const planId = e.target.dataset.plan;
+                        this.startCheckout(planId);
+                    });
+                });
+                
+                // Disable buttons if not authenticated
+                if (!this.authManager.getCurrentUser()) {
+                    this.disableCheckoutButtons();
+                }
+            }
+            
+            enableCheckoutButtons() {
+                const buttons = document.querySelectorAll('.checkout-btn');
+                buttons.forEach(button => {
+                    button.disabled = false;
+                    button.textContent = button.textContent.replace(' (Sign in required)', '');
+                });
+            }
+            
+            disableCheckoutButtons() {
+                const buttons = document.querySelectorAll('.checkout-btn');
+                buttons.forEach(button => {
+                    button.disabled = true;
+                    if (!button.textContent.includes('(Sign in required)')) {
+                        button.textContent += ' (Sign in required)';
+                    }
+                });
+            }
+            
+            async signIn() {
+                try {
+                    // Redirect to auth page with callback
+                    const callbackUrl = encodeURIComponent(window.location.href);
+                    window.location.href = `auth.html?callback=${callbackUrl}`;
+                } catch (error) {
+                    console.error('Sign in error:', error);
+                    this.showMessage('Sign in failed: ' + error.message, 'error');
+                }
+            }
+            
+            async startCheckout(planId) {
+                if (this.isProcessing) {
+                    return;
+                }
+                
+                try {
+                    this.isProcessing = true;
+                    this.showMessage('Creating checkout session...', 'info');
+                    this.setLoadingState(true);
+                    
+                    // Create checkout session with callback URL preservation
+                    const result = await this.checkoutHandler.createCheckoutSession(planId, {
+                        // Custom success URL that includes callback
+                        successUrl: `${window.location.origin}/checkout-success.html?callback=${encodeURIComponent(window.location.href)}`,
+                        cancelUrl: `${window.location.href}?checkout=canceled`
+                    });
+                    
+                    this.showMessage('Redirecting to Stripe Checkout...', 'info');
+                    
+                    // Redirect to Stripe Checkout
+                    window.location.href = result.url;
+                    
+                } catch (error) {
+                    console.error('Checkout error:', error);
+                    this.showMessage('Checkout failed: ' + error.message, 'error');
+                    this.setLoadingState(false);
+                    this.isProcessing = false;
+                }
+            }
+            
+            getCallbackUrl() {
+                // This simulates what the checkout handler does
+                try {
+                    const url = new URL(window.location);
+                    url.searchParams.delete('session_id');
+                    url.searchParams.delete('success');
+                    url.searchParams.delete('canceled');
+                    url.searchParams.delete('checkout');
+                    return url.toString();
+                } catch (error) {
+                    return window.location.href;
+                }
+            }
+            
+            setLoadingState(loading) {
+                const container = document.getElementById('plans-container');
+                if (loading) {
+                    container.classList.add('loading');
+                } else {
+                    container.classList.remove('loading');
+                }
+            }
+            
+            showMessage(message, type) {
+                const messageElement = document.getElementById('status-message');
+                messageElement.textContent = message;
+                messageElement.className = `status-message ${type}`;
+                messageElement.style.display = 'block';
+                
+                // Auto-hide success and info messages
+                if (type === 'success' || type === 'info') {
+                    setTimeout(() => {
+                        messageElement.style.display = 'none';
+                    }, 5000);
+                }
+            }
+        }
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new CheckoutTestPage();
+        });
+        
+        // Handle return from checkout
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('checkout') === 'canceled') {
+            document.addEventListener('DOMContentLoaded', () => {
+                setTimeout(() => {
+                    const testPage = new CheckoutTestPage();
+                    testPage.showMessage('Checkout was canceled. You can try again.', 'info');
+                }, 1000);
+            });
+        }
+    </script>
+</body>
+</html>

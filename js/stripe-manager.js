@@ -184,7 +184,7 @@ class StripeManager {
       }
 
       const {
-        successUrl = `${window.location.origin}/dashboard.html?success=true`,
+        successUrl = `${window.location.origin}/checkout-success.html`,
         cancelUrl = `${window.location.origin}/pricing.html?canceled=true`,
         allowPromotionCodes = true,
         billingAddressCollection = 'auto',

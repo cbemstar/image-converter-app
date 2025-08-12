@@ -48,7 +48,7 @@ serve(async (req) => {
 
     // Get user profile with Stripe customer ID
     const { data: profile, error: profileError } = await supabase
-      .from('user_profiles')
+      .from('profiles')
       .select('stripe_customer_id')
       .eq('id', user_id)
       .single()
@@ -61,7 +61,7 @@ serve(async (req) => {
       throw new Error('User does not have a Stripe customer ID')
     }
 
-    // Create checkout session
+    // Create checkout session with session ID reconciliation
     const session = await stripe.checkout.sessions.create({
       customer: profile.stripe_customer_id,
       payment_method_types: ['card'],
@@ -72,19 +72,28 @@ serve(async (req) => {
         },
       ],
       mode: 'subscription',
-      success_url: success_url,
-      cancel_url: cancel_url,
+      // Use Stripe's {CHECKOUT_SESSION_ID} placeholder for state reconciliation
+      success_url: `${success_url}${success_url.includes('?') ? '&' : '?'}session_id={CHECKOUT_SESSION_ID}&success=true`,
+      cancel_url: `${cancel_url}${cancel_url.includes('?') ? '&' : '?'}canceled=true`,
       allow_promotion_codes: allow_promotion_codes,
       billing_address_collection: billing_address_collection,
       customer_update: customer_update,
+      // Enable automatic tax calculation if Stripe Tax is configured
+      automatic_tax: {
+        enabled: true,
+      },
       subscription_data: {
         metadata: {
           user_id: user_id
         }
       },
       metadata: {
-        user_id: user_id
+        user_id: user_id,
+        created_at: new Date().toISOString()
       }
+    }, {
+      // Add idempotency key for safe retries
+      idempotencyKey: `checkout-${user_id}-${price_id}-${Date.now()}`
     })
 
     return new Response(

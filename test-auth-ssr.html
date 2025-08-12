@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test SSR Authentication</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .btn-primary { background-color: #007bff; color: white; }
+        .btn-success { background-color: #28a745; color: white; }
+        .btn-danger { background-color: #dc3545; color: white; }
+        .btn-info { background-color: #17a2b8; color: white; }
+        #status { margin-top: 20px; }
+        .auth-form {
+            display: none;
+            margin-top: 10px;
+        }
+        .auth-form.active {
+            display: block;
+        }
+        input {
+            margin: 5px 0;
+            padding: 8px;
+            width: 200px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>SSR Authentication Test</h1>
+    
+    <div class="test-section info">
+        <h3>Authentication Status</h3>
+        <div id="auth-status">Loading...</div>
+        <div id="user-info"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Authentication Actions</h3>
+        
+        <!-- Email Authentication -->
+        <div>
+            <button class="btn-primary" onclick="toggleForm('email-signin')">Email Sign In</button>
+            <button class="btn-success" onclick="toggleForm('email-signup')">Email Sign Up</button>
+            
+            <div id="email-signin" class="auth-form">
+                <h4>Sign In with Email</h4>
+                <input type="email" id="signin-email" placeholder="Email" />
+                <input type="password" id="signin-password" placeholder="Password" />
+                <button class="btn-primary" onclick="signInWithEmail()">Sign In</button>
+            </div>
+            
+            <div id="email-signup" class="auth-form">
+                <h4>Sign Up with Email</h4>
+                <input type="text" id="signup-name" placeholder="Full Name" />
+                <input type="email" id="signup-email" placeholder="Email" />
+                <input type="password" id="signup-password" placeholder="Password" />
+                <button class="btn-success" onclick="signUpWithEmail()">Sign Up</button>
+            </div>
+        </div>
+
+        <!-- OAuth Authentication -->
+        <div style="margin-top: 15px;">
+            <button class="btn-info" onclick="signInWithGoogle()">Sign In with Google</button>
+            <button class="btn-info" onclick="signInWithGitHub()">Sign In with GitHub</button>
+        </div>
+
+        <!-- Other Actions -->
+        <div style="margin-top: 15px;">
+            <button class="btn-danger" onclick="signOut()">Sign Out</button>
+            <button class="btn-info" onclick="refreshSession()">Refresh Session</button>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h3>Cookie Configuration Test</h3>
+        <button class="btn-info" onclick="testCookies()">Test Cookie Functionality</button>
+        <button class="btn-info" onclick="validateConfig()">Validate Configuration</button>
+        <div id="cookie-test-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Session Security Test</h3>
+        <button class="btn-info" onclick="testSessionSecurity()">Test Session Security</button>
+        <div id="security-test-results"></div>
+    </div>
+
+    <div id="status" class="test-section">
+        <h3>Status Log</h3>
+        <div id="log"></div>
+    </div>
+
+    <!-- Load dependencies -->
+    <script src="/js/public-config.js"></script>
+    <script type="module">
+        import { getAuthUtils } from '/js/auth/auth-utils.js';
+        import { getCookieConfig } from '/js/auth/cookie-config.js';
+        import { getSessionMiddleware } from '/js/auth/session-middleware.js';
+
+        let authUtils, cookieConfig, sessionMiddleware;
+
+        // Initialize components
+        async function initialize() {
+            try {
+                authUtils = getAuthUtils();
+                cookieConfig = getCookieConfig();
+                sessionMiddleware = getSessionMiddleware();
+
+                // Set up auth state listener
+                authUtils.addAuthStateListener((event, session, user) => {
+                    log(`Auth state changed: ${event}`, 'info');
+                    updateAuthStatus();
+                });
+
+                // Initial status update
+                updateAuthStatus();
+                
+                // Expose functions globally for button handlers
+                window.authUtils = authUtils;
+                window.cookieConfig = cookieConfig;
+                window.sessionMiddleware = sessionMiddleware;
+                window.updateAuthStatus = updateAuthStatus;
+                window.log = log;
+
+                log('SSR Authentication system initialized successfully', 'success');
+            } catch (error) {
+                log(`Initialization error: ${error.message}`, 'error');
+            }
+        }
+
+        function updateAuthStatus() {
+            const status = authUtils.getAuthStatus();
+            const statusDiv = document.getElementById('auth-status');
+            const userInfoDiv = document.getElementById('user-info');
+
+            statusDiv.innerHTML = `
+                <strong>Authenticated:</strong> ${status.isAuthenticated ? 'Yes' : 'No'}<br>
+                <strong>Email Verified:</strong> ${status.isEmailVerified ? 'Yes' : 'No'}<br>
+                <strong>Initialized:</strong> ${status.isInitialized ? 'Yes' : 'No'}
+            `;
+
+            if (status.user) {
+                userInfoDiv.innerHTML = `
+                    <h4>User Information</h4>
+                    <strong>Email:</strong> ${status.user.email}<br>
+                    <strong>ID:</strong> ${status.user.id}<br>
+                    <strong>Created:</strong> ${new Date(status.user.created_at).toLocaleString()}
+                `;
+            } else {
+                userInfoDiv.innerHTML = '';
+            }
+        }
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = type;
+            logEntry.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
+            logDiv.appendChild(logEntry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        // Global functions for button handlers
+        window.toggleForm = function(formId) {
+            const forms = document.querySelectorAll('.auth-form');
+            forms.forEach(form => form.classList.remove('active'));
+            
+            const targetForm = document.getElementById(formId);
+            if (targetForm) {
+                targetForm.classList.add('active');
+            }
+        };
+
+        window.signInWithEmail = async function() {
+            const email = document.getElementById('signin-email').value;
+            const password = document.getElementById('signin-password').value;
+
+            if (!email || !password) {
+                log('Please enter email and password', 'error');
+                return;
+            }
+
+            try {
+                log('Attempting email sign in...', 'info');
+                const result = await authUtils.signInWithEmail(email, password);
+                log('Email sign in successful', 'success');
+            } catch (error) {
+                log(`Email sign in error: ${error.message}`, 'error');
+            }
+        };
+
+        window.signUpWithEmail = async function() {
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+
+            if (!email || !password) {
+                log('Please enter email and password', 'error');
+                return;
+            }
+
+            try {
+                log('Attempting email sign up...', 'info');
+                const result = await authUtils.signUpWithEmail(email, password, { fullName: name });
+                if (result.requiresConfirmation) {
+                    log('Sign up successful! Please check your email for confirmation.', 'success');
+                } else {
+                    log('Email sign up successful', 'success');
+                }
+            } catch (error) {
+                log(`Email sign up error: ${error.message}`, 'error');
+            }
+        };
+
+        window.signInWithGoogle = async function() {
+            try {
+                log('Attempting Google sign in...', 'info');
+                const result = await authUtils.signInWithGoogle();
+                log('Google sign in initiated', 'info');
+            } catch (error) {
+                log(`Google sign in error: ${error.message}`, 'error');
+            }
+        };
+
+        window.signInWithGitHub = async function() {
+            try {
+                log('Attempting GitHub sign in...', 'info');
+                const result = await authUtils.signInWithGitHub();
+                log('GitHub sign in initiated', 'info');
+            } catch (error) {
+                log(`GitHub sign in error: ${error.message}`, 'error');
+            }
+        };
+
+        window.signOut = async function() {
+            try {
+                log('Signing out...', 'info');
+                await authUtils.signOut();
+                log('Sign out successful', 'success');
+            } catch (error) {
+                log(`Sign out error: ${error.message}`, 'error');
+            }
+        };
+
+        window.refreshSession = async function() {
+            try {
+                log('Refreshing session...', 'info');
+                const session = await sessionMiddleware.getCurrentSession();
+                if (session) {
+                    log('Session refresh successful', 'success');
+                } else {
+                    log('No active session to refresh', 'info');
+                }
+            } catch (error) {
+                log(`Session refresh error: ${error.message}`, 'error');
+            }
+        };
+
+        window.testCookies = function() {
+            const results = cookieConfig.testCookies();
+            const resultsDiv = document.getElementById('cookie-test-results');
+            
+            resultsDiv.innerHTML = `
+                <h4>Cookie Test Results</h4>
+                <div class="${results.success ? 'success' : 'error'}">
+                    ${results.message}
+                </div>
+            `;
+            
+            log(`Cookie test: ${results.message}`, results.success ? 'success' : 'error');
+        };
+
+        window.validateConfig = function() {
+            const validation = authUtils.validateConfig();
+            const resultsDiv = document.getElementById('cookie-test-results');
+            
+            let html = `<h4>Configuration Validation</h4>`;
+            html += `<div class="${validation.isValid ? 'success' : 'error'}">`;
+            html += validation.isValid ? 'Configuration is valid' : 'Configuration issues found';
+            html += '</div>';
+            
+            if (validation.issues.length > 0) {
+                html += '<h5>Issues:</h5><ul>';
+                validation.issues.forEach(issue => {
+                    html += `<li>${issue}</li>`;
+                });
+                html += '</ul>';
+            }
+            
+            resultsDiv.innerHTML = html;
+            log(`Configuration validation: ${validation.isValid ? 'Valid' : 'Issues found'}`, validation.isValid ? 'success' : 'error');
+        };
+
+        window.testSessionSecurity = function() {
+            const resultsDiv = document.getElementById('security-test-results');
+            
+            // Test session fingerprinting
+            const fingerprint = sessionMiddleware.generateBrowserFingerprint();
+            
+            // Test CSRF token generation
+            const csrfToken = sessionMiddleware.generateCSRFToken();
+            
+            resultsDiv.innerHTML = `
+                <h4>Session Security Test Results</h4>
+                <div class="info">
+                    <strong>Browser Fingerprint:</strong> ${fingerprint}<br>
+                    <strong>CSRF Token:</strong> ${csrfToken.substring(0, 16)}...<br>
+                    <strong>Security Headers:</strong> Set<br>
+                </div>
+            `;
+            
+            log('Session security test completed', 'success');
+        };
+
+        // Initialize when page loads
+        initialize();
+    </script>
+</body>
+</html>

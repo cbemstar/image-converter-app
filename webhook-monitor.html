@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webhook Monitor Dashboard</title>
+    <script src="js/env-config.js"></script>
+    <script src="js/webhook-dashboard.js"></script>
+</head>
+<body>
+    <div id="dashboard-container">
+        <h1>Webhook Monitoring Dashboard</h1>
+        
+        <div class="dashboard-tabs">
+            <button class="tab-btn active" onclick="showTab('metrics')">Metrics</button>
+            <button class="tab-btn" onclick="showTab('health')">Health Check</button>
+            <button class="tab-btn" onclick="showTab('dlq')">Dead Letter Queue</button>
+        </div>
+        
+        <div id="metrics-tab" class="tab-content active">
+            <div id="metrics-content">Loading metrics...</div>
+            <button onclick="refreshMetrics()" class="refresh-btn">Refresh Metrics</button>
+        </div>
+        
+        <div id="health-tab" class="tab-content">
+            <div id="health-content">Loading health check...</div>
+            <button onclick="refreshHealth()" class="refresh-btn">Refresh Health</button>
+        </div>
+        
+        <div id="dlq-tab" class="tab-content">
+            <div id="dlq-content">Loading DLQ...</div>
+            <button onclick="refreshDLQ()" class="refresh-btn">Refresh DLQ</button>
+        </div>
+    </div>
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        #dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        h1 {
+            background: #1976d2;
+            color: white;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .dashboard-tabs {
+            display: flex;
+            background: #f0f0f0;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        
+        .tab-btn:hover {
+            background: #e0e0e0;
+        }
+        
+        .tab-btn.active {
+            background: white;
+            border-bottom: 2px solid #1976d2;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 20px;
+            min-height: 400px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .refresh-btn {
+            background: #1976d2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        
+        .refresh-btn:hover {
+            background: #1565c0;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #666;
+            padding: 40px;
+        }
+        
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        .dlq-item {
+            background: #fff3e0;
+            border: 1px solid #ffb74d;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        
+        .dlq-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .dlq-event-id {
+            font-family: monospace;
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        
+        .dlq-attempts {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+        
+        .dlq-error {
+            background: #ffebee;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #c62828;
+            margin: 10px 0;
+        }
+        
+        .dlq-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .dlq-retry-btn {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .dlq-retry-btn:hover {
+            background: #45a049;
+        }
+    </style>
+
+    <script>
+        let dashboard;
+        
+        // Initialize dashboard when page loads
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Wait for env config to load
+                await new Promise(resolve => {
+                    if (window.ENV_CONFIG) {
+                        resolve();
+                    } else {
+                        const checkConfig = setInterval(() => {
+                            if (window.ENV_CONFIG) {
+                                clearInterval(checkConfig);
+                                resolve();
+                            }
+                        }, 100);
+                    }
+                });
+                
+                dashboard = new WebhookDashboard(
+                    window.ENV_CONFIG.SUPABASE_URL,
+                    window.ENV_CONFIG.SUPABASE_ANON_KEY
+                );
+                
+                // Load initial data
+                await refreshMetrics();
+                
+            } catch (error) {
+                console.error('Failed to initialize dashboard:', error);
+                document.getElementById('metrics-content').innerHTML = 
+                    `<div class="error">Failed to initialize dashboard: ${error.message}</div>`;
+            }
+        });
+        
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Load data for the tab if not already loaded
+            if (tabName === 'health' && !document.getElementById('health-content').innerHTML.includes('health-dashboard')) {
+                refreshHealth();
+            } else if (tabName === 'dlq' && document.getElementById('dlq-content').innerHTML === 'Loading DLQ...') {
+                refreshDLQ();
+            }
+        }
+        
+        async function refreshMetrics() {
+            const content = document.getElementById('metrics-content');
+            content.innerHTML = '<div class="loading">Loading metrics...</div>';
+            
+            try {
+                const metrics = await dashboard.getMetrics();
+                content.innerHTML = dashboard.getDashboardStyles() + dashboard.renderMetricsDashboard(metrics);
+            } catch (error) {
+                content.innerHTML = `<div class="error">Failed to load metrics: ${error.message}</div>`;
+            }
+        }
+        
+        async function refreshHealth() {
+            const content = document.getElementById('health-content');
+            content.innerHTML = '<div class="loading">Loading health check...</div>';
+            
+            try {
+                const health = await dashboard.getHealthCheck();
+                content.innerHTML = dashboard.getDashboardStyles() + dashboard.renderHealthDashboard(health);
+            } catch (error) {
+                content.innerHTML = `<div class="error">Failed to load health check: ${error.message}</div>`;
+            }
+        }
+        
+        async function refreshDLQ() {
+            const content = document.getElementById('dlq-content');
+            content.innerHTML = '<div class="loading">Loading DLQ...</div>';
+            
+            try {
+                const dlq = await dashboard.getDLQ();
+                
+                if (dlq.count === 0) {
+                    content.innerHTML = '<div style="text-align: center; color: #4caf50; padding: 40px;">✅ No items in dead letter queue</div>';
+                } else {
+                    const dlqHtml = `
+                        <h3>Dead Letter Queue (${dlq.count} items)</h3>
+                        <div class="dlq-items">
+                            ${dlq.items.map(item => `
+                                <div class="dlq-item">
+                                    <div class="dlq-header">
+                                        <div>
+                                            <span class="dlq-event-id">${item.stripe_event_id}</span>
+                                            <span style="margin-left: 10px; font-weight: 500;">${item.event_type}</span>
+                                        </div>
+                                        <span class="dlq-attempts">${item.processing_attempts} attempts</span>
+                                    </div>
+                                    <div class="dlq-error">${item.last_error}</div>
+                                    <div style="font-size: 12px; color: #666;">
+                                        Created: ${new Date(item.created_at).toLocaleString()}
+                                    </div>
+                                    <div class="dlq-actions">
+                                        <button class="dlq-retry-btn" onclick="retryDLQItem('${item.stripe_event_id}')">
+                                            Retry Event
+                                        </button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    content.innerHTML = dlqHtml;
+                }
+            } catch (error) {
+                content.innerHTML = `<div class="error">Failed to load DLQ: ${error.message}</div>`;
+            }
+        }
+        
+        async function retryDLQItem(eventId) {
+            try {
+                const result = await dashboard.retryEvent(eventId);
+                
+                if (result.success) {
+                    alert('Webhook event retry initiated successfully');
+                    await refreshDLQ(); // Refresh the DLQ view
+                    await refreshMetrics(); // Refresh metrics too
+                } else {
+                    alert(`Failed to retry webhook event: ${result.message}`);
+                }
+            } catch (error) {
+                alert(`Error retrying webhook event: ${error.message}`);
+            }
+        }
+        
+        // Auto-refresh every 30 seconds for the active tab
+        setInterval(() => {
+            const activeTab = document.querySelector('.tab-content.active');
+            if (activeTab) {
+                const tabId = activeTab.id;
+                if (tabId === 'metrics-tab') {
+                    refreshMetrics();
+                } else if (tabId === 'health-tab') {
+                    refreshHealth();
+                }
+                // Don't auto-refresh DLQ as it's less dynamic
+            }
+        }, 30000);
+    </script>
+</body>
+</html>

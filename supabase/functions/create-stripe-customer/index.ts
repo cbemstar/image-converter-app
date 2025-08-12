@@ -40,7 +40,7 @@ serve(async (req) => {
 
     // Check if customer already exists
     const { data: existingProfile, error: profileError } = await supabase
-      .from('user_profiles')
+      .from('profiles')
       .select('stripe_customer_id')
       .eq('id', user_id)
       .single()
@@ -73,7 +73,7 @@ serve(async (req) => {
 
     // Update user profile with Stripe customer ID
     const { error: updateError } = await supabase
-      .from('user_profiles')
+      .from('profiles')
       .update({
         stripe_customer_id: customer.id,
         updated_at: new Date().toISOString()

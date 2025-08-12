@@ -40,7 +40,7 @@ serve(async (req) => {
 
     // Get user profile with Stripe customer ID
     const { data: profile, error: profileError } = await supabase
-      .from('user_profiles')
+      .from('profiles')
       .select('stripe_customer_id')
       .eq('id', user_id)
       .single()
@@ -53,10 +53,13 @@ serve(async (req) => {
       throw new Error('User does not have a Stripe customer ID')
     }
 
-    // Create Customer Portal session
+    // Create Customer Portal session with return URL configuration
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: profile.stripe_customer_id,
-      return_url: return_url,
+      return_url: `${return_url}${return_url.includes('?') ? '&' : '?'}portal=updated`,
+    }, {
+      // Add idempotency key for safe retries
+      idempotencyKey: `portal-${user_id}-${Date.now()}`
     })
 
     return new Response(

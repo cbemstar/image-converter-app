@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Success - Image Converter</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/auth.css">
+    <style>
+        .checkout-success-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            text-align: center;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem;
+            background: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .processing-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem;
+            background: #3b82f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .error-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem;
+            background: #ef4444;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .checkout-details {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .detail-label {
+            font-weight: 500;
+            color: #64748b;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .quota-update {
+            background: #ecfdf5;
+            border: 1px solid #10b981;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .quota-update h4 {
+            color: #065f46;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .quota-update p {
+            color: #047857;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">
+                        <a href="index.html">
+                            <h1>Image Converter</h1>
+                        </a>
+                    </div>
+                    <nav class="nav" id="main-nav">
+                        <!-- Navigation will be populated by JavaScript -->
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <div class="checkout-success-container">
+                    <!-- Processing State -->
+                    <div id="processing-state" class="checkout-state">
+                        <div class="processing-icon">
+                            <div class="loading-spinner"></div>
+                        </div>
+                        <h2>Processing Your Subscription</h2>
+                        <p>Please wait while we activate your new plan...</p>
+                        <div class="checkout-details">
+                            <div class="detail-row">
+                                <span class="detail-label">Session ID:</span>
+                                <span class="detail-value" id="session-id-display">Loading...</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Status:</span>
+                                <span class="detail-value">Processing payment...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Success State -->
+                    <div id="success-state" class="checkout-state hidden">
+                        <div class="success-icon">✓</div>
+                        <h2>Subscription Activated!</h2>
+                        <p>Your payment was successful and your subscription is now active.</p>
+
+                        <div class="checkout-details" id="success-details">
+                            <!-- Details will be populated by JavaScript -->
+                        </div>
+
+                        <div class="quota-update" id="quota-update">
+                            <h4>Your New Plan Benefits</h4>
+                            <p id="quota-info">Loading plan details...</p>
+                        </div>
+
+                        <div class="action-buttons">
+                            <a href="#" id="primary-action-btn" class="btn btn-primary">
+                                Start Converting Images
+                            </a>
+                            <a href="dashboard.html" class="btn btn-secondary">
+                                View Dashboard
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Error State -->
+                    <div id="error-state" class="checkout-state hidden">
+                        <div class="error-icon">⚠</div>
+                        <h2>Processing Error</h2>
+                        <p id="error-message">There was an issue processing your subscription.</p>
+
+                        <div class="checkout-details">
+                            <div class="detail-row">
+                                <span class="detail-label">Session ID:</span>
+                                <span class="detail-value" id="error-session-id">N/A</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Error:</span>
+                                <span class="detail-value" id="error-details">Unknown error</span>
+                            </div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <a href="pricing.html" class="btn btn-primary">
+                                Try Again
+                            </a>
+                            <a href="mailto:support@imageconverter.com" class="btn btn-secondary">
+                                Contact Support
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <p>&copy; 2024 Image Converter. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/env-config.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/auth-manager.js"></script>
+    <script src="js/profile-manager.js"></script>
+    <script src="js/quota-manager.js"></script>
+    <script src="js/stripe-manager.js"></script>
+    <script src="js/stripe-checkout-handler.js"></script>
+    <script src="js/unified-navigation.js"></script>
+
+    <script>
+        class CheckoutSuccessPage {
+            constructor() {
+                this.sessionId = null;
+                this.sessionDetails = null;
+                this.callbackUrl = null;
+                this.maxRetries = 10;
+                this.retryCount = 0;
+
+                this.init();
+            }
+
+            async init() {
+                try {
+                    // Get session ID and callback URL from URL
+                    const urlParams = new URLSearchParams(window.location.search);
+                    this.sessionId = urlParams.get('session_id');
+                    this.callbackUrl = urlParams.get('callback');
+
+                    if (!this.sessionId) {
+                        this.showError('No session ID found in URL');
+                        return;
+                    }
+
+                    // Display session ID
+                    document.getElementById('session-id-display').textContent = this.sessionId;
+
+                    // Wait for dependencies to load
+                    await this.waitForDependencies();
+
+                    // Process the checkout session
+                    await this.processCheckoutSession();
+
+                } catch (error) {
+                    console.error('Checkout success page error:', error);
+                    this.showError(error.message);
+                }
+            }
+
+            async waitForDependencies() {
+                return new Promise((resolve) => {
+                    const checkDependencies = () => {
+                        if (window.supabaseClient && window.authManager && window.stripeCheckoutHandler) {
+                            resolve();
+                        } else {
+                            setTimeout(checkDependencies, 100);
+                        }
+                    };
+                    checkDependencies();
+                });
+            }
+
+            async processCheckoutSession() {
+                try {
+                    // Fetch session details from Stripe
+                    await this.fetchSessionDetails();
+
+                    // Wait for webhook processing
+                    await this.waitForWebhookProcessing();
+
+                    // Refresh user data
+                    await this.refreshUserData();
+
+                    // Show success state
+                    this.showSuccess();
+
+                } catch (error) {
+                    console.error('Error processing checkout session:', error);
+                    this.showError(error.message);
+                }
+            }
+
+            async fetchSessionDetails() {
+                try {
+                    const { data, error } = await window.supabaseClient.getClient().functions.invoke('get-checkout-session', {
+                        body: { session_id: this.sessionId }
+                    });
+
+                    if (error) {
+                        throw error;
+                    }
+
+                    this.sessionDetails = data;
+                    console.log('Session details:', this.sessionDetails);
+
+                } catch (error) {
+                    console.warn('Could not fetch session details:', error.message);
+                    // Continue without session details - not critical
+                }
+            }
+
+            async waitForWebhookProcessing() {
+                console.log('Waiting for webhook processing...');
+
+                for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
+                    try {
+                        const { data, error } = await window.supabaseClient.getClient().functions.invoke('check-webhook-status', {
+                            body: { session_id: this.sessionId }
+                        });
+
+                        if (!error && data?.processed) {
+                            console.log('Webhook processing completed');
+                            return true;
+                        }
+
+                        // Update processing message
+                        this.updateProcessingMessage(`Activating subscription... (${attempt}/${this.maxRetries})`);
+
+                        // Wait before next attempt (exponential backoff)
+                        const delay = Math.min(1000 * Math.pow(1.5, attempt - 1), 5000);
+                        await new Promise(resolve => setTimeout(resolve, delay));
+
+                    } catch (error) {
+                        console.warn(`Webhook check attempt ${attempt} failed:`, error.message);
+                    }
+                }
+
+                console.warn('Webhook processing check timed out - proceeding anyway');
+                return false;
+            }
+
+            async refreshUserData() {
+                try {
+                    // Refresh auth session
+                    if (window.authManager && typeof window.authManager.refreshSession === 'function') {
+                        await window.authManager.refreshSession();
+                    }
+
+                    // Refresh profile data
+                    if (window.profileManager && typeof window.profileManager.loadUserProfile === 'function') {
+                        await window.profileManager.loadUserProfile();
+                    }
+
+                    // Refresh quota data
+                    if (window.quotaManager && typeof window.quotaManager.refreshUsage === 'function') {
+                        await window.quotaManager.refreshUsage();
+                    }
+
+                    console.log('User data refreshed successfully');
+
+                } catch (error) {
+                    console.error('Error refreshing user data:', error);
+                    // Don't throw - this is not critical for showing success
+                }
+            }
+
+            updateProcessingMessage(message) {
+                const statusElement = document.querySelector('#processing-state .detail-value');
+                if (statusElement) {
+                    statusElement.textContent = message;
+                }
+            }
+
+            showSuccess() {
+                // Hide processing state
+                document.getElementById('processing-state').classList.add('hidden');
+
+                // Show success state
+                document.getElementById('success-state').classList.remove('hidden');
+
+                // Populate success details
+                this.populateSuccessDetails();
+
+                // Update quota information
+                this.updateQuotaInfo();
+
+                // Set up callback URL for primary action
+                this.setupCallbackUrl();
+
+                // Clean up URL
+                this.cleanupUrl();
+            }
+
+            populateSuccessDetails() {
+                const detailsContainer = document.getElementById('success-details');
+
+                if (this.sessionDetails) {
+                    detailsContainer.innerHTML = `
+                        <div class="detail-row">
+                            <span class="detail-label">Session ID:</span>
+                            <span class="detail-value">${this.sessionDetails.id}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Payment Status:</span>
+                            <span class="detail-value">${this.sessionDetails.payment_status}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Amount:</span>
+                            <span class="detail-value">$${(this.sessionDetails.amount_total / 100).toFixed(2)} ${this.sessionDetails.currency.toUpperCase()}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Email:</span>
+                            <span class="detail-value">${this.sessionDetails.customer_email}</span>
+                        </div>
+                    `;
+                } else {
+                    detailsContainer.innerHTML = `
+                        <div class="detail-row">
+                            <span class="detail-label">Session ID:</span>
+                            <span class="detail-value">${this.sessionId}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Status:</span>
+                            <span class="detail-value">Successfully processed</span>
+                        </div>
+                    `;
+                }
+            }
+
+            async updateQuotaInfo() {
+                try {
+                    // Get current user profile and quota info
+                    const profile = window.profileManager?.getCurrentProfile();
+                    const quotaInfo = window.quotaManager?.getCurrentUsage();
+
+                    if (profile && quotaInfo) {
+                        const planName = profile.subscription_info?.plan || 'Pro';
+                        const conversionsLimit = quotaInfo.conversions_limit;
+                        const limitText = conversionsLimit === -1 ? 'Unlimited' : conversionsLimit.toLocaleString();
+
+                        document.getElementById('quota-info').textContent =
+                            `You now have access to ${limitText} conversions per month with your ${planName} plan.`;
+                    } else {
+                        document.getElementById('quota-info').textContent =
+                            'Your subscription is now active! Check your dashboard for plan details.';
+                    }
+                } catch (error) {
+                    console.error('Error updating quota info:', error);
+                    document.getElementById('quota-info').textContent =
+                        'Your subscription is now active! Check your dashboard for plan details.';
+                }
+            }
+
+            setupCallbackUrl() {
+                const primaryBtn = document.getElementById('primary-action-btn');
+                if (primaryBtn && this.callbackUrl) {
+                    try {
+                        const callbackUrl = decodeURIComponent(this.callbackUrl);
+                        primaryBtn.href = callbackUrl;
+                        primaryBtn.textContent = 'Continue Where You Left Off';
+                    } catch (error) {
+                        console.error('Error setting up callback URL:', error);
+                        primaryBtn.href = 'tools/image-converter/index.html';
+                    }
+                } else if (primaryBtn) {
+                    primaryBtn.href = 'tools/image-converter/index.html';
+                }
+            }
+
+            showError(message) {
+                // Hide processing state
+                document.getElementById('processing-state').classList.add('hidden');
+
+                // Show error state
+                document.getElementById('error-state').classList.remove('hidden');
+
+                // Update error details
+                document.getElementById('error-message').textContent = message;
+                document.getElementById('error-session-id').textContent = this.sessionId || 'N/A';
+                document.getElementById('error-details').textContent = message;
+            }
+
+            cleanupUrl() {
+                try {
+                    const url = new URL(window.location);
+                    url.searchParams.delete('session_id');
+                    url.searchParams.delete('success');
+
+                    // Update URL without page reload
+                    window.history.replaceState({}, document.title, url.toString());
+
+                } catch (error) {
+                    console.error('Error cleaning up URL:', error);
+                }
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new CheckoutSuccessPage();
+        });
+    </script>
+</body>
+
+</html>

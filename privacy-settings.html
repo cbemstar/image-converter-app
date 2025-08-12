@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Settings - Image Converter</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="/styles/styles.css">
+    <link rel="stylesheet" href="/styles/data-export.css">
+    <link rel="stylesheet" href="/styles/account-deletion.css">
+    
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Configuration -->
+    <script src="/js/env-config.js"></script>
+    <script src="/js/supabase-client.js"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="/" class="text-xl font-bold text-gray-900">Image Converter</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/dashboard.html" class="text-gray-600 hover:text-gray-900">Dashboard</a>
+                    <a href="/profile.html" class="text-gray-600 hover:text-gray-900">Profile</a>
+                    <div id="auth-container"></div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">Privacy Settings</h1>
+            <p class="mt-2 text-gray-600">
+                Manage your personal data and privacy preferences. All actions comply with GDPR requirements.
+            </p>
+        </div>
+
+        <!-- Privacy Overview -->
+        <div class="bg-white rounded-lg shadow-sm border p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Your Privacy Rights</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="privacy-right">
+                    <h3 class="font-medium text-gray-900 mb-2">Right to Access</h3>
+                    <p class="text-sm text-gray-600 mb-3">
+                        You have the right to access all personal data we hold about you.
+                    </p>
+                    <button class="text-blue-600 hover:text-blue-700 text-sm font-medium" onclick="showDataExport()">
+                        Export My Data →
+                    </button>
+                </div>
+                <div class="privacy-right">
+                    <h3 class="font-medium text-gray-900 mb-2">Right to Erasure</h3>
+                    <p class="text-sm text-gray-600 mb-3">
+                        You have the right to request deletion of your personal data.
+                    </p>
+                    <button class="text-red-600 hover:text-red-700 text-sm font-medium" onclick="showAccountDeletion()">
+                        Delete My Account →
+                    </button>
+                </div>
+                <div class="privacy-right">
+                    <h3 class="font-medium text-gray-900 mb-2">Data Processing</h3>
+                    <p class="text-sm text-gray-600">
+                        We process your data only for providing our image conversion services and billing.
+                    </p>
+                </div>
+                <div class="privacy-right">
+                    <h3 class="font-medium text-gray-900 mb-2">Data Retention</h3>
+                    <p class="text-sm text-gray-600">
+                        We retain your data only as long as necessary for service provision and legal requirements.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="bg-white rounded-lg shadow-sm border">
+            <div class="border-b border-gray-200">
+                <nav class="-mb-px flex">
+                    <button 
+                        id="export-tab" 
+                        class="tab-button active py-4 px-6 text-sm font-medium border-b-2 border-blue-500 text-blue-600"
+                        onclick="showTab('export')"
+                    >
+                        Data Export
+                    </button>
+                    <button 
+                        id="deletion-tab" 
+                        class="tab-button py-4 px-6 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                        onclick="showTab('deletion')"
+                    >
+                        Account Deletion
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Data Export Tab -->
+            <div id="export-content" class="tab-content p-6">
+                <div id="data-export-manager"></div>
+            </div>
+
+            <!-- Account Deletion Tab -->
+            <div id="deletion-content" class="tab-content p-6 hidden">
+                <div id="account-deletion-manager"></div>
+            </div>
+        </div>
+
+        <!-- Privacy Policy Link -->
+        <div class="mt-8 text-center">
+            <p class="text-sm text-gray-500">
+                For more information about how we handle your data, please read our 
+                <a href="/privacy-policy.html" class="text-blue-600 hover:text-blue-700">Privacy Policy</a>.
+            </p>
+        </div>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 max-w-sm mx-4">
+            <div class="flex items-center space-x-3">
+                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                <span class="text-gray-700">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/auth-manager.js"></script>
+    <script src="/js/components/DataExportManager.js"></script>
+    <script src="/js/components/AccountDeletionManager.js"></script>
+    
+    <script>
+        // Tab functionality
+        function showTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active', 'border-blue-500', 'text-blue-600')
+                btn.classList.add('border-transparent', 'text-gray-500')
+            })
+            
+            document.getElementById(`${tabName}-tab`).classList.add('active', 'border-blue-500', 'text-blue-600')
+            document.getElementById(`${tabName}-tab`).classList.remove('border-transparent', 'text-gray-500')
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden')
+            })
+            
+            document.getElementById(`${tabName}-content`).classList.remove('hidden')
+            
+            // Initialize managers if needed
+            if (tabName === 'export' && !window.dataExportManager) {
+                window.dataExportManager = new DataExportManager()
+            } else if (tabName === 'deletion' && !window.accountDeletionManager) {
+                window.accountDeletionManager = new AccountDeletionManager()
+            }
+        }
+
+        // Quick navigation functions
+        function showDataExport() {
+            showTab('export')
+        }
+
+        function showAccountDeletion() {
+            showTab('deletion')
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check authentication
+            const { data: { session } } = await window.supabase.auth.getSession()
+            
+            if (!session) {
+                // Redirect to login with callback
+                const callbackUrl = encodeURIComponent(window.location.href)
+                window.location.href = `/auth.html?callback=${callbackUrl}`
+                return
+            }
+
+            // Initialize auth UI
+            if (window.AuthManager) {
+                new AuthManager()
+            }
+
+            // Initialize default tab
+            showTab('export')
+        })
+
+        // Handle auth state changes
+        window.supabase.auth.onAuthStateChange((event, session) => {
+            if (event === 'SIGNED_OUT') {
+                window.location.href = '/'
+            }
+        })
+    </script>
+
+    <style>
+        .privacy-right {
+            padding: 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f9fafb;
+        }
+
+        .tab-button.active {
+            border-bottom-color: #3b82f6 !important;
+            color: #3b82f6 !important;
+        }
+
+        .tab-content {
+            min-height: 400px;
+        }
+    </style>
+</body>
+</html>

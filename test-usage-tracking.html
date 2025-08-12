@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usage Tracking Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 3px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .usage-tracking-widget {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .usage-meter {
+            margin: 10px 0;
+        }
+        .usage-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .usage-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        .usage-fill.green { background-color: #28a745; }
+        .usage-fill.yellow { background-color: #ffc107; }
+        .usage-fill.orange { background-color: #fd7e14; }
+        .usage-fill.red { background-color: #dc3545; }
+        button {
+            padding: 8px 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-warning {
+            background-color: #ffc107;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <h1>Usage Tracking System Test</h1>
+    
+    <div class="test-section">
+        <h2>Authentication Status</h2>
+        <div id="auth-status">Checking authentication...</div>
+        <button onclick="testAuth()" class="btn-primary">Test Auth</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Usage Tracking Functions</h2>
+        <button onclick="testCheckQuota()" class="btn-primary">Check Quota</button>
+        <button onclick="testGetUsage()" class="btn-primary">Get Usage</button>
+        <button onclick="testPeriodInfo()" class="btn-primary">Get Period Info</button>
+        <div id="usage-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Usage Display Widget</h2>
+        <div id="usage-widget"></div>
+        <button onclick="initUsageWidget()" class="btn-success">Initialize Widget</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Image Conversion Test</h2>
+        <input type="file" id="test-file" accept="image/*">
+        <select id="target-format">
+            <option value="png">PNG</option>
+            <option value="jpg">JPG</option>
+            <option value="webp">WebP</option>
+        </select>
+        <button onclick="testImageConversion()" class="btn-warning">Test Conversion</button>
+        <div id="conversion-results"></div>
+    </div>
+
+    <!-- Include Supabase client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Include our usage tracking client -->
+    <script src="js/usage-tracking-client.js"></script>
+
+    <script>
+        // Initialize Supabase client
+        const supabaseUrl = 'YOUR_SUPABASE_URL' // Replace with actual URL
+        const supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY' // Replace with actual key
+        
+        let supabase, usageClient, usageUI;
+
+        // Initialize clients
+        function initClients() {
+            try {
+                supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey)
+                window.supabase = supabase // Make available globally
+                
+                usageClient = new UsageTrackingClient(supabaseUrl, supabaseAnonKey)
+                usageUI = new UsageTrackingUI(usageClient)
+                
+                console.log('Clients initialized successfully')
+                testAuth()
+            } catch (error) {
+                console.error('Error initializing clients:', error)
+                showResult('auth-status', 'Error initializing clients: ' + error.message, false)
+            }
+        }
+
+        // Test authentication
+        async function testAuth() {
+            try {
+                const { data: { session }, error } = await supabase.auth.getSession()
+                
+                if (error) {
+                    showResult('auth-status', 'Auth error: ' + error.message, false)
+                    return
+                }
+                
+                if (session) {
+                    showResult('auth-status', `Authenticated as: ${session.user.email}`, true)
+                } else {
+                    showResult('auth-status', 'Not authenticated. Please sign in first.', false)
+                }
+            } catch (error) {
+                showResult('auth-status', 'Auth test failed: ' + error.message, false)
+            }
+        }
+
+        // Test quota check
+        async function testCheckQuota() {
+            try {
+                const result = await usageClient.checkQuota()
+                showResult('usage-results', `Quota Check: ${JSON.stringify(result, null, 2)}`, result.success)
+            } catch (error) {
+                showResult('usage-results', 'Quota check failed: ' + error.message, false)
+            }
+        }
+
+        // Test get usage
+        async function testGetUsage() {
+            try {
+                const result = await usageClient.getUserUsage()
+                showResult('usage-results', `Usage Info: ${JSON.stringify(result, null, 2)}`, result.success)
+            } catch (error) {
+                showResult('usage-results', 'Get usage failed: ' + error.message, false)
+            }
+        }
+
+        // Test period info
+        async function testPeriodInfo() {
+            try {
+                const result = await usageClient.getPeriodInfo()
+                showResult('usage-results', `Period Info: ${JSON.stringify(result, null, 2)}`, result.success)
+            } catch (error) {
+                showResult('usage-results', 'Get period info failed: ' + error.message, false)
+            }
+        }
+
+        // Initialize usage widget
+        function initUsageWidget() {
+            try {
+                usageUI.init('#usage-widget')
+                showResult('usage-results', 'Usage widget initialized successfully', true)
+            } catch (error) {
+                showResult('usage-results', 'Widget initialization failed: ' + error.message, false)
+            }
+        }
+
+        // Test image conversion
+        async function testImageConversion() {
+            const fileInput = document.getElementById('test-file')
+            const formatSelect = document.getElementById('target-format')
+            
+            if (!fileInput.files[0]) {
+                showResult('conversion-results', 'Please select a file first', false)
+                return
+            }
+
+            try {
+                const file = fileInput.files[0]
+                const targetFormat = formatSelect.value
+                
+                const result = await usageClient.convertImage(file, {
+                    target_format: targetFormat,
+                    quality: 90
+                })
+                
+                if (result.success) {
+                    showResult('conversion-results', 
+                        `Conversion successful! File size: ${result.file_size} bytes, ` +
+                        `Processing time: ${result.processing_time}ms, ` +
+                        `Remaining quota: ${result.remaining_quota}`, true)
+                    
+                    // Create download link
+                    const downloadLink = document.createElement('a')
+                    downloadLink.href = result.download_url
+                    downloadLink.download = result.filename
+                    downloadLink.textContent = 'Download converted file'
+                    downloadLink.style.display = 'block'
+                    downloadLink.style.marginTop = '10px'
+                    
+                    const resultsDiv = document.getElementById('conversion-results')
+                    resultsDiv.appendChild(downloadLink)
+                } else {
+                    showResult('conversion-results', `Conversion failed: ${result.error}`, false)
+                }
+            } catch (error) {
+                showResult('conversion-results', 'Conversion test failed: ' + error.message, false)
+            }
+        }
+
+        // Helper function to show results
+        function showResult(containerId, message, success) {
+            const container = document.getElementById(containerId)
+            const resultDiv = document.createElement('div')
+            resultDiv.className = `test-result ${success ? 'success' : 'error'}`
+            resultDiv.textContent = message
+            
+            // Clear previous results
+            container.innerHTML = ''
+            container.appendChild(resultDiv)
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if we have the required environment variables
+            if (supabaseUrl === 'YOUR_SUPABASE_URL' || supabaseAnonKey === 'YOUR_SUPABASE_ANON_KEY') {
+                showResult('auth-status', 'Please update the Supabase URL and API key in the script', false)
+                return
+            }
+            
+            initClients()
+        })
+
+        // Add refresh function to global scope for the widget
+        window.refreshUsage = function() {
+            if (usageUI) {
+                usageUI.refreshUsage()
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Billing Management</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/billing.css">
+    <style>
+        .test-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .test-section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #f8fafc;
+        }
+        
+        .test-section h3 {
+            margin: 0 0 1rem 0;
+            color: #1e293b;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .status-message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: none;
+        }
+        
+        .status-message.success {
+            background: #ecfdf5;
+            border: 1px solid #10b981;
+            color: #065f46;
+        }
+        
+        .status-message.error {
+            background: #fef2f2;
+            border: 1px solid #ef4444;
+            color: #991b1b;
+        }
+        
+        .status-message.info {
+            background: #eff6ff;
+            border: 1px solid #3b82f6;
+            color: #1e40af;
+        }
+        
+        .auth-status {
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .test-actions {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+        
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+        
+        .btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+        
+        @media (max-width: 768px) {
+            .test-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">
+                        <a href="index.html">
+                            <h1>Image Converter</h1>
+                        </a>
+                    </div>
+                    <nav class="nav" id="main-nav">
+                        <!-- Navigation will be populated by JavaScript -->
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <div class="test-container">
+                    <h2>Test Billing Management & Customer Portal</h2>
+                    <p>This page tests the billing management UI and Customer Portal integration with return URL configuration.</p>
+                    
+                    <!-- Auth Status -->
+                    <div class="auth-status">
+                        <h3>Authentication Status</h3>
+                        <p id="auth-status">Checking authentication...</p>
+                        <button id="sign-in-btn" class="btn btn-primary" style="display: none;">Sign In</button>
+                    </div>
+                    
+                    <!-- Status Messages -->
+                    <div id="status-message" class="status-message"></div>
+                    
+                    <!-- Test Grid -->
+                    <div class="test-grid">
+                        <!-- Billing UI Test -->
+                        <div class="test-section">
+                            <h3>Billing Management UI</h3>
+                            <p>Test the full billing management interface:</p>
+                            <div id="billing-ui-container">
+                                <!-- Billing UI will be rendered here -->
+                            </div>
+                            <div class="test-actions">
+                                <button id="refresh-billing-btn" class="btn btn-secondary">
+                                    Refresh Billing Data
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Billing Widget Test -->
+                        <div class="test-section">
+                            <h3>Billing Widget (Compact)</h3>
+                            <p>Test the compact billing widget:</p>
+                            <div id="billing-widget-container">
+                                <!-- Billing widget will be rendered here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Customer Portal Test -->
+                    <div class="test-section">
+                        <h3>Customer Portal Integration</h3>
+                        <p>Test Customer Portal access with return URL configuration:</p>
+                        
+                        <div class="test-actions">
+                            <button id="open-portal-btn" class="btn btn-primary">
+                                Open Customer Portal
+                            </button>
+                            <button id="open-portal-custom-btn" class="btn btn-secondary">
+                                Open Portal (Custom Return URL)
+                            </button>
+                        </div>
+                        
+                        <div style="margin-top: 1rem; padding: 1rem; background: #fef3c7; border-radius: 8px;">
+                            <h4>Test Information</h4>
+                            <p><strong>Current URL:</strong> <span id="current-url"></span></p>
+                            <p><strong>Return URL:</strong> <span id="return-url"></span></p>
+                            <p><strong>Note:</strong> Customer Portal requires an active subscription.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Subscription Status -->
+                    <div class="test-section">
+                        <h3>Current Subscription Status</h3>
+                        <div id="subscription-status">
+                            <p>Loading subscription status...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <p>&copy; 2024 Image Converter. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/env-config.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/auth-manager.js"></script>
+    <script src="js/profile-manager.js"></script>
+    <script src="js/quota-manager.js"></script>
+    <script src="js/stripe-manager.js"></script>
+    <script src="js/stripe-checkout-handler.js"></script>
+    <script src="js/billing-management.js"></script>
+    <script src="js/unified-navigation.js"></script>
+    
+    <script>
+        class BillingTestPage {
+            constructor() {
+                this.authManager = null;
+                this.billingManager = null;
+                this.isProcessing = false;
+                
+                this.init();
+            }
+            
+            async init() {
+                try {
+                    // Display current URL info
+                    document.getElementById('current-url').textContent = window.location.href;
+                    document.getElementById('return-url').textContent = this.getReturnUrl();
+                    
+                    // Wait for dependencies
+                    await this.waitForDependencies();
+                    
+                    // Set up auth status
+                    this.setupAuthStatus();
+                    
+                    // Set up test buttons
+                    this.setupTestButtons();
+                    
+                    // Initialize billing UI
+                    this.initializeBillingUI();
+                    
+                    // Check for portal return
+                    this.checkPortalReturn();
+                    
+                } catch (error) {
+                    console.error('Test page initialization error:', error);
+                    this.showMessage('Failed to initialize test page: ' + error.message, 'error');
+                }
+            }
+            
+            async waitForDependencies() {
+                return new Promise((resolve) => {
+                    const checkDependencies = () => {
+                        if (window.authManager && window.billingManager) {
+                            this.authManager = window.authManager;
+                            this.billingManager = window.billingManager;
+                            resolve();
+                        } else {
+                            setTimeout(checkDependencies, 100);
+                        }
+                    };
+                    checkDependencies();
+                });
+            }
+            
+            setupAuthStatus() {
+                const user = this.authManager.getCurrentUser();
+                const statusElement = document.getElementById('auth-status');
+                const signInBtn = document.getElementById('sign-in-btn');
+                
+                if (user) {
+                    statusElement.textContent = `Signed in as: ${user.email}`;
+                    signInBtn.style.display = 'none';
+                } else {
+                    statusElement.textContent = 'Not signed in. Please sign in to test billing features.';
+                    signInBtn.style.display = 'inline-block';
+                    signInBtn.onclick = () => this.signIn();
+                }
+                
+                // Listen for auth changes
+                this.authManager.addAuthStateListener((event, session) => {
+                    if (event === 'SIGNED_IN') {
+                        statusElement.textContent = `Signed in as: ${session.user.email}`;
+                        signInBtn.style.display = 'none';
+                        this.initializeBillingUI();
+                        this.updateSubscriptionStatus();
+                    } else if (event === 'SIGNED_OUT') {
+                        statusElement.textContent = 'Not signed in. Please sign in to test billing features.';
+                        signInBtn.style.display = 'inline-block';
+                        this.clearBillingUI();
+                    }
+                });
+            }
+            
+            setupTestButtons() {
+                // Refresh billing button
+                document.getElementById('refresh-billing-btn').addEventListener('click', () => {
+                    this.refreshBillingData();
+                });
+                
+                // Open portal buttons
+                document.getElementById('open-portal-btn').addEventListener('click', () => {
+                    this.openCustomerPortal();
+                });
+                
+                document.getElementById('open-portal-custom-btn').addEventListener('click', () => {
+                    this.openCustomerPortalCustom();
+                });
+            }
+            
+            async initializeBillingUI() {
+                if (!this.authManager.getCurrentUser()) {
+                    return;
+                }
+                
+                try {
+                    // Create billing UI
+                    this.billingManager.createBillingUI('billing-ui-container');
+                    
+                    // Create billing widget
+                    this.billingManager.createBillingWidget('billing-widget-container');
+                    
+                    // Update subscription status
+                    this.updateSubscriptionStatus();
+                    
+                    // Listen for billing events
+                    this.billingManager.addListener((event, data) => {
+                        this.handleBillingEvent(event, data);
+                    });
+                    
+                } catch (error) {
+                    console.error('Error initializing billing UI:', error);
+                    this.showMessage('Failed to initialize billing UI: ' + error.message, 'error');
+                }
+            }
+            
+            clearBillingUI() {
+                document.getElementById('billing-ui-container').innerHTML = '<p>Please sign in to view billing information.</p>';
+                document.getElementById('billing-widget-container').innerHTML = '<p>Sign in required</p>';
+                document.getElementById('subscription-status').innerHTML = '<p>Please sign in to view subscription status.</p>';
+            }
+            
+            async refreshBillingData() {
+                try {
+                    this.showMessage('Refreshing billing data...', 'info');
+                    
+                    // Reload billing data
+                    await this.billingManager.loadSubscriptionData();
+                    
+                    // Recreate UI
+                    this.initializeBillingUI();
+                    
+                    this.showMessage('Billing data refreshed successfully', 'success');
+                    
+                } catch (error) {
+                    console.error('Error refreshing billing data:', error);
+                    this.showMessage('Failed to refresh billing data: ' + error.message, 'error');
+                }
+            }
+            
+            async openCustomerPortal() {
+                if (this.isProcessing) return;
+                
+                try {
+                    this.isProcessing = true;
+                    this.showMessage('Opening Customer Portal...', 'info');
+                    
+                    await this.billingManager.openCustomerPortal({
+                        returnUrl: window.location.href
+                    });
+                    
+                } catch (error) {
+                    console.error('Error opening Customer Portal:', error);
+                    this.showMessage('Failed to open Customer Portal: ' + error.message, 'error');
+                    this.isProcessing = false;
+                }
+            }
+            
+            async openCustomerPortalCustom() {
+                if (this.isProcessing) return;
+                
+                try {
+                    this.isProcessing = true;
+                    this.showMessage('Opening Customer Portal with custom return URL...', 'info');
+                    
+                    const customReturnUrl = `${window.location.href}?portal_test=custom&timestamp=${Date.now()}`;
+                    
+                    await this.billingManager.openCustomerPortal({
+                        returnUrl: customReturnUrl
+                    });
+                    
+                } catch (error) {
+                    console.error('Error opening Customer Portal:', error);
+                    this.showMessage('Failed to open Customer Portal: ' + error.message, 'error');
+                    this.isProcessing = false;
+                }
+            }
+            
+            updateSubscriptionStatus() {
+                const status = this.billingManager.getSubscriptionStatus();
+                const statusContainer = document.getElementById('subscription-status');
+                
+                statusContainer.innerHTML = `
+                    <div class="subscription-info">
+                        <div class="detail-row">
+                            <span class="detail-label">Plan:</span>
+                            <span class="detail-value">${status.plan}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Status:</span>
+                            <span class="detail-value">${status.status}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Has Active Subscription:</span>
+                            <span class="detail-value">${status.hasActiveSubscription ? 'Yes' : 'No'}</span>
+                        </div>
+                        ${status.currentPeriodEnd ? `
+                            <div class="detail-row">
+                                <span class="detail-label">Current Period End:</span>
+                                <span class="detail-value">${new Date(status.currentPeriodEnd).toLocaleDateString()}</span>
+                            </div>
+                        ` : ''}
+                        ${status.cancelAtPeriodEnd ? `
+                            <div class="detail-row">
+                                <span class="detail-label">Cancel at Period End:</span>
+                                <span class="detail-value warning">Yes</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+            
+            handleBillingEvent(event, data) {
+                console.log('Billing event:', event, data);
+                
+                switch (event) {
+                    case 'portal_opening':
+                        this.showMessage('Opening Customer Portal...', 'info');
+                        break;
+                    case 'portal_error':
+                        this.showMessage(`Portal error: ${data.error}`, 'error');
+                        this.isProcessing = false;
+                        break;
+                    case 'upgrade_started':
+                        this.showMessage(`Starting upgrade to ${data.planId}...`, 'info');
+                        break;
+                    case 'upgrade_error':
+                        this.showMessage(`Upgrade error: ${data.error}`, 'error');
+                        break;
+                    case 'subscription_loaded':
+                        this.updateSubscriptionStatus();
+                        break;
+                }
+            }
+            
+            checkPortalReturn() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const portalStatus = urlParams.get('portal');
+                const portalTest = urlParams.get('portal_test');
+                
+                if (portalStatus === 'updated') {
+                    this.showMessage('Welcome back from Customer Portal! Your billing information has been updated.', 'success');
+                    
+                    if (portalTest === 'custom') {
+                        this.showMessage('Custom return URL test successful!', 'info');
+                    }
+                    
+                    // Clean up URL
+                    this.cleanupUrl();
+                    
+                    // Refresh billing data
+                    setTimeout(() => {
+                        this.refreshBillingData();
+                    }, 1000);
+                }
+            }
+            
+            async signIn() {
+                try {
+                    const callbackUrl = encodeURIComponent(window.location.href);
+                    window.location.href = `auth.html?callback=${callbackUrl}`;
+                } catch (error) {
+                    console.error('Sign in error:', error);
+                    this.showMessage('Sign in failed: ' + error.message, 'error');
+                }
+            }
+            
+            getReturnUrl() {
+                try {
+                    const url = new URL(window.location);
+                    url.searchParams.delete('portal');
+                    url.searchParams.delete('portal_test');
+                    url.searchParams.delete('timestamp');
+                    return url.toString();
+                } catch (error) {
+                    return window.location.href;
+                }
+            }
+            
+            cleanupUrl() {
+                try {
+                    const url = new URL(window.location);
+                    url.searchParams.delete('portal');
+                    url.searchParams.delete('portal_test');
+                    url.searchParams.delete('timestamp');
+                    
+                    window.history.replaceState({}, document.title, url.toString());
+                } catch (error) {
+                    console.error('Error cleaning up URL:', error);
+                }
+            }
+            
+            showMessage(message, type) {
+                const messageElement = document.getElementById('status-message');
+                messageElement.textContent = message;
+                messageElement.className = `status-message ${type}`;
+                messageElement.style.display = 'block';
+                
+                if (type === 'success' || type === 'info') {
+                    setTimeout(() => {
+                        messageElement.style.display = 'none';
+                    }, 5000);
+                }
+            }
+        }
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new BillingTestPage();
+        });
+    </script>
+</body>
+</html>

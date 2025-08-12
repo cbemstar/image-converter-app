@@ -1,0 +1,134 @@
+# Production Supabase Configuration
+# This file contains production-specific settings for Supabase
+
+project_id = "image-converter-app-prod"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+[realtime]
+enabled = true
+
+[studio]
+enabled = false  # Disable studio in production for security
+
+[inbucket]
+enabled = false  # Disable email testing in production
+
+[storage]
+enabled = true
+file_size_limit = "250MiB"  # Increased for production
+
+[auth]
+enabled = true
+# Production site URL - MUST be updated with your actual domain
+site_url = "https://your-production-domain.com"
+# Production redirect URLs - MUST be updated with your actual domain
+additional_redirect_urls = [
+  "https://your-production-domain.com",
+  "https://your-production-domain.com/auth",
+  "https://your-production-domain.com/tools/image-converter"
+]
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+refresh_token_reuse_interval = 10
+enable_signup = true
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = true  # Enable email confirmations in production
+
+[auth.sms]
+enable_signup = false  # Disable SMS signup in production unless needed
+enable_confirmations = false
+
+# Production OAuth Providers
+[auth.external.github]
+enabled = true
+client_id = "env(SUPABASE_AUTH_EXTERNAL_GITHUB_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_GITHUB_SECRET)"
+redirect_uri = ""
+url = ""
+
+[auth.external.google]
+enabled = true
+client_id = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
+redirect_uri = ""
+url = ""
+
+# Disable other OAuth providers in production unless needed
+[auth.external.apple]
+enabled = false
+
+[auth.external.azure]
+enabled = false
+
+[auth.external.bitbucket]
+enabled = false
+
+[auth.external.discord]
+enabled = false
+
+[auth.external.facebook]
+enabled = false
+
+[auth.external.gitlab]
+enabled = false
+
+[auth.external.keycloak]
+enabled = false
+
+[auth.external.linkedin]
+enabled = false
+
+[auth.external.notion]
+enabled = false
+
+[auth.external.twitch]
+enabled = false
+
+[auth.external.twitter]
+enabled = false
+
+[auth.external.slack]
+enabled = false
+
+[auth.external.spotify]
+enabled = false
+
+[auth.external.workos]
+enabled = false
+
+[auth.external.zoom]
+enabled = false
+
+[edge_runtime]
+enabled = true
+# Use per_worker for production load handling
+policy = "per_worker"
+inspector_port = 8083
+
+[analytics]
+enabled = true  # Enable analytics in production
+port = 54327
+vector_port = 54328
+backend = "postgres"
+
+# Production experimental features
+[experimental]
+# Configure read replicas if needed for scaling
+# [experimental.read_replicas.database]
+# [experimental.read_replicas.database.aws_rds]
+# enabled = false
+# connection_string = "env(SUPABASE_READ_REPLICA_CONNECTION_STRING)"

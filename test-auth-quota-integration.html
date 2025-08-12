@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication Guards and Quota Integration Test</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/quota-integration.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .test-section {
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .test-result.success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid #10b981;
+            color: #10b981;
+        }
+        .test-result.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+        }
+        .test-result.info {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid #3b82f6;
+            color: #3b82f6;
+        }
+        .test-button {
+            background: var(--primary);
+            color: var(--background);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body class="bg-background text-foreground">
+    <div class="container mx-auto p-6">
+        <h1 class="text-3xl font-bold mb-6">Authentication Guards and Quota Integration Test</h1>
+        
+        <!-- Guest Usage Test -->
+        <div class="test-section">
+            <h2 class="text-xl font-semibold mb-4">Guest Usage Management</h2>
+            <div id="guest-usage-display" class="usage-display guest">
+                <div class="usage-text">
+                    <span class="usage-count">Loading...</span>
+                    <span class="usage-label">guest conversions remaining</span>
+                </div>
+                <div class="usage-bar">
+                    <div class="usage-fill normal" style="width: 0%"></div>
+                </div>
+            </div>
+            <button class="test-button" onclick="testGuestUsage()">Test Guest Usage</button>
+            <button class="test-button" onclick="simulateGuestConversion()">Simulate Conversion</button>
+            <button class="test-button" onclick="resetGuestUsage()">Reset Guest Usage</button>
+            <div id="guest-test-results"></div>
+        </div>
+
+        <!-- Plan Limits Test -->
+        <div class="test-section">
+            <h2 class="text-xl font-semibold mb-4">Plan Limits</h2>
+            <button class="test-button" onclick="testPlanLimits()">Test Plan Limits</button>
+            <div id="plan-limits-results"></div>
+        </div>
+
+        <!-- File Size Validation Test -->
+        <div class="test-section">
+            <h2 class="text-xl font-semibold mb-4">File Size Validation</h2>
+            <input type="file" id="test-file-input" accept="image/*" multiple>
+            <button class="test-button" onclick="testFileSizeValidation()">Test File Size Validation</button>
+            <div id="file-size-results"></div>
+        </div>
+
+        <!-- Quota Check Simulation -->
+        <div class="test-section">
+            <h2 class="text-xl font-semibold mb-4">Quota Check Simulation</h2>
+            <label>
+                Files to convert: 
+                <input type="number" id="files-count" value="1" min="1" max="10" style="width: 60px; padding: 4px; margin: 0 8px;">
+            </label>
+            <button class="test-button" onclick="simulateQuotaCheck()">Check Quota</button>
+            <div id="quota-check-results"></div>
+        </div>
+
+        <!-- Upgrade Prompt Test -->
+        <div class="test-section">
+            <h2 class="text-xl font-semibold mb-4">Upgrade Prompts</h2>
+            <button class="test-button" onclick="showGuestUpgradePrompt()">Show Guest Upgrade</button>
+            <button class="test-button" onclick="showAuthUpgradePrompt()">Show Auth Upgrade</button>
+            <div id="upgrade-prompt-results"></div>
+        </div>
+    </div>
+
+    <script>
+        // Mock authentication state
+        let isAuthenticated = false;
+        let currentPlan = 'guest';
+        
+        // Guest usage management functions
+        function getGuestUsageFromStorage() {
+            const stored = localStorage.getItem('guestImageQuota');
+            const now = Date.now();
+            const oneDay = 24 * 60 * 60 * 1000;
+            
+            let guestData;
+            
+            if (stored) {
+                try {
+                    guestData = JSON.parse(stored);
+                    
+                    // Reset daily if more than 24 hours have passed
+                    if (now - guestData.lastReset > oneDay) {
+                        guestData = { used: 0, lastReset: now };
+                        localStorage.setItem('guestImageQuota', JSON.stringify(guestData));
+                    }
+                } catch (error) {
+                    guestData = { used: 0, lastReset: now };
+                    localStorage.setItem('guestImageQuota', JSON.stringify(guestData));
+                }
+            } else {
+                guestData = { used: 0, lastReset: now };
+                localStorage.setItem('guestImageQuota', JSON.stringify(guestData));
+            }
+
+            return guestData;
+        }
+
+        function updateGuestUsage(increment = 1) {
+            const current = getGuestUsageFromStorage();
+            const newUsage = {
+                used: current.used + increment,
+                lastReset: current.lastReset
+            };
+            
+            localStorage.setItem('guestImageQuota', JSON.stringify(newUsage));
+            return newUsage;
+        }
+
+        function getPlanLimits(planName) {
+            const limits = {
+                guest: {
+                    maxFileSize: 25 * 1024 * 1024, // 25MB
+                    monthlyConversions: 3
+                },
+                free: {
+                    maxFileSize: 25 * 1024 * 1024, // 25MB
+                    monthlyConversions: 10
+                },
+                pro: {
+                    maxFileSize: 100 * 1024 * 1024, // 100MB
+                    monthlyConversions: 1000
+                },
+                unlimited: {
+                    maxFileSize: 250 * 1024 * 1024, // 250MB
+                    monthlyConversions: -1 // Unlimited
+                }
+            };
+
+            const plan = planName ? planName.toLowerCase() : 'free';
+            return limits[plan] || limits.free;
+        }
+
+        function checkGuestQuota(requestedCount) {
+            const guestUsage = getGuestUsageFromStorage();
+            const remaining = Math.max(0, 3 - guestUsage.used);
+            
+            return {
+                allowed: remaining >= requestedCount,
+                error: remaining < requestedCount ? 'QUOTA_EXCEEDED' : null,
+                message: remaining < requestedCount ? 'Guest users can convert up to 3 images. Sign in for more conversions.' : null,
+                remaining: remaining,
+                maxFileSize: 25 * 1024 * 1024,
+                isGuest: true,
+                plan: 'guest'
+            };
+        }
+
+        function updateGuestUsageDisplay() {
+            const usage = getGuestUsageFromStorage();
+            const remaining = Math.max(0, 3 - usage.used);
+            const percentage = (usage.used / 3) * 100;
+            
+            const display = document.getElementById('guest-usage-display');
+            const countElement = display.querySelector('.usage-count');
+            const fillElement = display.querySelector('.usage-fill');
+            
+            countElement.textContent = `${remaining} of 3`;
+            fillElement.style.width = `${percentage}%`;
+            
+            if (percentage >= 100) {
+                fillElement.className = 'usage-fill critical';
+            } else if (percentage >= 66) {
+                fillElement.className = 'usage-fill warning';
+            } else {
+                fillElement.className = 'usage-fill normal';
+            }
+        }
+
+        function addTestResult(containerId, message, type = 'info') {
+            const container = document.getElementById(containerId);
+            const result = document.createElement('div');
+            result.className = `test-result ${type}`;
+            result.textContent = message;
+            container.appendChild(result);
+        }
+
+        function clearTestResults(containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+        }
+
+        // Test functions
+        function testGuestUsage() {
+            clearTestResults('guest-test-results');
+            
+            const usage = getGuestUsageFromStorage();
+            addTestResult('guest-test-results', `Current guest usage: ${usage.used}/3`, 'info');
+            addTestResult('guest-test-results', `Last reset: ${new Date(usage.lastReset).toLocaleString()}`, 'info');
+            
+            const quotaCheck = checkGuestQuota(1);
+            addTestResult('guest-test-results', `Can convert 1 image: ${quotaCheck.allowed}`, quotaCheck.allowed ? 'success' : 'error');
+            addTestResult('guest-test-results', `Remaining quota: ${quotaCheck.remaining}`, 'info');
+            
+            updateGuestUsageDisplay();
+        }
+
+        function simulateGuestConversion() {
+            clearTestResults('guest-test-results');
+            
+            const quotaCheck = checkGuestQuota(1);
+            if (quotaCheck.allowed) {
+                updateGuestUsage(1);
+                addTestResult('guest-test-results', 'Conversion simulated successfully!', 'success');
+            } else {
+                addTestResult('guest-test-results', 'Conversion blocked: ' + quotaCheck.message, 'error');
+            }
+            
+            updateGuestUsageDisplay();
+        }
+
+        function resetGuestUsage() {
+            localStorage.removeItem('guestImageQuota');
+            addTestResult('guest-test-results', 'Guest usage reset!', 'success');
+            updateGuestUsageDisplay();
+        }
+
+        function testPlanLimits() {
+            clearTestResults('plan-limits-results');
+            
+            const plans = ['guest', 'free', 'pro', 'unlimited'];
+            plans.forEach(plan => {
+                const limits = getPlanLimits(plan);
+                const maxSizeMB = Math.round(limits.maxFileSize / (1024 * 1024));
+                const conversions = limits.monthlyConversions === -1 ? 'Unlimited' : limits.monthlyConversions;
+                
+                addTestResult('plan-limits-results', 
+                    `${plan.toUpperCase()}: ${maxSizeMB}MB max file, ${conversions} conversions/month`, 
+                    'info'
+                );
+            });
+        }
+
+        function testFileSizeValidation() {
+            clearTestResults('file-size-results');
+            
+            const fileInput = document.getElementById('test-file-input');
+            const files = fileInput.files;
+            
+            if (files.length === 0) {
+                addTestResult('file-size-results', 'Please select files to test', 'error');
+                return;
+            }
+            
+            const planLimits = getPlanLimits(currentPlan);
+            
+            Array.from(files).forEach(file => {
+                const fileSizeMB = Math.round(file.size / (1024 * 1024));
+                const maxSizeMB = Math.round(planLimits.maxFileSize / (1024 * 1024));
+                const valid = file.size <= planLimits.maxFileSize;
+                
+                addTestResult('file-size-results', 
+                    `${file.name}: ${fileSizeMB}MB (max: ${maxSizeMB}MB) - ${valid ? 'VALID' : 'TOO LARGE'}`, 
+                    valid ? 'success' : 'error'
+                );
+            });
+        }
+
+        function simulateQuotaCheck() {
+            clearTestResults('quota-check-results');
+            
+            const filesCount = parseInt(document.getElementById('files-count').value);
+            const quotaCheck = checkGuestQuota(filesCount);
+            
+            addTestResult('quota-check-results', `Checking quota for ${filesCount} files...`, 'info');
+            addTestResult('quota-check-results', `Result: ${quotaCheck.allowed ? 'ALLOWED' : 'DENIED'}`, 
+                quotaCheck.allowed ? 'success' : 'error');
+            
+            if (!quotaCheck.allowed) {
+                addTestResult('quota-check-results', `Error: ${quotaCheck.error}`, 'error');
+                addTestResult('quota-check-results', `Message: ${quotaCheck.message}`, 'error');
+            }
+            
+            addTestResult('quota-check-results', `Remaining quota: ${quotaCheck.remaining}`, 'info');
+        }
+
+        function createUpgradeModal(config) {
+            const modal = document.createElement('div');
+            modal.className = 'upgrade-modal-overlay';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.7);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+            `;
+
+            modal.innerHTML = `
+                <div class="upgrade-modal" style="
+                    background: var(--background);
+                    border: 2px solid var(--foreground);
+                    border-radius: 12px;
+                    padding: 24px;
+                    max-width: 400px;
+                    width: 90%;
+                    text-align: center;
+                ">
+                    <h3 style="color: var(--foreground); margin-bottom: 16px;">${config.title}</h3>
+                    <p style="color: var(--foreground); margin-bottom: 24px; line-height: 1.5;">${config.message}</p>
+                    <div class="modal-actions" style="display: flex; gap: 12px; justify-content: center;">
+                        <button class="test-button primary-action">${config.primaryAction.text}</button>
+                        ${config.secondaryAction ? `<button class="test-button secondary-action">${config.secondaryAction.text}</button>` : ''}
+                        <button class="test-button close-modal">Close</button>
+                    </div>
+                </div>
+            `;
+
+            // Add event listeners
+            modal.querySelector('.primary-action').addEventListener('click', () => {
+                config.primaryAction.action();
+                modal.remove();
+            });
+
+            if (config.secondaryAction) {
+                modal.querySelector('.secondary-action').addEventListener('click', () => {
+                    config.secondaryAction.action();
+                    modal.remove();
+                });
+            }
+
+            modal.querySelector('.close-modal').addEventListener('click', () => {
+                modal.remove();
+            });
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+
+            return modal;
+        }
+
+        function showGuestUpgradePrompt() {
+            clearTestResults('upgrade-prompt-results');
+            
+            const modal = createUpgradeModal({
+                title: 'Sign In for More Conversions',
+                message: 'Guest users can convert up to 3 images per day. Sign in to get 10 free conversions per month and access to premium plans.',
+                primaryAction: {
+                    text: 'Sign In',
+                    action: () => addTestResult('upgrade-prompt-results', 'Sign In clicked!', 'success')
+                },
+                secondaryAction: {
+                    text: 'View Plans',
+                    action: () => addTestResult('upgrade-prompt-results', 'View Plans clicked!', 'info')
+                }
+            });
+            
+            document.body.appendChild(modal);
+        }
+
+        function showAuthUpgradePrompt() {
+            clearTestResults('upgrade-prompt-results');
+            
+            const modal = createUpgradeModal({
+                title: 'Upgrade to Pro',
+                message: 'You\'ve used all your free conversions this month. Upgrade to Pro for 1,000 conversions per month.',
+                primaryAction: {
+                    text: 'Upgrade Now',
+                    action: () => addTestResult('upgrade-prompt-results', 'Upgrade Now clicked!', 'success')
+                },
+                secondaryAction: {
+                    text: 'Manage Billing',
+                    action: () => addTestResult('upgrade-prompt-results', 'Manage Billing clicked!', 'info')
+                }
+            });
+            
+            document.body.appendChild(modal);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateGuestUsageDisplay();
+            testGuestUsage();
+        });
+    </script>
+</body>
+</html>

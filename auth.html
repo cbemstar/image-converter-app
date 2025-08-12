@@ -192,9 +192,9 @@
                 debug(`Session check: ${data.session ? 'Active session' : 'No session'}`);
 
                 if (data.session) {
-                    showMessage(`Welcome back, ${data.session.user.email}! You're already signed in. Redirecting to homepage...`, 'success');
+                    showMessage(`Welcome back, ${data.session.user.email}! You're already signed in. Redirecting...`, 'success');
                     setTimeout(() => {
-                        window.location.href = 'index.html';
+                        handleAuthRedirect();
                     }, 2000);
                 }
 
@@ -248,7 +248,7 @@
                 showMessage('Sign in successful! Redirecting...', 'success');
 
                 setTimeout(() => {
-                    window.location.href = 'index.html';
+                    handleAuthRedirect();
                 }, 2000);
 
             } catch (error) {
@@ -301,7 +301,7 @@
                 } else {
                     showMessage('Account created! Redirecting...', 'success');
                     setTimeout(() => {
-                        window.location.href = 'index.html';
+                        handleAuthRedirect();
                     }, 2000);
                 }
 
@@ -322,7 +322,7 @@
                 const { data, error } = await supabase.auth.signInWithOAuth({
                     provider: 'google',
                     options: {
-                        redirectTo: `${window.location.origin}/index.html`
+                        redirectTo: `${window.location.origin}/auth.html`
                     }
                 });
 
@@ -344,7 +344,7 @@
                 const { data, error } = await supabase.auth.signInWithOAuth({
                     provider: 'github',
                     options: {
-                        redirectTo: `${window.location.origin}/index.html`
+                        redirectTo: `${window.location.origin}/auth.html`
                     }
                 });
 
@@ -358,6 +358,34 @@
             }
         };
 
+        // Handle authentication redirect after successful login
+        function handleAuthRedirect() {
+            // Check if there's a stored redirect URL from the original page
+            const redirectUrl = sessionStorage.getItem('auth_redirect');
+            
+            if (redirectUrl && redirectUrl !== window.location.href) {
+                // Clear the redirect URL first
+                sessionStorage.removeItem('auth_redirect');
+                
+                debug(`Redirecting back to original page: ${redirectUrl}`);
+                window.location.href = redirectUrl;
+                
+            } else {
+                // Check URL parameters for redirect
+                const urlParams = new URLSearchParams(window.location.search);
+                const returnTo = urlParams.get('returnTo');
+                
+                if (returnTo) {
+                    debug(`Redirecting to returnTo parameter: ${returnTo}`);
+                    window.location.href = decodeURIComponent(returnTo);
+                } else {
+                    // Default to homepage
+                    debug('No redirect URL found, going to homepage');
+                    window.location.href = 'index.html';
+                }
+            }
+        }
+
         // Handle authentication callback
         function handleAuthCallback() {
             const hashParams = new URLSearchParams(window.location.hash.substring(1));
@@ -367,14 +395,14 @@
 
             if (accessToken) {
                 debug(`Auth callback detected: ${type}`);
-                showMessage('Authentication successful! Redirecting to homepage...', 'success');
+                showMessage('Authentication successful! Redirecting...', 'success');
 
                 // Clear the hash from URL
                 window.history.replaceState({}, document.title, window.location.pathname);
 
-                // Redirect to homepage after a short delay
+                // Redirect back to original page after a short delay
                 setTimeout(() => {
-                    window.location.href = 'index.html';
+                    handleAuthRedirect();
                 }, 2000);
 
                 return true;

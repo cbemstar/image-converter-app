@@ -1,5 +1,7 @@
 // core.js - Main application logic for image converter
 
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
 import { 
   showNotification, 
   showError, 
@@ -31,10 +33,755 @@ import {
 let _selectedFiles = [];
 window._selectedFiles = _selectedFiles; // Expose to window for other modules
 
+// Authentication variables
+let supabase = null;
+let authManager = null;
+let usageTracker = null;
+let quotaManager = null;
+let stripeManager = null;
+
 // Sanitize filenames to prevent XSS
 function sanitizeFilename(name) {
   return name.replace(/[<>&"'`]/g, '');
 }
+
+// Initialize Supabase client and authentication
+async function initializeAuth() {
+  try {
+    // Wait for public config to be loaded
+    if (!window.PUBLIC_ENV) {
+      console.log('Waiting for public config...');
+      await new Promise(resolve => {
+        const checkConfig = () => {
+          if (window.PUBLIC_ENV) {
+            resolve();
+          } else {
+            setTimeout(checkConfig, 100);
+          }
+        };
+        checkConfig();
+      });
+    }
+
+    console.log('Initializing Supabase client...');
+    
+    // Create Supabase client
+    supabase = createClient(
+      window.PUBLIC_ENV.SUPABASE_URL,
+      window.PUBLIC_ENV.SUPABASE_ANON_KEY,
+      {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true
+        }
+      }
+    );
+
+    // Make supabase client available globally
+    window.supabaseClient = { getClient: () => supabase };
+
+    // Initialize AuthManager if available
+    if (window.AuthManager) {
+      authManager = new window.AuthManager(window.supabaseClient);
+      window.authManager = authManager;
+    } else {
+      // Fallback: create basic auth management
+      setupBasicAuthManagement();
+    }
+
+    // Initialize usage tracking and quota management
+    await initializeQuotaSystem();
+
+    console.log('✅ Authentication initialized successfully');
+
+  } catch (error) {
+    console.error('❌ Authentication initialization failed:', error);
+    // Continue without auth - app should still work for anonymous users
+  }
+}
+
+// Initialize quota and usage tracking system
+async function initializeQuotaSystem() {
+  try {
+    // Initialize usage tracker
+    if (window.usageTracker) {
+      usageTracker = window.usageTracker;
+    } else if (window.useUsage) {
+      const { usageTracker: tracker } = window.useUsage();
+      usageTracker = tracker;
+    }
+
+    // Initialize quota manager
+    if (window.quotaManager) {
+      quotaManager = window.quotaManager;
+    }
+
+    // Initialize Stripe manager
+    if (window.stripeManager) {
+      stripeManager = window.stripeManager;
+    }
+
+    // Set up usage tracking UI
+    await setupUsageDisplay();
+
+    console.log('✅ Quota system initialized');
+
+  } catch (error) {
+    console.error('❌ Quota system initialization failed:', error);
+  }
+}
+
+// Basic auth management fallback
+function setupBasicAuthManagement() {
+  // Listen for auth state changes
+  supabase.auth.onAuthStateChange((event, session) => {
+    console.log('Auth state changed:', event, session?.user?.email || 'No user');
+    updateAuthUI(session);
+  });
+
+  // Get initial session
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    updateAuthUI(session);
+  });
+
+  // Add sign out handler
+  document.addEventListener('click', (e) => {
+    if (e.target.matches('[data-action="signout"]')) {
+      e.preventDefault();
+      handleSignOut();
+    }
+  });
+
+  // Add dropdown toggle handler
+  document.addEventListener('click', (e) => {
+    if (e.target.matches('.dropdown-toggle') || e.target.closest('.dropdown-toggle')) {
+      e.preventDefault();
+      toggleUserDropdown();
+    }
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.dropdown')) {
+      closeUserDropdown();
+    }
+  });
+}
+
+// Update authentication UI
+function updateAuthUI(session) {
+  const authRequiredElements = document.querySelectorAll('[data-auth-required]');
+  const guestOnlyElements = document.querySelectorAll('[data-guest-only]');
+  const userInfoElements = document.querySelectorAll('[data-user-info]');
+
+  if (session && session.user) {
+    console.log('Showing authenticated UI for:', session.user.email);
+    
+    // Show auth-required elements
+    authRequiredElements.forEach(el => {
+      el.style.display = 'flex';
+      el.classList.remove('hidden');
+    });
+
+    // Hide guest-only elements
+    guestOnlyElements.forEach(el => {
+      el.style.display = 'none';
+      el.classList.add('hidden');
+    });
+
+    // Update user info elements
+    userInfoElements.forEach(el => {
+      const infoType = el.dataset.userInfo;
+      switch (infoType) {
+        case 'email':
+          el.textContent = session.user.email || '';
+          break;
+        case 'name':
+          el.textContent = session.user.user_metadata?.full_name || 
+                         session.user.email?.split('@')[0] || 
+                         'User';
+          break;
+        case 'avatar':
+          if (el.tagName === 'IMG') {
+            const avatarUrl = session.user.user_metadata?.avatar_url || 
+                            `https://ui-avatars.com/api/?name=${encodeURIComponent(session.user.email || 'User')}&background=0066cc&color=fff`;
+            el.src = avatarUrl;
+            el.style.display = 'block';
+          }
+          break;
+      }
+    });
+
+  } else {
+    console.log('Showing guest UI');
+    
+    // Hide auth-required elements
+    authRequiredElements.forEach(el => {
+      el.style.display = 'none';
+      el.classList.add('hidden');
+    });
+
+    // Show guest-only elements
+    guestOnlyElements.forEach(el => {
+      el.style.display = 'flex';
+      el.classList.remove('hidden');
+    });
+
+    // Clear user info elements
+    userInfoElements.forEach(el => {
+      const infoType = el.dataset.userInfo;
+      switch (infoType) {
+        case 'email':
+        case 'name':
+          el.textContent = '';
+          break;
+        case 'avatar':
+          if (el.tagName === 'IMG') {
+            el.style.display = 'none';
+            el.src = '';
+          }
+          break;
+      }
+    });
+  }
+}
+
+// Handle sign out
+async function handleSignOut() {
+  try {
+    console.log('Signing out...');
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
+    
+    console.log('✅ Signed out successfully');
+    closeUserDropdown();
+    
+  } catch (error) {
+    console.error('❌ Sign out error:', error);
+    alert('Error signing out: ' + error.message);
+  }
+}
+
+// Toggle user dropdown menu
+function toggleUserDropdown() {
+  const dropdown = document.querySelector('.dropdown-content');
+  const toggle = document.querySelector('.dropdown-toggle');
+  
+  if (dropdown && toggle) {
+    const isVisible = dropdown.style.display === 'block';
+    dropdown.style.display = isVisible ? 'none' : 'block';
+    toggle.setAttribute('aria-expanded', isVisible ? 'false' : 'true');
+  }
+}
+
+// Close user dropdown menu
+function closeUserDropdown() {
+  const dropdown = document.querySelector('.dropdown-content');
+  const toggle = document.querySelector('.dropdown-toggle');
+  
+  if (dropdown && toggle) {
+    dropdown.style.display = 'none';
+    toggle.setAttribute('aria-expanded', 'false');
+  }
+}
+
+// Authentication Guards and Quota Integration
+// ==========================================
+
+/**
+ * Check if user can perform conversions based on authentication and quota
+ * Requirements: 5.1-5.6, 6.1-6.3
+ */
+async function checkConversionQuota(requestedCount = 1) {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      // Guest user - use localStorage quota
+      return checkGuestQuota(requestedCount);
+    }
+
+    // Authenticated user - check server-side quota
+    return await checkAuthenticatedUserQuota(user, requestedCount);
+
+  } catch (error) {
+    console.error('Error checking conversion quota:', error);
+    return {
+      allowed: false,
+      error: 'QUOTA_CHECK_FAILED',
+      message: 'Unable to check quota. Please try again.',
+      remaining: 0,
+      maxFileSize: 25 * 1024 * 1024 // 25MB default
+    };
+  }
+}
+
+/**
+ * Check quota for guest users
+ */
+function checkGuestQuota(requestedCount) {
+  const guestQuota = getGuestUsageFromStorage();
+  const remaining = Math.max(0, 3 - guestQuota.used); // Guest limit: 3 conversions
+  
+  return {
+    allowed: remaining >= requestedCount,
+    error: remaining < requestedCount ? 'QUOTA_EXCEEDED' : null,
+    message: remaining < requestedCount ? 'Guest users can convert up to 3 images. Sign in for more conversions.' : null,
+    remaining: remaining,
+    maxFileSize: 25 * 1024 * 1024, // 25MB for guests
+    isGuest: true,
+    plan: 'guest'
+  };
+}
+
+/**
+ * Check quota for authenticated users
+ */
+async function checkAuthenticatedUserQuota(user, requestedCount) {
+  try {
+    // Use usage tracker if available
+    if (usageTracker) {
+      await usageTracker.fetchUsage();
+      const currentUsage = usageTracker.getCurrentUsage();
+      
+      if (currentUsage) {
+        const remaining = currentUsage.remainingConversions;
+        const planLimits = getPlanLimits(currentUsage.planName);
+        
+        return {
+          allowed: remaining >= requestedCount,
+          error: remaining < requestedCount ? 'QUOTA_EXCEEDED' : null,
+          message: remaining < requestedCount ? `You've used all ${currentUsage.conversionsLimit} conversions this month. Upgrade for more.` : null,
+          remaining: remaining,
+          maxFileSize: planLimits.maxFileSize,
+          plan: currentUsage.planName.toLowerCase(),
+          conversionsUsed: currentUsage.conversionsUsed,
+          conversionsLimit: currentUsage.conversionsLimit
+        };
+      }
+    }
+
+    // Fallback: use quota manager
+    if (quotaManager) {
+      const quotaCheck = await quotaManager.checkConversionQuota();
+      const planLimits = quotaManager.getCurrentPlanLimits();
+      
+      return {
+        allowed: quotaCheck.allowed,
+        error: quotaCheck.allowed ? null : 'QUOTA_EXCEEDED',
+        message: quotaCheck.allowed ? null : 'Monthly conversion limit reached. Upgrade for more conversions.',
+        remaining: quotaCheck.remaining || 0,
+        maxFileSize: planLimits.maxFileSize,
+        plan: 'free' // Default fallback
+      };
+    }
+
+    // Final fallback: assume free plan with basic limits
+    return {
+      allowed: true,
+      remaining: 10, // Free plan default
+      maxFileSize: 25 * 1024 * 1024,
+      plan: 'free'
+    };
+
+  } catch (error) {
+    console.error('Error checking authenticated user quota:', error);
+    return {
+      allowed: false,
+      error: 'QUOTA_CHECK_FAILED',
+      message: 'Unable to verify your quota. Please try again.',
+      remaining: 0,
+      maxFileSize: 25 * 1024 * 1024
+    };
+  }
+}
+
+/**
+ * Get guest usage from localStorage
+ */
+function getGuestUsageFromStorage() {
+  const stored = localStorage.getItem('guestImageQuota');
+  const now = Date.now();
+  const oneDay = 24 * 60 * 60 * 1000;
+  
+  let guestData;
+  
+  if (stored) {
+    try {
+      guestData = JSON.parse(stored);
+      
+      // Reset daily if more than 24 hours have passed
+      if (now - guestData.lastReset > oneDay) {
+        guestData = { used: 0, lastReset: now };
+        localStorage.setItem('guestImageQuota', JSON.stringify(guestData));
+      }
+    } catch (error) {
+      guestData = { used: 0, lastReset: now };
+      localStorage.setItem('guestImageQuota', JSON.stringify(guestData));
+    }
+  } else {
+    guestData = { used: 0, lastReset: now };
+    localStorage.setItem('guestImageQuota', JSON.stringify(guestData));
+  }
+
+  return guestData;
+}
+
+/**
+ * Update guest usage in localStorage
+ */
+function updateGuestUsage(increment = 1) {
+  const current = getGuestUsageFromStorage();
+  const newUsage = {
+    used: current.used + increment,
+    lastReset: current.lastReset
+  };
+  
+  localStorage.setItem('guestImageQuota', JSON.stringify(newUsage));
+  return newUsage;
+}
+
+/**
+ * Get plan limits based on plan name
+ */
+function getPlanLimits(planName) {
+  const limits = {
+    guest: {
+      maxFileSize: 25 * 1024 * 1024, // 25MB
+      monthlyConversions: 3
+    },
+    free: {
+      maxFileSize: 25 * 1024 * 1024, // 25MB
+      monthlyConversions: 10
+    },
+    pro: {
+      maxFileSize: 100 * 1024 * 1024, // 100MB
+      monthlyConversions: 1000
+    },
+    unlimited: {
+      maxFileSize: 250 * 1024 * 1024, // 250MB
+      monthlyConversions: -1 // Unlimited
+    }
+  };
+
+  const plan = planName ? planName.toLowerCase() : 'free';
+  return limits[plan] || limits.free;
+}
+
+/**
+ * Record a successful conversion
+ */
+async function recordConversion() {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      // Update guest usage
+      updateGuestUsage(1);
+      updateUsageDisplay();
+      return;
+    }
+
+    // For authenticated users, the server-side Edge Function handles the increment
+    // We just need to refresh the usage display
+    if (usageTracker) {
+      await usageTracker.recordConversion();
+    }
+    
+    updateUsageDisplay();
+
+  } catch (error) {
+    console.error('Error recording conversion:', error);
+  }
+}
+
+/**
+ * Show upgrade prompt when quota is exceeded
+ */
+function showUpgradePrompt(quotaInfo) {
+  const { plan, isGuest } = quotaInfo;
+  
+  if (isGuest) {
+    showGuestUpgradePrompt();
+  } else {
+    showAuthenticatedUpgradePrompt(plan);
+  }
+}
+
+/**
+ * Show upgrade prompt for guest users
+ */
+function showGuestUpgradePrompt() {
+  const modal = createUpgradeModal({
+    title: 'Sign In for More Conversions',
+    message: 'Guest users can convert up to 3 images per day. Sign in to get 10 free conversions per month and access to premium plans.',
+    primaryAction: {
+      text: 'Sign In',
+      action: () => redirectToAuth()
+    },
+    secondaryAction: {
+      text: 'View Plans',
+      action: () => window.open('/pricing.html', '_blank')
+    }
+  });
+  
+  document.body.appendChild(modal);
+}
+
+/**
+ * Show upgrade prompt for authenticated users
+ */
+function showAuthenticatedUpgradePrompt(currentPlan) {
+  const planInfo = {
+    free: {
+      title: 'Upgrade to Pro',
+      message: 'You\'ve used all your free conversions this month. Upgrade to Pro for 1,000 conversions per month.',
+      upgradeTarget: 'pro'
+    },
+    pro: {
+      title: 'Upgrade to Unlimited',
+      message: 'You\'ve reached your Pro plan limit. Upgrade to Unlimited for unlimited conversions.',
+      upgradeTarget: 'unlimited'
+    }
+  };
+
+  const info = planInfo[currentPlan] || planInfo.free;
+  
+  const modal = createUpgradeModal({
+    title: info.title,
+    message: info.message,
+    primaryAction: {
+      text: 'Upgrade Now',
+      action: () => initiateUpgrade(info.upgradeTarget)
+    },
+    secondaryAction: {
+      text: 'Manage Billing',
+      action: () => openCustomerPortal()
+    }
+  });
+  
+  document.body.appendChild(modal);
+}
+
+/**
+ * Create upgrade modal
+ */
+function createUpgradeModal({ title, message, primaryAction, secondaryAction }) {
+  const modal = document.createElement('div');
+  modal.className = 'upgrade-modal-overlay';
+  modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+  `;
+
+  modal.innerHTML = `
+    <div class="upgrade-modal" style="
+      background: var(--background);
+      border: 2px solid var(--foreground);
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+    ">
+      <h3 style="color: var(--foreground); margin-bottom: 16px;">${title}</h3>
+      <p style="color: var(--foreground); margin-bottom: 24px; line-height: 1.5;">${message}</p>
+      <div class="modal-actions" style="display: flex; gap: 12px; justify-content: center;">
+        <button class="btn btn-primary primary-action">${primaryAction.text}</button>
+        ${secondaryAction ? `<button class="btn btn-secondary secondary-action">${secondaryAction.text}</button>` : ''}
+        <button class="btn btn-outline close-modal">Close</button>
+      </div>
+    </div>
+  `;
+
+  // Add event listeners
+  modal.querySelector('.primary-action').addEventListener('click', () => {
+    primaryAction.action();
+    modal.remove();
+  });
+
+  if (secondaryAction) {
+    modal.querySelector('.secondary-action').addEventListener('click', () => {
+      secondaryAction.action();
+      modal.remove();
+    });
+  }
+
+  modal.querySelector('.close-modal').addEventListener('click', () => {
+    modal.remove();
+  });
+
+  // Close on overlay click
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.remove();
+    }
+  });
+
+  return modal;
+}
+
+/**
+ * Initiate upgrade process
+ */
+async function initiateUpgrade(planType) {
+  try {
+    if (!stripeManager) {
+      console.error('Stripe manager not available');
+      showNotification('Billing system not available. Please try again later.', 'error');
+      return;
+    }
+
+    await stripeManager.purchasePlan(planType, {
+      successUrl: `${window.location.origin}/tools/image-converter/index.html?upgrade=success`,
+      cancelUrl: `${window.location.href}?upgrade=canceled`
+    });
+
+  } catch (error) {
+    console.error('Error initiating upgrade:', error);
+    showNotification('Failed to start upgrade process. Please try again.', 'error');
+  }
+}
+
+/**
+ * Open Customer Portal
+ */
+async function openCustomerPortal() {
+  try {
+    if (!stripeManager) {
+      console.error('Stripe manager not available');
+      showNotification('Billing system not available. Please try again later.', 'error');
+      return;
+    }
+
+    await stripeManager.redirectToCustomerPortal({
+      returnUrl: window.location.href
+    });
+
+  } catch (error) {
+    console.error('Error opening Customer Portal:', error);
+    showNotification('Failed to open billing portal. Please try again.', 'error');
+  }
+}
+
+/**
+ * Redirect to authentication page
+ */
+function redirectToAuth() {
+  const currentUrl = encodeURIComponent(window.location.href);
+  window.location.href = `/auth.html?callback=${currentUrl}`;
+}
+
+/**
+ * Set up usage display in the UI
+ */
+async function setupUsageDisplay() {
+  try {
+    const usageContainer = document.getElementById('usage-counter');
+    if (!usageContainer) {
+      console.warn('Usage counter container not found');
+      return;
+    }
+
+    // Initial display
+    await updateUsageDisplay();
+
+    // Set up periodic updates
+    setInterval(updateUsageDisplay, 30000); // Update every 30 seconds
+
+  } catch (error) {
+    console.error('Error setting up usage display:', error);
+  }
+}
+
+/**
+ * Update usage display in the UI
+ */
+async function updateUsageDisplay() {
+  try {
+    const usageContainer = document.getElementById('usage-counter');
+    if (!usageContainer) return;
+
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      // Guest user display
+      const guestUsage = getGuestUsageFromStorage();
+      const remaining = Math.max(0, 3 - guestUsage.used);
+      
+      usageContainer.innerHTML = `
+        <div class="usage-display guest">
+          <div class="usage-text">
+            <span class="usage-count">${remaining} of 3</span>
+            <span class="usage-label">free conversions remaining</span>
+          </div>
+          <div class="usage-bar">
+            <div class="usage-fill" style="width: ${(guestUsage.used / 3) * 100}%"></div>
+          </div>
+          <div class="usage-actions">
+            <button class="btn btn-sm btn-primary" onclick="redirectToAuth()">Sign In for More</button>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    // Authenticated user display
+    if (usageTracker) {
+      const currentUsage = usageTracker.getCurrentUsage();
+      if (currentUsage) {
+        const percentage = (currentUsage.conversionsUsed / currentUsage.conversionsLimit) * 100;
+        const isUnlimited = currentUsage.conversionsLimit === -1;
+        
+        usageContainer.innerHTML = `
+          <div class="usage-display authenticated">
+            <div class="usage-text">
+              <span class="usage-count">
+                ${isUnlimited ? 'Unlimited' : `${currentUsage.remainingConversions} of ${currentUsage.conversionsLimit}`}
+              </span>
+              <span class="usage-label">conversions remaining</span>
+            </div>
+            ${!isUnlimited ? `
+              <div class="usage-bar">
+                <div class="usage-fill ${percentage >= 90 ? 'critical' : percentage >= 75 ? 'warning' : 'normal'}" 
+                     style="width: ${Math.min(percentage, 100)}%"></div>
+              </div>
+            ` : ''}
+            <div class="usage-info">
+              <span class="plan-name">${currentUsage.planName} Plan</span>
+              ${currentUsage.periodEnd ? `<span class="reset-date">Resets ${new Date(currentUsage.periodEnd).toLocaleDateString()}</span>` : ''}
+            </div>
+            ${currentUsage.remainingConversions <= 0 ? `
+              <div class="usage-actions">
+                <button class="btn btn-sm btn-primary" onclick="initiateUpgrade('pro')">Upgrade Plan</button>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }
+    }
+
+  } catch (error) {
+    console.error('Error updating usage display:', error);
+  }
+}
+
+// Make functions available globally for compatibility
+window.checkConversionQuota = checkConversionQuota;
+window.recordConversion = recordConversion;
+window.showUpgradePrompt = showUpgradePrompt;
+window.initiateUpgrade = initiateUpgrade;
+window.openCustomerPortal = openCustomerPortal;
+window.redirectToAuth = redirectToAuth;
 
 // DOM elements - These will be initialized when DOM is loaded
 let dropArea;
@@ -198,24 +945,31 @@ async function handleFiles(files) {
     }
   }
   
-  const quota = getQuotaInfo();
-  if (quota.used >= 100) {
+  // Check quota using integrated system
+  const quotaCheck = await checkConversionQuota(imageFiles.length);
+  if (!quotaCheck.allowed) {
     if (progressStatus) progressStatus.textContent = '';
     if (progressBar) progressBar.style.width = '0';
-    updateQuotaStatus();
-    toggleStripeAccordion(true);
+    
+    if (quotaCheck.error === 'QUOTA_EXCEEDED') {
+      showUpgradePrompt(quotaCheck);
+    } else {
+      showNotification(quotaCheck.message || 'Cannot process images at this time.', 'error');
+    }
     return;
   }
   
-  // Allow up to 25MB for in-browser, >25MB for Supabase
-  const validFiles = imageFiles.filter(f => f.size <= 100*1024*1024); // allow up to 100MB for pro, but hybrid logic will route
-  let canProcess = Math.min(validFiles.length, 100 - quota.used);
-  if (imageFiles.length > 100 || validFiles.length > 100 || canProcess < validFiles.length) {
-    showNotification('You selected more than 100 images. Only the first 100 within your quota will be processed.', 'warning');
+  // Use quota check results for file processing
+  const validFiles = imageFiles.filter(f => f.size <= quotaCheck.maxFileSize);
+  let canProcess = Math.min(validFiles.length, quotaCheck.remaining);
+  
+  if (imageFiles.length > canProcess) {
+    showNotification(`You selected ${imageFiles.length} images. Only ${canProcess} can be processed within your quota.`, 'warning');
   }
+  
   if (canProcess === 0) {
     showNotification('No images can be processed (quota or size limit).', 'error');
-    updateQuotaStatus();
+    showUpgradePrompt(quotaCheck);
     return;
   }
   
@@ -319,9 +1073,10 @@ async function handleFiles(files) {
         convertBtn.addEventListener('click', async function(ev) {
           ev.stopPropagation();
           
-          // Check usage limit
-          if (!window.canConvert()) {
-            window.showUpgradeModal();
+          // Check conversion quota with authentication guards
+          const quotaCheck = await checkConversionQuota(1);
+          if (!quotaCheck.allowed) {
+            showUpgradePrompt(quotaCheck);
             return;
           }
           
@@ -330,6 +1085,13 @@ async function handleFiles(files) {
           
           if (!fileToConvert) {
             showNotification('File not found', 'error');
+            return;
+          }
+          
+          // Check file size against plan limits
+          if (fileToConvert.size > quotaCheck.maxFileSize) {
+            const maxSizeMB = Math.round(quotaCheck.maxFileSize / (1024 * 1024));
+            showNotification(`File too large. Maximum size for your plan is ${maxSizeMB}MB.`, 'error');
             return;
           }
           
@@ -348,7 +1110,7 @@ async function handleFiles(files) {
             await processImages([fileToConvert], maxW, maxH, targetBytes, format);
             
             // Record successful conversion
-            window.recordConversion();
+            await recordConversion();
             
             this.textContent = 'Convert';
             this.disabled = false;
@@ -444,6 +1206,20 @@ async function processSingleImage(index) {
   const file = _selectedFiles[index];
   if (!file) return;
   
+  // Check conversion quota before processing
+  const quotaCheck = await checkConversionQuota(1);
+  if (!quotaCheck.allowed) {
+    showUpgradePrompt(quotaCheck);
+    return;
+  }
+  
+  // Check file size against plan limits
+  if (file.size > quotaCheck.maxFileSize) {
+    const maxSizeMB = Math.round(quotaCheck.maxFileSize / (1024 * 1024));
+    showNotification(`File too large. Maximum size for your plan is ${maxSizeMB}MB.`, 'error');
+    return;
+  }
+  
   const format = outputFormatInput.value;
   const maxW = parseInt(maxWidthInput.value, 10) || 99999;
   const maxH = parseInt(maxHeightInput.value, 10) || 99999;
@@ -528,11 +1304,9 @@ async function processSingleImage(index) {
       }
     }
     
-    // Update quota
-    const quota = getQuotaInfo();
-    quota.used += 1;
-    setQuotaInfo(quota);
-    updateQuotaStatus();
+    // Record successful conversion
+    await recordConversion();
+    
   } catch (err) {
     const safeName = sanitizeFilename(file.name);
     console.error(`Error converting image ${safeName}:`, err);
@@ -1286,6 +2060,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   upgradeBtn = document.getElementById('upgrade-btn');
   downloadSelectedBtn = document.getElementById('download-selected');
   
+  // Initialize authentication first
+  await initializeAuth();
+  
   // Ensure download buttons are hidden on page load
   const downloadButtonsContainer = document.querySelector('.download-btns-responsive');
   if (downloadButtonsContainer) {
@@ -1328,7 +2105,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupNavigation();
   setupFaqs();
   setupLoginModal();
-  setupAuth();
+  // setupAuth(); // Removed - using new auth system
   
   // Initialize tool integration
   if (window.initializeToolIntegration) {
@@ -1351,3 +2128,106 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 export { handleFiles, sanitizeFilename };
 export function setPreviewTbody(elem) { previewTbody = elem; }
+//
+ Initialize main convert button with authentication guards
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize DOM elements
+  convertImagesBtn = document.getElementById('convert-images-btn');
+  
+  if (convertImagesBtn) {
+    convertImagesBtn.addEventListener('click', async function() {
+      const selectedCheckboxes = document.querySelectorAll('.select-image:checked');
+      const selectedCount = selectedCheckboxes.length;
+      
+      if (selectedCount === 0) {
+        showNotification('Please select at least one image to convert.', 'error');
+        return;
+      }
+      
+      // Check conversion quota with authentication guards
+      const quotaCheck = await checkConversionQuota(selectedCount);
+      if (!quotaCheck.allowed) {
+        showUpgradePrompt(quotaCheck);
+        return;
+      }
+      
+      // Check if we can process all selected images
+      if (quotaCheck.remaining < selectedCount) {
+        const message = `You can only convert ${quotaCheck.remaining} more images this month. ${selectedCount} images selected.`;
+        showNotification(message, 'warning');
+        
+        // Ask user if they want to convert only the allowed amount
+        const proceed = confirm(`Convert only ${quotaCheck.remaining} images?`);
+        if (!proceed) return;
+      }
+      
+      // Disable button during processing
+      const originalText = this.textContent;
+      this.textContent = 'Converting...';
+      this.disabled = true;
+      
+      try {
+        // Get selected files
+        const selectedFiles = [];
+        selectedCheckboxes.forEach((checkbox, index) => {
+          const fileIndex = parseInt(checkbox.dataset.index, 10) - 1;
+          if (fileIndex >= 0 && fileIndex < _selectedFiles.length) {
+            const file = _selectedFiles[fileIndex];
+            
+            // Check file size against plan limits
+            if (file.size <= quotaCheck.maxFileSize) {
+              selectedFiles.push({ file, index: fileIndex });
+            } else {
+              const maxSizeMB = Math.round(quotaCheck.maxFileSize / (1024 * 1024));
+              showNotification(`Skipping ${file.name} - exceeds ${maxSizeMB}MB limit for your plan.`, 'warning');
+            }
+          }
+        });
+        
+        if (selectedFiles.length === 0) {
+          showNotification('No files can be processed within your plan limits.', 'error');
+          return;
+        }
+        
+        // Limit to quota remaining
+        const filesToProcess = selectedFiles.slice(0, quotaCheck.remaining);
+        
+        // Process files sequentially to avoid overwhelming the system
+        let processed = 0;
+        let failed = 0;
+        
+        for (const { file, index } of filesToProcess) {
+          try {
+            await processSingleImage(index);
+            processed++;
+            
+            // Update button text with progress
+            this.textContent = `Converting... (${processed}/${filesToProcess.length})`;
+            
+          } catch (error) {
+            console.error(`Failed to process ${file.name}:`, error);
+            failed++;
+          }
+        }
+        
+        // Show completion message
+        if (processed > 0) {
+          showNotification(`Successfully converted ${processed} images${failed > 0 ? ` (${failed} failed)` : ''}.`, 'success');
+        } else {
+          showNotification('No images were converted successfully.', 'error');
+        }
+        
+      } catch (error) {
+        console.error('Batch conversion error:', error);
+        showNotification('An error occurred during batch conversion.', 'error');
+      } finally {
+        // Re-enable button
+        this.textContent = originalText;
+        this.disabled = false;
+      }
+    });
+  }
+  
+  // Initialize authentication and quota system
+  initializeAuth();
+});

@@ -1,1 +1,7 @@
 window.PUBLIC_ENV={"SUPABASE_URL":"https://flsgsnupfogaphqdrtqi.supabase.co","SUPABASE_ANON_KEY":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZsc2dzbnVwZm9nYXBocWRydHFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI5MDU1ODAsImV4cCI6MjA2ODQ4MTU4MH0.tIeLTN7LT9rtKnnPHb18pi4S_jrN0DUZaB0HDhDcyEw","STRIPE_PUBLISHABLE_KEY":"pk_live_51LTgh8BcmaVSn6Z1nQkl0Xc2lFlcaFvaBabebmyJr4fWmZqVk37uI2JBUoY9otwUVqmN2Xol9ZOdcjOdcy8MqHbS00QLT2xZxw"};
+
+// OAuth Configuration
+window.OAUTH_CONFIG = {
+  GITHUB_CLIENT_ID: 'Ov23limZxZIpu9wUhbSm',
+  GOOGLE_CLIENT_ID: '426371779829-f91h1pvmbhge2pslohu23n4klqkv5j5g.apps.googleusercontent.com'
+};

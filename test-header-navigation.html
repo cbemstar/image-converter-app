@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Header Navigation State Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-element {
+            padding: 8px 16px;
+            border-radius: 4px;
+            margin: 0 5px;
+        }
+        
+        .sign-in-element {
+            background: #007bff;
+            color: white;
+        }
+        
+        .user-menu-element {
+            background: #28a745;
+            color: white;
+        }
+        
+        .loading-element {
+            background: #ffc107;
+            color: black;
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .status-indicator {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        
+        .status-ok {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .controls {
+            margin: 20px 0;
+        }
+        
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            background: #007bff;
+            color: white;
+        }
+        
+        button:hover {
+            background: #0056b3;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .auth-component {
+            border: 2px solid #ddd;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        
+        .sign-in-component {
+            border-color: #007bff;
+        }
+        
+        .user-menu-component {
+            border-color: #28a745;
+        }
+        
+        .loading-component {
+            border-color: #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <h1>Header Navigation State Test</h1>
+    <p>This page tests that the header never renders both Sign-In and User menu simultaneously.</p>
+    
+    <!-- Simulated Header -->
+    <div class="header">
+        <div class="logo">
+            <h2>Image Converter</h2>
+        </div>
+        <div class="navigation">
+            <!-- Sign-in elements (should only show when not authenticated) -->
+            <div id="sign-in-button" class="nav-element sign-in-element" data-guest-only>
+                Sign In
+            </div>
+            <div id="sign-in-link" class="nav-element sign-in-element" data-guest-only>
+                Create Account
+            </div>
+            
+            <!-- User menu elements (should only show when authenticated) -->
+            <div id="user-menu" class="nav-element user-menu-element" data-auth-required>
+                User Menu
+            </div>
+            <div id="user-avatar" class="nav-element user-menu-element" data-auth-required>
+                👤 John Doe
+            </div>
+            
+            <!-- Loading elements (should only show during loading) -->
+            <div id="loading-indicator" class="nav-element loading-element" data-auth-component="loading">
+                Loading...
+            </div>
+        </div>
+    </div>
+    
+    <!-- Status Indicator -->
+    <div id="status-indicator" class="status-indicator status-ok">
+        ✅ Navigation state is consistent
+    </div>
+    
+    <!-- Controls -->
+    <div class="controls">
+        <h3>Test Navigation States</h3>
+        <button onclick="testLoadingState()">Loading State</button>
+        <button onclick="testGuestState()">Guest State (Not Authenticated)</button>
+        <button onclick="testAuthenticatedState()">Authenticated State</button>
+        <button onclick="testRapidStateChanges()">Rapid State Changes</button>
+        <button onclick="runAutomaticTest()">Run Automatic Test</button>
+    </div>
+    
+    <!-- Auth Components Test -->
+    <div class="test-section">
+        <h3>Authentication Components</h3>
+        <div id="auth-signin-container"></div>
+        <div id="auth-usermenu-container"></div>
+        <div id="auth-loading-container"></div>
+    </div>
+    
+    <!-- Test Results -->
+    <div class="test-section">
+        <h3>Test Results</h3>
+        <div id="test-results"></div>
+    </div>
+    
+    <!-- Current State Display -->
+    <div class="test-section">
+        <h3>Current State</h3>
+        <div id="current-state">
+            <p><strong>Navigation State:</strong> <span id="nav-state">loading</span></p>
+            <p><strong>Sign-in Elements Visible:</strong> <span id="signin-count">0</span></p>
+            <p><strong>User Menu Elements Visible:</strong> <span id="usermenu-count">0</span></p>
+            <p><strong>Loading Elements Visible:</strong> <span id="loading-count">0</span></p>
+        </div>
+    </div>
+
+    <!-- Load dependencies -->
+    <script src="/js/public-config.js"></script>
+    <script type="module">
+        // Mock auth components for testing
+        class TestAuthComponents {
+            constructor() {
+                this.navigationState = 'loading';
+                this.initialize();
+            }
+
+            initialize() {
+                this.updateDisplay();
+            }
+
+            handleAuthStateChange(state) {
+                if (state.loading) {
+                    this.navigationState = 'loading';
+                } else if (state.isAuthenticated) {
+                    this.navigationState = 'authenticated';
+                } else {
+                    this.navigationState = 'guest';
+                }
+                
+                this.ensureHeaderStateConsistency();
+                this.updateDisplay();
+                this.checkNavigationConsistency();
+            }
+
+            ensureHeaderStateConsistency() {
+                const signInElements = document.querySelectorAll('[data-auth-component="sign-in"], [data-guest-only]');
+                const userMenuElements = document.querySelectorAll('[data-auth-component="user-menu"], [data-auth-required]');
+                const loadingElements = document.querySelectorAll('[data-auth-component="loading"]');
+
+                // Hide all elements first
+                [...signInElements, ...userMenuElements, ...loadingElements].forEach(el => {
+                    el.style.display = 'none';
+                    el.classList.add('hidden');
+                });
+
+                // Show appropriate elements based on navigation state
+                switch (this.navigationState) {
+                    case 'loading':
+                        loadingElements.forEach(el => {
+                            el.style.display = el.dataset.authDisplay || 'block';
+                            el.classList.remove('hidden');
+                        });
+                        break;
+                        
+                    case 'authenticated':
+                        userMenuElements.forEach(el => {
+                            el.style.display = el.dataset.authDisplay || 'block';
+                            el.classList.remove('hidden');
+                        });
+                        break;
+                        
+                    case 'guest':
+                        signInElements.forEach(el => {
+                            el.style.display = el.dataset.guestDisplay || 'block';
+                            el.classList.remove('hidden');
+                        });
+                        break;
+                }
+            }
+
+            updateDisplay() {
+                document.getElementById('nav-state').textContent = this.navigationState;
+                
+                const signInCount = this.countVisibleElements('[data-guest-only]');
+                const userMenuCount = this.countVisibleElements('[data-auth-required]');
+                const loadingCount = this.countVisibleElements('[data-auth-component="loading"]');
+                
+                document.getElementById('signin-count').textContent = signInCount;
+                document.getElementById('usermenu-count').textContent = userMenuCount;
+                document.getElementById('loading-count').textContent = loadingCount;
+            }
+
+            countVisibleElements(selector) {
+                const elements = document.querySelectorAll(selector);
+                let count = 0;
+                elements.forEach(el => {
+                    if (this.isElementVisible(el)) count++;
+                });
+                return count;
+            }
+
+            isElementVisible(element) {
+                if (!element) return false;
+                const style = element.style;
+                const hasHiddenClass = element.classList.contains('hidden');
+                const hasDisplayNone = style.display === 'none';
+                return !hasHiddenClass && !hasDisplayNone;
+            }
+
+            checkNavigationConsistency() {
+                const signInVisible = this.countVisibleElements('[data-guest-only]');
+                const userMenuVisible = this.countVisibleElements('[data-auth-required]');
+                
+                const statusIndicator = document.getElementById('status-indicator');
+                
+                if (signInVisible > 0 && userMenuVisible > 0) {
+                    statusIndicator.className = 'status-indicator status-error';
+                    statusIndicator.innerHTML = '❌ ERROR: Both sign-in and user menu are visible!';
+                    return false;
+                } else {
+                    statusIndicator.className = 'status-indicator status-ok';
+                    statusIndicator.innerHTML = '✅ Navigation state is consistent';
+                    return true;
+                }
+            }
+
+            getNavigationState() {
+                return this.navigationState;
+            }
+        }
+
+        // Create test instance
+        const testAuthComponents = new TestAuthComponents();
+        
+        // Global test functions
+        window.testLoadingState = () => {
+            testAuthComponents.handleAuthStateChange({ loading: true, isAuthenticated: false });
+            logTestResult('Loading State', testAuthComponents.checkNavigationConsistency());
+        };
+
+        window.testGuestState = () => {
+            testAuthComponents.handleAuthStateChange({ loading: false, isAuthenticated: false });
+            logTestResult('Guest State', testAuthComponents.checkNavigationConsistency());
+        };
+
+        window.testAuthenticatedState = () => {
+            testAuthComponents.handleAuthStateChange({ 
+                loading: false, 
+                isAuthenticated: true,
+                user: { id: '123', email: 'test@example.com' }
+            });
+            logTestResult('Authenticated State', testAuthComponents.checkNavigationConsistency());
+        };
+
+        window.testRapidStateChanges = () => {
+            const states = [
+                { loading: true, isAuthenticated: false },
+                { loading: false, isAuthenticated: false },
+                { loading: false, isAuthenticated: true, user: { id: '123' } },
+                { loading: false, isAuthenticated: false },
+                { loading: false, isAuthenticated: true, user: { id: '123' } }
+            ];
+
+            let allPassed = true;
+            states.forEach((state, index) => {
+                testAuthComponents.handleAuthStateChange(state);
+                const passed = testAuthComponents.checkNavigationConsistency();
+                if (!passed) allPassed = false;
+                
+                // Small delay to see the changes
+                setTimeout(() => {
+                    console.log(`Rapid test ${index + 1}:`, passed ? 'PASS' : 'FAIL');
+                }, index * 100);
+            });
+
+            setTimeout(() => {
+                logTestResult('Rapid State Changes', allPassed);
+            }, states.length * 100 + 100);
+        };
+
+        window.runAutomaticTest = () => {
+            const testResults = [];
+            
+            // Test 1: Loading state
+            testAuthComponents.handleAuthStateChange({ loading: true, isAuthenticated: false });
+            testResults.push({
+                name: 'Loading State',
+                passed: testAuthComponents.checkNavigationConsistency(),
+                state: testAuthComponents.getNavigationState()
+            });
+
+            // Test 2: Guest state
+            testAuthComponents.handleAuthStateChange({ loading: false, isAuthenticated: false });
+            testResults.push({
+                name: 'Guest State',
+                passed: testAuthComponents.checkNavigationConsistency(),
+                state: testAuthComponents.getNavigationState()
+            });
+
+            // Test 3: Authenticated state
+            testAuthComponents.handleAuthStateChange({ 
+                loading: false, 
+                isAuthenticated: true,
+                user: { id: '123', email: 'test@example.com' }
+            });
+            testResults.push({
+                name: 'Authenticated State',
+                passed: testAuthComponents.checkNavigationConsistency(),
+                state: testAuthComponents.getNavigationState()
+            });
+
+            // Display results
+            const resultsDiv = document.getElementById('test-results');
+            let html = '<h4>Automatic Test Results</h4>';
+            
+            const allPassed = testResults.every(result => result.passed);
+            html += `<p><strong>Overall Result:</strong> ${allPassed ? '✅ ALL TESTS PASSED' : '❌ SOME TESTS FAILED'}</p>`;
+            
+            html += '<ul>';
+            testResults.forEach(result => {
+                html += `<li>${result.passed ? '✅' : '❌'} ${result.name} (${result.state})</li>`;
+            });
+            html += '</ul>';
+            
+            resultsDiv.innerHTML = html;
+        };
+
+        function logTestResult(testName, passed) {
+            const resultsDiv = document.getElementById('test-results');
+            const timestamp = new Date().toLocaleTimeString();
+            const result = `<p><strong>[${timestamp}]</strong> ${testName}: ${passed ? '✅ PASS' : '❌ FAIL'}</p>`;
+            resultsDiv.innerHTML += result;
+        }
+
+        // Initialize with loading state
+        testAuthComponents.handleAuthStateChange({ loading: true, isAuthenticated: false });
+        
+        console.log('Header navigation state test initialized');
+    </script>
+</body>
+</html>

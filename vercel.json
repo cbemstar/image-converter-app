@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "npm run build:production",
   "outputDirectory": "public",
   "installCommand": "npm install",
   "framework": null,
@@ -12,6 +12,15 @@
   "functions": {
     "api/cron/cleanup.js": {
       "maxDuration": 300
+    },
+    "api/health.js": {
+      "maxDuration": 30
+    },
+    "api/monitoring/health.js": {
+      "maxDuration": 30
+    },
+    "api/monitoring/metrics.js": {
+      "maxDuration": 60
     }
   },
   "headers": [
@@ -29,8 +38,33 @@
         {
           "key": "X-XSS-Protection",
           "value": "1; mode=block"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
         }
       ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/health",
+      "destination": "/api/health",
+      "permanent": false
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/monitoring",
+      "destination": "/monitoring-dashboard.html"
     }
   ]
 }

@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session Security Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .status-indicator {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        
+        .status-ok {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .controls {
+            margin: 20px 0;
+        }
+        
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            background: #007bff;
+            color: white;
+        }
+        
+        button:hover {
+            background: #0056b3;
+        }
+        
+        button.danger {
+            background: #dc3545;
+        }
+        
+        button.danger:hover {
+            background: #c82333;
+        }
+        
+        button.warning {
+            background: #ffc107;
+            color: #212529;
+        }
+        
+        button.warning:hover {
+            background: #e0a800;
+        }
+        
+        .security-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .info-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .info-card h4 {
+            margin: 0 0 10px 0;
+            color: #007bff;
+        }
+        
+        .security-events {
+            max-height: 300px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        .event-entry {
+            margin: 5px 0;
+            padding: 5px;
+            background: white;
+            border-radius: 3px;
+            border-left: 3px solid #007bff;
+        }
+        
+        .event-warning {
+            border-left-color: #ffc107;
+        }
+        
+        .event-error {
+            border-left-color: #dc3545;
+        }
+        
+        .fingerprint {
+            font-family: monospace;
+            background: #e9ecef;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Session Security Test</h1>
+    <p>This page tests session security features including token rotation, hijacking detection, and timeout management.</p>
+    
+    <!-- Status Overview -->
+    <div class="test-section">
+        <h3>Security Status</h3>
+        <div id="security-status" class="status-indicator status-ok">
+            🔒 Session security active
+        </div>
+        <div id="auth-status">Loading authentication status...</div>
+    </div>
+
+    <!-- Security Information -->
+    <div class="test-section">
+        <h3>Security Information</h3>
+        <div class="security-info">
+            <div class="info-card">
+                <h4>Session Details</h4>
+                <div id="session-info">Loading...</div>
+            </div>
+            <div class="info-card">
+                <h4>Device Fingerprint</h4>
+                <div id="device-info">Loading...</div>
+            </div>
+            <div class="info-card">
+                <h4>Security Timers</h4>
+                <div id="timer-info">Loading...</div>
+            </div>
+            <div class="info-card">
+                <h4>Activity Tracking</h4>
+                <div id="activity-info">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="test-section">
+        <h3>Security Controls</h3>
+        <div class="controls">
+            <button onclick="testTokenRotation()">Test Token Rotation</button>
+            <button onclick="testInactivityTimeout()">Test Inactivity Timeout</button>
+            <button onclick="simulateHijacking()" class="warning">Simulate Hijacking</button>
+            <button onclick="testDeviceFingerprint()">Test Device Fingerprint</button>
+            <button onclick="forceSignOut()" class="danger">Force Sign Out</button>
+            <button onclick="clearSecurityEvents()">Clear Events</button>
+            <button onclick="refreshStatus()">Refresh Status</button>
+        </div>
+    </div>
+
+    <!-- Authentication Test -->
+    <div class="test-section">
+        <h3>Authentication Test</h3>
+        <div id="auth-controls">
+            <button onclick="signInTest()">Sign In (Test)</button>
+            <button onclick="signOutTest()">Sign Out</button>
+        </div>
+    </div>
+
+    <!-- Security Events Log -->
+    <div class="test-section">
+        <h3>Security Events Log</h3>
+        <div id="security-events" class="security-events">
+            No security events yet...
+        </div>
+    </div>
+
+    <!-- Test Results -->
+    <div class="test-section">
+        <h3>Test Results</h3>
+        <div id="test-results"></div>
+    </div>
+
+    <!-- Load dependencies -->
+    <script src="/js/public-config.js"></script>
+    <script type="module">
+        import { getSessionSecurity } from '/js/auth/session-security.js';
+        import { getAuthUtils } from '/js/auth/auth-utils.js';
+
+        let sessionSecurity, authUtils;
+        let statusUpdateInterval;
+
+        // Initialize components
+        async function initialize() {
+            try {
+                sessionSecurity = getSessionSecurity();
+                authUtils = getAuthUtils();
+
+                // Set up status updates
+                statusUpdateInterval = setInterval(updateStatus, 2000);
+                
+                // Initial status update
+                updateStatus();
+                
+                // Expose functions globally
+                window.sessionSecurity = sessionSecurity;
+                window.authUtils = authUtils;
+                window.updateStatus = updateStatus;
+                window.logTestResult = logTestResult;
+
+                logTestResult('Session Security System initialized successfully', 'success');
+            } catch (error) {
+                logTestResult(`Initialization error: ${error.message}`, 'error');
+            }
+        }
+
+        function updateStatus() {
+            try {
+                updateSecurityStatus();
+                updateSessionInfo();
+                updateDeviceInfo();
+                updateTimerInfo();
+                updateActivityInfo();
+                updateSecurityEvents();
+            } catch (error) {
+                console.error('Error updating status:', error);
+            }
+        }
+
+        function updateSecurityStatus() {
+            const status = sessionSecurity.getSecurityStatus();
+            const authState = authUtils.getAuthStatus();
+            
+            const statusDiv = document.getElementById('security-status');
+            const authDiv = document.getElementById('auth-status');
+            
+            if (authState.isAuthenticated) {
+                statusDiv.className = 'status-indicator status-ok';
+                statusDiv.innerHTML = '🔒 Session security active';
+                
+                authDiv.innerHTML = `
+                    <strong>Authenticated:</strong> Yes<br>
+                    <strong>Email Verified:</strong> ${authState.isEmailVerified ? 'Yes' : 'No'}<br>
+                    <strong>User:</strong> ${authState.user?.email || 'Unknown'}
+                `;
+            } else {
+                statusDiv.className = 'status-indicator status-warning';
+                statusDiv.innerHTML = '⚠️ Not authenticated - security features inactive';
+                
+                authDiv.innerHTML = '<strong>Authenticated:</strong> No';
+            }
+        }
+
+        function updateSessionInfo() {
+            const status = sessionSecurity.getSecurityStatus();
+            const infoDiv = document.getElementById('session-info');
+            
+            if (status.sessionActive) {
+                const sessionAge = Math.floor(status.sessionAge / 1000);
+                const lastActivity = Math.floor((Date.now() - status.lastActivity) / 1000);
+                
+                infoDiv.innerHTML = `
+                    <strong>Active:</strong> Yes<br>
+                    <strong>Age:</strong> ${sessionAge}s<br>
+                    <strong>Last Activity:</strong> ${lastActivity}s ago<br>
+                    <strong>Rotations:</strong> ${status.rotationCount}<br>
+                    <strong>Fingerprint:</strong> <span class="fingerprint">${status.sessionFingerprint || 'None'}</span>
+                `;
+            } else {
+                infoDiv.innerHTML = '<strong>Active:</strong> No';
+            }
+        }
+
+        function updateDeviceInfo() {
+            const status = sessionSecurity.getSecurityStatus();
+            const infoDiv = document.getElementById('device-info');
+            
+            infoDiv.innerHTML = `
+                <strong>Fingerprint:</strong> <span class="fingerprint">${status.deviceFingerprint || 'Generating...'}</span><br>
+                <strong>Browser:</strong> ${navigator.userAgent.split(' ')[0]}<br>
+                <strong>Platform:</strong> ${navigator.platform}<br>
+                <strong>Screen:</strong> ${screen.width}x${screen.height}
+            `;
+        }
+
+        function updateTimerInfo() {
+            const status = sessionSecurity.getSecurityStatus();
+            const infoDiv = document.getElementById('timer-info');
+            
+            infoDiv.innerHTML = `
+                <strong>Token Rotation:</strong> ${status.timersActive.rotation ? '✅ Active' : '❌ Inactive'}<br>
+                <strong>Inactivity Timer:</strong> ${status.timersActive.inactivity ? '✅ Active' : '❌ Inactive'}<br>
+                <strong>Events Logged:</strong> ${status.securityEvents}
+            `;
+        }
+
+        function updateActivityInfo() {
+            const status = sessionSecurity.getSecurityStatus();
+            const infoDiv = document.getElementById('activity-info');
+            
+            const lastActivity = Math.floor((Date.now() - status.lastActivity) / 1000);
+            
+            infoDiv.innerHTML = `
+                <strong>Last Activity:</strong> ${lastActivity}s ago<br>
+                <strong>Status:</strong> ${lastActivity < 30 ? '🟢 Active' : lastActivity < 120 ? '🟡 Idle' : '🔴 Inactive'}<br>
+                <strong>Monitoring:</strong> ✅ Active
+            `;
+        }
+
+        function updateSecurityEvents() {
+            const events = sessionSecurity.getSecurityEvents(20);
+            const eventsDiv = document.getElementById('security-events');
+            
+            if (events.length === 0) {
+                eventsDiv.innerHTML = 'No security events yet...';
+                return;
+            }
+            
+            let html = '';
+            events.reverse().forEach(event => {
+                const time = new Date(event.timestamp).toLocaleTimeString();
+                const className = event.type.includes('failed') || event.type.includes('suspicious') ? 'event-error' :
+                                event.type.includes('expired') || event.type.includes('timeout') ? 'event-warning' : '';
+                
+                html += `
+                    <div class="event-entry ${className}">
+                        <strong>[${time}]</strong> ${event.type}
+                        ${event.reason ? ` (${event.reason})` : ''}
+                        ${event.rotationCount ? ` - Rotation #${event.rotationCount}` : ''}
+                    </div>
+                `;
+            });
+            
+            eventsDiv.innerHTML = html;
+        }
+
+        // Global test functions
+        window.testTokenRotation = async function() {
+            try {
+                logTestResult('Testing manual token rotation...', 'info');
+                await sessionSecurity.manualTokenRotation();
+                logTestResult('Token rotation test completed successfully', 'success');
+            } catch (error) {
+                logTestResult(`Token rotation test failed: ${error.message}`, 'error');
+            }
+        };
+
+        window.testInactivityTimeout = function() {
+            logTestResult('Testing inactivity timeout (simulated)...', 'info');
+            
+            // Simulate inactivity by not triggering activity events
+            setTimeout(() => {
+                logTestResult('Inactivity timeout test completed (check security events)', 'info');
+            }, 2000);
+        };
+
+        window.simulateHijacking = function() {
+            logTestResult('Simulating session hijacking attempt...', 'warning');
+            
+            // Modify session storage to simulate hijacking
+            const originalFingerprint = sessionStorage.getItem('session_fingerprint');
+            sessionStorage.setItem('session_fingerprint', 'hijacked_fingerprint_' + Date.now());
+            
+            setTimeout(() => {
+                // Restore original fingerprint
+                if (originalFingerprint) {
+                    sessionStorage.setItem('session_fingerprint', originalFingerprint);
+                }
+                logTestResult('Hijacking simulation completed (check security events)', 'warning');
+            }, 3000);
+        };
+
+        window.testDeviceFingerprint = async function() {
+            try {
+                logTestResult('Testing device fingerprint generation...', 'info');
+                
+                const fingerprint = await sessionSecurity.generateDeviceFingerprint();
+                logTestResult(`Device fingerprint generated: ${fingerprint}`, 'success');
+                
+                // Test consistency
+                const fingerprint2 = await sessionSecurity.generateDeviceFingerprint();
+                if (fingerprint === fingerprint2) {
+                    logTestResult('Device fingerprint consistency test passed', 'success');
+                } else {
+                    logTestResult('Device fingerprint consistency test failed', 'error');
+                }
+            } catch (error) {
+                logTestResult(`Device fingerprint test failed: ${error.message}`, 'error');
+            }
+        };
+
+        window.forceSignOut = async function() {
+            if (confirm('This will force sign out for security testing. Continue?')) {
+                try {
+                    logTestResult('Testing force sign out...', 'warning');
+                    await sessionSecurity.forceSignOut('test');
+                    logTestResult('Force sign out test completed', 'success');
+                } catch (error) {
+                    logTestResult(`Force sign out test failed: ${error.message}`, 'error');
+                }
+            }
+        };
+
+        window.clearSecurityEvents = function() {
+            sessionSecurity.clearSecurityEvents();
+            logTestResult('Security events cleared', 'info');
+        };
+
+        window.refreshStatus = function() {
+            updateStatus();
+            logTestResult('Status refreshed', 'info');
+        };
+
+        window.signInTest = async function() {
+            try {
+                logTestResult('Testing sign in (simulated)...', 'info');
+                
+                // This would normally use real authentication
+                // For testing, we'll simulate the process
+                const testEmail = 'test@example.com';
+                const testPassword = 'testpassword123';
+                
+                logTestResult(`Simulated sign in for ${testEmail}`, 'info');
+                logTestResult('Note: Use real authentication for actual testing', 'warning');
+                
+            } catch (error) {
+                logTestResult(`Sign in test failed: ${error.message}`, 'error');
+            }
+        };
+
+        window.signOutTest = async function() {
+            try {
+                logTestResult('Testing sign out...', 'info');
+                await authUtils.signOut();
+                logTestResult('Sign out test completed', 'success');
+            } catch (error) {
+                logTestResult(`Sign out test failed: ${error.message}`, 'error');
+            }
+        };
+
+        function logTestResult(message, type = 'info') {
+            const resultsDiv = document.getElementById('test-results');
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'success' ? 'status-ok' : 
+                            type === 'error' ? 'status-error' : 
+                            type === 'warning' ? 'status-warning' : '';
+            
+            const result = `
+                <div class="status-indicator ${className}" style="margin: 5px 0; padding: 8px;">
+                    <strong>[${timestamp}]</strong> ${message}
+                </div>
+            `;
+            
+            resultsDiv.innerHTML += result;
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+            
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        // Initialize when page loads
+        initialize();
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (statusUpdateInterval) {
+                clearInterval(statusUpdateInterval);
+            }
+        });
+    </script>
+</body>
+</html>

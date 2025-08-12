@@ -48,6 +48,25 @@ document.addEventListener('DOMContentLoaded', () => {
     toolList.appendChild(li);
   }
   // Sidebar remains overlayed across breakpoints so no main content offset is
+
+  // Global auth redirect function
+  window.redirectToAuth = function() {
+    // Store current URL for redirect after authentication
+    sessionStorage.setItem('auth_redirect', window.location.href);
+    
+    console.log('Storing redirect URL:', window.location.href);
+    
+    // Calculate correct path to auth page based on current location
+    let authPath = 'auth.html';
+    
+    // If we're in a tool subdirectory, go up two levels
+    if (window.location.pathname.includes('/tools/')) {
+      authPath = '../../auth.html';
+    }
+    
+    // Redirect to auth page
+    window.location.href = authPath;
+  };
   // needed.
 
   function openSidebar() {
