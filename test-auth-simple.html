@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Auth Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Simple Authentication Test</h1>
+    
+    <div id="status" class="status info">Initializing...</div>
+    
+    <div id="auth-section">
+        <h2>Authentication</h2>
+        <button onclick="testSupabaseConnection()">Test Supabase Connection</button>
+        <button onclick="testSignIn()">Test Sign In</button>
+        <button onclick="testSignOut()">Test Sign Out</button>
+    </div>
+    
+    <div id="user-info" style="display: none;">
+        <h2>User Information</h2>
+        <p>Email: <span id="user-email"></span></p>
+        <p>ID: <span id="user-id"></span></p>
+    </div>
+    
+    <div id="quota-info">
+        <h2>Quota Information</h2>
+        <p>Guest Usage: <span id="guest-usage">0</span> / 3</p>
+        <p>Auth Usage: <span id="auth-usage">Loading...</span></p>
+    </div>
+
+    <!-- Load configuration and scripts -->
+    <script src="js/public-config.js"></script>
+    <script src="js/auth-manager.js"></script>
+    <script type="module">
+        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+        
+        let supabaseClient = null;
+        let authManager = null;
+        let currentUser = null;
+        
+        // Initialize
+        async function init() {
+            try {
+                updateStatus('Waiting for configuration...', 'info');
+                
+                // Wait for config
+                while (!window.PUBLIC_ENV) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+                
+                updateStatus('Creating Supabase client...', 'info');
+                
+                // Create Supabase client
+                supabaseClient = createClient(
+                    window.PUBLIC_ENV.SUPABASE_URL,
+                    window.PUBLIC_ENV.SUPABASE_ANON_KEY,
+                    {
+                        auth: {
+                            persistSession: true,
+                            autoRefreshToken: true,
+                            detectSessionInUrl: true
+                        }
+                    }
+                );
+                
+                window.supabaseClient = { getClient: () => supabaseClient };
+                
+                updateStatus('Initializing AuthManager...', 'info');
+                
+                // Initialize AuthManager
+                if (window.AuthManager) {
+                    authManager = new window.AuthManager(window.supabaseClient);
+                    window.authManager = authManager;
+                }
+                
+                // Set up auth state listener
+                supabaseClient.auth.onAuthStateChange((event, session) => {
+                    console.log('Auth state changed:', event, session?.user?.email || 'No user');
+                    handleAuthStateChange(event, session);
+                });
+                
+                // Get initial session
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                handleAuthStateChange('INITIAL', session);
+                
+                updateStatus('✅ Initialization complete!', 'success');
+                
+            } catch (error) {
+                console.error('Initialization error:', error);
+                updateStatus(`❌ Initialization failed: ${error.message}`, 'error');
+            }
+        }
+        
+        function handleAuthStateChange(event, session) {
+            currentUser = session?.user || null;
+            
+            if (currentUser) {
+                document.getElementById('user-info').style.display = 'block';
+                document.getElementById('user-email').textContent = currentUser.email;
+                document.getElementById('user-id').textContent = currentUser.id;
+                updateStatus(`✅ Signed in as ${currentUser.email}`, 'success');
+            } else {
+                document.getElementById('user-info').style.display = 'none';
+                updateStatus('Not signed in', 'info');
+            }
+            
+            updateQuotaDisplay();
+        }
+        
+        async function updateQuotaDisplay() {
+            // Update guest usage
+            const guestUsage = getGuestUsage();
+            document.getElementById('guest-usage').textContent = guestUsage.used;
+            
+            // Update auth usage
+            if (currentUser) {
+                try {
+                    const { data: usage } = await supabaseClient
+                        .from('user_usage')
+                        .select('*')
+                        .eq('user_id', currentUser.id)
+                        .single();
+                    
+                    const usedConversions = usage?.conversions_used || 0;
+                    document.getElementById('auth-usage').textContent = `${usedConversions} / 10`;
+                } catch (error) {
+                    document.getElementById('auth-usage').textContent = 'Error loading';
+                }
+            } else {
+                document.getElementById('auth-usage').textContent = 'Not signed in';
+            }
+        }
+        
+        function getGuestUsage() {
+            try {
+                const stored = localStorage.getItem('guestImageQuota');
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    const hoursSinceReset = (Date.now() - parsed.lastReset) / (1000 * 60 * 60);
+                    if (hoursSinceReset >= 24) {
+                        return { used: 0, lastReset: Date.now() };
+                    }
+                    return parsed;
+                }
+            } catch (error) {
+                console.error('Error loading guest usage:', error);
+            }
+            return { used: 0, lastReset: Date.now() };
+        }
+        
+        function updateStatus(message, type) {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = `status ${type}`;
+        }
+        
+        // Global test functions
+        window.testSupabaseConnection = async function() {
+            try {
+                updateStatus('Testing Supabase connection...', 'info');
+                
+                const { data, error } = await supabaseClient.auth.getSession();
+                if (error) throw error;
+                
+                updateStatus('✅ Supabase connection successful!', 'success');
+                console.log('Session data:', data);
+                
+            } catch (error) {
+                updateStatus(`❌ Supabase connection failed: ${error.message}`, 'error');
+                console.error('Connection error:', error);
+            }
+        };
+        
+        window.testSignIn = async function() {
+            try {
+                updateStatus('Testing sign in...', 'info');
+                
+                // Redirect to auth page
+                window.location.href = 'auth.html';
+                
+            } catch (error) {
+                updateStatus(`❌ Sign in failed: ${error.message}`, 'error');
+                console.error('Sign in error:', error);
+            }
+        };
+        
+        window.testSignOut = async function() {
+            try {
+                updateStatus('Testing sign out...', 'info');
+                
+                if (authManager && authManager.signOut) {
+                    await authManager.signOut();
+                } else {
+                    await supabaseClient.auth.signOut();
+                }
+                
+                updateStatus('✅ Sign out successful!', 'success');
+                
+            } catch (error) {
+                updateStatus(`❌ Sign out failed: ${error.message}`, 'error');
+                console.error('Sign out error:', error);
+            }
+        };
+        
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    </script>
+</body>
+</html>

@@ -1,3 +1,6 @@
+// utils.js - Cleaned up utility functions
+// Note: Quota management has been moved to core.js
+
 // utils.js - Utility functions for the image converter
 
 // Notification system
@@ -117,48 +120,14 @@ export function showError(index, filename, err) {
   previewTbody.appendChild(tr);
 }
 
-// Quota management
-export function getQuotaInfo() {
-  const now = Date.now();
-  let quota = JSON.parse(localStorage.getItem('imgQuota') || '{}');
-  if (!quota.start || typeof quota.used !== 'number') {
-    quota = { start: now, used: 0 };
-    localStorage.setItem('imgQuota', JSON.stringify(quota));
-  } else if (now - quota.start > 24*60*60*1000) {
-    quota = { start: now, used: 0 };
-    localStorage.setItem('imgQuota', JSON.stringify(quota));
-  }
-  return quota;
-}
-
-export function setQuotaInfo(quota) {
-  localStorage.setItem('imgQuota', JSON.stringify(quota));
-}
-
-export function updateQuotaStatus() {
-  const quota = getQuotaInfo();
-  const left = Math.max(0, 100 - quota.used);
-  const quotaStatus = document.getElementById('quota-status');
-  const upgradeBtn = document.getElementById('upgrade-btn');
-  
-  if (quotaStatus) {
-    quotaStatus.textContent = `Free quota: ${left} of 100 images left (resets in ${Math.ceil((24*60*60*1000 - (Date.now() - quota.start))/3600000)}h)`;
-  }
-  
-  // Show upgrade button if quota is low or zero
+// Show upgrade button if quota is low or zero
   if (upgradeBtn) {
     upgradeBtn.style.display = (left <= 2) ? 'inline-block' : 'none';
   }
 }
 
-export function canProcessImages(num, files) {
-  const quota = getQuotaInfo();
-  if (quota.used >= 100) return false;
-  let valid = 0;
-  for (let i = 0; i < files.length; i++) {
-    if (files[i].size <= 5*1024*1024) valid++;
-  }
-  return Math.min(valid, 100 - quota.used);
+
+  return Math.min(valid, 100 - // quota.used);
 }
 
 // Format file size in KB or MB for readability
@@ -265,12 +234,7 @@ export function checkWasmSupport() {
 }
 
 // Toggle Stripe pricing accordion
-export function toggleStripeAccordion(show = false) {
-  const accordion = document.getElementById('stripe-accordion');
-  if (accordion) {
-    accordion.style.display = show ? 'block' : 'none';
-  }
-}
+
 
 // Fix download button display issues
 export function fixDownloadButtonDisplay() {
