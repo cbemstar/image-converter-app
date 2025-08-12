@@ -136,16 +136,21 @@ export function setQuotaInfo(quota) {
 }
 
 export function updateQuotaStatus() {
-  const quota = getQuotaInfo();
-  const left = Math.max(0, 100 - quota.used);
+  let left;
+  if (window.imageAuth && typeof window.imageAuth.getRemainingConversions === 'function') {
+    left = window.imageAuth.getRemainingConversions();
+  } else {
+    const quota = getQuotaInfo();
+    left = Math.max(0, 100 - quota.used);
+  }
+
   const quotaStatus = document.getElementById('quota-status');
   const upgradeBtn = document.getElementById('upgrade-btn');
-  
+
   if (quotaStatus) {
-    quotaStatus.textContent = `Free quota: ${left} of 100 images left (resets in ${Math.ceil((24*60*60*1000 - (Date.now() - quota.start))/3600000)}h)`;
+    quotaStatus.textContent = `${left} free conversions remaining. Quota resets every 24 hours.`;
   }
-  
-  // Show upgrade button if quota is low or zero
+
   if (upgradeBtn) {
     upgradeBtn.style.display = (left <= 2) ? 'inline-block' : 'none';
   }

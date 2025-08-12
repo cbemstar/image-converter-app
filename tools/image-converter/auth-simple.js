@@ -17,6 +17,7 @@ class ImageConverterAuth {
       // Load usage from localStorage for anonymous users
       this.loadLocalUsage();
       this.isInitialized = true;
+      this.updateUI();
       console.log('✅ Image Converter Auth initialized');
     } catch (error) {
       console.error('❌ Auth initialization failed:', error);
@@ -53,25 +54,10 @@ class ImageConverterAuth {
   }
 
   updateUI() {
-    const remaining = this.getRemainingConversions();
-    const usageElement = document.getElementById('usage-counter');
-    
-    if (usageElement) {
-      if (remaining > 0) {
-        usageElement.innerHTML = `
-          <div class="text-sm text-muted-foreground">
-            <i class="fas fa-image mr-1"></i>
-            ${remaining} free conversions remaining
-          </div>
-        `;
-      } else {
-        usageElement.innerHTML = `
-          <div class="text-sm text-destructive">
-            <i class="fas fa-exclamation-triangle mr-1"></i>
-            Free limit reached. <a href="#upgrade" class="text-primary underline">Upgrade for unlimited conversions</a>
-          </div>
-        `;
-      }
+    const quotaElement = document.getElementById('quota-status');
+    if (quotaElement) {
+      const remaining = this.getRemainingConversions();
+      quotaElement.textContent = `${remaining} free conversions remaining. Quota resets every 24 hours.`;
     }
   }
 
