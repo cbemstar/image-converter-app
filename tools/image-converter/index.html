@@ -22,8 +22,6 @@
   <script src="https://cdn.jsdelivr.net/npm/raw-wasm@1.0.0/dist/raw-wasm.min.js"></script>
   <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Simple Authentication for Usage Tracking -->
-  <script src="auth-simple.js"></script>
   
   <!-- JS files -->
   <script type="module" src="core.js"></script>
@@ -48,30 +46,6 @@
           </a>
         </div>
         <div class="flex items-center gap-2">
-          <!-- Guest User -->
-          <div data-guest-only class="flex items-center gap-2">
-            <a href="../../auth.html" class="btn btn-outline btn-sm" data-nav-link="auth">
-              <i class="fas fa-sign-in-alt mr-1"></i>
-              Sign In
-            </a>
-          </div>
-          
-          <!-- Authenticated User -->
-          <div data-auth-required class="flex items-center gap-2" style="display: none;">
-            <div class="dropdown dropdown-end relative">
-              <button class="btn btn-outline btn-sm dropdown-toggle" aria-label="User menu" aria-expanded="false">
-                <img data-user-info="avatar" class="w-6 h-6 rounded-full mr-2 max-w-full h-auto" alt="User avatar" style="display: none;">
-                <span data-user-info="name" class="hidden sm:inline">User</span>
-                <i class="fas fa-chevron-down ml-1"></i>
-              </button>
-              <ul class="dropdown-content menu p-2 shadow bg-background border border-border rounded-lg w-52 absolute right-0 top-full mt-1 z-50" style="display: none;" role="menu">
-                <li role="none"><a href="../../dashboard.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded" data-nav-link="dashboard" data-dashboard-access="true" role="menuitem"><i class="fas fa-tachometer-alt"></i>Dashboard</a></li>
-                <li role="none"><a href="../../profile.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded" data-nav-link="profile" role="menuitem"><i class="fas fa-user"></i>Profile</a></li>
-                <li role="none"><a href="#" data-action="signout" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded" role="menuitem"><i class="fas fa-sign-out-alt"></i>Sign Out</a></li>
-              </ul>
-            </div>
-          </div>
-          
           <button id="theme-toggle" class="btn btn-outline btn-sm" aria-label="Toggle theme">
             <span id="theme-toggle-icon">🌙</span>
           </button>
@@ -185,30 +159,9 @@
     <div id="progress-bar-container" class="w-full max-w-2xl mx-auto mb-4">
       <div id="progress-bar"></div>
     </div>
-    <div id="quota-status" class="text-center text-base font-medium mb-2" style="color:hsl(39 100% 64%);"></div>
     
     <!-- Usage Counter -->
     <div id="usage-counter" class="text-center mb-4"></div>
-    
-    <!-- Hidden legacy auth controls for backwards compatibility -->
-    <div id="auth-controls" class="text-center mb-4" style="display: none;">
-      <input id="auth-email" type="email" placeholder="Email" class="border rounded px-2 py-1 mr-2" />
-      <input id="auth-password" type="password" placeholder="Password" class="border rounded px-2 py-1 mr-2" />
-      <button onclick="signUp(document.getElementById('auth-email').value, document.getElementById('auth-password').value)" class="bg-blue-500 text-white px-4 py-2 rounded">Sign Up</button>
-      <button onclick="signIn(document.getElementById('auth-email').value, document.getElementById('auth-password').value)" class="bg-green-500 text-white px-4 py-2 rounded">Login</button>
-      <button onclick="signOut()" class="bg-red-500 text-white px-4 py-2 rounded" style="display:none;">Logout</button>
-    </div>
-    <div class="flex flex-col items-center mb-4">
-      <button id="upgrade-btn" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded shadow transition-colors mb-0">Upgrade</button>
-      <!-- Stripe Pricing Table Accordion -->
-      <div id="stripe-accordion" style="display:none;width:100%;max-width:900px;min-width:320px;overflow-x:auto;background:var(--background);border-radius:14px;box-shadow:0 4px 24px rgba(0,0,0,0.18);padding: var(--spacing-6) 1rem 1rem 1rem;">
-        <div style="margin-bottom:1rem;text-align:center;color:var(--foreground);font-size:1.2rem;font-weight: 600;">Upgrade to Pro</div>
-        <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
-        <stripe-pricing-table pricing-table-id="prctbl_1QwytqBcmaVSn6Z156zYdTHl"
-          publishable-key="pk_live_51LTgh8BcmaVSn6Z1nQkl0Xc2lFlcaFvaBabebmyJr4fWmZqVk37uI2JBUoY9otwUVqmN2Xol9ZOdcjOdcy8MqHbS00QLT2xZxw">
-        </stripe-pricing-table>
-      </div>
-    </div>
     <!-- File Drop Area -->
     <div id="drop-area" class="border-2 border-dashed border-blue-400 rounded-lg p-4 sm:p-8 text-center text-blue-500 mb-8 bg-white shadow hover:shadow-lg transition-shadow cursor-pointer max-w-2xl mx-auto px-4">
       <p class="mb-4">Drag & drop your image files here</p>
@@ -276,42 +229,6 @@
     </div>
     
     <!-- Login Modal -->
-    <div id="login-modal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; overflow:auto; background-color:rgba(0,0,0,0.7);">
-      <div style="background-color:var(--background); margin:10% auto; padding:20px; border:2px solid var(--foreground); border-radius:12px; width:90%; max-width:400px;">
-        <span id="close-login-modal" style="color:var(--foreground); float:right; font-size:28px; font-weight:bold; cursor:pointer;">&times;</span>
-        <h3 style="color:var(--foreground); margin-bottom:20px; text-align:center;">Login / Sign Up</h3>
-        
-        <div class="mb-4">
-          <label for="modal-email" style="color:var(--foreground); display:block; margin-bottom:6px;">Email:</label>
-          <input id="modal-email" type="email" placeholder="your@email.com" class="input" />
-        </div>
-
-        <div id="full-name-field" class="mb-4" style="display:none;">
-          <label for="modal-full-name" style="color:var(--foreground); display:block; margin-bottom:6px;">Full Name:</label>
-          <input id="modal-full-name" type="text" placeholder="Your full name" class="input" />
-        </div>
-        
-        <div id="password-field" class="mb-4">
-          <label for="modal-password" style="color:var(--foreground); display:block; margin-bottom:6px;">Password:</label>
-          <input id="modal-password" type="password" placeholder="Your password" class="input" />
-        </div>
-        
-        <div id="auth-actions" class="flex justify-between mt-6 gap-2">
-          <button id="modal-signup-btn" class="btn flex-1">Sign Up</button>
-          <button id="modal-login-btn" class="btn flex-1">Login</button>
-        </div>
-
-        <div class="mt-4 flex justify-center">
-          <button id="google-login-btn" class="btn w-full flex items-center justify-center gap-2">
-            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5 max-w-full h-auto">
-            Continue with Google
-          </button>
-        </div>
-        
-        <div class="text-center mt-4">
-          <a href="#" id="forgot-password-link" style="color:var(--primary); text-decoration:underline; font-size:0.9rem;">Forgot your password?</a>
-        </div>
-      </div>
     </div>
     
     <!-- Download buttons -->

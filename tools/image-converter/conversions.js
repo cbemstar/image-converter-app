@@ -10,9 +10,6 @@ import {
   isSvg, 
   isIco, 
   showNotification, 
-  getQuotaInfo, 
-  setQuotaInfo, 
-  updateQuotaStatus,
   fixDownloadButtonDisplay,
   formatFileSize
 } from '../../utils.js';
@@ -339,13 +336,6 @@ export async function processImages(files, maxW, maxH, targetBytes, format) {
   }
   
   // Fix download buttons display
-  fixDownloadButtonDisplay();
-  
-  // Increment quota counter
-  const quota = getQuotaInfo();
-  quota.used += processed;
-  setQuotaInfo(quota);
-  updateQuotaStatus();
-  
+  fixDownloadButtonDisplay();  
   return processed;
 } 

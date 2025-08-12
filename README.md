@@ -55,7 +55,6 @@ A comprehensive collection of browser-based utility tools designed for marketing
 - **MediaPipe**: Background removal (Selfie Segmentation)
 - **pdf-lib**: PDF manipulation and merging
 - **Tesseract.js**: OCR functionality for PDF text extraction
-- **Supabase**: Optional authentication and user management
 
 ### Browser APIs Used
 - **HTML5 Canvas API**: Image processing and manipulation
@@ -92,16 +91,6 @@ npm test
 ```
 
 ## 🔧 Configuration
-
-### Authentication (Optional)
-To enable enhanced features with user accounts:
-
-1. Create a Supabase project
-2. Set `SUPABASE_URL` and `SUPABASE_ANON_KEY` as environment variables (e.g., in a `.env.local` file) and run `npm run build:config` to generate the runtime configuration
-3. Configure Google OAuth in your Supabase dashboard
-4. Ensure your `users` table includes a `full_name` column
-
-> **Deployment Note:** Run `npm run build:config` before deploying to generate `js/supabase-config.js` from your current `SUPABASE_URL` and `SUPABASE_ANON_KEY` values.
 
 ### Analytics (Optional)
 The site includes Google Tag Manager integration (container `GTM-NFJTSQ3N`) for centralized analytics configuration.

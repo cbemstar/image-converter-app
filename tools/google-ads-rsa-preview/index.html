@@ -30,18 +30,6 @@
   <script type="module" src="../../layout.js"></script>
 
   <!-- Core Dependencies -->
-  <script src="../../js/config.js"></script>
-    <script src="/js/public-config.js"></script>
-    <script type="module" src="/js/supabase-client.js"></script>
-  <script src="../../js/path-resolver.js"></script>
-  <script src="../../js/auth-manager.js"></script>
-  <script src="../../js/auth-state-sync.js"></script>
-  <script src="../../js/quota-manager.js"></script>
-  <script src="../../js/analytics-manager.js"></script>
-  <script src="../../js/error-handler.js"></script>
-  <script src="../../js/tool-integration.js"></script>
-  <script src="../../js/unified-navigation.js"></script>
-  <script src="../../js/auto-navigation.js"></script>
 
   <!-- THEME INIT -->
   <script>
@@ -170,7 +158,6 @@
       box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
     }
 
-<<<<<<< HEAD
     /* mimic Google ads appearance */
     .ad-sponsored-row { font-size:0.875rem; color:#4d5156; margin-bottom:0.25rem; display:flex; gap:0.25rem; align-items:center; }
     .ad-sponsored-row span:first-child { color:#202124; font-weight:600; }
@@ -191,14 +178,12 @@
     .validation-icon.valid { color:#10b981; }
     .validation-icon.invalid { color: hsl(var(--destructive)); }
     .validation-icon.warning { color:#f59e0b; }
-=======
     .ad-preview-row {
       position: relative;
       display: flex;
       gap: 1.5rem;
       align-items: flex-start;
     }
->>>>>>> 40058ad (Sign-in Dasboard)
 
     .ad-preview-text {
       flex: 1;
@@ -385,30 +370,6 @@
           </a>
         </div>
         <div class="flex items-center gap-2">
-          <!-- Guest User -->
-          <div data-guest-only class="flex items-center gap-2">
-            <a href="../../auth.html" class="btn btn-outline btn-sm" data-nav-link="auth">
-              <i class="fas fa-sign-in-alt mr-1"></i>
-              Sign In
-            </a>
-          </div>
-          
-          <!-- Authenticated User -->
-          <div data-auth-required class="flex items-center gap-2" style="display: none;">
-            <div class="dropdown dropdown-end relative">
-              <button class="btn btn-outline btn-sm dropdown-toggle" aria-label="User menu" aria-expanded="false">
-                <img data-user-info="avatar" class="w-6 h-6 rounded-full mr-2" alt="User avatar" style="display: none;">
-                <span data-user-info="name" class="hidden sm:inline">User</span>
-                <i class="fas fa-chevron-down ml-1"></i>
-              </button>
-              <ul class="dropdown-content menu p-2 shadow bg-background border border-border rounded-lg w-52 absolute right-0 top-full mt-1 z-50" style="display: none;" role="menu">
-                <li role="none"><a href="../../dashboard.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded" data-nav-link="dashboard" data-dashboard-access="true" role="menuitem"><i class="fas fa-tachometer-alt"></i>Dashboard</a></li>
-                <li role="none"><a href="../../profile.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded" data-nav-link="profile" role="menuitem"><i class="fas fa-user"></i>Profile</a></li>
-                <li role="none"><a href="#" data-action="signout" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded" role="menuitem"><i class="fas fa-sign-out-alt"></i>Sign Out</a></li>
-              </ul>
-            </div>
-          </div>
-          
           <button id="theme-toggle" class="btn btn-outline btn-sm" aria-label="Toggle theme">
             <span id="theme-toggle-icon">🌙</span>
           </button>
@@ -673,7 +634,6 @@
           name: 'google-ads-rsa-preview',
           type: 'utility',
           requiresAuth: false,
-          quotaType: 'conversions',
           trackUsage: true
         });
       }
@@ -692,25 +652,6 @@
       const snippets = qa('#snippets-container > div').map(g => { const header = q('input', g).value; const values = qa('.snippet-values input', g).map(i => i.value.trim()).filter(Boolean); return { header, values }; }).filter(s => s.header && s.values.length);
       const phone = q('#callExtension').value.trim();
 
-<<<<<<< HEAD
-      let html=`<div class="ad-sponsored-row"><span>Sponsored</span><span class="ad-sponsored-dot">•</span><span>${displayUrl}${p1?'/'+p1:''}${p2?'/'+p2:''}</span></div>`;
-      html+='<div class="ad-preview-row">';
-      if(mobile){ html+=imageAssetDataUrl?`<img class="ad-image" src="${imageAssetDataUrl}" alt="ad">`:`<div class="ad-image flex items-center justify-center text-4xl text-muted-foreground">🖼️</div>`; }
-      html+='<div class="ad-preview-text">';
-      const title=heads.slice(0,3).join(' | ');
-      html+=`<div class="ad-title">${title?`<a href="${finalUrl}" target="_blank">${title}</a>`:'<span class="text-muted-foreground">Your ad title...</span>'}</div>`;
-      html+=`<div class="ad-description mt-1">${descs.slice(0,2).join(' ')||'<span class="text-muted-foreground">Your ad description...</span>'}</div>`;
-      html+='<div class="ad-extensions mt-2">';
-      if(sitelinks.length){ html+='<div class="sitelinks flex flex-wrap gap-x-6 gap-y-1 mt-2">'+sitelinks.map(s=>`<a class="sitelink" href="${s.url||finalUrl}" target="_blank">${s.text}</a>`).join('')+'</div>'; }
-      if(callouts.length){ html+='<div class="callouts flex flex-wrap gap-3 mt-2">'+callouts.map(c=>`<span class="callout">${c}</span>`).join('')+'</div>'; }
-      if(snippets.length){ html+='<div class="structured-snippets flex flex-wrap gap-3 mt-2">'+snippets.map(sn=>`<span class="structured-snippet"><b>${sn.header}:</b> ${sn.values.join(', ')}</span>`).join('')+'</div>'; }
-      if(phone){ html+=`<div class="call-extension mt-2">Call: <a href="tel:${phone}">${phone}</a></div>`; }
-      html+='</div>'; // text
-      if(!mobile){ html+=imageAssetDataUrl?`<img class="ad-image" src="${imageAssetDataUrl}" alt="ad">`:`<div class="ad-image flex items-center justify-center text-4xl text-muted-foreground">🖼️</div>`; }
-      html+='</div>'; // row
-      q('#ad-preview').innerHTML=html;
-      adStrength(heads,descs);
-=======
       let html = `<div class="ad-sponsored-row"><span>Sponsored</span><span class="ad-sponsored-dot">•</span><span>${displayUrl}${p1 ? '/' + p1 : ''}${p2 ? '/' + p2 : ''}</span></div>`;
       html += '<div class="ad-preview-row">';
       if (mobile) { html += imageAssetDataUrl ? `<img class="ad-image" src="${imageAssetDataUrl}" alt="ad">` : `<div class="ad-image flex items-center justify-center text-4xl text-muted-foreground">🖼️</div>`; }
@@ -727,7 +668,6 @@
       html += '</div>'; // row
       q('#ad-preview').innerHTML = html;
       adStrength(heads, descs);
->>>>>>> 40058ad (Sign-in Dasboard)
     }
 
     /* ---------------- VALIDATION ---------------- */

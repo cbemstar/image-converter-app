@@ -1,7 +1,0 @@
-{
-  "name": "Postcard Standard",
-  "width_mm": 148,
-  "height_mm": 105,
-  "bleed_mm": 3,
-  "channel": "print"
-}

@@ -12,13 +12,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome for icons -->
   <!-- Core Dependencies -->
-  <script src="../../js/config.js"></script>
-    <script src="/js/public-config.js"></script>
-    <script type="module" src="/js/supabase-client.js"></script>
-  <script src="../../js/path-resolver.js"></script>
-  <script src="../../js/auth-manager.js"></script>
-  <script src="../../js/auth-state-sync.js"></script>
-  <script src="../../js/unified-navigation.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <!-- MediaPipe Selfie Segmentation -->
@@ -44,30 +37,6 @@
           </a>
         </div>
         <div class="flex items-center gap-2">
-          <!-- Guest User -->
-          <div data-guest-only class="flex items-center gap-2">
-            <a href="../../auth.html" class="btn btn-outline btn-sm" data-nav-link="auth">
-              <i class="fas fa-sign-in-alt mr-1"></i>
-              Sign In
-            </a>
-          </div>
-          
-          <!-- Authenticated User -->
-          <div data-auth-required class="flex items-center gap-2" style="display: none;">
-            <div class="dropdown dropdown-end relative">
-              <button class="btn btn-outline btn-sm dropdown-toggle" aria-label="User menu" aria-expanded="false">
-                <img data-user-info="avatar" class="w-6 h-6 rounded-full mr-2" alt="User avatar" style="display: none;">
-                <span data-user-info="name" class="hidden sm:inline">User</span>
-                <i class="fas fa-chevron-down ml-1"></i>
-              </button>
-              <ul class="dropdown-content menu p-2 shadow bg-background border border-border rounded-lg w-52 absolute right-0 top-full mt-1 z-50" style="display: none;" role="menu">
-                <li role="none"><a href="../../dashboard.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded" data-nav-link="dashboard" data-dashboard-access="true" role="menuitem"><i class="fas fa-tachometer-alt"></i>Dashboard</a></li>
-                <li role="none"><a href="../../profile.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded" data-nav-link="profile" role="menuitem"><i class="fas fa-user"></i>Profile</a></li>
-                <li role="none"><a href="#" data-action="signout" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded" role="menuitem"><i class="fas fa-sign-out-alt"></i>Sign Out</a></li>
-              </ul>
-            </div>
-          </div>
-          
           <button id="theme-toggle" class="btn btn-outline btn-sm" aria-label="Toggle theme">
             <span id="theme-toggle-icon">🌙</span>
           </button>

@@ -3,10 +3,6 @@
 import { 
   showNotification, 
   showError, 
-  getQuotaInfo, 
-  setQuotaInfo, 
-  updateQuotaStatus, 
-  canProcessImages, 
   isHeic, 
   isRaw, 
   isAvif, 
@@ -60,15 +56,6 @@ let upgradeBtn;
 let downloadSelectedBtn;
 
 // Navigation and modal elements
-let navLoginBtn;
-let navLogoutBtn;
-let mobileMenuButton;
-let mobileMenu;
-let loginModal;
-let closeLoginModal;
-let modalSignupBtn;
-let modalLoginBtn;
-let forgotPasswordLink;
 // Sidebar and tool search are now handled in layout.js
 
 // Modal elements for image preview (Lightbox Gallery) - These will be initialized when DOM is loaded
@@ -81,78 +68,11 @@ let closeModalBtn;
 let galleryImages = [];
 let galleryIndex = 0;
 
-// Supabase client instance (initialized from supabase-client.js)
-let supabase;
 
-// Initialize Supabase if available
-function initSupabase() {
-  if (!window.supabaseClient) {
-    console.error('Supabase client not initialized.');
-    return false;
-  }
 
-  supabase = window.supabaseClient.getClient();
-
-  if (!supabase) {
-    console.error('Supabase client unavailable.');
-    return false;
-  }
-
-  // Listen for auth state changes
-  supabase.auth.onAuthStateChange((event, session) => {
-    updateAuthUI(!!session);
-
-    if (session) {
-      // Reset quota for logged in users
-      localStorage.setItem('imgQuota', JSON.stringify({ start: Date.now(), used: 0 }));
-      updateQuotaStatus();
-
-      // Close login modal if open
-      if (loginModal) {
-        loginModal.style.display = 'none';
-      }
-    }
-  });
-
-  // Check the current session state
-  supabase.auth.getSession().then(({ data }) => {
-    updateAuthUI(!!data.session);
-  });
-
-  return true;
-}
-
-// Update UI based on authentication state
-function updateAuthUI(isLoggedIn) {
-  // Update navigation buttons
-  if (navLoginBtn && navLogoutBtn) {
-    navLoginBtn.style.display = isLoggedIn ? 'none' : 'inline-flex';
-    navLogoutBtn.style.display = isLoggedIn ? 'inline-flex' : 'none';
-  }
-  
-  // Update legacy auth controls for backwards compatibility
-  const legacyLogoutBtn = document.querySelector('#auth-controls button.bg-red-500');
-  if (legacyLogoutBtn) {
-    legacyLogoutBtn.style.display = isLoggedIn ? 'inline-block' : 'none';
-  }
-}
-
-// Debug mode: auto-reset quota when URL contains '?debug'
-function initDebugMode() {
-  if (window.location.search.includes('debug')) {
-    localStorage.setItem('imgQuota', JSON.stringify({ start: Date.now(), used: 0 }));
-    console.log('Debug: quota reset to 0');
-  }
 }
 
 // File handling function
-async function handleFiles(files) {
-  if (!files.length) return;
-  const imageFiles = Array.from(files).filter(f => f.type.startsWith('image/') || isRaw(f) || isHeic(f));
-  if (!imageFiles.length) {
-    showNotification('Please select image files only.', 'error');
-    return;
-  }
 
   toggleTableHeader(false);
   
@@ -198,29 +118,10 @@ async function handleFiles(files) {
     }
   }
   
-  const quota = getQuotaInfo();
-  if (quota.used >= 100) {
-    if (progressStatus) progressStatus.textContent = '';
-    if (progressBar) progressBar.style.width = '0';
-    updateQuotaStatus();
-    toggleStripeAccordion(true);
-    return;
-  }
-  
-  // Allow up to 25MB for in-browser, >25MB for Supabase
-  const validFiles = imageFiles.filter(f => f.size <= 100*1024*1024); // allow up to 100MB for pro, but hybrid logic will route
-  let canProcess = Math.min(validFiles.length, 100 - quota.used);
-  if (imageFiles.length > 100 || validFiles.length > 100 || canProcess < validFiles.length) {
-    showNotification('You selected more than 100 images. Only the first 100 within your quota will be processed.', 'warning');
-  }
-  if (canProcess === 0) {
-    showNotification('No images can be processed (quota or size limit).', 'error');
-    updateQuotaStatus();
-    return;
-  }
-  
-  _selectedFiles = validFiles.slice(0, canProcess);
-  window._selectedFiles = _selectedFiles; // Update global reference
+  const validFiles = imageFiles.filter(f => f.size <= 100*1024*1024);
+  _selectedFiles = validFiles;
+  window._selectedFiles = _selectedFiles;
+
   
   // Clear and show table
   if (previewTbody) {
@@ -527,12 +428,6 @@ async function processSingleImage(index) {
         });
       }
     }
-    
-    // Update quota
-    const quota = getQuotaInfo();
-    quota.used += 1;
-    setQuotaInfo(quota);
-    updateQuotaStatus();
   } catch (err) {
     const safeName = sanitizeFilename(file.name);
     console.error(`Error converting image ${safeName}:`, err);
@@ -872,13 +767,6 @@ function setupNavigation() {
     });
   }
   
-  // Navigation login button
-  if (navLoginBtn && loginModal) {
-    navLoginBtn.addEventListener('click', function() {
-      loginModal.style.display = 'block';
-    });
-  }
-  
   // Navigation logout button
   if (navLogoutBtn) {
     navLogoutBtn.addEventListener('click', function() {
@@ -909,223 +797,7 @@ function setupFaqs() {
   });
 }
 
-// Login modal functionality
-function setupLoginModal() {
-  if (!loginModal) return;
-  
-  // Close modal handlers
-  if (closeLoginModal) {
-    closeLoginModal.addEventListener('click', function() {
-      loginModal.style.display = 'none';
-    });
-  }
-  
-  // Close modal when clicking outside
-  window.addEventListener('click', function(event) {
-    if (event.target === loginModal) {
-      loginModal.style.display = 'none';
-    }
-  });
-  
-  let signUpMode = false;
-  const fullNameField = document.getElementById('full-name-field');
-  if (fullNameField) {
-    fullNameField.style.display = 'none';
-  }
 
-  // Modal signup button
-  if (modalSignupBtn) {
-    modalSignupBtn.addEventListener('click', function() {
-      const email = document.getElementById('modal-email').value;
-      const password = document.getElementById('modal-password').value;
-      const fullName = document.getElementById('modal-full-name').value;
-
-      if (!signUpMode) {
-        signUpMode = true;
-        if (fullNameField) fullNameField.style.display = 'block';
-        return;
-      }
-
-      if (!email || !password || !fullName) {
-        showNotification('Please fill out all fields', 'error');
-        return;
-      }
-
-      if (typeof window.signUp === 'function') {
-        window.signUp(email, password, fullName);
-      } else {
-        showNotification('Sign up functionality not available. Please refresh the page.', 'error');
-      }
-    });
-  }
-
-  // Modal login button
-  if (modalLoginBtn) {
-    modalLoginBtn.addEventListener('click', function() {
-      const email = document.getElementById('modal-email').value;
-      const password = document.getElementById('modal-password').value;
-
-      if (fullNameField) {
-        fullNameField.style.display = 'none';
-      }
-      signUpMode = false;
-
-      if (!email || !password) {
-        showNotification('Please enter both email and password', 'error');
-        return;
-      }
-      
-      if (typeof window.signIn === 'function') {
-        window.signIn(email, password);
-      } else {
-        showNotification('Login functionality not available. Please refresh the page.', 'error');
-      }
-    });
-  }
-
-  const googleBtn = document.getElementById('google-login-btn');
-  if (googleBtn) {
-    googleBtn.addEventListener('click', function() {
-      if (typeof window.signInWithGoogle === 'function') {
-        window.signInWithGoogle();
-      } else {
-        showNotification('Google sign in unavailable. Please refresh the page.', 'error');
-      }
-    });
-  }
-  
-  // Forgot password link
-  if (forgotPasswordLink) {
-    forgotPasswordLink.addEventListener('click', function(e) {
-      e.preventDefault();
-      const email = document.getElementById('modal-email').value;
-      if (!email) {
-        showNotification('Enter your email above to reset your password', 'error');
-        return;
-      }
-      if (typeof window.resetPassword === 'function') {
-        window.resetPassword(email);
-      }
-    });
-  }
-}
-
-// Authentication functionality
-function setupAuth() {
-  window.signUp = async function(email, password, fullName) {
-    if (!supabase) {
-      showNotification('Authentication service not available', 'error');
-      return;
-    }
-
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email: email,
-        password: password,
-        options: { data: { full_name: fullName || '' } }
-      });
-
-      if (error) {
-        if (/exists|registered/i.test(error.message)) {
-          showNotification('This email is already registered. Please sign in or use "Forgot your password".', 'error');
-          return;
-        }
-        throw error;
-      }
-      
-      showNotification('Sign up successful! Please check your email for verification.', 'success');
-
-      // Clear form and close modal
-      const emailField = document.getElementById('modal-email');
-      const passwordField = document.getElementById('modal-password');
-      const nameField = document.getElementById('modal-full-name');
-      if (emailField) emailField.value = '';
-      if (passwordField) passwordField.value = '';
-      if (nameField) nameField.value = '';
-      if (loginModal) loginModal.style.display = 'none';
-      if (typeof fullNameField !== 'undefined') {
-        fullNameField.style.display = 'none';
-      }
-      signUpMode = false;
-      
-    } catch (err) {
-      showNotification('Sign up failed: ' + err.message, 'error');
-    }
-  };
-  
-  window.signIn = async function(email, password) {
-    if (!supabase) {
-      showNotification('Authentication service not available', 'error');
-      return;
-    }
-    
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password,
-      });
-      
-      if (error) throw error;
-      
-      showNotification('Logged in successfully!', 'success');
-      
-      // Clear form and close modal
-      const emailField = document.getElementById('modal-email');
-      const passwordField = document.getElementById('modal-password');
-      const nameField = document.getElementById('modal-full-name');
-      if (emailField) emailField.value = '';
-      if (passwordField) passwordField.value = '';
-      if (nameField) nameField.value = '';
-      if (loginModal) loginModal.style.display = 'none';
-      
-    } catch (err) {
-      showNotification('Login failed: ' + err.message, 'error');
-    }
-  };
-
-  window.signInWithGoogle = async function() {
-    if (!supabase) {
-      showNotification('Authentication service not available', 'error');
-      return;
-    }
-
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
-      if (error) throw error;
-    } catch (err) {
-      showNotification('Google sign in failed: ' + err.message, 'error');
-    }
-  };
-
-  window.resetPassword = async function(email) {
-    if (!supabase) {
-      showNotification('Authentication service not available', 'error');
-      return;
-    }
-
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email);
-      if (error) throw error;
-      showNotification('Password reset email sent', 'success');
-    } catch (err) {
-      showNotification('Password reset failed: ' + err.message, 'error');
-    }
-  };
-
-  window.signOut = async function() {
-    if (!supabase) {
-      showNotification('Authentication service not available', 'error');
-      return;
-    }
-    
-    try {
-      await supabase.auth.signOut();
-      showNotification('Logged out successfully', 'success');
-    } catch (err) {
-      showNotification('Logout failed: ' + err.message, 'error');
-    }
-  };
-}
 
 // Main setup function
 function setupEventListeners() {
@@ -1293,14 +965,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   
   // Initialize navigation and modal references
-  navLoginBtn = document.getElementById('nav-login-btn');
-  navLogoutBtn = document.getElementById('nav-logout-btn');
-  mobileMenuButton = document.getElementById('mobile-menu-button');
-  mobileMenu = document.getElementById('mobile-menu');
-  loginModal = document.getElementById('login-modal');
-  closeLoginModal = document.getElementById('close-login-modal');
-  modalSignupBtn = document.getElementById('modal-signup-btn');
-  modalLoginBtn = document.getElementById('modal-login-btn');
   forgotPasswordLink = document.getElementById('forgot-password-link');
   
   // Initialize modal references
@@ -1317,8 +981,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   initDebugMode();
   await initImageProcessingLibraries();
   await initSpecialFormatLibraries();
-  initSupabase();
-  updateQuotaStatus();
   setupEventListeners();
   setupBulkRename();
   setupDownloadSelected();
@@ -1327,8 +989,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupUpgradeButton();
   setupNavigation();
   setupFaqs();
-  setupLoginModal();
-  setupAuth();
   
   // Initialize tool integration
   if (window.initializeToolIntegration) {
@@ -1336,7 +996,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       name: 'image-converter',
       type: 'conversion',
       requiresAuth: false, // Allow guest usage but encourage sign up
-      quotaType: 'conversions',
       trackUsage: true
     });
   }
