@@ -1055,3 +1055,29 @@ nav .flex.items-center {
 .dropdown-content {
   z-index: 9999;
 }
+
+/* Responsive control panel */
+#controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+#controls .control-item {
+  flex: 1 1 30%;
+}
+
+@media (max-width: 992px) {
+  #controls .control-item {
+    flex: 1 1 45%;
+  }
+}
+
+@media (max-width: 576px) {
+  #controls {
+    flex-direction: column;
+  }
+  #controls .control-item {
+    flex: 1 1 100%;
+  }
+}

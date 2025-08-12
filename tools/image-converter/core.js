@@ -58,6 +58,23 @@ let showBulkRenameLink;
 let bulkRenameControls;
 let upgradeBtn;
 let downloadSelectedBtn;
+let sizeModeRadios;
+let widthControl;
+let heightControl;
+let fileSizeGroup;
+
+function getConversionParams() {
+  const useFileSize = !targetSizeInput.disabled;
+  const maxW = maxWidthInput.disabled ? 99999 : parseInt(maxWidthInput.value, 10) || 99999;
+  const maxH = maxHeightInput.disabled ? 99999 : parseInt(maxHeightInput.value, 10) || 99999;
+  let targetBytes = 0;
+  if (useFileSize) {
+    const sizeVal = parseFloat(targetSizeInput.value) || 500;
+    targetBytes = sizeUnitSelect.value === 'MB' ? sizeVal * 1024 * 1024 : sizeVal * 1024;
+  }
+  const format = outputFormatInput ? outputFormatInput.value : 'webp';
+  return { maxW, maxH, targetBytes, format };
+}
 
 // Navigation and modal elements
 let navLoginBtn;
@@ -334,11 +351,7 @@ async function handleFiles(files) {
           }
           
           // Get conversion parameters
-          const maxW = parseInt(maxWidthInput.value, 10) || 99999;
-          const maxH = parseInt(maxHeightInput.value, 10) || 99999;
-          const sizeVal = parseFloat(targetSizeInput.value) || 500;
-          const targetBytes = (sizeUnitSelect.value === 'MB' ? sizeVal * 1024 * 1024 : sizeVal * 1024);
-          const format = outputFormatInput.value;
+          const { maxW, maxH, targetBytes, format } = getConversionParams();
           
           try {
             this.textContent = 'Converting...';
@@ -444,11 +457,7 @@ async function processSingleImage(index) {
   const file = _selectedFiles[index];
   if (!file) return;
   
-  const format = outputFormatInput.value;
-  const maxW = parseInt(maxWidthInput.value, 10) || 99999;
-  const maxH = parseInt(maxHeightInput.value, 10) || 99999;
-  const sizeVal = parseFloat(targetSizeInput.value) || 500;
-  const targetBytes = (sizeUnitSelect.value === 'MB' ? sizeVal * 1024 * 1024 : sizeVal * 1024);
+  const { maxW, maxH, targetBytes, format } = getConversionParams();
   
   // Get row for this file
   const tr = document.querySelector(`#preview-tbody tr[data-row-index="${index + 1}"]`);
@@ -1149,11 +1158,22 @@ function setupEventListeners() {
         dropArea.classList.remove('border-blue-600');
       }, false);
     });
-    
+
     dropArea.addEventListener('drop', (e) => {
       handleFiles(e.dataTransfer.files);
     }, false);
-    
+
+    dropArea.addEventListener('click', () => {
+      if (fileElem) fileElem.click();
+    });
+
+    dropArea.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (fileElem) fileElem.click();
+      }
+    });
+
     // File input change handler
     if (fileElem) {
       fileElem.addEventListener('change', () => {
@@ -1204,11 +1224,7 @@ function setupEventListeners() {
         }
         
         // Get conversion parameters
-        const maxW = parseInt(maxWidthInput.value, 10) || 99999;
-        const maxH = parseInt(maxHeightInput.value, 10) || 99999;
-        const sizeVal = parseFloat(targetSizeInput.value) || 500;
-        const targetBytes = (sizeUnitSelect.value === 'MB' ? sizeVal * 1024 * 1024 : sizeVal * 1024);
-        const format = outputFormatInput.value;
+        const { maxW, maxH, targetBytes, format } = getConversionParams();
 
         try {
           // Process images
@@ -1285,11 +1301,31 @@ document.addEventListener('DOMContentLoaded', async () => {
   bulkRenameControls = document.getElementById('bulk-rename-controls');
   upgradeBtn = document.getElementById('upgrade-btn');
   downloadSelectedBtn = document.getElementById('download-selected');
+  sizeModeRadios = document.querySelectorAll('input[name="size-mode"]');
+  widthControl = document.getElementById('width-control');
+  heightControl = document.getElementById('height-control');
+  fileSizeGroup = document.getElementById('file-size-group');
   
   // Ensure download buttons are hidden on page load
   const downloadButtonsContainer = document.querySelector('.download-btns-responsive');
   if (downloadButtonsContainer) {
     downloadButtonsContainer.style.display = 'none';
+  }
+
+  function updateSizeMode() {
+    const useFileSize = document.getElementById('mode-filesize').checked;
+    fileSizeGroup.classList.toggle('hidden', !useFileSize);
+    targetSizeInput.disabled = !useFileSize;
+    sizeUnitSelect.disabled = !useFileSize;
+    widthControl.classList.toggle('hidden', useFileSize);
+    heightControl.classList.toggle('hidden', useFileSize);
+    maxWidthInput.disabled = useFileSize;
+    maxHeightInput.disabled = useFileSize;
+  }
+
+  if (sizeModeRadios) {
+    sizeModeRadios.forEach(radio => radio.addEventListener('change', updateSizeMode));
+    updateSizeMode();
   }
   
   // Initialize navigation and modal references
