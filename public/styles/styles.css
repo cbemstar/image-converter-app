@@ -984,6 +984,12 @@ nav .flex.items-center.gap-2 {
   font-size: 1rem;
 }
 
+/* Hide authentication UI elements */
+[data-guest-only],
+[data-auth-required] {
+  display: none !important;
+}
+
 /* Sign in button styling */
 [data-guest-only] a {
   display: flex;
