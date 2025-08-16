@@ -119,8 +119,9 @@
           <button id="select-btn" class="btn">Select PDF</button>
           <input id="file-input" type="file" accept="application/pdf" style="display:none;" />
         </div>
+        <div id="upload-hint" class="text-center text-[var(--muted-foreground)] text-sm" aria-live="polite"></div>
         <div id="progress-status" class="text-center" class="text-foreground"></div>
-        <div id="progress-bar-container" class="w-full max-w-md mx-auto border rounded-lg p-1 bg-card">
+        <div id="progress-bar-container" class="w-full max-w-md mx-auto border rounded-lg p-1 bg-card" role="progressbar" aria-label="OCR progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
           <div id="progress-bar"></div>
         </div>
         <textarea id="text-output" rows="8" class="input font-mono" placeholder="OCR result will appear here"></textarea>
