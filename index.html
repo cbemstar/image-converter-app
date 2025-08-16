@@ -11,8 +11,8 @@
   <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
   <link rel="stylesheet" href="styles/styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Font Awesome for icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <script src="styles/theme.js"></script>
   <script src="layout.js"></script>
   <script src="home.js"></script>
@@ -35,7 +35,7 @@
         <div class="flex items-center gap-4">
           <button id="sidebar-toggle" class="btn btn-outline btn-sm" aria-label="Open sidebar" aria-controls="sidebar"
             aria-expanded="false">
-            <i class="fas fa-bars"></i>
+            <i data-lucide="menu"></i>
           </button>
           <a href="index.html" class="flex items-center gap-2">
             <span class="text-foreground text-xl font-bold">reformately</span>
@@ -45,7 +45,7 @@
 
 
           <button id="theme-toggle" class="btn btn-outline btn-sm" aria-label="Toggle theme">
-            <span id="theme-toggle-icon">🌙</span>
+            <i data-lucide="sun" id="theme-toggle-icon" class="w-4 h-4"></i>
           </button>
         </div>
       </div>
@@ -60,50 +60,50 @@
       <div class="flex justify-between items-center mb-4">
         <a href="index.html" class="text-xl font-bold" class="text-foreground">reformately</a>
         <button id="sidebar-close" class="btn btn-outline btn-sm" aria-label="Close sidebar">
-          <i class="fas fa-times"></i>
+          <i data-lucide="x"></i>
         </button>
       </div>
       <h2 class="text-lg font-bold mb-4" class="text-foreground">Tools</h2>
       <label for="tool-search" class="sr-only">Search tools</label>
       <input id="tool-search" type="text" placeholder="Search" class="input w-full mb-4" />
       <ul id="tool-list" class="space-y-2" role="list">
-        <li><a href="tools/image-converter/index.html" class="text-foreground hover:text-primary">Image Converter</a>
+        <li><a href="tools/image-converter/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="image" class="w-4 h-4"></i>Image Converter</a>
         </li>
-        <li><a href="tools/background-remover/index.html" class="text-foreground hover:text-primary">Background
+        <li><a href="tools/background-remover/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="scissors" class="w-4 h-4"></i>Background
             Remover</a></li>
-        <li><a href="tools/google-ads-rsa-preview/index.html" class="text-foreground hover:text-primary">Google Ads RSA
+        <li><a href="tools/google-ads-rsa-preview/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="bar-chart-3" class="w-4 h-4"></i>Google Ads RSA
             Preview</a></li>
-        <li><a href="tools/campaign-structure/index.html" class="text-foreground hover:text-primary">Campaign
+        <li><a href="tools/campaign-structure/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="layers" class="w-4 h-4"></i>Campaign
             Structure</a></li>
-        <li><a href="tools/bulk-match-editor/index.html" class="text-foreground hover:text-primary">Bulk Match Type
+        <li><a href="tools/bulk-match-editor/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="edit-3" class="w-4 h-4"></i>Bulk Match Type
             Editor</a></li>
-        <li><a href="tools/json-formatter/index.html" class="text-foreground hover:text-primary">JSON
+        <li><a href="tools/json-formatter/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="braces" class="w-4 h-4"></i>JSON
             Formatter</a></li>
-        <li><a href="tools/color-palette/index.html" class="text-foreground hover:text-primary">Colour
+        <li><a href="tools/color-palette/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="palette" class="w-4 h-4"></i>Colour
             Palette Extractor</a></li>
-        <li><a href="tools/pdf-merger/index.html" class="text-foreground hover:text-primary">PDF
+        <li><a href="tools/pdf-merger/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="file-text" class="w-4 h-4"></i>PDF
             Merger</a></li>
-        <li><a href="tools/utm-builder/index.html" class="text-foreground hover:text-primary">UTM
+        <li><a href="tools/utm-builder/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="link" class="w-4 h-4"></i>UTM
             Builder</a></li>
-        <li><a href="tools/qr-generator/index.html" class="text-foreground hover:text-primary">QR Code
+        <li><a href="tools/qr-generator/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="qr-code" class="w-4 h-4"></i>QR Code
             Generator</a></li>
-        <li><a href="tools/pdf-ocr/index.html" class="text-foreground hover:text-primary">PDF OCR</a>
+        <li><a href="tools/pdf-ocr/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="file-search" class="w-4 h-4"></i>PDF OCR</a>
         </li>
-        <li><a href="tools/uuid-generator/index.html" class="text-foreground hover:text-primary">UUID
+        <li><a href="tools/uuid-generator/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="hash" class="w-4 h-4"></i>UUID
             Generator</a></li>
-        <li><a href="tools/timestamp-converter/index.html" class="text-foreground hover:text-primary">Timestamp
+        <li><a href="tools/timestamp-converter/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="clock" class="w-4 h-4"></i>Timestamp
             Converter</a></li>
-        <li><a href="tools/meta-tag-generator/index.html" class="text-foreground hover:text-primary">Meta Tag
+        <li><a href="tools/meta-tag-generator/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="tag" class="w-4 h-4"></i>Meta Tag
             Generator</a></li>
-        <li><a href="tools/robots-txt/index.html" class="text-foreground hover:text-primary">Robots.txt Tool</a></li>
-        <li><a href="tools/text-case-converter/index.html" class="text-foreground hover:text-primary">Text Case
+        <li><a href="tools/robots-txt/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="bot" class="w-4 h-4"></i>Robots.txt Tool</a></li>
+        <li><a href="tools/text-case-converter/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="type" class="w-4 h-4"></i>Text Case
             Converter</a></li>
-        <li><a href="tools/layout-tool/index.html" class="text-foreground hover:text-primary">Layout
+        <li><a href="tools/layout-tool/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="layout" class="w-4 h-4"></i>Layout
             Generator</a></li>
-        <li><a href="#" class="text-foreground hover:text-primary">More coming soon</a></li>
+        <li><a href="#" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="plus" class="w-4 h-4"></i>More coming soon</a></li>
       </ul>
       <div class="mt-6 pt-6 border-t border-border/20">
-        <a href="tools/request-tool/index.html" class="text-foreground hover:text-primary">Request a
+        <a href="tools/request-tool/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="message-square" class="w-4 h-4"></i>Request a
           Tool</a>
       </div>
     </aside>
@@ -138,87 +138,138 @@
         <div id="home-tools" class="grid gap-4 md:grid-cols-2 max-w-2xl mx-auto">
           <a href="tools/image-converter/index.html" class="card" data-name="Image Converter" data-category="Images"
             data-slug="image-converter">
-            <h3 class="font-semibold mb-1">Image Converter</h3>
+            <div class="flex items-center gap-3 mb-2">
+              <i data-lucide="image" class="w-6 h-6 text-primary"></i>
+              <h3 class="font-semibold">Image Converter</h3>
+            </div>
             <p class="text-sm">Convert images between formats.</p>
           </a>
           <a href="tools/background-remover/index.html" class="card" data-name="Background Remover"
             data-category="Images" data-slug="background-remover">
-            <h3 class="font-semibold mb-1" class="text-foreground">Background Remover</h3>
+            <div class="flex items-center gap-3 mb-2">
+              <i data-lucide="scissors" class="w-6 h-6 text-primary"></i>
+              <h3 class="font-semibold" class="text-foreground">Background Remover</h3>
+            </div>
             <p class="text-sm" class="text-foreground">Remove the background from images.</p>
           </a>
           <a href="tools/google-ads-rsa-preview/index.html" class="card" data-name="Google Ads RSA Preview"
             data-category="Marketing" data-slug="google-ads-rsa-preview">
-            <h3 class="font-semibold mb-1" class="text-foreground">Google Ads RSA Preview</h3>
+            <div class="flex items-center gap-3 mb-2">
+              <i data-lucide="bar-chart-3" class="w-6 h-6 text-primary"></i>
+              <h3 class="font-semibold" class="text-foreground">Google Ads RSA Preview</h3>
+            </div>
             <p class="text-sm" class="text-foreground">Visualize responsive search ads.</p>
           </a>
           <a href="tools/campaign-structure/index.html" class="card" data-name="Campaign Structure"
             data-category="Marketing" data-slug="campaign-structure">
-            <h3 class="font-semibold mb-1" class="text-foreground">Campaign Structure</h3>
+            <div class="flex items-center gap-3 mb-2">
+              <i data-lucide="layers" class="w-6 h-6 text-primary"></i>
+              <h3 class="font-semibold" class="text-foreground">Campaign Structure</h3>
+            </div>
             <p class="text-sm" class="text-foreground">Visualize ad campaign hierarchy.</p>
           </a>
           <a href="tools/bulk-match-editor/index.html" class="card" data-name="Bulk Match Type Editor"
             data-category="Marketing" data-slug="bulk-match-editor">
-            <h3 class="font-semibold mb-1" class="text-foreground">Bulk Match Type Editor</h3>
+            <div class="flex items-center gap-3 mb-2">
+              <i data-lucide="edit-3" class="w-6 h-6 text-primary"></i>
+              <h3 class="font-semibold" class="text-foreground">Bulk Match Type Editor</h3>
+            </div>
             <p class="text-sm" class="text-foreground">Convert keywords to phrase and exact match.</p>
           </a>
           <a href="tools/json-formatter/index.html" class="card" data-name="JSON Formatter" data-category="Utilities"
             data-slug="json-formatter">
-            <h3 class="font-semibold mb-1" class="text-foreground">JSON Formatter</h3>
+            <div class="flex items-center gap-3 mb-2">
+              <i data-lucide="braces" class="w-6 h-6 text-primary"></i>
+              <h3 class="font-semibold" class="text-foreground">JSON Formatter</h3>
+            </div>
             <p class="text-sm" class="text-foreground">Format or minify JSON easily.</p>
           </a>
           <a href="tools/color-palette/index.html" class="card" data-name="Colour Palette Extractor"
             data-category="Images" data-slug="color-palette">
-            <h3 class="font-semibold mb-1" class="text-foreground">Colour Palette Extractor</h3>
+            <div class="flex items-center gap-3 mb-2">
+              <i data-lucide="palette" class="w-6 h-6 text-primary"></i>
+              <h3 class="font-semibold" class="text-foreground">Colour Palette Extractor</h3>
+            </div>
             <p class="text-sm" class="text-foreground">Extract dominant colours from images.</p>
           </a>
           <a href="tools/pdf-merger/index.html" class="card" data-name="PDF Merger" data-category="Utilities"
             data-slug="pdf-merger">
-            <h3 class="font-semibold mb-1" class="text-foreground">PDF Merger</h3>
+            <div class="flex items-center gap-3 mb-2">
+              <i data-lucide="file-text" class="w-6 h-6 text-primary"></i>
+              <h3 class="font-semibold" class="text-foreground">PDF Merger</h3>
+            </div>
             <p class="text-sm" class="text-foreground">Combine PDFs easily.</p>
           </a>
           <a href="tools/utm-builder/index.html" class="card" data-name="UTM Builder" data-category="Marketing"
             data-slug="utm-builder">
-            <h3 class="font-semibold mb-1" class="text-foreground">UTM Builder</h3>
+            <div class="flex items-center gap-3 mb-2">
+              <i data-lucide="link" class="w-6 h-6 text-primary"></i>
+              <h3 class="font-semibold" class="text-foreground">UTM Builder</h3>
+            </div>
             <p class="text-sm" class="text-foreground">Create tracking URLs quickly.</p>
           </a>
           <a href="tools/qr-generator/index.html" class="card" data-name="QR Code Generator" data-category="Utilities"
             data-slug="qr-generator">
-            <h3 class="font-semibold mb-1" class="text-foreground">QR Code Generator</h3>
+            <div class="flex items-center gap-3 mb-2">
+              <i data-lucide="qr-code" class="w-6 h-6 text-primary"></i>
+              <h3 class="font-semibold" class="text-foreground">QR Code Generator</h3>
+            </div>
             <p class="text-sm" class="text-foreground">Create customizable QR codes.</p>
           </a>
           <a href="tools/pdf-ocr/index.html" class="card" data-name="PDF OCR" data-category="Utilities"
             data-slug="pdf-ocr">
-            <h3 class="font-semibold mb-1" class="text-foreground">PDF OCR</h3>
+            <div class="flex items-center gap-3 mb-2">
+              <i data-lucide="file-search" class="w-6 h-6 text-primary"></i>
+              <h3 class="font-semibold" class="text-foreground">PDF OCR</h3>
+            </div>
             <p class="text-sm" class="text-foreground">Extract text from PDFs using OCR.</p>
           </a>
           <a href="tools/uuid-generator/index.html" class="card" data-name="UUID Generator" data-category="Utilities"
             data-slug="uuid-generator">
-            <h3 class="font-semibold mb-1" class="text-foreground">UUID Generator</h3>
+            <div class="flex items-center gap-3 mb-2">
+              <i data-lucide="hash" class="w-6 h-6 text-primary"></i>
+              <h3 class="font-semibold" class="text-foreground">UUID Generator</h3>
+            </div>
             <p class="text-sm" class="text-foreground">Create v1, v3, v4 or v5 IDs.</p>
           </a>
           <a href="tools/timestamp-converter/index.html" class="card" data-name="Timestamp Converter"
             data-category="Utilities" data-slug="timestamp-converter">
-            <h3 class="font-semibold mb-1" class="text-foreground">Timestamp Converter</h3>
+            <div class="flex items-center gap-3 mb-2">
+              <i data-lucide="clock" class="w-6 h-6 text-primary"></i>
+              <h3 class="font-semibold" class="text-foreground">Timestamp Converter</h3>
+            </div>
             <p class="text-sm" class="text-foreground">Convert between Unix time and dates.</p>
           </a>
           <a href="tools/meta-tag-generator/index.html" class="card" data-name="Meta Tag Generator"
             data-category="Marketing" data-slug="meta-tag-generator">
-            <h3 class="font-semibold mb-1" class="text-foreground">Meta Tag Generator</h3>
+            <div class="flex items-center gap-3 mb-2">
+              <i data-lucide="tag" class="w-6 h-6 text-primary"></i>
+              <h3 class="font-semibold" class="text-foreground">Meta Tag Generator</h3>
+            </div>
             <p class="text-sm" class="text-foreground">Generate SEO meta tags easily.</p>
           </a>
           <a href="tools/text-case-converter/index.html" class="card" data-name="Text Case Converter"
             data-category="Utilities" data-slug="text-case-converter">
-            <h3 class="font-semibold mb-1" class="text-foreground">Text Case Converter</h3>
+            <div class="flex items-center gap-3 mb-2">
+              <i data-lucide="type" class="w-6 h-6 text-primary"></i>
+              <h3 class="font-semibold" class="text-foreground">Text Case Converter</h3>
+            </div>
             <p class="text-sm" class="text-foreground">Switch text between cases.</p>
           </a>
           <a href="tools/robots-txt/index.html" class="card" data-name="Robots.txt Tool" data-category="Marketing"
             data-slug="robots-txt">
-            <h3 class="font-semibold mb-1" class="text-foreground">Robots.txt Tool</h3>
+            <div class="flex items-center gap-3 mb-2">
+              <i data-lucide="bot" class="w-6 h-6 text-primary"></i>
+              <h3 class="font-semibold" class="text-foreground">Robots.txt Tool</h3>
+            </div>
             <p class="text-sm" class="text-foreground">Generate and validate robots directives.</p>
           </a>
           <a href="tools/layout-tool/index.html" class="card" data-name="Layout Generator" data-category="Images"
             data-slug="layout-tool">
-            <h3 class="font-semibold mb-1" class="text-foreground">Layout Generator</h3>
+            <div class="flex items-center gap-3 mb-2">
+              <i data-lucide="layout" class="w-6 h-6 text-primary"></i>
+              <h3 class="font-semibold" class="text-foreground">Layout Generator</h3>
+            </div>
             <p class="text-sm" class="text-foreground">Generate multi-size layouts.</p>
           </a>
         </div>
@@ -227,8 +278,13 @@
   </div>
 
   <script>
+    // Initialize Lucide icons immediately
+    lucide.createIcons();
+    
     // Initialize page functionality
     document.addEventListener('DOMContentLoaded', () => {
+      // Re-initialize Lucide icons to ensure they're visible
+      lucide.createIcons();
       initializeSidebar();
       initializeTheme();
     });
