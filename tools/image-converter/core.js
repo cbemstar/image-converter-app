@@ -1305,6 +1305,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   widthControl = document.getElementById('width-control');
   heightControl = document.getElementById('height-control');
   fileSizeGroup = document.getElementById('file-size-group');
+  const compatWarning = document.getElementById('compat-warning');
   
   // Ensure download buttons are hidden on page load
   const downloadButtonsContainer = document.querySelector('.download-btns-responsive');
@@ -1382,7 +1383,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.imageAuth.updateUI();
   }
   
-  console.log('Image conversion app initialized');
+  // Browser compatibility info for special formats
+  try {
+    const ua = navigator.userAgent.toLowerCase();
+    if (compatWarning) {
+      if (ua.includes('firefox')) {
+        compatWarning.textContent = 'Heads up: Firefox may have limited support for HEIC/HEIF. If conversion fails, try Chrome or Edge.';
+      } else if (!('createImageBitmap' in window)) {
+        compatWarning.textContent = 'Your browser lacks some image APIs; certain formats may not convert properly.';
+      }
+    }
+  } catch (_) {}
+
+  // Set initial defaults and event listeners for controls
+  // ... (other code)
 });
 
 export { handleFiles, sanitizeFilename };

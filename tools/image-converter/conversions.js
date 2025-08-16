@@ -243,6 +243,7 @@ export async function processImages(files, maxW, maxH, targetBytes, format) {
   if (progressContainer) progressContainer.style.display = 'block';
   if (progressStatus) progressStatus.textContent = `Converting 1 of ${files.length}`;
   if (progressBar) progressBar.style.width = '0%';
+  if (progressContainer) progressContainer.setAttribute('aria-valuenow', '0');
   
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
@@ -281,6 +282,7 @@ export async function processImages(files, maxW, maxH, targetBytes, format) {
       
       // Update progress bar
       if (progressBar) progressBar.style.width = `${Math.round((processed / files.length) * 100)}%`;
+      if (progressContainer) progressContainer.setAttribute('aria-valuenow', String(Math.round((processed / files.length) * 100)));
       
     } catch (err) {
       console.error(`Error processing ${file.name}:`, err);
@@ -296,6 +298,7 @@ export async function processImages(files, maxW, maxH, targetBytes, format) {
   }
   if (progressContainer) progressContainer.style.display = 'none';
   if (progressBar) progressBar.style.width = '0%';
+  if (progressContainer) progressContainer.setAttribute('aria-valuenow', '100');
   
   // Create download link for all files
   if (processed > 0) {

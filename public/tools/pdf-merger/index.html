@@ -130,12 +130,12 @@
         <ul id="pdf-list" class="grid grid-cols-2 sm:grid-cols-3 gap-4"></ul>
         <p class="text-sm text-center" class="text-foreground">Specify page ranges like <code>1-3,5</code> for each file.</p>
         <div id="progress-status" class="text-center" class="text-foreground"></div>
-        <div id="progress-bar-container" class="w-full max-w-md mx-auto border rounded-lg p-1 bg-card">
+        <div id="progress-bar-container" class="w-full max-w-md mx-auto border rounded-lg p-1 bg-card" role="progressbar" aria-label="Merge progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
           <div id="progress-bar"></div>
         </div>
         <div class="flex flex-col items-center gap-4">
-          <button id="merge-btn" class="btn">Merge PDFs</button>
-          <a id="download-link" class="download-btn" href="#" download="merged.pdf" style="display:none;">Download Merged PDF</a>
+          <button id="merge-btn" class="btn" aria-label="Merge selected PDFs" title="Merge selected PDFs">Merge PDFs</button>
+          <a id="download-link" class="download-btn" href="#" download="merged.pdf" style="display:none;" aria-label="Download merged PDF" title="Download merged PDF">Download Merged PDF</a>
         </div>
         <div class="flex flex-col items-center gap-4">
           <label for="image-format" class="text-sm" class="text-foreground">Image format:</label>
@@ -144,8 +144,8 @@
             <option value="png">PNG</option>
             <option value="webp">WebP</option>
           </select>
-          <button id="extract-btn" class="btn">Extract Pages as Images</button>
-          <a id="download-images-link" class="download-btn" href="#" download="pages.zip" style="display:none;">Download Images ZIP</a>
+          <button id="extract-btn" class="btn" aria-label="Extract selected pages as images" title="Extract selected pages as images">Extract Pages as Images</button>
+          <a id="download-images-link" class="download-btn" href="#" download="pages.zip" style="display:none;" aria-label="Download images as ZIP" title="Download images as ZIP">Download Images ZIP</a>
         </div>
           <section class="mt-8 space-y-4">
             <h2 class="text-2xl font-bold" class="text-foreground">About this tool</h2>

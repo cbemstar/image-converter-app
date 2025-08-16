@@ -9,7 +9,7 @@ class AuthManager {
     this.updateAuthUI();
   }
 
-  // Always report authenticated
+  // Always report authenticated to bypass checks
   isAuthenticated() {
     return true;
   }
@@ -18,11 +18,12 @@ class AuthManager {
     return this.currentUser;
   }
 
-  // No-op methods
+  // No-op auth methods
   async signOut() {}
   async signInWithEmail() { return { user: this.currentUser }; }
   async signInWithProvider() { return { user: this.currentUser }; }
 
+  // Listener management (no-op)
   addAuthStateListener(listener) {
     this.authStateListeners.push(listener);
   }
@@ -30,10 +31,12 @@ class AuthManager {
     this.authStateListeners = this.authStateListeners.filter(l => l !== listener);
   }
 
+  // Always allow access
   requireAuth() {
     return true;
   }
 
+  // Hide any auth related UI elements
   updateAuthUI() {
     document.querySelectorAll('[data-auth-required],[data-guest-only]').forEach(el => {
       el.style.display = 'none';

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,23 +10,24 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="styles/theme.js"></script>
-    
+
     <!-- Global Authentication System (includes universal navigation) -->
     <script src="js/auth-loader.js"></script>
 </head>
+
 <body class="bg-background min-h-screen">
     <!-- Navigation will be automatically inserted by universal-nav.js -->
 
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-8">
         <h1 class="text-3xl font-bold mb-6">Page Title</h1>
-        
+
         <!-- Auth-required content -->
         <div data-auth-required style="display: none;">
             <p>This content is only visible to authenticated users.</p>
             <p>Welcome, <span data-user-info="name">User</span>!</p>
         </div>
-        
+
         <!-- Guest-only content -->
         <div data-guest-only>
             <p>Please <a href="auth.html" class="text-primary underline">sign in</a> to access this feature.</p>
@@ -36,7 +38,7 @@
         // Wait for global auth to be ready
         document.addEventListener('authReady', () => {
             console.log('🎉 Global authentication is ready on this page!');
-            
+
             // Add any page-specific auth logic here
             setupPageSpecificAuth();
         });
@@ -62,4 +64,5 @@
         }
     </script>
 </body>
+
 </html>

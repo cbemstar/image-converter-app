@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const progressContainer = document.getElementById('progress-bar-container');
   const progressBar = document.getElementById('progress-bar');
   const downloadBtn = document.getElementById('download-btn');
+  const uploadHint = document.getElementById('upload-hint');
 
   function dragOver(e) {
     e.preventDefault();
@@ -23,12 +24,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!file) return;
     if (!(file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf'))) {
       showNotification('Please upload a PDF file', 'error');
+      if (uploadHint) uploadHint.textContent = 'That file type is not supported. Please choose a PDF.';
       return;
     }
+    if (uploadHint) uploadHint.textContent = '';
     output.value = '';
     progressStatus.textContent = 'Loading PDF...';
     progressContainer.style.display = 'block';
     progressBar.style.width = '0%';
+    progressContainer.setAttribute('aria-valuenow', '0');
     downloadBtn.style.display = 'none';
 
     try {
@@ -48,12 +52,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const result = await Tesseract.recognize(canvas, 'eng');
         text += result.data.text + '\n\n';
         progressBar.style.width = `${Math.round((i / total) * 100)}%`;
+        progressContainer.setAttribute('aria-valuenow', String(Math.round((i / total) * 100)));
         await new Promise(r => setTimeout(r));
       }
       output.value = text.trim();
       progressStatus.textContent = 'Done!';
       progressContainer.style.display = 'none';
+      progressContainer.setAttribute('aria-valuenow', '100');
       downloadBtn.style.display = 'inline-block';
+      if (uploadHint) uploadHint.textContent = 'OCR complete. You can download the extracted text.';
       downloadBtn.onclick = () => {
         const blob = new Blob([output.value], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
@@ -67,6 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error(err);
       progressContainer.style.display = 'none';
       progressStatus.textContent = '';
+      if (uploadHint) uploadHint.textContent = 'Something went wrong. Please try another PDF or refresh the page.';
+      progressContainer.setAttribute('aria-valuenow', '0');
       showNotification('OCR failed: ' + err.message, 'error');
     }
   }

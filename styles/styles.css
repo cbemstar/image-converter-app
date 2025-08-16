@@ -1081,3 +1081,72 @@ nav .flex.items-center {
     flex: 1 1 100%;
   }
 }
+
+@media (min-width: 1024px) {
+  #sidebar {
+    transform: none !important;
+    z-index: 30;
+  }
+  #sidebar-overlay {
+    display: none !important;
+  }
+  main#main-content {
+    margin-left: 16rem;
+  }
+  nav.bg-background {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+}
+
+/* Tool thumbnail for cards and lists */
+.tool-thumb {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--muted);
+  color: var(--foreground);
+  flex-shrink: 0;
+}
+
+/* Notifications UI */
+#notifications-button {
+  position: relative;
+}
+#notifications-dot {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 8px;
+  height: 8px;
+  background: var(--primary);
+  border-radius: 9999px;
+  display: none;
+}
+#notifications-panel {
+  position: fixed;
+  top: 64px;
+  right: 16px;
+  width: min(320px, 90vw);
+  max-height: 60vh;
+  overflow: auto;
+  background: var(--card);
+  color: var(--card-foreground);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  display: none;
+  z-index: 60;
+}
+#notifications-panel[aria-hidden="false"] {
+  display: block;
+}
+
+/* Live region for toasts remains usable */
+#notification-container[role="region"] {
+  pointer-events: none;
+}

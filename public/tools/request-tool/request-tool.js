@@ -22,5 +22,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     form.reset();
     showNotification('Thanks for your suggestion!', 'success');
+
+    // Visible confirmation
+    let confirm = document.getElementById('tool-request-confirmation');
+    if (!confirm) {
+      confirm = document.createElement('div');
+      confirm.id = 'tool-request-confirmation';
+      confirm.className = 'mt-3 p-3 rounded border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)]';
+      confirm.setAttribute('role', 'status');
+      confirm.setAttribute('aria-live', 'polite');
+      form.parentNode.insertBefore(confirm, form.nextSibling);
+    }
+    confirm.textContent = email ? 'We received your request. We\'ll email you if we build it.' : 'We received your request. Check back on the homepage for updates.';
   });
 });

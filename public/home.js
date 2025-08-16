@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const container = document.getElementById('home-tools');
   if (!search || !container) return;
   const cards = Array.from(container.querySelectorAll('.card'));
+  const noResults = document.getElementById('no-results');
   function getVisits(slug) {
     return parseInt(localStorage.getItem(`visits_${slug}`) || '0', 10);
   }
@@ -20,12 +21,17 @@ document.addEventListener('DOMContentLoaded', () => {
       sorted.sort((a, b) => getVisits(b.dataset.slug) - getVisits(a.dataset.slug));
     }
     container.innerHTML = '';
+    let visibleCount = 0;
     sorted.forEach(card => {
       const text = card.dataset.name.toLowerCase() + ' ' + card.dataset.category.toLowerCase();
       const show = text.includes(term) && (cat === 'All' || card.dataset.category === cat);
       card.style.display = show ? '' : 'none';
-      container.appendChild(card);
+      if (show) {
+        visibleCount++;
+        container.appendChild(card);
+      }
     });
+    if (noResults) noResults.classList.toggle('hidden', visibleCount !== 0);
   }
   search.addEventListener('input', render);
   if (category) category.addEventListener('change', render);

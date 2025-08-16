@@ -153,6 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (progressContainer) progressContainer.style.display = 'block';
     if (progressBar) progressBar.style.width = '0%';
     if (progressStatus) progressStatus.textContent = `Merging 0 of ${files.length}`;
+    if (progressContainer) progressContainer.setAttribute('aria-valuenow', '0');
 
     const merged = await PDFLib.PDFDocument.create();
     for (let i = 0; i < files.length; i++) {
@@ -168,6 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showNotification(`Error merging ${files[i].file.name}: ${err.message}`, 'error');
       }
       if (progressBar) progressBar.style.width = `${Math.round(((i + 1) / files.length) * 100)}%`;
+      if (progressContainer) progressContainer.setAttribute('aria-valuenow', String(Math.round(((i + 1) / files.length) * 100)));
     }
 
     const mergedBytes = await merged.save();
@@ -179,6 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (progressStatus) progressStatus.textContent = 'Merge complete!';
     if (progressContainer) progressContainer.style.display = 'none';
     if (progressBar) progressBar.style.width = '0%';
+    if (progressContainer) progressContainer.setAttribute('aria-valuenow', '100');
     mergeBtn.disabled = false;
   });
   extractBtn.addEventListener('click', async () => {
@@ -191,6 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (progressContainer) progressContainer.style.display = 'block';
     if (progressBar) progressBar.style.width = '0%';
     if (progressStatus) progressStatus.textContent = `Extracting 0 pages`;
+    if (progressContainer) progressContainer.setAttribute('aria-valuenow', '0');
     const format = imageFormatSelect ? imageFormatSelect.value : 'jpeg';
     const zip = new JSZip();
     let processed = 0;
@@ -216,6 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
         processed++;
         if (progressStatus) progressStatus.textContent = `Extracting ${processed} of ${total}`;
         if (progressBar) progressBar.style.width = `${Math.round((processed / total) * 100)}%`;
+        if (progressContainer) progressContainer.setAttribute('aria-valuenow', String(Math.round((processed / total) * 100)));
       }
     }
     const zipBlob = await zip.generateAsync({ type: 'blob' });
@@ -225,6 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (progressContainer) progressContainer.style.display = 'none';
     if (progressBar) progressBar.style.width = '0%';
     if (progressStatus) progressStatus.textContent = 'Extraction complete!';
+    if (progressContainer) progressContainer.setAttribute('aria-valuenow', '100');
     extractBtn.disabled = false;
   });
 });
