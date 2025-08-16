@@ -58,6 +58,23 @@ let showBulkRenameLink;
 let bulkRenameControls;
 let upgradeBtn;
 let downloadSelectedBtn;
+let sizeModeRadios;
+let widthControl;
+let heightControl;
+let fileSizeGroup;
+
+function getConversionParams() {
+  const useFileSize = !targetSizeInput.disabled;
+  const maxW = maxWidthInput.disabled ? 99999 : parseInt(maxWidthInput.value, 10) || 99999;
+  const maxH = maxHeightInput.disabled ? 99999 : parseInt(maxHeightInput.value, 10) || 99999;
+  let targetBytes = 0;
+  if (useFileSize) {
+    const sizeVal = parseFloat(targetSizeInput.value) || 500;
+    targetBytes = sizeUnitSelect.value === 'MB' ? sizeVal * 1024 * 1024 : sizeVal * 1024;
+  }
+  const format = outputFormatInput ? outputFormatInput.value : 'webp';
+  return { maxW, maxH, targetBytes, format };
+}
 
 // Navigation and modal elements
 let navLoginBtn;
@@ -315,6 +332,48 @@ async function handleFiles(files) {
           openImageModal(e.target.result, sanitizeFilename(file.name), i);
         });
 
+        // Add individual convert button handler
+        convertBtn.addEventListener('click', async function(ev) {
+          ev.stopPropagation();
+          
+          // Check usage limit
+          if (!window.canConvert()) {
+            window.showUpgradeModal();
+            return;
+          }
+          
+          const fileIndex = parseInt(this.dataset.index, 10) - 1;
+          const fileToConvert = _selectedFiles[fileIndex];
+          
+          if (!fileToConvert) {
+            showNotification('File not found', 'error');
+            return;
+          }
+          
+          // Get conversion parameters
+          const { maxW, maxH, targetBytes, format } = getConversionParams();
+          
+          try {
+            this.textContent = 'Converting...';
+            this.disabled = true;
+            
+            // Process single image
+            await processImages([fileToConvert], maxW, maxH, targetBytes, format);
+            
+            // Record successful conversion
+            window.recordConversion();
+            
+            this.textContent = 'Convert';
+            this.disabled = false;
+            
+          } catch (error) {
+            console.error('Individual conversion failed:', error);
+            showNotification('Conversion failed: ' + error.message, 'error');
+            this.textContent = 'Convert';
+            this.disabled = false;
+          }
+        });
+
         // Make row clickable to toggle checkbox
         tr.style.cursor = 'pointer';
         tr.addEventListener('click', function(ev) {
@@ -398,11 +457,7 @@ async function processSingleImage(index) {
   const file = _selectedFiles[index];
   if (!file) return;
   
-  const format = outputFormatInput.value;
-  const maxW = parseInt(maxWidthInput.value, 10) || 99999;
-  const maxH = parseInt(maxHeightInput.value, 10) || 99999;
-  const sizeVal = parseFloat(targetSizeInput.value) || 500;
-  const targetBytes = (sizeUnitSelect.value === 'MB' ? sizeVal * 1024 * 1024 : sizeVal * 1024);
+  const { maxW, maxH, targetBytes, format } = getConversionParams();
   
   // Get row for this file
   const tr = document.querySelector(`#preview-tbody tr[data-row-index="${index + 1}"]`);
@@ -1103,11 +1158,22 @@ function setupEventListeners() {
         dropArea.classList.remove('border-blue-600');
       }, false);
     });
-    
+
     dropArea.addEventListener('drop', (e) => {
       handleFiles(e.dataTransfer.files);
     }, false);
-    
+
+    dropArea.addEventListener('click', () => {
+      if (fileElem) fileElem.click();
+    });
+
+    dropArea.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (fileElem) fileElem.click();
+      }
+    });
+
     // File input change handler
     if (fileElem) {
       fileElem.addEventListener('change', () => {
@@ -1118,12 +1184,10 @@ function setupEventListeners() {
     // Convert button click handler
     if (convertImagesBtn) {
       convertImagesBtn.addEventListener('click', async () => {
-        // Check quota before processing
-        if (window.toolIntegration) {
-          const canProceed = await window.toolIntegration.checkQuota('conversion');
-          if (!canProceed) {
-            return; // Quota exceeded, error already shown
-          }
+        // Check usage limit before processing
+        if (!window.canConvert()) {
+          window.showUpgradeModal();
+          return;
         }
         
         // Get selected files
@@ -1160,39 +1224,18 @@ function setupEventListeners() {
         }
         
         // Get conversion parameters
-        const maxW = parseInt(maxWidthInput.value, 10) || 99999;
-        const maxH = parseInt(maxHeightInput.value, 10) || 99999;
-        const sizeVal = parseFloat(targetSizeInput.value) || 500;
-        const targetBytes = (sizeUnitSelect.value === 'MB' ? sizeVal * 1024 * 1024 : sizeVal * 1024);
-        const format = outputFormatInput.value;
+        const { maxW, maxH, targetBytes, format } = getConversionParams();
 
         try {
           // Process images
           await processImages(filesToProcess, maxW, maxH, targetBytes, format);
           
-          // Track successful conversion
-          if (window.toolIntegration) {
-            window.toolIntegration.trackToolUsage('conversion_completed', {
-              file_count: filesToProcess.length,
-              output_format: format
-            });
-          }
-        } catch (error) {
-          // Handle and track errors
-          if (window.handleError) {
-            window.handleError(error, {
-              tool: 'image-converter',
-              operation: 'conversion',
-              file_count: filesToProcess.length
-            });
-          }
+          // Record successful conversion
+          window.recordConversion();
           
-          if (window.toolIntegration) {
-            window.toolIntegration.trackToolUsage('conversion_failed', {
-              file_count: filesToProcess.length,
-              error: error.message
-            });
-          }
+        } catch (error) {
+          console.error('Conversion failed:', error);
+          showNotification('Conversion failed: ' + error.message, 'error');
         }
       });
     }
@@ -1258,11 +1301,32 @@ document.addEventListener('DOMContentLoaded', async () => {
   bulkRenameControls = document.getElementById('bulk-rename-controls');
   upgradeBtn = document.getElementById('upgrade-btn');
   downloadSelectedBtn = document.getElementById('download-selected');
+  sizeModeRadios = document.querySelectorAll('input[name="size-mode"]');
+  widthControl = document.getElementById('width-control');
+  heightControl = document.getElementById('height-control');
+  fileSizeGroup = document.getElementById('file-size-group');
+  const compatWarning = document.getElementById('compat-warning');
   
   // Ensure download buttons are hidden on page load
   const downloadButtonsContainer = document.querySelector('.download-btns-responsive');
   if (downloadButtonsContainer) {
     downloadButtonsContainer.style.display = 'none';
+  }
+
+  function updateSizeMode() {
+    const useFileSize = document.getElementById('mode-filesize').checked;
+    fileSizeGroup.classList.toggle('hidden', !useFileSize);
+    targetSizeInput.disabled = !useFileSize;
+    sizeUnitSelect.disabled = !useFileSize;
+    widthControl.classList.toggle('hidden', useFileSize);
+    heightControl.classList.toggle('hidden', useFileSize);
+    maxWidthInput.disabled = useFileSize;
+    maxHeightInput.disabled = useFileSize;
+  }
+
+  if (sizeModeRadios) {
+    sizeModeRadios.forEach(radio => radio.addEventListener('change', updateSizeMode));
+    updateSizeMode();
   }
   
   // Initialize navigation and modal references
@@ -1314,7 +1378,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
   
-  console.log('Image conversion app initialized');
+  // Initialize usage tracking display
+  if (window.imageAuth) {
+    window.imageAuth.updateUI();
+  }
+  
+  // Browser compatibility info for special formats
+  try {
+    const ua = navigator.userAgent.toLowerCase();
+    if (compatWarning) {
+      if (ua.includes('firefox')) {
+        compatWarning.textContent = 'Heads up: Firefox may have limited support for HEIC/HEIF. If conversion fails, try Chrome or Edge.';
+      } else if (!('createImageBitmap' in window)) {
+        compatWarning.textContent = 'Your browser lacks some image APIs; certain formats may not convert properly.';
+      }
+    }
+  } catch (_) {}
+
+  // Set initial defaults and event listeners for controls
+  // ... (other code)
 });
 
 export { handleFiles, sanitizeFilename };

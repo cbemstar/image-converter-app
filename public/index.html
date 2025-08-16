@@ -17,8 +17,7 @@
   <script src="layout.js"></script>
   <script src="home.js"></script>
 
-  <!-- Global Authentication System -->
-  <script src="js/auth-loader.js"></script>
+
 </head>
 
 <body class="bg-transparent min-h-screen flex flex-col">
@@ -29,6 +28,7 @@
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0"
       style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
+  
   <nav class="bg-background shadow-md border-b border-border" role="navigation" aria-label="Main navigation">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
@@ -42,40 +42,7 @@
           </a>
         </div>
         <div class="flex items-center gap-2">
-          <!-- Authentication Status -->
-          <div data-guest-only class="flex items-center gap-2">
-            <a href="auth.html" class="btn btn-outline btn-sm">
-              <i class="fas fa-sign-in-alt mr-1"></i>
-              Sign In
-            </a>
-          </div>
 
-          <div data-auth-required class="flex items-center gap-2" style="display: none;">
-            <div class="dropdown dropdown-end relative">
-              <button class="btn btn-outline btn-sm dropdown-toggle" aria-label="User menu" aria-expanded="false">
-                <img data-user-info="avatar" class="w-6 h-6 rounded-full mr-2" alt="User avatar" style="display: none;">
-                <span data-user-info="name" class="hidden sm:inline">User</span>
-                <i class="fas fa-chevron-down ml-1"></i>
-              </button>
-              <ul
-                class="dropdown-content menu p-2 shadow bg-background border border-border rounded-lg w-52 absolute right-0 top-full mt-1 z-50"
-                style="display: none;">
-                <li><a href="dashboard.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded"><i
-                      class="fas fa-tachometer-alt"></i>Dashboard</a></li>
-                <li><a href="analytics.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded"><i
-                      class="fas fa-chart-bar"></i>Analytics</a></li>
-                <li><a href="profile.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded"><i
-                      class="fas fa-user"></i>Profile</a></li>
-                <li><a href="pricing.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded"><i
-                      class="fas fa-credit-card"></i>Pricing</a></li>
-                <li>
-                  <hr class="my-1 border-border">
-                </li>
-                <li><a href="#" id="signOutBtn" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded"><i
-                      class="fas fa-sign-out-alt"></i>Sign Out</a></li>
-              </ul>
-            </div>
-          </div>
 
           <button id="theme-toggle" class="btn btn-outline btn-sm" aria-label="Toggle theme">
             <span id="theme-toggle-icon">🌙</span>
@@ -148,7 +115,7 @@
           <p class="text-lg">A collection of handy online tools</p>
         </section>
 
-        <div class="max-w-md mx-auto mb-4 space-y-2">
+        <div class="max-w-md mx-auto mb-4 space-y-2 sticky top-16 z-30 bg-background/95 backdrop-blur border-b border-border p-3 rounded-md">
           <label for="home-search" class="sr-only">Search tools</label>
           <input id="home-search" type="text" placeholder="Search tools" class="input w-full" />
           <div class="flex gap-2">
@@ -171,90 +138,176 @@
         <div id="home-tools" class="grid gap-4 md:grid-cols-2 max-w-2xl mx-auto">
           <a href="tools/image-converter/index.html" class="card" data-name="Image Converter" data-category="Images"
             data-slug="image-converter">
-            <h3 class="font-semibold mb-1">Image Converter</h3>
-            <p class="text-sm">Convert images between formats.</p>
+            <div class="flex items-start gap-3">
+              <div class="tool-thumb" aria-hidden="true"><i class="fas fa-image"></i></div>
+              <div>
+                <h3 class="font-semibold mb-1">Image Converter</h3>
+                <p class="text-sm">Convert images between formats.</p>
+              </div>
+            </div>
           </a>
           <a href="tools/background-remover/index.html" class="card" data-name="Background Remover"
             data-category="Images" data-slug="background-remover">
-            <h3 class="font-semibold mb-1" class="text-foreground">Background Remover</h3>
-            <p class="text-sm" class="text-foreground">Remove the background from images.</p>
+            <div class="flex items-start gap-3">
+              <div class="tool-thumb" aria-hidden="true"><i class="fas fa-scissors"></i></div>
+              <div>
+                <h3 class="font-semibold mb-1" class="text-foreground">Background Remover</h3>
+                <p class="text-sm" class="text-foreground">Remove the background from images.</p>
+              </div>
+            </div>
           </a>
           <a href="tools/google-ads-rsa-preview/index.html" class="card" data-name="Google Ads RSA Preview"
             data-category="Marketing" data-slug="google-ads-rsa-preview">
-            <h3 class="font-semibold mb-1" class="text-foreground">Google Ads RSA Preview</h3>
-            <p class="text-sm" class="text-foreground">Visualize responsive search ads.</p>
+            <div class="flex items-start gap-3">
+              <div class="tool-thumb" aria-hidden="true"><i class="fas fa-bullhorn"></i></div>
+              <div>
+                <h3 class="font-semibold mb-1" class="text-foreground">Google Ads RSA Preview</h3>
+                <p class="text-sm" class="text-foreground">Visualize responsive search ads.</p>
+              </div>
+            </div>
           </a>
           <a href="tools/campaign-structure/index.html" class="card" data-name="Campaign Structure"
             data-category="Marketing" data-slug="campaign-structure">
-            <h3 class="font-semibold mb-1" class="text-foreground">Campaign Structure</h3>
-            <p class="text-sm" class="text-foreground">Visualize ad campaign hierarchy.</p>
+            <div class="flex items-start gap-3">
+              <div class="tool-thumb" aria-hidden="true"><i class="fas fa-sitemap"></i></div>
+              <div>
+                <h3 class="font-semibold mb-1" class="text-foreground">Campaign Structure</h3>
+                <p class="text-sm" class="text-foreground">Visualize ad campaign hierarchy.</p>
+              </div>
+            </div>
           </a>
           <a href="tools/bulk-match-editor/index.html" class="card" data-name="Bulk Match Type Editor"
             data-category="Marketing" data-slug="bulk-match-editor">
-            <h3 class="font-semibold mb-1" class="text-foreground">Bulk Match Type Editor</h3>
-            <p class="text-sm" class="text-foreground">Convert keywords to phrase and exact match.</p>
+            <div class="flex items-start gap-3">
+              <div class="tool-thumb" aria-hidden="true"><i class="fas fa-list"></i></div>
+              <div>
+                <h3 class="font-semibold mb-1" class="text-foreground">Bulk Match Type Editor</h3>
+                <p class="text-sm" class="text-foreground">Convert keywords to phrase and exact match.</p>
+              </div>
+            </div>
           </a>
           <a href="tools/json-formatter/index.html" class="card" data-name="JSON Formatter" data-category="Utilities"
             data-slug="json-formatter">
-            <h3 class="font-semibold mb-1" class="text-foreground">JSON Formatter</h3>
-            <p class="text-sm" class="text-foreground">Format or minify JSON easily.</p>
+            <div class="flex items-start gap-3">
+              <div class="tool-thumb" aria-hidden="true"><i class="fas fa-code"></i></div>
+              <div>
+                <h3 class="font-semibold mb-1" class="text-foreground">JSON Formatter</h3>
+                <p class="text-sm" class="text-foreground">Format or minify JSON easily.</p>
+              </div>
+            </div>
           </a>
           <a href="tools/color-palette/index.html" class="card" data-name="Colour Palette Extractor"
             data-category="Images" data-slug="color-palette">
-            <h3 class="font-semibold mb-1" class="text-foreground">Colour Palette Extractor</h3>
-            <p class="text-sm" class="text-foreground">Extract dominant colours from images.</p>
+            <div class="flex items-start gap-3">
+              <div class="tool-thumb" aria-hidden="true"><i class="fas fa-palette"></i></div>
+              <div>
+                <h3 class="font-semibold mb-1" class="text-foreground">Colour Palette Extractor</h3>
+                <p class="text-sm" class="text-foreground">Extract dominant colours from images.</p>
+              </div>
+            </div>
           </a>
           <a href="tools/pdf-merger/index.html" class="card" data-name="PDF Merger" data-category="Utilities"
             data-slug="pdf-merger">
-            <h3 class="font-semibold mb-1" class="text-foreground">PDF Merger</h3>
-            <p class="text-sm" class="text-foreground">Combine PDFs easily.</p>
+            <div class="flex items-start gap-3">
+              <div class="tool-thumb" aria-hidden="true"><i class="fas fa-file-pdf"></i></div>
+              <div>
+                <h3 class="font-semibold mb-1" class="text-foreground">PDF Merger</h3>
+                <p class="text-sm" class="text-foreground">Combine PDFs easily.</p>
+              </div>
+            </div>
           </a>
           <a href="tools/utm-builder/index.html" class="card" data-name="UTM Builder" data-category="Marketing"
             data-slug="utm-builder">
-            <h3 class="font-semibold mb-1" class="text-foreground">UTM Builder</h3>
-            <p class="text-sm" class="text-foreground">Create tracking URLs quickly.</p>
+            <div class="flex items-start gap-3">
+              <div class="tool-thumb" aria-hidden="true"><i class="fas fa-link"></i></div>
+              <div>
+                <h3 class="font-semibold mb-1" class="text-foreground">UTM Builder</h3>
+                <p class="text-sm" class="text-foreground">Create tracking URLs quickly.</p>
+              </div>
+            </div>
           </a>
           <a href="tools/qr-generator/index.html" class="card" data-name="QR Code Generator" data-category="Utilities"
             data-slug="qr-generator">
-            <h3 class="font-semibold mb-1" class="text-foreground">QR Code Generator</h3>
-            <p class="text-sm" class="text-foreground">Create customizable QR codes.</p>
+            <div class="flex items-start gap-3">
+              <div class="tool-thumb" aria-hidden="true"><i class="fas fa-qrcode"></i></div>
+              <div>
+                <h3 class="font-semibold mb-1" class="text-foreground">QR Code Generator</h3>
+                <p class="text-sm" class="text-foreground">Create customizable QR codes.</p>
+              </div>
+            </div>
           </a>
           <a href="tools/pdf-ocr/index.html" class="card" data-name="PDF OCR" data-category="Utilities"
             data-slug="pdf-ocr">
-            <h3 class="font-semibold mb-1" class="text-foreground">PDF OCR</h3>
-            <p class="text-sm" class="text-foreground">Extract text from PDFs using OCR.</p>
+            <div class="flex items-start gap-3">
+              <div class="tool-thumb" aria-hidden="true"><i class="fas fa-file-lines"></i></div>
+              <div>
+                <h3 class="font-semibold mb-1" class="text-foreground">PDF OCR</h3>
+                <p class="text-sm" class="text-foreground">Extract text from PDFs using OCR.</p>
+              </div>
+            </div>
           </a>
           <a href="tools/uuid-generator/index.html" class="card" data-name="UUID Generator" data-category="Utilities"
             data-slug="uuid-generator">
-            <h3 class="font-semibold mb-1" class="text-foreground">UUID Generator</h3>
-            <p class="text-sm" class="text-foreground">Create v1, v3, v4 or v5 IDs.</p>
+            <div class="flex items-start gap-3">
+              <div class="tool-thumb" aria-hidden="true"><i class="fas fa-fingerprint"></i></div>
+              <div>
+                <h3 class="font-semibold mb-1" class="text-foreground">UUID Generator</h3>
+                <p class="text-sm" class="text-foreground">Create v1, v3, v4 or v5 IDs.</p>
+              </div>
+            </div>
           </a>
           <a href="tools/timestamp-converter/index.html" class="card" data-name="Timestamp Converter"
             data-category="Utilities" data-slug="timestamp-converter">
-            <h3 class="font-semibold mb-1" class="text-foreground">Timestamp Converter</h3>
-            <p class="text-sm" class="text-foreground">Convert between Unix time and dates.</p>
+            <div class="flex items-start gap-3">
+              <div class="tool-thumb" aria-hidden="true"><i class="fas fa-clock"></i></div>
+              <div>
+                <h3 class="font-semibold mb-1" class="text-foreground">Timestamp Converter</h3>
+                <p class="text-sm" class="text-foreground">Convert between Unix time and dates.</p>
+              </div>
+            </div>
           </a>
           <a href="tools/meta-tag-generator/index.html" class="card" data-name="Meta Tag Generator"
             data-category="Marketing" data-slug="meta-tag-generator">
-            <h3 class="font-semibold mb-1" class="text-foreground">Meta Tag Generator</h3>
-            <p class="text-sm" class="text-foreground">Generate SEO meta tags easily.</p>
+            <div class="flex items-start gap-3">
+              <div class="tool-thumb" aria-hidden="true"><i class="fas fa-tags"></i></div>
+              <div>
+                <h3 class="font-semibold mb-1" class="text-foreground">Meta Tag Generator</h3>
+                <p class="text-sm" class="text-foreground">Generate SEO meta tags easily.</p>
+              </div>
+            </div>
           </a>
           <a href="tools/text-case-converter/index.html" class="card" data-name="Text Case Converter"
             data-category="Utilities" data-slug="text-case-converter">
-            <h3 class="font-semibold mb-1" class="text-foreground">Text Case Converter</h3>
-            <p class="text-sm" class="text-foreground">Switch text between cases.</p>
+            <div class="flex items-start gap-3">
+              <div class="tool-thumb" aria-hidden="true"><i class="fas fa-font"></i></div>
+              <div>
+                <h3 class="font-semibold mb-1" class="text-foreground">Text Case Converter</h3>
+                <p class="text-sm" class="text-foreground">Switch text between cases.</p>
+              </div>
+            </div>
           </a>
           <a href="tools/robots-txt/index.html" class="card" data-name="Robots.txt Tool" data-category="Marketing"
             data-slug="robots-txt">
-            <h3 class="font-semibold mb-1" class="text-foreground">Robots.txt Tool</h3>
-            <p class="text-sm" class="text-foreground">Generate and validate robots directives.</p>
+            <div class="flex items-start gap-3">
+              <div class="tool-thumb" aria-hidden="true"><i class="fas fa-robot"></i></div>
+              <div>
+                <h3 class="font-semibold mb-1" class="text-foreground">Robots.txt Tool</h3>
+                <p class="text-sm" class="text-foreground">Generate and validate robots directives.</p>
+              </div>
+            </div>
           </a>
           <a href="tools/layout-tool/index.html" class="card" data-name="Layout Generator" data-category="Images"
             data-slug="layout-tool">
-            <h3 class="font-semibold mb-1" class="text-foreground">Layout Generator</h3>
-            <p class="text-sm" class="text-foreground">Generate multi-size layouts.</p>
+            <div class="flex items-start gap-3">
+              <div class="tool-thumb" aria-hidden="true"><i class="fas fa-object-group"></i></div>
+              <div>
+                <h3 class="font-semibold mb-1" class="text-foreground">Layout Generator</h3>
+                <p class="text-sm" class="text-foreground">Generate multi-size layouts.</p>
+              </div>
+            </div>
           </a>
         </div>
+        <div id="no-results" class="text-center text-[var(--muted-foreground)] py-8 hidden" aria-live="polite">No tools match your search. Try clearing filters.</div>
       </div>
     </main>
   </div>
@@ -263,15 +316,7 @@
     // Initialize page functionality
     document.addEventListener('DOMContentLoaded', () => {
       initializeSidebar();
-      initializeDropdown();
       initializeTheme();
-      setupSignOut();
-    });
-
-    // Wait for global auth to be ready
-    document.addEventListener('authReady', () => {
-      console.log('🎉 Global authentication is ready!');
-      setupAuthFeatures();
     });
 
     // Initialize sidebar functionality
@@ -302,30 +347,7 @@
       }
     }
 
-    // Initialize dropdown functionality
-    function initializeDropdown() {
-      const dropdownToggle = document.querySelector('.dropdown-toggle');
-      const dropdownContent = document.querySelector('.dropdown-content');
 
-      if (dropdownToggle && dropdownContent) {
-        dropdownToggle.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-
-          const isOpen = dropdownContent.style.display === 'block';
-          dropdownContent.style.display = isOpen ? 'none' : 'block';
-          dropdownToggle.setAttribute('aria-expanded', !isOpen);
-        });
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', (e) => {
-          if (!dropdownToggle.contains(e.target) && !dropdownContent.contains(e.target)) {
-            dropdownContent.style.display = 'none';
-            dropdownToggle.setAttribute('aria-expanded', 'false');
-          }
-        });
-      }
-    }
 
     // Initialize theme toggle
     function initializeTheme() {
@@ -340,273 +362,7 @@
       }
     }
 
-    // Setup sign out functionality
-    function setupSignOut() {
-      const signOutBtn = document.getElementById('signOutBtn');
-      if (signOutBtn) {
-        signOutBtn.addEventListener('click', async (e) => {
-          e.preventDefault();
-          try {
-            if (window.globalAuth) {
-              await window.globalAuth.signOut();
-              setTimeout(() => window.location.reload(), 1000);
-            }
-          } catch (error) {
-            console.error('Sign out error:', error);
-          }
-        });
-      }
-    }
 
-    // Setup authentication-dependent features
-    function setupAuthFeatures() {
-      // Add authentication requirement to premium features
-      const premiumTools = document.querySelectorAll('[data-premium="true"]');
-      premiumTools.forEach(tool => {
-        tool.addEventListener('click', (e) => {
-          if (window.globalAuth && !window.globalAuth.requireAuth({
-            title: 'Premium Feature',
-            message: 'This tool requires a premium account. Sign in to access advanced features.'
-          })) {
-            e.preventDefault();
-          }
-        });
-      });
-    }
-
-    // Global toast function
-    window.showToast = function(message, type = 'info') {
-      if (window.globalAuth) {
-        window.globalAuth.showToast(message, type);
-      } else {
-        console.log(`Toast: ${message}`);
-      }
-    };
-
-    // Debug function
-    window.debugAuth = function() {
-      if (window.globalAuth) {
-        console.log('=== Global Authentication Debug ===');
-        console.log('Authenticated:', window.globalAuth.isAuthenticated());
-        console.log('Current user:', window.globalAuth.getCurrentUser());
-        console.log('Current session:', window.globalAuth.getCurrentSession());
-      } else {
-        console.log('Global auth not available');
-      }
-    };
-
-
-
-    // Initialize sidebar functionality
-    function initializeSidebar() {
-      const sidebarToggle = document.getElementById('sidebar-toggle');
-      const sidebar = document.getElementById('sidebar');
-      const sidebarOverlay = document.getElementById('sidebar-overlay');
-      const sidebarClose = document.getElementById('sidebar-close');
-
-      if (sidebarToggle && sidebar && sidebarOverlay) {
-        sidebarToggle.addEventListener('click', () => {
-          sidebar.classList.remove('-translate-x-full');
-          sidebarOverlay.classList.remove('hidden');
-          sidebarToggle.setAttribute('aria-expanded', 'true');
-        });
-
-        const closeSidebar = () => {
-          sidebar.classList.add('-translate-x-full');
-          sidebarOverlay.classList.add('hidden');
-          sidebarToggle.setAttribute('aria-expanded', 'false');
-        };
-
-        if (sidebarClose) {
-          sidebarClose.addEventListener('click', closeSidebar);
-        }
-
-        sidebarOverlay.addEventListener('click', closeSidebar);
-      }
-    }
-
-    // Initialize authentication system
-    async function initializeAuthentication() {
-      try {
-        console.log('Initializing authentication system...');
-
-        // Wait for required dependencies
-        let attempts = 0;
-        const maxAttempts = 50; // Increase wait time
-
-        while ((!window.supabase || !window.PUBLIC_ENV) && attempts < maxAttempts) {
-          await new Promise(resolve => setTimeout(resolve, 100));
-          attempts++;
-        }
-
-        if (!window.PUBLIC_ENV) {
-          console.error('PUBLIC_ENV not loaded after waiting');
-          return;
-        }
-
-        if (!window.supabase) {
-          console.error('Supabase not loaded after waiting');
-          return;
-        }
-
-        console.log('Dependencies loaded, checking auth state...');
-
-        // Check current auth state directly with Supabase
-        const { data: { session }, error } = await window.supabase.auth.getSession();
-
-        if (error) {
-          console.error('Error getting session:', error);
-          return;
-        }
-
-        console.log('Session check result:', session ? `User: ${session.user.email}` : 'No session');
-
-        // Update UI based on auth state
-        updateAuthUIDirectly(!!session, session?.user);
-
-        // Listen for auth changes
-        window.supabase.auth.onAuthStateChange((event, session) => {
-          console.log('Auth state changed:', event, session?.user?.email || 'No user');
-          updateAuthUIDirectly(!!session, session?.user);
-        });
-
-      } catch (error) {
-        console.error('Error initializing authentication:', error);
-      }
-    }
-
-    // Direct UI update function
-    function updateAuthUIDirectly(isAuthenticated, user) {
-      console.log('Updating UI directly:', isAuthenticated, user?.email);
-
-      const authRequired = document.querySelectorAll('[data-auth-required]');
-      const guestOnly = document.querySelectorAll('[data-guest-only]');
-      const userInfo = document.querySelectorAll('[data-user-info]');
-
-      if (isAuthenticated) {
-        // Show authenticated elements
-        authRequired.forEach(el => {
-          el.style.display = 'flex';
-          el.classList.remove('hidden');
-        });
-
-        // Hide guest elements
-        guestOnly.forEach(el => {
-          el.style.display = 'none';
-          el.classList.add('hidden');
-        });
-
-        // Update user info
-        userInfo.forEach(el => {
-          const infoType = el.dataset.userInfo;
-          if (infoType === 'name') {
-            el.textContent = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
-          } else if (infoType === 'email') {
-            el.textContent = user?.email || '';
-          } else if (infoType === 'avatar' && el.tagName === 'IMG') {
-            el.src = user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.email || 'User')}&background=0066cc&color=fff`;
-            el.style.display = 'block';
-          }
-        });
-
-      } else {
-        // Hide authenticated elements
-        authRequired.forEach(el => {
-          el.style.display = 'none';
-          el.classList.add('hidden');
-        });
-
-        // Show guest elements
-        guestOnly.forEach(el => {
-          el.style.display = 'flex';
-          el.classList.remove('hidden');
-        });
-
-        // Clear user info
-        userInfo.forEach(el => {
-          if (el.tagName === 'IMG') {
-            el.style.display = 'none';
-          } else {
-            el.textContent = '';
-          }
-        });
-      }
-    }
-
-    // Debug function - you can call this in browser console
-    window.debugAuth = function () {
-      console.log('=== Authentication Debug ===');
-      console.log('AuthManager available:', !!window.authManager);
-      console.log('Supabase available:', !!window.supabase);
-      console.log('PUBLIC_ENV loaded:', !!window.PUBLIC_ENV);
-
-      if (window.authManager) {
-        console.log('Is authenticated:', window.authManager.isAuthenticated());
-        console.log('Current user:', window.authManager.getCurrentUser());
-        console.log('Current session:', window.authManager.getCurrentSession());
-      }
-
-      const authElements = document.querySelectorAll('[data-auth-required]');
-      const guestElements = document.querySelectorAll('[data-guest-only]');
-      console.log('Auth required elements:', authElements.length);
-      console.log('Guest only elements:', guestElements.length);
-
-      authElements.forEach((el, i) => {
-        console.log(`Auth element ${i}:`, el, 'visible:', el.style.display !== 'none');
-      });
-    };
-
-    // Ensure theme toggle is properly initialized
-    if (window.initializeThemeToggle) {
-      window.initializeThemeToggle();
-    } else {
-      // Fallback theme toggle initialization if theme.js hasn't loaded yet
-      setTimeout(() => {
-        if (window.initializeThemeToggle) {
-          window.initializeThemeToggle();
-        }
-      }, 100);
-    }
-
-    // Setup dropdown functionality
-    const dropdownToggle = document.querySelector('.dropdown-toggle');
-    const dropdownContent = document.querySelector('.dropdown-content');
-
-    if (dropdownToggle && dropdownContent) {
-      dropdownToggle.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        const isOpen = dropdownContent.style.display === 'block';
-        dropdownContent.style.display = isOpen ? 'none' : 'block';
-        dropdownToggle.setAttribute('aria-expanded', !isOpen);
-      });
-
-      // Close dropdown when clicking outside
-      document.addEventListener('click', (e) => {
-        if (!dropdownToggle.contains(e.target) && !dropdownContent.contains(e.target)) {
-          dropdownContent.style.display = 'none';
-          dropdownToggle.setAttribute('aria-expanded', 'false');
-        }
-      });
-    }
-
-    // Add authentication requirement to premium features
-    // This can be expanded as needed for specific tools
-    const premiumTools = document.querySelectorAll('[data-premium="true"]');
-    premiumTools.forEach(tool => {
-      tool.addEventListener('click', (e) => {
-        if (!window.requireAuth) return;
-
-        if (!window.requireAuth({
-          title: 'Premium Feature',
-          message: 'This tool requires a premium account. Sign in to access advanced features.',
-          feature: 'premium tool'
-        })) {
-          e.preventDefault();
-        }
-      });
-    });
   </script>
 </body>
 
