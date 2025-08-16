@@ -11,8 +11,11 @@
   const CONFIG = {
     scriptsToLoad: [
       'js/public-config.js',
-      'js/global-auth.js',
-      'js/universal-nav.js'
+      'js/supabase-client.js',
+      'js/auth-manager.js',
+      'js/unified-navigation.js',
+      'js/auth-state-sync.js',
+      'js/auth-guards.js'
     ],
     loadTimeout: 10000 // 10 seconds
   };

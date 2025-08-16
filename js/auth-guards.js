@@ -10,7 +10,8 @@ class AuthGuards {
       'dashboard.html',
       'profile.html',
       'settings.html',
-      'subscription.html'
+      'subscription.html',
+      'analytics.html'
     ];
     
     this.init();
