@@ -9,7 +9,397 @@
     <link rel="stylesheet" href="styles/styles.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="js/auth-loader.js"></script>
+    <style>
+        .pricing-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .pricing-header h1 {
+            font-size: 48px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+
+        .pricing-header p {
+            font-size: 20px;
+            color: #6b7280;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .pricing-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin: 40px 0;
+        }
+
+        .pricing-toggle-label {
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .pricing-toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 32px;
+            background: #e5e7eb;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .pricing-toggle-switch.active {
+            background: #3b82f6;
+        }
+
+        .pricing-toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 28px;
+            height: 28px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .pricing-toggle-switch.active .pricing-toggle-slider {
+            transform: translateX(28px);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            padding: 40px 32px;
+            position: relative;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+        }
+
+        .pricing-card.popular {
+            border: 2px solid #3b82f6;
+            transform: scale(1.05);
+        }
+
+        .pricing-card.popular::before {
+            content: 'Most Popular';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #3b82f6;
+            color: white;
+            padding: 6px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .pricing-card.current-plan {
+            border: 2px solid #10b981;
+        }
+
+        .pricing-card.current-plan::before {
+            content: 'Current Plan';
+            background: #10b981;
+        }
+
+        .pricing-plan-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .pricing-plan-description {
+            color: #6b7280;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .pricing-plan-price {
+            margin-bottom: 32px;
+        }
+
+        .pricing-price-amount {
+            font-size: 48px;
+            font-weight: 700;
+            color: #1f2937;
+            line-height: 1;
+        }
+
+        .pricing-price-currency {
+            font-size: 24px;
+            color: #6b7280;
+        }
+
+        .pricing-price-interval {
+            color: #6b7280;
+            font-size: 16px;
+            margin-left: 4px;
+        }
+
+        .pricing-features {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 32px;
+        }
+
+        .pricing-feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            color: #374151;
+        }
+
+        .pricing-feature-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #dcfce7;
+            color: #16a34a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .pricing-feature.limitation .pricing-feature-icon {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .pricing-cta {
+            width: 100%;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .pricing-cta-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .pricing-cta-primary:hover:not(:disabled) {
+            background: #2563eb;
+        }
+
+        .pricing-cta-secondary {
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+
+        .pricing-cta-secondary:hover:not(:disabled) {
+            background: #e5e7eb;
+        }
+
+        .pricing-cta-current {
+            background: #10b981;
+            color: white;
+        }
+
+        .pricing-cta:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .pricing-cta.loading {
+            position: relative;
+            color: transparent;
+        }
+
+        .pricing-cta.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .pricing-faq {
+            margin-top: 80px;
+        }
+
+        .pricing-faq h2 {
+            text-align: center;
+            font-size: 32px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 40px;
+        }
+
+        .faq-list {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            width: 100%;
+            padding: 20px 24px;
+            background: none;
+            border: none;
+            text-align: left;
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-question:hover {
+            background: #f9fafb;
+        }
+
+        .faq-answer {
+            padding: 0 24px 20px;
+            color: #6b7280;
+            line-height: 1.6;
+            display: none;
+        }
+
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+
+        .faq-icon {
+            transition: transform 0.2s;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        .back-nav {
+            margin-bottom: 20px;
+        }
+
+        .back-nav a {
+            color: #3b82f6;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .back-nav a:hover {
+            text-decoration: underline;
+        }
+
+        .pricing-guarantee {
+            text-align: center;
+            margin-top: 40px;
+            padding: 24px;
+            background: #f0fdf4;
+            border-radius: 12px;
+            border: 1px solid #bbf7d0;
+        }
+
+        .pricing-guarantee h3 {
+            color: #166534;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .pricing-guarantee p {
+            color: #15803d;
+            margin: 0;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .pricing-container {
+                padding: 10px;
+            }
+
+            .pricing-header h1 {
+                font-size: 36px;
+            }
+
+            .pricing-header p {
+                font-size: 18px;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .pricing-card {
+                padding: 30px 24px;
+            }
+
+            .pricing-card.popular {
+                transform: none;
+            }
+
+            .pricing-price-amount {
+                font-size: 40px;
+            }
+        }
+    </style>
+
     <script src="styles/theme.js"></script>
+
 </head>
 
 <body class="bg-background min-h-screen flex flex-col">
@@ -127,6 +517,13 @@
                 </div>
             </div>
 
+
+    <!-- Load dependencies -->
+    <script src="js/config.js"></script>
+    <script src="js/profile-manager.js"></script>
+    <script src="js/quota-manager.js"></script>
+    <script src="js/stripe-manager.js"></script>
+
             <div class="text-center mt-8">
                 <a href="index.html" class="btn btn-outline">
                     <i class="fas fa-arrow-left mr-2"></i>
@@ -135,6 +532,7 @@
             </div>
         </div>
     </main>
+
 
     <script>
         // Initialize theme toggle
