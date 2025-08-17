@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Google Tag Manager -->
+  <script>(function (w, d, s, l, i) { w[l] = w[l] || []; w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' }); var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f); })(window, document, 'script', 'dataLayer', 'GTM-NFJTSQ3N');</script>
+  <!-- End Google Tag Manager -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>reformately Tools</title>
+  <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
+  <link rel="stylesheet" href="styles/styles.css">
+  <link rel="stylesheet" href="styles/globals.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <!-- shadcn/ui Components -->
+  <script src="js/shadcn-components.js" type="module"></script>
+  <script src="js/hero-enhancements.js"></script>
+  <script src="js/tools-refactor.js"></script>
+  <script src="styles/theme.js"></script>
+  <script src="layout.js"></script>
+  <script src="home.js"></script>
+  <script src="js/footer.js"></script>
+  <script src="js/universal-footer.js"></script>
+</head>
+
+<body class="bg-transparent min-h-screen flex flex-col">
+  <a href="#main-content"
+    class="sr-only focus:not-sr-only absolute left-2 top-2 bg-background text-foreground p-2 z-50">Skip
+    to main content</a>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0"
+      style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+  <nav class="bg-background shadow-md border-b border-border" role="navigation" aria-label="Main navigation">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center gap-4">
+          <button id="sidebar-toggle" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3" aria-label="Open sidebar" aria-controls="sidebar"
+            aria-expanded="false">
+            <i data-lucide="menu"></i>
+          </button>
+          <a href="index.html" class="flex items-center gap-2">
+            <span class="text-foreground text-xl font-bold">reformately</span>
+          </a>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="theme-toggle" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3" aria-label="Toggle theme">
+            <i data-lucide="sun" id="theme-toggle-icon" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="flex flex-grow">
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
+    <aside id="sidebar"
+      class="fixed top-0 left-0 w-64 h-full bg-background border-r border-border/20 p-4 transform -translate-x-full transition-transform z-40"
+      role="complementary" aria-label="Sidebar" tabindex="-1">
+      <div class="flex justify-between items-center mb-4">
+        <a href="index.html" class="text-xl font-bold" class="text-foreground">reformately</a>
+        <button id="sidebar-close" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3" aria-label="Close sidebar">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <h2 class="text-lg font-bold mb-4" class="text-foreground">Tools</h2>
+      <label for="tool-search" class="sr-only">Search tools</label>
+      <input id="tool-search" type="text" placeholder="Search" class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50" />
+      <ul id="tool-list" class="space-y-2" role="list">
+        <li><a href="tools/image-converter/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="image" class="w-4 h-4"></i>Image Converter</a>
+        </li>
+        <li><a href="tools/background-remover/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="scissors" class="w-4 h-4"></i>Background
+            Remover</a></li>
+        <li><a href="tools/google-ads-rsa-preview/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="bar-chart-3" class="w-4 h-4"></i>Google Ads RSA
+            Preview</a></li>
+        <li><a href="tools/campaign-structure/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="layers" class="w-4 h-4"></i>Campaign
+            Structure</a></li>
+        <li><a href="tools/bulk-match-editor/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="edit-3" class="w-4 h-4"></i>Bulk Match Type
+            Editor</a></li>
+        <li><a href="tools/json-formatter/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="braces" class="w-4 h-4"></i>JSON
+            Formatter</a></li>
+        <li><a href="tools/color-palette/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="palette" class="w-4 h-4"></i>Colour
+            Palette Extractor</a></li>
+        <li><a href="tools/pdf-merger/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="file-text" class="w-4 h-4"></i>PDF
+            Merger</a></li>
+        <li><a href="tools/utm-builder/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="link" class="w-4 h-4"></i>UTM
+            Builder</a></li>
+        <li><a href="tools/qr-generator/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="qr-code" class="w-4 h-4"></i>QR Code
+            Generator</a></li>
+        <li><a href="tools/pdf-ocr/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="file-search" class="w-4 h-4"></i>PDF OCR</a>
+        </li>
+        <li><a href="tools/uuid-generator/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="hash" class="w-4 h-4"></i>UUID
+            Generator</a></li>
+        <li><a href="tools/timestamp-converter/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="clock" class="w-4 h-4"></i>Timestamp
+            Converter</a></li>
+        <li><a href="tools/meta-tag-generator/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="tag" class="w-4 h-4"></i>Meta Tag
+            Generator</a></li>
+        <li><a href="tools/robots-txt/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="bot" class="w-4 h-4"></i>Robots.txt Tool</a></li>
+        <li><a href="tools/text-case-converter/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="type" class="w-4 h-4"></i>Text Case
+            Converter</a></li>
+        <li><a href="tools/layout-tool/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="layout" class="w-4 h-4"></i>Layout
+            Generator</a></li>
+        <li><a href="#" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="plus" class="w-4 h-4"></i>More coming soon</a></li>
+      </ul>
+      <div class="mt-6 pt-6 border-t border-border/20">
+        <a href="tools/request-tool/index.html" class="text-foreground hover:text-primary flex items-center gap-2"><i data-lucide="message-square" class="w-4 h-4"></i>Request a
+          Tool</a>
+      </div>
+    </aside>
+
+    <main id="main-content" class="flex-grow" tabindex="-1">
+      <!-- Hero Section -->
+      <section class="relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/30 py-20 lg:py-24">
+        <!-- Background decorative elements -->
+        <div class="absolute inset-0">
+          <div class="absolute top-20 left-10 w-2 h-2 bg-primary rounded-full opacity-60 animate-pulse"></div>
+          <div class="absolute top-40 right-20 w-1 h-1 bg-secondary-foreground rounded-full opacity-40 animate-pulse delay-1000"></div>
+          <div class="absolute bottom-40 left-1/4 w-1.5 h-1.5 bg-accent-foreground rounded-full opacity-50 animate-pulse delay-500"></div>
+          <div class="absolute bottom-20 right-1/3 w-1 h-1 bg-muted-foreground rounded-full opacity-30 animate-pulse delay-1500"></div>
+        </div>
+        
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
+              Professional Tools for 
+              <span class="text-primary">Digital Professionals</span>
+            </h1>
+            <p class="text-lg md:text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
+              Transform your workflow with our collection of browser-based tools. No downloads, no installations - just powerful utilities that work instantly in your browser.
+            </p>
+            
+            <!-- Primary CTA Buttons - Using shadcn/ui Button components -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+              <button id="explore-tools-btn" class="bg-primary text-primary-foreground hover:bg-primary/90 h-12 px-8 text-base font-semibold rounded-lg transition-all duration-200">
+                Explore Tools
+              </button>
+              <button id="request-tool-btn" class="bg-secondary text-secondary-foreground hover:bg-secondary/80 h-12 px-8 text-base font-semibold rounded-lg transition-all duration-200 flex items-center">
+                <span>Request a Tool</span>
+                <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+              </button>
+            </div>
+            
+            <!-- Quick Access Tool Cards - Using shadcn/ui Card components -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto mb-12">
+              <div id="image-tools-card" class="quick-access-card group relative overflow-hidden rounded-lg border bg-card text-card-foreground transition-all duration-200 hover:border-primary/50 hover:bg-card/50">
+                <div class="p-6 text-left">
+                  <div class="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors mb-4">
+                    <i data-lucide="image" class="w-6 h-6 text-blue-600"></i>
+                  </div>
+                  <h3 class="font-semibold text-lg mb-2 group-hover:text-primary transition-colors text-left">Image Tools</h3>
+                  <p class="text-sm text-muted-foreground mb-4 text-left">Convert, edit, and enhance images instantly</p>
+                  <div class="flex items-center text-primary font-medium text-sm group-hover:translate-x-1 transition-transform">
+                    <span>Try Tools</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                  </div>
+                </div>
+              </div>
+              
+              <div id="marketing-tools-card" class="quick-access-card group relative overflow-hidden rounded-lg border bg-card text-card-foreground transition-all duration-200 hover:border-primary/50 hover:bg-card/50">
+                <div class="p-6 text-left">
+                  <div class="w-12 h-12 rounded-lg bg-green-500/10 flex items-center justify-center group-hover:bg-green-500/20 transition-colors mb-4">
+                    <i data-lucide="bar-chart-3" class="w-6 h-6 text-green-600"></i>
+                  </div>
+                  <h3 class="font-semibold text-lg mb-2 group-hover:text-primary transition-colors text-left">Marketing</h3>
+                  <p class="text-sm text-muted-foreground mb-4 text-left">Campaign tools and analytics utilities</p>
+                  <div class="flex items-center text-primary font-medium text-sm group-hover:translate-x-1 transition-transform">
+                    <span>Try Tools</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                  </div>
+                </div>
+              </div>
+              
+              <div id="developer-tools-card" class="quick-access-card group relative overflow-hidden rounded-lg border bg-card text-card-foreground transition-all duration-200 hover:border-primary/50 hover:bg-card/50">
+                <div class="p-6 text-left">
+                  <div class="w-12 h-12 rounded-lg bg-violet-500/10 flex items-center justify-center group-hover:bg-violet-500/20 transition-colors mb-4">
+                    <i data-lucide="code" class="w-6 h-6 text-violet-600"></i>
+                  </div>
+                  <h3 class="font-semibold text-lg mb-2 group-hover:text-primary transition-colors text-left">Developer</h3>
+                  <p class="text-sm text-muted-foreground mb-4 text-left">Coding and development utilities</p>
+                  <div class="flex items-center text-primary font-medium text-sm group-hover:translate-x-1 transition-transform">
+                    <span>Try Tools</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                  </div>
+                </div>
+              </div>
+              
+              <div id="utilities-tools-card" class="quick-access-card group relative overflow-hidden rounded-lg border bg-card text-card-foreground transition-all duration-200 hover:border-primary/50 hover:bg-card/50">
+                <div class="p-6 text-left">
+                  <div class="w-12 h-12 rounded-lg bg-cyan-500/10 flex items-center justify-center group-hover:bg-cyan-500/20 transition-colors mb-4">
+                    <i data-lucide="wrench" class="w-6 h-6 text-cyan-600"></i>
+                  </div>
+                  <h3 class="font-semibold text-lg mb-2 group-hover:text-primary transition-colors text-left">Utilities</h3>
+                  <p class="text-sm text-muted-foreground mb-4 text-left">Essential tools for daily tasks</p>
+                  <div class="flex items-center text-primary font-medium text-sm group-hover:translate-x-1 transition-transform">
+                    <span>Try Tools</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Social Proof Section - Consistent Typography -->
+            <div class="text-center">
+              <p class="text-sm text-muted-foreground mb-4">Trusted by professionals worldwide</p>
+              <div class="flex flex-col sm:flex-row gap-8 justify-center items-center text-sm text-muted-foreground">
+                <div class="flex items-center space-x-2">
+                  <i data-lucide="users" class="w-4 h-4 text-primary"></i>
+                  <span>10K+ Users</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <i data-lucide="zap" class="w-4 h-4 text-primary"></i>
+                  <span>Instant Results</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <i data-lucide="shield" class="w-4 h-4 text-primary"></i>
+                  <span>Privacy First</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Bottom fade overlay -->
+          <div class="h-24 bg-gradient-to-t from-background to-transparent"></div>
+      </section>
+
+              <!-- Enhanced Search & Filter Section - Using shadcn/ui Components -->
+              <section class="py-16 bg-muted/30">
+                <div class="container mx-auto px-4">
+                  <div class="max-w-5xl mx-auto mb-16">
+                    <!-- Section Header - Consistent Typography Scale -->
+                    <div class="text-center mb-12">
+                      <h2 class="text-2xl font-semibold text-foreground mb-3">Find the Right Tool</h2>
+                      <p class="text-base text-muted-foreground">Search, filter, and discover tools to streamline your workflow</p>
+                    </div>
+                    
+                    <!-- Search Bar - Using shadcn/ui Input component -->
+                    <div class="relative mb-10">
+                      <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <i data-lucide="search" class="w-5 h-5 text-muted-foreground"></i>
+                      </div>
+                      <input 
+                        id="home-search" 
+                        type="text" 
+                        placeholder="Search for tools, categories, or features..." 
+                        class="block w-full pl-12 pr-4 py-4 border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent rounded-lg transition-colors text-base font-medium"
+                      />
+                    </div>
+                    
+                    <!-- Filter Controls - Using shadcn/ui components -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                      <!-- Category Filter -->
+                      <div class="space-y-3">
+                        <label for="category-filter" class="block text-sm font-semibold text-foreground">Category</label>
+                        <div class="relative">
+                          <select 
+                            id="category-filter" 
+                            class="w-full px-4 py-3 border border-input bg-background text-foreground rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-colors appearance-none cursor-pointer text-base font-medium"
+                          >
+                            <option value="All" class="text-foreground bg-background py-2">All Categories</option>
+                            <option value="Images" class="text-foreground bg-background py-2">🖼️ Images</option>
+                            <option value="Marketing" class="text-foreground bg-background py-2">📊 Marketing</option>
+                            <option value="Writing" class="text-foreground bg-background py-2">✍️ Writing</option>
+                            <option value="Utilities" class="text-foreground bg-background py-2">🛠️ Utilities</option>
+                            <option value="Developer" class="text-foreground bg-background py-2">💻 Developer</option>
+                          </select>
+                          <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                            <i data-lucide="chevron-down" class="w-4 h-4 text-muted-foreground"></i>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <!-- Sort Control -->
+                      <div class="space-y-3">
+                        <label for="sort-select" class="block text-sm font-semibold text-foreground">Sort By</label>
+                        <div class="relative">
+                          <select 
+                            id="sort-select" 
+                            class="w-full px-4 py-3 border border-input bg-background text-foreground rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-colors appearance-none cursor-pointer text-base font-medium"
+                          >
+                            <option value="az" class="text-foreground bg-background py-2">🔤 Alphabetical (A-Z)</option>
+                            <option value="visits" class="text-foreground bg-background py-2">🔥 Most Popular</option>
+                          </select>
+                          <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                            <i data-lucide="chevron-down" class="w-4 h-4 text-muted-foreground"></i>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <!-- Clear Filters Button - Using shadcn/ui Button component -->
+                      <div class="space-y-3">
+                        <label class="block text-sm font-semibold text-foreground opacity-0">Actions</label>
+                        <button 
+                          id="clear-filters" 
+                          class="inline-flex items-center justify-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+                        >
+                          <i data-lucide="x" class="w-4 h-4 mr-2"></i>
+                          Clear Filters
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+            
+                  <!-- Enhanced Tools Grid - Consistent Card Design Language -->
+                  <div class="max-w-7xl mx-auto">
+                    <!-- Tools Grid Header - Consistent Typography -->
+                    <div class="flex items-center justify-between mb-10">
+                      <div>
+                        <h2 class="text-2xl font-semibold text-foreground">Available Tools</h2>
+                        <p class="text-base text-muted-foreground mt-2">Professional tools for every digital workflow</p>
+                      </div>
+                      <div class="hidden sm:flex items-center space-x-2 text-sm text-muted-foreground">
+                        <i data-lucide="info" class="w-4 h-4"></i>
+                        <span>Click any tool to get started</span>
+                      </div>
+                    </div>
+                    
+                    <!-- Tools Grid - Generated dynamically with shadcn/ui components -->
+                    <div id="home-tools" class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                      <!-- Tools will be generated dynamically by tools-refactor.js -->
+                      <div class="text-center py-8 text-muted-foreground col-span-3">
+                        <i data-lucide="loader-2" class="w-8 h-8 mx-auto mb-4 animate-spin"></i>
+                        <p>Loading tools...</p>
+                      </div>
+            
+                      <a href="tools/background-remover/index.html" class="group relative overflow-hidden rounded-lg border bg-card text-card-foreground transition-all duration-200 hover:border-primary/50 hover:bg-card/50" data-name="Background Remover" data-category="Images">
+                        <div class="p-8">
+                          <div class="flex items-start justify-between mb-6">
+                            <div class="w-14 h-14 rounded-lg bg-purple-500/10 flex items-center justify-center group-hover:bg-purple-500/20 transition-colors">
+                              <i data-lucide="scissors" class="w-7 h-7 text-purple-600"></i>
+                            </div>
+                            <span class="inline-flex items-center rounded-lg bg-purple-50 px-3 py-1 text-xs font-semibold text-purple-700 ring-1 ring-inset ring-purple-700/10 dark:bg-purple-400/10 dark:text-purple-400 dark:ring-purple-400/30">Images</span>
+                          </div>
+                          <h3 class="font-semibold text-xl mb-3 group-hover:text-primary transition-colors">Background Remover</h3>
+                          <p class="text-base text-muted-foreground leading-relaxed mb-6">Remove backgrounds from images using AI-powered technology. Perfect for product photos and portraits.</p>
+                          <div class="flex items-center justify-between">
+                            <div class="flex items-center text-sm text-muted-foreground">
+                              <i data-lucide="zap" class="w-4 h-4 mr-2"></i>
+                              <span>AI-Powered</span>
+                            </div>
+                            <div class="flex items-center text-primary font-medium text-sm group-hover:translate-x-1 transition-transform">
+                              <span>Try Tool</span>
+                              <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                            </div>
+                          </div>
+                        </div>
+                      </a>
+            
+                      <a href="tools/color-palette/index.html" class="group relative overflow-hidden rounded-lg border bg-card text-card-foreground transition-all duration-200 hover:border-primary/50 hover:bg-card/50" data-name="Colour Palette Extractor" data-category="Images">
+                        <div class="p-8">
+                          <div class="flex items-start justify-between mb-6">
+                            <div class="w-14 h-14 rounded-lg bg-pink-500/10 flex items-center justify-center group-hover:bg-pink-500/20 transition-colors">
+                              <i data-lucide="palette" class="w-7 h-7 text-pink-600"></i>
+                            </div>
+                            <span class="inline-flex items-center rounded-lg bg-pink-50 px-3 py-1 text-xs font-semibold text-pink-700 ring-1 ring-inset ring-pink-700/10 dark:bg-pink-400/10 dark:text-pink-400 dark:ring-pink-400/30">Images</span>
+                          </div>
+                          <h3 class="font-semibold text-xl mb-3 group-hover:text-primary transition-colors">Colour Palette Extractor</h3>
+                          <p class="text-base text-muted-foreground leading-relaxed mb-6">Extract dominant colors from images for design inspiration. Generate beautiful color schemes instantly.</p>
+                          <div class="flex items-center justify-between">
+                            <div class="flex items-center text-sm text-muted-foreground">
+                              <i data-lucide="palette" class="w-4 h-4 mr-2"></i>
+                              <span>Color Analysis</span>
+                            </div>
+                            <div class="flex items-center text-primary font-medium text-sm group-hover:translate-x-1 transition-transform">
+                              <span>Try Tool</span>
+                              <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                            </div>
+                          </div>
+                        </div>
+                      </a>
+            
+                      <!-- Marketing Tools -->
+                      <a href="tools/google-ads-rsa-preview/index.html" class="group relative overflow-hidden rounded-lg border bg-card text-card-foreground transition-all duration-200 hover:border-primary/50 hover:bg-card/50" data-name="Google Ads RSA Preview" data-category="Marketing">
+                        <div class="p-8">
+                          <div class="flex items-start justify-between mb-6">
+                            <div class="w-14 h-14 rounded-lg bg-green-500/10 flex items-center justify-center group-hover:bg-green-500/20 transition-colors">
+                              <i data-lucide="bar-chart-3" class="w-7 h-7 text-green-600"></i>
+                            </div>
+                            <span class="inline-flex items-center rounded-lg bg-green-50 px-3 py-1 text-xs font-semibold text-green-700 ring-1 ring-inset ring-green-700/10 dark:bg-green-400/10 dark:text-green-400 dark:ring-green-400/30">Marketing</span>
+                          </div>
+                          <h3 class="font-semibold text-xl mb-3 group-hover:text-primary transition-colors">Google Ads RSA Preview</h3>
+                          <p class="text-base text-muted-foreground leading-relaxed mb-6">Visualize responsive search ads before publishing. Preview how your ads will look across different devices.</p>
+                          <div class="flex items-center justify-between">
+                            <div class="flex items-center text-sm text-muted-foreground">
+                              <i data-lucide="eye" class="w-4 h-4 mr-2"></i>
+                              <span>Preview</span>
+                            </div>
+                            <div class="flex items-center text-primary font-medium text-sm group-hover:translate-x-1 transition-transform">
+                              <span>Try Tool</span>
+                              <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                            </div>
+                          </div>
+                        </div>
+                      </a>
+            
+                      <a href="tools/campaign-structure/index.html" class="group relative overflow-hidden rounded-lg border bg-card text-card-foreground transition-all duration-200 hover:border-primary/50 hover:bg-card/50" data-name="Campaign Structure" data-category="Marketing">
+                        <div class="p-8">
+                          <div class="flex items-start justify-between mb-6">
+                            <div class="w-14 h-14 rounded-lg bg-emerald-500/10 flex items-center justify-center group-hover:bg-emerald-500/20 transition-colors">
+                              <i data-lucide="layers" class="w-7 h-7 text-emerald-600"></i>
+                            </div>
+                            <span class="inline-flex items-center rounded-lg bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-700/10 dark:bg-emerald-400/10 dark:text-emerald-400 dark:ring-emerald-400/30">Marketing</span>
+                          </div>
+                          <h3 class="font-semibold text-xl mb-3 group-hover:text-primary transition-colors">Campaign Structure</h3>
+                          <p class="text-base text-muted-foreground leading-relaxed mb-6">Create and export campaign hierarchy diagrams. Visualize your marketing strategy and campaign organization.</p>
+                          <div class="flex items-center justify-between">
+                            <div class="flex items-center text-sm text-muted-foreground">
+                              <i data-lucide="layers" class="w-4 h-4 mr-2"></i>
+                              <span>Structure</span>
+                            </div>
+                            <div class="flex items-center text-primary font-medium text-sm group-hover:translate-x-1 transition-transform">
+                              <span>Try Tool</span>
+                              <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                            </div>
+                          </div>
+                        </div>
+                      </a>
+            
+                      <a href="tools/utm-builder/index.html" class="group relative overflow-hidden rounded-lg border bg-card text-card-foreground transition-all duration-200 hover:border-primary/50 hover:bg-card/50" data-name="UTM Builder" data-category="Marketing">
+                        <div class="p-8">
+                          <div class="flex items-start justify-between mb-6">
+                            <div class="w-14 h-14 rounded-lg bg-teal-500/10 flex items-center justify-center group-hover:bg-teal-500/20 transition-colors">
+                              <i data-lucide="link" class="w-7 h-7 text-teal-600"></i>
+                            </div>
+                            <span class="inline-flex items-center rounded-lg bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-700 ring-1 ring-inset ring-teal-700/10 dark:bg-teal-400/10 dark:text-teal-400 dark:ring-teal-400/30">Marketing</span>
+                          </div>
+                          <h3 class="font-semibold text-xl mb-3 group-hover:text-primary transition-colors">UTM Builder</h3>
+                          <p class="text-base text-muted-foreground leading-relaxed mb-6">Generate tracking URLs for campaign analytics. Build UTM parameters for better marketing attribution.</p>
+                          <div class="flex items-center justify-between">
+                            <div class="flex items-center text-sm text-muted-foreground">
+                              <i data-lucide="link" class="w-4 h-4 mr-2"></i>
+                              <span>Tracking</span>
+                            </div>
+                            <div class="flex items-center text-primary font-medium text-sm group-hover:translate-x-1 transition-transform">
+                              <span>Try Tool</span>
+                              <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                            </div>
+                          </div>
+                        </div>
+                      </a>
+            
+                      <!-- Developer & Utility Tools -->
+                      <a href="tools/json-formatter/index.html" class="group relative overflow-hidden rounded-lg border bg-card text-card-foreground transition-all duration-200 hover:border-primary/50 hover:bg-card/50" data-name="JSON Formatter" data-category="Developer">
+                        <div class="p-8">
+                          <div class="flex items-start justify-between mb-6">
+                            <div class="w-14 h-14 rounded-lg bg-violet-500/10 flex items-center justify-center group-hover:bg-violet-500/20 transition-colors">
+                              <i data-lucide="braces" class="w-7 h-7 text-violet-600"></i>
+                            </div>
+                            <span class="inline-flex items-center rounded-lg bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-700 ring-1 ring-inset ring-violet-700/10 dark:bg-violet-400/10 dark:text-violet-400 dark:ring-violet-400/30">Developer</span>
+                          </div>
+                          <h3 class="font-semibold text-xl mb-3 group-hover:text-primary transition-colors">JSON Formatter</h3>
+                          <p class="text-base text-muted-foreground leading-relaxed mb-6">Format, validate, and minify JSON data easily. Perfect for developers and data analysts.</p>
+                          <div class="flex items-center justify-between">
+                            <div class="flex items-center text-sm text-muted-foreground">
+                              <i data-lucide="braces" class="w-4 h-4 mr-2"></i>
+                              <span>Developer</span>
+                            </div>
+                            <div class="flex items-center text-primary font-medium text-sm group-hover:translate-x-1 transition-transform">
+                              <span>Try Tool</span>
+                              <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                            </div>
+                          </div>
+                        </div>
+                      </a>
+            
+                      <a href="tools/pdf-merger/index.html" class="group relative overflow-hidden rounded-lg border bg-card text-card-foreground transition-all duration-200 hover:border-primary/50 hover:bg-card/50" data-name="PDF Merger" data-category="Utilities">
+                        <div class="p-8">
+                          <div class="flex items-start justify-between mb-6">
+                            <div class="w-14 h-14 rounded-lg bg-orange-500/10 flex items-center justify-center group-hover:bg-orange-500/20 transition-colors">
+                              <i data-lucide="file-text" class="w-7 h-7 text-orange-600"></i>
+                            </div>
+                            <span class="inline-flex items-center rounded-lg bg-orange-50 px-3 py-1 text-xs font-semibold text-orange-700 ring-1 ring-inset ring-orange-700/10 dark:bg-orange-400/10 dark:text-orange-400 dark:ring-orange-400/30">Utilities</span>
+                          </div>
+                          <h3 class="font-semibold text-xl mb-3 group-hover:text-primary transition-colors">PDF Merger</h3>
+                          <p class="text-base text-muted-foreground leading-relaxed mb-6">Combine multiple PDF files into one document. Simple, fast, and secure PDF merging.</p>
+                          <div class="flex items-center justify-between">
+                            <div class="flex items-center text-sm text-muted-foreground">
+                              <i data-lucide="file-text" class="w-4 h-4 mr-2"></i>
+                              <span>PDF Tools</span>
+                            </div>
+                            <div class="flex items-center text-primary font-medium text-sm group-hover:translate-x-1 transition-transform">
+                              <span>Try Tool</span>
+                              <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                            </div>
+                          </div>
+                        </div>
+                      </a>
+            
+                      <a href="tools/qr-generator/index.html" class="group relative overflow-hidden rounded-lg border bg-card text-card-foreground transition-all duration-200 hover:border-primary/50 hover:bg-card/50" data-name="QR Code Generator" data-category="Utilities">
+                        <div class="p-8">
+                          <div class="flex items-start justify-between mb-6">
+                            <div class="w-14 h-14 rounded-lg bg-cyan-500/10 flex items-center justify-center group-hover:bg-cyan-500/20 transition-colors">
+                              <i data-lucide="qr-code" class="w-7 h-7 text-cyan-600"></i>
+                            </div>
+                            <span class="inline-flex items-center rounded-lg bg-cyan-50 px-3 py-1 text-xs font-semibold text-cyan-700 ring-1 ring-inset ring-cyan-700/10 dark:bg-cyan-400/10 dark:text-cyan-400 dark:ring-cyan-400/30">Utilities</span>
+                          </div>
+                          <h3 class="font-semibold text-xl mb-3 group-hover:text-primary transition-colors">QR Code Generator</h3>
+                          <p class="text-base text-muted-foreground leading-relaxed mb-6">Create customizable QR codes for various purposes. Generate codes for URLs, text, and contact information.</p>
+                          <div class="flex items-center justify-between">
+                            <div class="flex items-center text-sm text-muted-foreground">
+                              <i data-lucide="qr-code" class="w-4 h-4 mr-2"></i>
+                              <span>QR Codes</span>
+                            </div>
+                            <div class="flex items-center text-primary font-medium text-sm group-hover:translate-x-1 transition-transform">
+                              <span>Try Tool</span>
+                              <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                            </div>
+                          </div>
+                        </div>
+          </a>
+        </div>
+      </div>
+      </div>
+              </section>
+    </main>
+  </div>
+
+
+
+  <script>
+    // Initialize Lucide icons immediately
+    lucide.createIcons();
+    
+    // Initialize page functionality
+    document.addEventListener('DOMContentLoaded', () => {
+      // Re-initialize Lucide icons to ensure they're visible
+      lucide.createIcons();
+      initializeSidebar();
+      initializeTheme();
+    });
+
+    // Initialize sidebar functionality
+    function initializeSidebar() {
+      const sidebarToggle = document.getElementById('sidebar-toggle');
+      const sidebar = document.getElementById('sidebar');
+      const sidebarOverlay = document.getElementById('sidebar-overlay');
+      const sidebarClose = document.getElementById('sidebar-close');
+
+      if (sidebarToggle && sidebar && sidebarOverlay) {
+        sidebarToggle.addEventListener('click', () => {
+          sidebar.classList.remove('-translate-x-full');
+          sidebarOverlay.classList.remove('hidden');
+          sidebarToggle.setAttribute('aria-expanded', 'true');
+        });
+
+        const closeSidebar = () => {
+          sidebar.classList.add('-translate-x-full');
+          sidebarOverlay.classList.add('hidden');
+          sidebarToggle.setAttribute('aria-expanded', 'false');
+        };
+
+        if (sidebarClose) {
+          sidebarClose.addEventListener('click', closeSidebar);
+        }
+
+        sidebarOverlay.addEventListener('click', closeSidebar);
+      }
+    }
+
+    // Initialize theme toggle
+    function initializeTheme() {
+      if (window.initializeThemeToggle) {
+        window.initializeThemeToggle();
+      } else {
+        setTimeout(() => {
+          if (window.initializeThemeToggle) {
+            window.initializeThemeToggle();
+          }
+        }, 100);
+      }
+    }
+
+    // Ensure footer icons are visible
+    window.addEventListener('load', () => {
+      lucide.createIcons();
+    });
+
+    // Fix theme toggle icon visibility - ensure it's always visible
+    function ensureThemeIconVisible() {
+      const themeIcon = document.getElementById('theme-toggle-icon');
+      if (themeIcon) {
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+        const expectedIcon = currentTheme === 'dark' ? 'sun' : 'moon';
+        
+        // Only update if the icon is missing or incorrect
+        if (!themeIcon.querySelector('svg') || themeIcon.getAttribute('data-lucide') !== expectedIcon) {
+          themeIcon.innerHTML = '';
+          themeIcon.setAttribute('data-lucide', expectedIcon);
+          lucide.createIcons();
+        }
+      }
+    }
+
+    // Call this function multiple times to ensure icon is visible
+    document.addEventListener('DOMContentLoaded', ensureThemeIconVisible);
+    window.addEventListener('load', ensureThemeIconVisible);
+    setTimeout(ensureThemeIconVisible, 100);
+    setTimeout(ensureThemeIconVisible, 500);
+    setTimeout(ensureThemeIconVisible, 1000);
+  </script>
+</body>
+
+</html>
