@@ -482,6 +482,42 @@
       left: 100%;
     }
 
+    /* Search enhancements */
+    .search-section .input:focus {
+      border-color: hsl(var(--primary));
+      box-shadow: 0 0 0 2px hsl(var(--primary) / 0.1);
+    }
+
+    .search-section .input:focus + #search-results-count {
+      color: hsl(var(--primary));
+    }
+
+    /* Tool card focus states for keyboard navigation */
+    .tool-card:focus {
+      outline: 2px solid hsl(var(--primary));
+      outline-offset: 2px;
+    }
+
+    .tool-card:focus-visible {
+      outline: 2px solid hsl(var(--primary));
+      outline-offset: 2px;
+    }
+
+    /* Filter and sort enhancements */
+    .filters-grid .select:focus {
+      border-color: hsl(var(--primary));
+      box-shadow: 0 0 0 2px hsl(var(--primary) / 0.1);
+    }
+
+    /* Search results counter animation */
+    #search-results-count {
+      transition: opacity 0.2s ease-in-out;
+    }
+
+    #search-results-count.hidden {
+      opacity: 0;
+    }
+
     /* Hero Section */
     .hero {
       background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--muted)) 100%);
@@ -965,6 +1001,9 @@
             placeholder="Search for tools, categories, or features..." 
             class="input pl-12"
           />
+          <div id="search-results-count" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-sm text-muted-foreground hidden">
+            <span id="visible-count">0</span> of <span id="total-count">0</span> tools
+          </div>
         </div>
         
         <!-- Filter Controls -->
@@ -976,9 +1015,8 @@
               <option value="All">All Categories</option>
               <option value="Images">🖼️ Images</option>
               <option value="Marketing">📊 Marketing</option>
-              <option value="Writing">✍️ Writing</option>
-              <option value="Utilities">🛠️ Utilities</option>
               <option value="Developer">💻 Developer</option>
+              <option value="Utilities">🛠️ Utilities</option>
             </select>
           </div>
           
@@ -987,7 +1025,8 @@
             <label for="sort-select" class="block text-sm font-semibold">Sort By</label>
             <select id="sort-select" class="select">
               <option value="az">🔤 Alphabetical (A-Z)</option>
-              <option value="visits">🔥 Most Popular</option>
+              <option value="za">🔤 Alphabetical (Z-A)</option>
+              <option value="category">📁 By Category</option>
             </select>
           </div>
           
@@ -1186,6 +1225,204 @@
             <div class="flex items-center text-sm text-muted-foreground">
               <i data-lucide="qr-code" class="w-4 h-4 mr-2"></i>
               <span>Code Generation</span>
+            </div>
+            <div class="flex items-center text-primary font-medium text-sm group-hover:translate-x-1 transition-transform">
+              <span>Try Tool</span>
+              <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+            </div>
+          </div>
+        </a>
+
+        <!-- Image Converter -->
+        <a href="tools/image-converter/index.html" class="tool-card group" data-name="Image Converter" data-category="Images">
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-14 h-14 rounded-lg bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
+              <i data-lucide="image" class="w-7 h-7 text-blue-600"></i>
+            </div>
+            <span class="badge badge-outline">Images</span>
+          </div>
+          <h3 class="font-semibold text-xl mb-3 group-hover:text-primary transition-colors">Image Converter</h3>
+          <p class="text-muted-foreground leading-relaxed mb-6">Convert images between formats, resize, and optimize for web use with advanced options.</p>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center text-sm text-muted-foreground">
+              <i data-lucide="zap" class="w-4 h-4 mr-2"></i>
+              <span>Format Conversion</span>
+            </div>
+            <div class="flex items-center text-primary font-medium text-sm group-hover:translate-x-1 transition-transform">
+              <span>Try Tool</span>
+              <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+            </div>
+          </div>
+        </a>
+
+        <!-- Bulk Match Editor -->
+        <a href="tools/bulk-match-editor/index.html" class="tool-card group" data-name="Bulk Match Editor" data-category="Marketing">
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-14 h-14 rounded-lg bg-green-500/10 flex items-center justify-center group-hover:bg-green-500/20 transition-colors">
+              <i data-lucide="edit-3" class="w-7 h-7 text-green-600"></i>
+            </div>
+            <span class="badge badge-outline">Marketing</span>
+          </div>
+          <h3 class="font-semibold text-xl mb-3 group-hover:text-primary transition-colors">Bulk Match Editor</h3>
+          <p class="text-muted-foreground leading-relaxed mb-6">Edit and manage bulk match types for Google Ads campaigns efficiently.</p>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center text-sm text-muted-foreground">
+              <i data-lucide="edit-3" class="w-4 h-4 mr-2"></i>
+              <span>Bulk Editing</span>
+            </div>
+            <div class="flex items-center text-primary font-medium text-sm group-hover:translate-x-1 transition-transform">
+              <span>Try Tool</span>
+              <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+            </div>
+          </div>
+        </a>
+
+        <!-- PDF OCR -->
+        <a href="tools/pdf-ocr/index.html" class="tool-card group" data-name="PDF OCR" data-category="Utilities">
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-14 h-14 rounded-lg bg-cyan-500/10 flex items-center justify-center group-hover:bg-cyan-500/20 transition-colors">
+              <i data-lucide="file-search" class="w-7 h-7 text-cyan-600"></i>
+            </div>
+            <span class="badge badge-outline">Utilities</span>
+          </div>
+          <h3 class="font-semibold text-xl mb-3 group-hover:text-primary transition-colors">PDF OCR</h3>
+          <p class="text-muted-foreground leading-relaxed mb-6">Extract text from scanned PDFs using advanced OCR technology.</p>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center text-sm text-muted-foreground">
+              <i data-lucide="file-search" class="w-4 h-4 mr-2"></i>
+              <span>Text Extraction</span>
+            </div>
+            <div class="flex items-center text-primary font-medium text-sm group-hover:translate-x-1 transition-transform">
+              <span>Try Tool</span>
+              <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+            </div>
+          </div>
+        </a>
+
+        <!-- UUID Generator -->
+        <a href="tools/uuid-generator/index.html" class="tool-card group" data-name="UUID Generator" data-category="Developer">
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-14 h-14 rounded-lg bg-violet-500/10 flex items-center justify-center group-hover:bg-violet-500/20 transition-colors">
+              <i data-lucide="hash" class="w-7 h-7 text-violet-600"></i>
+            </div>
+            <span class="badge badge-outline">Developer</span>
+          </div>
+          <h3 class="font-semibold text-xl mb-3 group-hover:text-primary transition-colors">UUID Generator</h3>
+          <p class="text-muted-foreground leading-relaxed mb-6">Generate unique identifiers for development and database applications.</p>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center text-sm text-muted-foreground">
+              <i data-lucide="hash" class="w-4 h-4 mr-2"></i>
+              <span>Unique IDs</span>
+            </div>
+            <div class="flex items-center text-primary font-medium text-sm group-hover:translate-x-1 transition-transform">
+              <span>Try Tool</span>
+              <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+            </div>
+          </div>
+        </a>
+
+        <!-- Timestamp Converter -->
+        <a href="tools/timestamp-converter/index.html" class="tool-card group" data-name="Timestamp Converter" data-category="Developer">
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-14 h-14 rounded-lg bg-violet-500/10 flex items-center justify-center group-hover:bg-violet-500/20 transition-colors">
+              <i data-lucide="clock" class="w-7 h-7 text-violet-600"></i>
+            </div>
+            <span class="badge badge-outline">Developer</span>
+          </div>
+          <h3 class="font-semibold text-xl mb-3 group-hover:text-primary transition-colors">Timestamp Converter</h3>
+          <p class="text-muted-foreground leading-relaxed mb-6">Convert between different timestamp formats for development and data processing.</p>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center text-sm text-muted-foreground">
+              <i data-lucide="clock" class="w-4 h-4 mr-2"></i>
+              <span>Time Conversion</span>
+            </div>
+            <div class="flex items-center text-primary font-medium text-sm group-hover:translate-x-1 transition-transform">
+              <span>Try Tool</span>
+              <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+            </div>
+          </div>
+        </a>
+
+        <!-- Meta Tag Generator -->
+        <a href="tools/meta-tag-generator/index.html" class="tool-card group" data-name="Meta Tag Generator" data-category="Marketing">
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-14 h-14 rounded-lg bg-green-500/10 flex items-center justify-center group-hover:bg-green-500/20 transition-colors">
+              <i data-lucide="tag" class="w-7 h-7 text-green-600"></i>
+            </div>
+            <span class="badge badge-outline">Marketing</span>
+          </div>
+          <h3 class="font-semibold text-xl mb-3 group-hover:text-primary transition-colors">Meta Tag Generator</h3>
+          <p class="text-muted-foreground leading-relaxed mb-6">Generate optimized meta tags for better SEO and social media sharing.</p>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center text-sm text-muted-foreground">
+              <i data-lucide="tag" class="w-4 h-4 mr-2"></i>
+              <span>SEO Optimization</span>
+            </div>
+            <div class="flex items-center text-primary font-medium text-sm group-hover:translate-x-1 transition-transform">
+              <span>Try Tool</span>
+              <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+            </div>
+          </div>
+        </a>
+
+        <!-- Robots.txt Tool -->
+        <a href="tools/robots-txt/index.html" class="tool-card group" data-name="Robots.txt Tool" data-category="Marketing">
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-14 h-14 rounded-lg bg-green-500/10 flex items-center justify-center group-hover:bg-green-500/20 transition-colors">
+              <i data-lucide="bot" class="w-7 h-7 text-green-600"></i>
+            </div>
+            <span class="badge badge-outline">Marketing</span>
+          </div>
+          <h3 class="font-semibold text-xl mb-3 group-hover:text-primary transition-colors">Robots.txt Tool</h3>
+          <p class="text-muted-foreground leading-relaxed mb-6">Generate and validate robots.txt files for proper search engine crawling.</p>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center text-sm text-muted-foreground">
+              <i data-lucide="bot" class="w-4 h-4 mr-2"></i>
+              <span>SEO Control</span>
+            </div>
+            <div class="flex items-center text-primary font-medium text-sm group-hover:translate-x-1 transition-transform">
+              <span>Try Tool</span>
+              <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+            </div>
+          </div>
+        </a>
+
+        <!-- Text Case Converter -->
+        <a href="tools/text-case-converter/index.html" class="tool-card group" data-name="Text Case Converter" data-category="Utilities">
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-14 h-14 rounded-lg bg-cyan-500/10 flex items-center justify-center group-hover:bg-cyan-500/20 transition-colors">
+              <i data-lucide="type" class="w-7 h-7 text-cyan-600"></i>
+            </div>
+            <span class="badge badge-outline">Utilities</span>
+          </div>
+          <h3 class="font-semibold text-xl mb-3 group-hover:text-primary transition-colors">Text Case Converter</h3>
+          <p class="text-muted-foreground leading-relaxed mb-6">Convert text between different cases: UPPERCASE, lowercase, Title Case, and more.</p>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center text-sm text-muted-foreground">
+              <i data-lucide="type" class="w-4 h-4 mr-2"></i>
+              <span>Text Formatting</span>
+            </div>
+            <div class="flex items-center text-primary font-medium text-sm group-hover:translate-x-1 transition-transform">
+              <span>Try Tool</span>
+              <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+            </div>
+          </div>
+        </a>
+
+        <!-- Layout Generator -->
+        <a href="tools/layout-tool/index.html" class="tool-card group" data-name="Layout Generator" data-category="Images">
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-14 h-14 rounded-lg bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
+              <i data-lucide="layout" class="w-7 h-7 text-blue-600"></i>
+            </div>
+            <span class="badge badge-outline">Images</span>
+          </div>
+          <h3 class="font-semibold text-xl mb-3 group-hover:text-primary transition-colors">Layout Generator</h3>
+          <p class="text-muted-foreground leading-relaxed mb-6">Create professional layouts and compositions for images and designs.</p>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center text-sm text-muted-foreground">
+              <i data-lucide="layout" class="w-4 h-4 mr-2"></i>
+              <span>Design Layouts</span>
             </div>
             <div class="flex items-center text-primary font-medium text-sm group-hover:translate-x-1 transition-transform">
               <span>Try Tool</span>
@@ -1425,71 +1662,220 @@
 
     themeToggle.addEventListener('click', toggleTheme);
 
-    // Tool search functionality
+    // Enhanced sidebar search functionality
     const toolSearchInput = document.getElementById('tool-search');
-    const toolList = document.getElementById('tool-list');
+    const sidebarMenuItems = document.querySelectorAll('.sidebar-menu-item');
 
     toolSearchInput.addEventListener('input', () => {
       const searchTerm = toolSearchInput.value.toLowerCase();
-      const tools = toolList.querySelectorAll('li a');
-
-      tools.forEach(tool => {
-        const toolName = tool.textContent.toLowerCase();
+      
+      sidebarMenuItems.forEach(item => {
+        const toolName = item.querySelector('span').textContent.toLowerCase();
+        const toolIcon = item.querySelector('i');
+        
         if (toolName.includes(searchTerm)) {
-          tool.parentElement.style.display = 'block';
+          item.style.display = 'block';
+          // Highlight matching text
+          if (searchTerm && toolIcon) {
+            toolIcon.style.color = 'hsl(var(--primary))';
+          }
         } else {
-          tool.parentElement.style.display = 'none';
+          item.style.display = 'none';
+          // Reset icon color
+          if (toolIcon) {
+            toolIcon.style.color = '';
+          }
+        }
+      });
+      
+      // Show/hide group labels based on visible items
+      const sidebarGroups = document.querySelectorAll('.sidebar-group');
+      sidebarGroups.forEach(group => {
+        const visibleItems = group.querySelectorAll('.sidebar-menu-item[style="display: block"]');
+        const groupLabel = group.querySelector('.sidebar-group-label');
+        
+        if (visibleItems.length === 0 && searchTerm) {
+          groupLabel.style.display = 'none';
+        } else {
+          groupLabel.style.display = 'block';
         }
       });
     });
 
-    // Home search functionality
+    // Clear sidebar search when input is cleared
+    toolSearchInput.addEventListener('input', () => {
+      if (toolSearchInput.value === '') {
+        sidebarMenuItems.forEach(item => {
+          item.style.display = 'block';
+          const toolIcon = item.querySelector('i');
+          if (toolIcon) {
+            toolIcon.style.color = '';
+          }
+        });
+        
+        const sidebarGroups = document.querySelectorAll('.sidebar-group');
+        sidebarGroups.forEach(group => {
+          const groupLabel = group.querySelector('.sidebar-group-label');
+          groupLabel.style.display = 'block';
+        });
+      }
+    });
+
+    // Enhanced search, filter, and sort functionality
     const homeSearchInput = document.getElementById('home-search');
     const toolCards = document.querySelectorAll('.tool-card');
+    const categoryFilter = document.getElementById('category-filter');
+    const sortSelect = document.getElementById('sort-select');
+    const clearFiltersBtn = document.getElementById('clear-filters');
 
-    homeSearchInput.addEventListener('input', () => {
+    // Function to apply all filters and search
+    const applyFilters = () => {
       const searchTerm = homeSearchInput.value.toLowerCase();
+      const selectedCategory = categoryFilter.value;
+      let visibleCount = 0;
       
       toolCards.forEach(card => {
         const toolName = card.getAttribute('data-name').toLowerCase();
-        const toolCategory = card.getAttribute('data-category').toLowerCase();
-        
-        if (toolName.includes(searchTerm) || toolCategory.includes(searchTerm)) {
-          card.style.display = 'block';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-    });
-
-    // Category filter functionality
-    const categoryFilter = document.getElementById('category-filter');
-    
-    categoryFilter.addEventListener('change', () => {
-      const selectedCategory = categoryFilter.value;
-      
-      toolCards.forEach(card => {
         const toolCategory = card.getAttribute('data-category');
+        const toolDescription = card.querySelector('p').textContent.toLowerCase();
         
-        if (selectedCategory === 'All' || toolCategory === selectedCategory) {
+        // Check if card matches search term
+        const matchesSearch = searchTerm === '' || 
+          toolName.includes(searchTerm) || 
+          toolCategory.toLowerCase().includes(searchTerm) ||
+          toolDescription.includes(searchTerm);
+        
+        // Check if card matches category filter
+        const matchesCategory = selectedCategory === 'All' || toolCategory === selectedCategory;
+        
+        // Show/hide card based on filters
+        if (matchesSearch && matchesCategory) {
           card.style.display = 'block';
+          visibleCount++;
         } else {
           card.style.display = 'none';
         }
       });
-    });
+      
+      // Update search results counter
+      updateSearchResultsCounter(visibleCount);
+      
+      // Apply sorting
+      applySorting();
+    };
+
+    // Function to update search results counter
+    const updateSearchResultsCounter = (visibleCount) => {
+      const searchResultsCount = document.getElementById('search-results-count');
+      const visibleCountSpan = document.getElementById('visible-count');
+      const totalCountSpan = document.getElementById('total-count');
+      
+      if (visibleCountSpan && totalCountSpan) {
+        visibleCountSpan.textContent = visibleCount;
+        totalCountSpan.textContent = toolCards.length;
+        
+        // Show/hide counter based on whether there are active filters
+        const hasActiveFilters = homeSearchInput.value || categoryFilter.value !== 'All';
+        if (hasActiveFilters) {
+          searchResultsCount.classList.remove('hidden');
+        } else {
+          searchResultsCount.classList.add('hidden');
+        }
+      }
+    };
+
+    // Function to apply sorting
+    const applySorting = () => {
+      const sortBy = sortSelect.value;
+      const toolsGrid = document.querySelector('.tools-grid');
+      const visibleCards = Array.from(toolCards).filter(card => card.style.display !== 'none');
+      
+      if (sortBy === 'az') {
+        // Sort alphabetically by tool name
+        visibleCards.sort((a, b) => {
+          const nameA = a.getAttribute('data-name').toLowerCase();
+          const nameB = b.getAttribute('data-name').toLowerCase();
+          return nameA.localeCompare(nameB);
+        });
+      } else if (sortBy === 'za') {
+        // Sort reverse alphabetically
+        visibleCards.sort((a, b) => {
+          const nameA = a.getAttribute('data-name').toLowerCase();
+          const nameB = b.getAttribute('data-name').toLowerCase();
+          return nameB.localeCompare(nameA);
+        });
+      } else if (sortBy === 'category') {
+        // Sort by category, then alphabetically within category
+        visibleCards.sort((a, b) => {
+          const categoryA = a.getAttribute('data-category');
+          const categoryB = b.getAttribute('data-category');
+          if (categoryA === categoryB) {
+            const nameA = a.getAttribute('data-name').toLowerCase();
+            const nameB = b.getAttribute('data-name').toLowerCase();
+            return nameA.localeCompare(nameB);
+          }
+          return categoryA.localeCompare(categoryB);
+        });
+      }
+      
+      // Reorder cards in the grid
+      visibleCards.forEach(card => {
+        toolsGrid.appendChild(card);
+      });
+    };
+
+    // Event listeners for search and filtering
+    homeSearchInput.addEventListener('input', applyFilters);
+    categoryFilter.addEventListener('change', applyFilters);
+    sortSelect.addEventListener('change', applyFilters);
 
     // Clear filters functionality
-    const clearFiltersBtn = document.getElementById('clear-filters');
-    
     clearFiltersBtn.addEventListener('click', () => {
       homeSearchInput.value = '';
       categoryFilter.value = 'All';
+      sortSelect.value = 'az';
       
       toolCards.forEach(card => {
         card.style.display = 'block';
       });
+      
+      // Reset to original order
+      applySorting();
     });
+
+    // Add search suggestions and autocomplete
+    homeSearchInput.addEventListener('focus', () => {
+      homeSearchInput.placeholder = 'Search for tools, categories, or features...';
+    });
+
+    // Add keyboard navigation for search
+    homeSearchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        // Focus on first visible tool card
+        const firstVisibleCard = Array.from(toolCards).find(card => card.style.display !== 'none');
+        if (firstVisibleCard) {
+          firstVisibleCard.focus();
+        }
+      } else if (e.key === 'Escape') {
+        // Clear search and reset filters
+        homeSearchInput.value = '';
+        categoryFilter.value = 'All';
+        sortSelect.value = 'az';
+        applyFilters();
+        homeSearchInput.blur();
+      }
+    });
+
+    // Add search highlighting
+    const highlightSearchTerm = (text, searchTerm) => {
+      if (!searchTerm) return text;
+      const regex = new RegExp(`(${searchTerm})`, 'gi');
+      return text.replace(regex, '<mark class="bg-yellow-200 dark:bg-yellow-800 px-1 rounded">$1</mark>');
+    };
+
+    // Initialize search results counter
+    updateSearchResultsCounter(toolCards.length);
 
     // CTA button functionality
     const exploreToolsBtn = document.getElementById('explore-tools-btn');
