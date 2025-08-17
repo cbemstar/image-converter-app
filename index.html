@@ -591,12 +591,12 @@
       margin-top: 1.5rem;
     }
 
-    /* Footer */
+    /* Enhanced Footer with shadcn Design */
     .footer {
       background-color: hsl(var(--card));
       border-top: 1px solid hsl(var(--border));
-      padding: 3rem 0;
-      margin-top: 5rem;
+      padding: 3rem 0 1rem;
+      margin-top: 4rem;
     }
 
     .footer-content {
@@ -604,8 +604,152 @@
       margin: 0 auto;
       padding: 0 1rem;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+      grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr;
       gap: 2rem;
+    }
+
+    .footer-brand {
+      max-width: 20rem;
+    }
+
+    .footer-section {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .footer-heading {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: hsl(var(--foreground));
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .footer-link {
+      color: hsl(var(--muted-foreground));
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: color 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .footer-link:hover {
+      color: hsl(var(--primary));
+    }
+
+    .social-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 0.5rem;
+      color: hsl(var(--muted-foreground));
+      background-color: hsl(var(--muted));
+      transition: all 0.2s ease;
+    }
+
+    .social-link:hover {
+      color: hsl(var(--primary));
+      background-color: hsl(var(--primary) / 0.1);
+      transform: translateY(-2px);
+    }
+
+    .newsletter-form {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .newsletter-input {
+      flex: 1;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid hsl(var(--border));
+      border-radius: 0.375rem;
+      background-color: hsl(var(--background));
+      color: hsl(var(--foreground));
+      font-size: 0.875rem;
+      transition: border-color 0.2s ease;
+    }
+
+    .newsletter-input:focus {
+      outline: none;
+      border-color: hsl(var(--primary));
+      box-shadow: 0 0 0 2px hsl(var(--primary) / 0.1);
+    }
+
+    .newsletter-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem;
+      border: 1px solid hsl(var(--primary));
+      border-radius: 0.375rem;
+      background-color: hsl(var(--primary));
+      color: hsl(var(--primary-foreground));
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .newsletter-button:hover {
+      background-color: hsl(var(--primary) / 0.9);
+      transform: translateY(-1px);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid hsl(var(--border));
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+    }
+
+    .footer-bottom-content {
+      max-width: 80rem;
+      margin: 0 auto;
+      padding: 0 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-bottom-links {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Responsive Footer */
+    @media (max-width: 1024px) {
+      .footer-content {
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+      }
+      
+      .footer-brand {
+        grid-column: 1 / -1;
+        max-width: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .footer-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      
+      .footer-bottom-content {
+        flex-direction: column;
+        text-align: center;
+      }
     }
 
     /* Responsive */
@@ -637,9 +781,10 @@
       </div>
       
               <div class="flex items-center gap-2">
-          <button id="search-button" class="btn btn-outline btn-sm" aria-label="Search" title="Search (⌘K)">
-            <i data-lucide="search" class="w-4 h-4"></i>
-          </button>
+                  <button id="search-button" class="btn btn-outline btn-sm" aria-label="Search" title="Search (⌘K)">
+          <i data-lucide="search" class="w-4 h-4"></i>
+          <span class="hidden sm:inline ml-2">Search</span>
+        </button>
           <button id="theme-toggle" class="btn btn-outline btn-sm" aria-label="Toggle theme" title="Toggle Theme (⌘T)">
             <i data-lucide="sun" id="theme-toggle-icon" class="w-4 h-4"></i>
           </button>
@@ -1434,58 +1579,99 @@
     </section>
   </main>
 
-  <!-- Footer -->
+  <!-- Enhanced Footer with shadcn Design -->
   <footer class="footer">
     <div class="footer-content">
-      <div>
-        <h3 class="text-lg font-bold mb-4">reformately</h3>
-        <p class="text-muted-foreground mb-4">Professional tools for digital professionals. Transform your workflow with our collection of browser-based utilities.</p>
-        <div class="flex space-x-4">
-          <a href="#" class="text-muted-foreground hover:text-primary transition-colors">
+      <!-- Brand Section -->
+      <div class="footer-brand">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+            <i data-lucide="zap" class="w-5 h-5 text-primary"></i>
+          </div>
+          <h3 class="text-xl font-bold">reformately</h3>
+        </div>
+        <p class="text-muted-foreground mb-6 leading-relaxed">
+          Professional tools for digital professionals. Transform your workflow with our collection of browser-based utilities.
+        </p>
+        <div class="flex items-center gap-3">
+          <a href="#" class="social-link" aria-label="Twitter">
             <i data-lucide="twitter" class="w-5 h-5"></i>
           </a>
-          <a href="#" class="text-muted-foreground hover:text-primary transition-colors">
+          <a href="#" class="social-link" aria-label="GitHub">
             <i data-lucide="github" class="w-5 h-5"></i>
           </a>
-          <a href="#" class="text-muted-foreground hover:text-primary transition-colors">
+          <a href="#" class="social-link" aria-label="LinkedIn">
             <i data-lucide="linkedin" class="w-5 h-5"></i>
           </a>
         </div>
       </div>
       
-      <div>
-        <h4 class="font-semibold mb-4">Tools</h4>
-        <ul class="space-y-2 text-muted-foreground">
-          <li><a href="#" class="hover:text-primary transition-colors">Image Tools</a></li>
-          <li><a href="#" class="hover:text-primary transition-colors">Marketing Tools</a></li>
-          <li><a href="#" class="hover:text-primary transition-colors">Developer Tools</a></li>
-          <li><a href="#" class="hover:text-primary transition-colors">Utilities</a></li>
+      <!-- Tools Section -->
+      <div class="footer-section">
+        <h4 class="footer-heading">Tools</h4>
+        <ul class="footer-links">
+          <li><a href="#tools-section" class="footer-link">Image Tools</a></li>
+          <li><a href="#tools-section" class="footer-link">Marketing Tools</a></li>
+          <li><a href="#tools-section" class="footer-link">Developer Tools</a></li>
+          <li><a href="#tools-section" class="footer-link">Utilities</a></li>
         </ul>
       </div>
       
-      <div>
-        <h4 class="font-semibold mb-4">Company</h4>
-        <ul class="space-y-2 text-muted-foreground">
-          <li><a href="#" class="hover:text-primary transition-colors">About</a></li>
-          <li><a href="#" class="hover:text-primary transition-colors">Contact</a></li>
-          <li><a href="#" class="hover:text-primary transition-colors">Privacy Policy</a></li>
-          <li><a href="#" class="hover:text-primary transition-colors">Terms of Service</a></li>
+      <!-- Company Section -->
+      <div class="footer-section">
+        <h4 class="footer-heading">Company</h4>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">About</a></li>
+          <li><a href="#" class="footer-link">Contact</a></li>
+          <li><a href="#" class="footer-link">Privacy Policy</a></li>
+          <li><a href="#" class="footer-link">Terms of Service</a></li>
         </ul>
       </div>
       
-      <div>
-        <h4 class="font-semibold mb-4">Support</h4>
-        <ul class="space-y-2 text-muted-foreground">
-          <li><a href="#" class="hover:text-primary transition-colors">Help Center</a></li>
-          <li><a href="#" class="hover:text-primary transition-colors">Request a Tool</a></li>
-          <li><a href="#" class="hover:text-primary transition-colors">Bug Report</a></li>
-          <li><a href="#" class="hover:text-primary transition-colors">Feature Request</a></li>
+      <!-- Support Section -->
+      <div class="footer-section">
+        <h4 class="footer-heading">Support</h4>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">Help Center</a></li>
+          <li><a href="tools/request-tool/index.html" class="footer-link">Request a Tool</a></li>
+          <li><a href="#" class="footer-link">Bug Report</a></li>
+          <li><a href="#" class="footer-link">Feature Request</a></li>
         </ul>
+      </div>
+      
+      <!-- Newsletter Section -->
+      <div class="footer-section">
+        <h4 class="footer-heading">Stay Updated</h4>
+        <p class="text-muted-foreground mb-4 text-sm">
+          Get notified about new tools and features.
+        </p>
+        <div class="newsletter-form">
+          <input 
+            type="email" 
+            placeholder="Enter your email" 
+            class="newsletter-input"
+          />
+          <button class="newsletter-button">
+            <i data-lucide="send" class="w-4 h-4"></i>
+          </button>
+        </div>
       </div>
     </div>
     
-    <div class="border-t border-border mt-8 pt-8 text-center text-muted-foreground">
-      <p>&copy; 2024 reformately. All rights reserved.</p>
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+      <div class="footer-bottom-content">
+        <p class="text-muted-foreground text-sm">
+          &copy; 2024 reformately. All rights reserved.
+        </p>
+        <div class="footer-bottom-links">
+          <a href="#" class="text-muted-foreground hover:text-primary text-sm transition-colors">Status</a>
+          <span class="text-muted-foreground mx-2">•</span>
+          <a href="#" class="text-muted-foreground hover:text-primary text-sm transition-colors">Security</a>
+          <span class="text-muted-foreground mx-2">•</span>
+          <a href="#" class="text-muted-foreground hover:text-primary text-sm transition-colors">Changelog</a>
+        </div>
+      </div>
     </div>
   </footer>
 

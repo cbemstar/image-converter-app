@@ -9,6 +9,7 @@
   <title>Image to WebP Converter</title>
   <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
   <link rel="stylesheet" href="../../styles/styles.css">
+  <link rel="stylesheet" href="../../styles/globals.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <!-- Updated AVIF library -->
@@ -22,6 +23,8 @@
   <script src="https://cdn.jsdelivr.net/npm/raw-wasm@1.0.0/dist/raw-wasm.min.js"></script>
   <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Lucide icons for footer -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <!-- Simple Authentication for Usage Tracking -->
   <script src="auth-simple.js"></script>
   
@@ -29,6 +32,7 @@
   <script type="module" src="core.js"></script>
   <script src="../../styles/theme.js"></script>
   <script type="module" src="../../layout.js"></script>
+  <script src="../../js/universal-footer.js"></script>
 </head>
 <body data-slug="image-converter" class="bg-transparent min-h-screen flex flex-col">
   <a href="#main-content" class="sr-only focus:not-sr-only absolute left-2 top-2 bg-background text-foreground p-2 z-50">Skip to main content</a>

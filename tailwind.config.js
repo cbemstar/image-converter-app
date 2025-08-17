@@ -1,12 +1,16 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: ["class"],
   content: [
-    "./index.html",
-    "./tools/**/*.html",
-    "./tools/**/*.js",
-    "./styles/**/*.css",
-    "./*.js"
+    './pages/**/*.{js,jsx}',
+    './components/**/*.{js,jsx}',
+    './app/**/*.{js,jsx}',
+    './src/**/*.{js,jsx}',
+    './*.html',
+    './js/**/*.js',
+    './styles/**/*.css',
   ],
+  prefix: "",
   theme: {
     container: {
       center: true,
@@ -56,28 +60,6 @@ module.exports = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
-      fontSize: {
-        xs: "var(--text-xs)",
-        sm: "var(--text-sm)",
-        base: "var(--text-base)",
-        lg: "var(--text-lg)",
-        xl: "var(--text-xl)",
-        "2xl": "var(--text-2xl)",
-        "3xl": "var(--text-3xl)",
-        "4xl": "var(--text-4xl)",
-      },
-      spacing: {
-        0: "var(--spacing-0)",
-        1: "var(--spacing-1)",
-        2: "var(--spacing-2)",
-        3: "var(--spacing-3)",
-        4: "var(--spacing-4)",
-        5: "var(--spacing-5)",
-        6: "var(--spacing-6)",
-        8: "var(--spacing-8)",
-        10: "var(--spacing-10)",
-        12: "var(--spacing-12)",
-      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
@@ -94,5 +76,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwindcss-animate")],
 }

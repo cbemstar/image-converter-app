@@ -12,15 +12,19 @@ function setTheme(theme) {
     // Update all theme toggle icons on the page
     const icons = document.querySelectorAll('#theme-toggle-icon');
     icons.forEach(icon => {
-      // Remove existing Lucide icon and create new one
-      icon.innerHTML = '';
-      if (theme === 'dark') {
-        icon.setAttribute('data-lucide', 'sun');
-      } else {
-        icon.setAttribute('data-lucide', 'moon');
+      // Only update if the icon doesn't have the correct icon already
+      const currentIcon = icon.getAttribute('data-lucide');
+      const expectedIcon = theme === 'dark' ? 'sun' : 'moon';
+      
+      if (currentIcon !== expectedIcon) {
+        // Remove existing Lucide icon and create new one
+        icon.innerHTML = '';
+        icon.setAttribute('data-lucide', expectedIcon);
+        // Recreate the icon
+        if (typeof lucide !== 'undefined' && lucide.createIcons) {
+          lucide.createIcons();
+        }
       }
-      // Recreate the icon
-      lucide.createIcons();
     });
     
     // Update button aria-label for accessibility
@@ -71,12 +75,14 @@ function initializeThemeToggle() {
   // Update all theme toggle icons to reflect current state
   const icons = document.querySelectorAll('#theme-toggle-icon');
   icons.forEach(icon => {
-    // Remove existing content and set appropriate Lucide icon
-    icon.innerHTML = '';
-    if (currentTheme === 'dark') {
-      icon.setAttribute('data-lucide', 'sun');
-    } else {
-      icon.setAttribute('data-lucide', 'moon');
+    // Only update if the icon doesn't have the correct icon already
+    const currentIcon = icon.getAttribute('data-lucide');
+    const expectedIcon = currentTheme === 'dark' ? 'sun' : 'moon';
+    
+    if (currentIcon !== expectedIcon) {
+      // Remove existing content and set appropriate Lucide icon
+      icon.innerHTML = '';
+      icon.setAttribute('data-lucide', expectedIcon);
     }
   });
   

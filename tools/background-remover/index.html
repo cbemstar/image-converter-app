@@ -9,8 +9,11 @@
   <title>Background Remover</title>
   <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
   <link rel="stylesheet" href="../../styles/styles.css">
+  <link rel="stylesheet" href="../../styles/globals.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome for icons -->
+  <!-- Lucide icons for footer -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <!-- Core Dependencies -->
   <script src="../../js/config.js"></script>
     <script src="/js/public-config.js"></script>
@@ -26,6 +29,8 @@
   <script src="../../styles/theme.js"></script>
   <script type="module" src="../../layout.js"></script>
   <script type="module" src="background-remover.js"></script>
+  <script src="../../js/universal-footer.js"></script>
+
 </head>
 <body data-slug="background-remover" class="bg-transparent min-h-screen flex flex-col">
   <a href="#main-content" class="sr-only focus:not-sr-only absolute left-2 top-2 bg-background text-foreground p-2 z-50">Skip to main content</a>
@@ -75,6 +80,9 @@
       </div>
     </div>
   </nav>
+    </div>
+  </div>
+
 
   <div class="flex flex-grow">
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
