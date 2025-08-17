@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-NFJTSQ3N');</script>
+  <!-- End Google Tag Manager -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>layout tool - reformately</title>
+  <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
+  <link rel="stylesheet" href="../../styles/styles.css">
+  <link rel="stylesheet" href="../../styles/globals.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <!-- Updated AVIF library -->
+  <script src="https://cdn.jsdelivr.net/npm/@jsquash/avif@2.1.1/dist/full/avif-enc.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@jsquash/avif@2.1.1/dist/full/avif-dec.js"></script>
+  <!-- Updated HEIC library - using heic-to instead of heic2any -->
+  <script src="https://cdn.jsdelivr.net/npm/heic-to@1.2.1/dist/iife/heic-to.js"></script>
+  <!-- Fallback HEIC decoder -->
+  <script src="https://cdn.jsdelivr.net/npm/libheif-js@1.19.8/libheif/libheif.js"></script>
+  <!-- RAW image processing -->
+  <script src="https://cdn.jsdelivr.net/npm/raw-wasm@1.0.0/dist/raw-wasm.min.js"></script>
+  <!-- Lucide icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <!-- Simple Authentication for Usage Tracking -->
+  <script src="auth-simple.js"></script>
+  
+  <!-- JS files -->
+  <script type="module" src="core.js"></script>
+  <script src="../../styles/theme.js"></script>
+  <script type="module" src="../../layout.js"></script>
+</head>
+<body data-slug="layout tool" class="bg-transparent min-h-screen flex flex-col">
+  <a href="#main-content" class="sr-only focus:not-sr-only absolute left-2 top-2 bg-background text-foreground p-2 z-50">Skip to main content</a>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  
+  <!-- Universal Navigation will be injected here by universal-nav.js -->
+  
+  <!-- Page Layout -->
+  <div class="flex flex-grow">
+    <!-- Universal Sidebar will be injected here by universal-nav.js -->
+    
+    <!-- Main Content -->
+    <main id="main-content" class="flex-1 p-6">
+      <!-- Tool-specific content goes here -->
+      <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6">layout tool</h1>
+        <!-- Original tool content will be preserved here -->
+      </div>
+    </main>
+  </div>
+  
+  <!-- Universal Footer will be injected here by universal-footer.js -->
+  
+  <!-- Universal Navigation and Footer Scripts -->
+  <script src="../../js/universal-nav.js"></script>
+  <script src="../../js/universal-footer.js"></script>
+</body>
+</html>

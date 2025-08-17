@@ -203,79 +203,103 @@ class UniversalNavigation {
         </div>
         
         <div class="command-list">
-          <div class="command-group">
+          <div class="command-group" data-group="quick-actions">
             <div class="command-group-heading">Quick Actions</div>
-            <div class="command-item" data-action="explore-tools">
+            <div class="command-item" data-action="explore-tools" data-search="explore tools">
               <i data-lucide="compass" class="w-4 h-4"></i>
               <span>Explore Tools</span>
               <span class="command-shortcut">⌘E</span>
             </div>
-            <div class="command-item" data-action="request-tool">
+            <div class="command-item" data-action="request-tool" data-search="request tool">
               <i data-lucide="message-square" class="w-4 h-4"></i>
               <span>Request a Tool</span>
               <span class="command-shortcut">⌘R</span>
             </div>
-            <div class="command-item" data-action="toggle-theme">
+            <div class="command-item" data-action="toggle-theme" data-search="toggle theme">
               <i data-lucide="sun" class="w-4 h-4"></i>
               <span>Toggle Theme</span>
               <span class="command-shortcut">⌘T</span>
             </div>
           </div>
           
-          <div class="command-group">
+          <div class="command-group" data-group="tools">
             <div class="command-group-heading">Tools</div>
-            <div class="command-item" data-action="image-converter">
+            <div class="command-item" data-action="image-converter" data-search="image converter">
               <i data-lucide="image" class="w-4 h-4"></i>
               <span>Image Converter</span>
               <span class="command-shortcut">⌘1</span>
             </div>
-            <div class="command-item" data-action="background-remover">
+            <div class="command-item" data-action="background-remover" data-search="background remover">
               <i data-lucide="scissors" class="w-4 h-4"></i>
               <span>Background Remover</span>
               <span class="command-shortcut">⌘2</span>
             </div>
-            <div class="command-item" data-action="google-ads-rsa">
+            <div class="command-item" data-action="google-ads-rsa" data-search="google ads rsa preview">
               <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
               <span>Google Ads RSA Preview</span>
               <span class="command-shortcut">⌘3</span>
             </div>
-            <div class="command-item" data-action="campaign-structure">
+            <div class="command-item" data-action="campaign-structure" data-search="campaign structure">
               <i data-lucide="layers" class="w-4 h-4"></i>
               <span>Campaign Structure</span>
               <span class="command-shortcut">⌘4</span>
             </div>
-            <div class="command-item" data-action="json-formatter">
+            <div class="command-item" data-action="json-formatter" data-search="json formatter">
               <i data-lucide="braces" class="w-4 h-4"></i>
               <span>JSON Formatter</span>
               <span class="command-shortcut">⌘5</span>
             </div>
-            <div class="command-item" data-action="pdf-merger">
+            <div class="command-item" data-action="pdf-merger" data-search="pdf merger">
               <i data-lucide="file-text" class="w-4 h-4"></i>
               <span>PDF Merger</span>
               <span class="command-shortcut">⌘6</span>
             </div>
-            <div class="command-item" data-action="utm-builder">
+            <div class="command-item" data-action="utm-builder" data-search="utm builder">
               <i data-lucide="link" class="w-4 h-4"></i>
               <span>UTM Builder</span>
             </div>
-            <div class="command-item" data-action="qr-generator">
+            <div class="command-item" data-action="qr-generator" data-search="qr code generator">
               <i data-lucide="qr-code" class="w-4 h-4"></i>
               <span>QR Code Generator</span>
             </div>
-            <div class="command-item" data-action="uuid-generator">
+            <div class="command-item" data-action="uuid-generator" data-search="uuid generator">
               <i data-lucide="hash" class="w-4 h-4"></i>
               <span>UUID Generator</span>
             </div>
+            <div class="command-item" data-action="pdf-ocr" data-search="pdf ocr">
+              <i data-lucide="file-search" class="w-4 h-4"></i>
+              <span>PDF OCR</span>
+            </div>
+            <div class="command-item" data-action="timestamp-converter" data-search="timestamp converter">
+              <i data-lucide="clock" class="w-4 h-4"></i>
+              <span>Timestamp Converter</span>
+            </div>
+            <div class="command-item" data-action="meta-tag-generator" data-search="meta tag generator">
+              <i data-lucide="tag" class="w-4 h-4"></i>
+              <span>Meta Tag Generator</span>
+            </div>
+            <div class="command-item" data-action="robots-txt" data-search="robots txt tool">
+              <i data-lucide="bot" class="w-4 h-4"></i>
+              <span>Robots.txt Tool</span>
+            </div>
+            <div class="command-item" data-action="text-case-converter" data-search="text case converter">
+              <i data-lucide="type" class="w-4 h-4"></i>
+              <span>Text Case Converter</span>
+            </div>
+            <div class="command-item" data-action="layout-tool" data-search="layout generator">
+              <i data-lucide="layout" class="w-4 h-4"></i>
+              <span>Layout Generator</span>
+            </div>
           </div>
           
-          <div class="command-group">
+          <div class="command-group" data-group="navigation">
             <div class="command-group-heading">Navigation</div>
-            <div class="command-item" data-action="toggle-sidebar">
+            <div class="command-item" data-action="toggle-sidebar" data-search="toggle sidebar">
               <i data-lucide="menu" class="w-4 h-4"></i>
               <span>Toggle Sidebar</span>
               <span class="command-shortcut">⌘B</span>
             </div>
-            <div class="command-item" data-action="go-home">
+            <div class="command-item" data-action="go-home" data-search="go home">
               <i data-lucide="home" class="w-4 h-4"></i>
               <span>Go to Home</span>
               <span class="command-shortcut">⌘H</span>
@@ -319,17 +343,26 @@ class UniversalNavigation {
     const commandItems = document.querySelectorAll('.command-item');
     const searchButton = document.getElementById('search-button');
 
-    if (commandDialog && commandInput && commandClose) {
-      const openCommandMenu = () => {
-        commandDialog.classList.add('open');
-        commandInput.focus();
-        commandInput.select();
-      };
+          if (commandDialog && commandInput && commandClose) {
+        const openCommandMenu = () => {
+          commandDialog.classList.add('open');
+          commandInput.focus();
+          commandInput.select();
+          // Reset search when opening
+          this.resetCommandSearch();
+        };
 
-      const closeCommandMenu = () => {
-        commandDialog.classList.remove('open');
-        commandInput.value = '';
-      };
+        const closeCommandMenu = () => {
+          commandDialog.classList.remove('open');
+          commandInput.value = '';
+          // Reset search when closing
+          this.resetCommandSearch();
+        };
+
+        // Add search functionality
+        commandInput.addEventListener('input', (e) => {
+          this.filterCommandItems(e.target.value);
+        });
 
       if (searchButton) {
         searchButton.addEventListener('click', openCommandMenu);
@@ -505,6 +538,120 @@ class UniversalNavigation {
   initializeIcons() {
     if (typeof lucide !== 'undefined') {
       lucide.createIcons();
+    }
+  }
+
+  filterCommandItems(searchTerm) {
+    const commandItems = document.querySelectorAll('.command-item');
+    const commandGroups = document.querySelectorAll('.command-group');
+    
+    if (!searchTerm.trim()) {
+      // Show all items and groups
+      commandItems.forEach(item => {
+        item.style.display = 'flex';
+      });
+      commandGroups.forEach(group => {
+        group.style.display = 'block';
+      });
+      return;
+    }
+
+    const searchLower = searchTerm.toLowerCase();
+    let hasVisibleItems = false;
+
+    commandItems.forEach(item => {
+      const searchText = item.getAttribute('data-search') || '';
+      const itemText = item.querySelector('span')?.textContent || '';
+      const combinedText = `${searchText} ${itemText}`.toLowerCase();
+      
+      if (combinedText.includes(searchLower)) {
+        item.style.display = 'flex';
+        hasVisibleItems = true;
+        // Highlight matching text
+        this.highlightSearchText(item, searchTerm);
+      } else {
+        item.style.display = 'none';
+      }
+    });
+
+    // Show/hide groups based on visible items
+    commandGroups.forEach(group => {
+      const visibleItems = group.querySelectorAll('.command-item[style="display: flex"]');
+      const groupHeading = group.querySelector('.command-group-heading');
+      
+      if (visibleItems.length > 0) {
+        group.style.display = 'block';
+        if (groupHeading) groupHeading.style.display = 'block';
+      } else {
+        group.style.display = 'none';
+        if (groupHeading) groupHeading.style.display = 'none';
+      }
+    });
+
+    // Show "no results" message if needed
+    this.showNoResultsMessage(!hasVisibleItems);
+  }
+
+  highlightSearchText(item, searchTerm) {
+    const span = item.querySelector('span');
+    if (span && searchTerm) {
+      const text = span.textContent;
+      const regex = new RegExp(`(${searchTerm})`, 'gi');
+      span.innerHTML = text.replace(regex, '<mark class="bg-yellow-200 dark:bg-yellow-800 px-1 rounded">$1</mark>');
+    }
+  }
+
+  resetCommandSearch() {
+    const commandItems = document.querySelectorAll('.command-item');
+    const commandGroups = document.querySelectorAll('.command-group');
+    
+    commandItems.forEach(item => {
+      item.style.display = 'flex';
+      const span = item.querySelector('span');
+      if (span) {
+        span.innerHTML = span.textContent; // Remove highlighting
+      }
+    });
+    
+    commandGroups.forEach(group => {
+      group.style.display = 'block';
+      const heading = group.querySelector('.command-group-heading');
+      if (heading) heading.style.display = 'block';
+    });
+
+    this.hideNoResultsMessage();
+  }
+
+  showNoResultsMessage(show) {
+    let noResults = document.querySelector('.command-no-results');
+    
+    if (show) {
+      if (!noResults) {
+        noResults = document.createElement('div');
+        noResults.className = 'command-no-results p-4 text-center text-muted-foreground';
+        noResults.innerHTML = `
+          <i data-lucide="search-x" class="w-8 h-8 mx-auto mb-2 text-muted-foreground"></i>
+          <p>No results found for your search</p>
+          <p class="text-sm">Try different keywords or browse all available options</p>
+        `;
+        
+        const commandList = document.querySelector('.command-list');
+        if (commandList) {
+          commandList.appendChild(noResults);
+        }
+      }
+      noResults.style.display = 'block';
+    } else {
+      if (noResults) {
+        noResults.style.display = 'none';
+      }
+    }
+  }
+
+  hideNoResultsMessage() {
+    const noResults = document.querySelector('.command-no-results');
+    if (noResults) {
+      noResults.style.display = 'none';
     }
   }
 }

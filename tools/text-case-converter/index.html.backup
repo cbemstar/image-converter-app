@@ -6,7 +6,7 @@
   <!-- End Google Tag Manager -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Request a Tool</title>
+  <title>Text Case Converter</title>
   <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
   <link rel="stylesheet" href="../../styles/styles.css">
   <link rel="stylesheet" href="../../styles/globals.css">
@@ -25,17 +25,62 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="../../styles/theme.js"></script>
   <script type="module" src="../../layout.js"></script>
-  <script type="module" src="request-tool.js"></script>
+  <script type="module" src="text-case-converter.js"></script>
   <script src="../../js/universal-footer.js"></script>
 
 </head>
-<body data-slug="request-tool" class="bg-transparent min-h-screen flex flex-col">
+<body data-slug="text-case-converter" class="bg-transparent min-h-screen flex flex-col">
   <a href="#main-content" class="sr-only focus:not-sr-only absolute left-2 top-2 bg-background text-foreground p-2 z-50">Skip to main content</a>
-  
-  
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
+  <nav class="bg-background shadow-md border-b border-border" role="navigation" aria-label="Main navigation">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center gap-4">
+          <button id="sidebar-toggle" class="btn btn-outline btn-sm" aria-label="Open sidebar" aria-controls="sidebar" aria-expanded="false">
+            <i class="fas fa-bars"></i>
+          </button>
+          <a href="../../index.html" class="flex items-center gap-2">
+            <span class="text-foreground text-xl font-bold">reformately</span>
+          </a>
+        </div>
+        <div class="flex items-center gap-2">
+          <!-- Guest User -->
+          <div data-guest-only class="flex items-center gap-2">
+            <a href="../../auth.html" class="btn btn-outline btn-sm" data-nav-link="auth">
+              <i class="fas fa-sign-in-alt mr-1"></i>
+              Sign In
+            </a>
+          </div>
+          
+          <!-- Authenticated User -->
+          <div data-auth-required class="flex items-center gap-2" style="display: none;">
+            <div class="dropdown dropdown-end relative">
+              <button class="btn btn-outline btn-sm dropdown-toggle" aria-label="User menu" aria-expanded="false">
+                <img data-user-info="avatar" class="w-6 h-6 rounded-full mr-2" alt="User avatar" style="display: none;">
+                <span data-user-info="name" class="hidden sm:inline">User</span>
+                <i class="fas fa-chevron-down ml-1"></i>
+              </button>
+              <ul class="dropdown-content menu p-2 shadow bg-background border border-border rounded-lg w-52 absolute right-0 top-full mt-1 z-50" style="display: none;" role="menu">
+                <li role="none"><a href="../../dashboard.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded" data-nav-link="dashboard" data-dashboard-access="true" role="menuitem"><i class="fas fa-tachometer-alt"></i>Dashboard</a></li>
+                <li role="none"><a href="../../profile.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded" data-nav-link="profile" role="menuitem"><i class="fas fa-user"></i>Profile</a></li>
+                <li role="none"><a href="#" data-action="signout" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded" role="menuitem"><i class="fas fa-sign-out-alt"></i>Sign Out</a></li>
+              </ul>
+            </div>
+          </div>
+          
+          <button id="theme-toggle" class="btn btn-outline btn-sm" aria-label="Toggle theme">
+            <span id="theme-toggle-icon">🌙</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+    </div>
+  </div>
+
+
   <div class="flex flex-grow">
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
     <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-background border-r border-border/20 p-4 transform -translate-x-full transition-transform z-40" role="complementary" aria-label="Sidebar" tabindex="-1">
@@ -72,42 +117,56 @@
         <a href="../request-tool/index.html" class="text-foreground hover:text-primary">Request a Tool</a>
       </div>
     </aside>
-    <main id="main-content" class="flex-grow p-4" tabindex="-1">
+    <main id="main-content" class="flex-grow p-4">
       <div class="max-w-xl mx-auto">
-        <h1 class="text-3xl font-bold mb-4" class="text-foreground">Request a Tool</h1>
-        <p class="text-foreground">Let us know what tool you'd like us to build next.</p>
-        <form id="tool-request-form" class="space-y-4 my-8">
-          <label class="label">Tool Name
-            <input id="tool-name" type="text" class="input mt-1" placeholder="e.g. Keyword Grouper" required />
-          </label>
-          <label class="label">What problem would this solve?
-            <textarea id="tool-problem" class="input mt-1" rows="3" required></textarea>
-          </label>
-          <label class="label">Your Name
-            <input id="requester-name" type="text" class="input mt-1" placeholder="Optional" />
-          </label>
-          <label class="label">Email (optional)
-            <input id="requester-email" type="email" class="input mt-1" placeholder="you@example.com" />
-          </label>
-          <button type="submit" class="btn btn-outline">Submit Request</button>
-        </form>
-        <section class="space-y-4">
-          <h2 class="text-2xl font-bold" class="text-foreground">About this page</h2>
-          <p class="text-foreground">Use this form to suggest new utilities that would help your marketing workflow. We review submissions regularly.</p>
+        <h1 class="text-3xl font-bold" class="text-foreground">Text Case Converter</h1>
+        <p class="mb-4" class="text-foreground">Quickly convert text into common casing styles.</p>
+        <label class="block" class="text-foreground">Input Text
+          <textarea id="tcc-input" rows="5" class="input mt-1"></textarea>
+        </label>
+        <div id="tcc-results" class="space-y-6 mt-6">
+          <div>
+            <label class="font-semibold" class="text-foreground">Uppercase</label>
+            <textarea id="tcc-upper" rows="2" class="input font-mono mt-1" readonly></textarea>
+            <button class="btn mt-2 copy-btn" data-target="tcc-upper">Copy</button>
+          </div>
+          <div>
+            <label class="font-semibold" class="text-foreground">Lowercase</label>
+            <textarea id="tcc-lower" rows="2" class="input font-mono mt-1" readonly></textarea>
+            <button class="btn mt-2 copy-btn" data-target="tcc-lower">Copy</button>
+          </div>
+          <div>
+            <label class="font-semibold" class="text-foreground">Title Case</label>
+            <textarea id="tcc-title" rows="2" class="input font-mono mt-1" readonly></textarea>
+            <button class="btn mt-2 copy-btn" data-target="tcc-title">Copy</button>
+          </div>
+          <div>
+            <label class="font-semibold" class="text-foreground">Sentence Case</label>
+            <textarea id="tcc-sentence" rows="2" class="input font-mono mt-1" readonly></textarea>
+            <button class="btn mt-2 copy-btn" data-target="tcc-sentence">Copy</button>
+          </div>
+          <div>
+            <label class="font-semibold" class="text-foreground">Alternating Case</label>
+            <textarea id="tcc-alternate" rows="2" class="input font-mono mt-1" readonly></textarea>
+            <button class="btn mt-2 copy-btn" data-target="tcc-alternate">Copy</button>
+          </div>
+        </div>
+        <section class="space-y-4 mt-8">
+          <h2 class="text-2xl font-bold" class="text-foreground">About this tool</h2>
+          <p class="text-foreground">Paste text and instantly view it in several cases. Nothing is sent to any server.</p>
           <h3 class="text-xl font-semibold" class="text-foreground">FAQs</h3>
           <details class="border p-2 rounded">
-            <summary class="cursor-pointer font-semibold" class="text-foreground">How soon will my idea be built?</summary>
-            <p class="mt-2" class="text-foreground">Ideas with the most interest get prioritised, but we can't guarantee timelines.</p>
+            <summary class="cursor-pointer font-semibold" class="text-foreground">What is sentence case?</summary>
+            <p class="mt-2" class="text-foreground">Sentence case capitalizes the first letter of each sentence while leaving the rest lowercase.</p>
           </details>
           <details class="border p-2 rounded">
-            <summary class="cursor-pointer font-semibold" class="text-foreground">Will you notify me?</summary>
-            <p class="mt-2" class="text-foreground">Leave your email in the request and we'll let you know if we develop your suggestion.</p>
+            <summary class="cursor-pointer font-semibold" class="text-foreground">Will my text be stored?</summary>
+            <p class="mt-2" class="text-foreground">No. Conversions happen entirely in your browser.</p>
           </details>
         </section>
       </div>
     </main>
   </div>
-
   <footer class="bg-background border-t border-border mt-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <div class="text-center">
@@ -115,6 +174,5 @@
       </div>
     </div>
   </footer>
-  <!-- ../../layout.js handles sidebar functionality -->
 </body>
 </html>

@@ -95,7 +95,7 @@ class UniversalFooter {
         <div class="footer-bottom">
           <div class="footer-bottom-content">
             <p class="text-muted-foreground text-sm">
-              &copy; 2024 reformately. All rights reserved.
+              &copy; ${new Date().getFullYear()} reformately. All rights reserved.
             </p>
             <div class="footer-bottom-links">
               <a href="#" class="text-muted-foreground hover:text-primary text-sm transition-colors">Status</a>

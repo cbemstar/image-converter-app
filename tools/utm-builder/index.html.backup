@@ -6,7 +6,7 @@
   <!-- End Google Tag Manager -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Request a Tool</title>
+  <title>UTM Parameter Builder</title>
   <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
   <link rel="stylesheet" href="../../styles/styles.css">
   <link rel="stylesheet" href="../../styles/globals.css">
@@ -25,17 +25,61 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="../../styles/theme.js"></script>
   <script type="module" src="../../layout.js"></script>
-  <script type="module" src="request-tool.js"></script>
+  <script type="module" src="utm-builder.js"></script>
   <script src="../../js/universal-footer.js"></script>
 
 </head>
-<body data-slug="request-tool" class="bg-transparent min-h-screen flex flex-col">
+<body data-slug="utm-builder" class="bg-transparent min-h-screen flex flex-col">
   <a href="#main-content" class="sr-only focus:not-sr-only absolute left-2 top-2 bg-background text-foreground p-2 z-50">Skip to main content</a>
-  
-  
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFJTSQ3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
+  <nav class="bg-background shadow-md border-b border-border" role="navigation" aria-label="Main navigation">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center gap-4">
+          <button id="sidebar-toggle" class="btn btn-outline btn-sm" aria-label="Open sidebar" aria-controls="sidebar" aria-expanded="false">
+            <i class="fas fa-bars"></i>
+          </button>
+          <a href="../../index.html" class="flex items-center gap-2">
+            <span class="text-foreground text-xl font-bold">reformately</span>
+          </a>
+        </div>
+        <div class="flex items-center gap-2">
+          <!-- Guest User -->
+          <div data-guest-only class="flex items-center gap-2">
+            <a href="../../auth.html" class="btn btn-outline btn-sm" data-nav-link="auth">
+              <i class="fas fa-sign-in-alt mr-1"></i>
+              Sign In
+            </a>
+          </div>
+          
+          <!-- Authenticated User -->
+          <div data-auth-required class="flex items-center gap-2" style="display: none;">
+            <div class="dropdown dropdown-end relative">
+              <button class="btn btn-outline btn-sm dropdown-toggle" aria-label="User menu" aria-expanded="false">
+                <img data-user-info="avatar" class="w-6 h-6 rounded-full mr-2" alt="User avatar" style="display: none;">
+                <span data-user-info="name" class="hidden sm:inline">User</span>
+                <i class="fas fa-chevron-down ml-1"></i>
+              </button>
+              <ul class="dropdown-content menu p-2 shadow bg-background border border-border rounded-lg w-52 absolute right-0 top-full mt-1 z-50" style="display: none;" role="menu">
+                <li role="none"><a href="../../dashboard.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded" data-nav-link="dashboard" data-dashboard-access="true" role="menuitem"><i class="fas fa-tachometer-alt"></i>Dashboard</a></li>
+                <li role="none"><a href="../../profile.html" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded" data-nav-link="profile" role="menuitem"><i class="fas fa-user"></i>Profile</a></li>
+                <li role="none"><a href="#" data-action="signout" class="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded" role="menuitem"><i class="fas fa-sign-out-alt"></i>Sign Out</a></li>
+              </ul>
+            </div>
+          </div>
+          
+          <button id="theme-toggle" class="btn btn-outline btn-sm" aria-label="Toggle theme">
+            <span id="theme-toggle-icon">🌙</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+    </div>
+  </div>
+
   <div class="flex flex-grow">
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30"></div>
     <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-background border-r border-border/20 p-4 transform -translate-x-full transition-transform z-40" role="complementary" aria-label="Sidebar" tabindex="-1">
@@ -72,42 +116,50 @@
         <a href="../request-tool/index.html" class="text-foreground hover:text-primary">Request a Tool</a>
       </div>
     </aside>
-    <main id="main-content" class="flex-grow p-4" tabindex="-1">
+    <main id="main-content" class="flex-grow p-4">
       <div class="max-w-xl mx-auto">
-        <h1 class="text-3xl font-bold mb-4" class="text-foreground">Request a Tool</h1>
-        <p class="text-foreground">Let us know what tool you'd like us to build next.</p>
-        <form id="tool-request-form" class="space-y-4 my-8">
-          <label class="label">Tool Name
-            <input id="tool-name" type="text" class="input mt-1" placeholder="e.g. Keyword Grouper" required />
+        <h1 class="text-3xl font-bold mb-2" class="text-foreground">UTM Parameter Builder</h1>
+        <p class="mb-4" class="text-foreground">Generate tracking URLs for your marketing campaigns.</p>
+        <div class="space-y-4">
+          <label class="block" class="text-foreground">Base URL
+            <input id="base-url" type="text" class="input mt-1" placeholder="https://example.com/page" />
           </label>
-          <label class="label">What problem would this solve?
-            <textarea id="tool-problem" class="input mt-1" rows="3" required></textarea>
+          <label class="block" class="text-foreground">Source
+            <input id="utm-source" type="text" class="input mt-1" placeholder="newsletter" />
           </label>
-          <label class="label">Your Name
-            <input id="requester-name" type="text" class="input mt-1" placeholder="Optional" />
+          <label class="block" class="text-foreground">Medium
+            <input id="utm-medium" type="text" class="input mt-1" placeholder="email" />
           </label>
-          <label class="label">Email (optional)
-            <input id="requester-email" type="email" class="input mt-1" placeholder="you@example.com" />
+          <label class="block" class="text-foreground">Campaign
+            <input id="utm-campaign" type="text" class="input mt-1" placeholder="spring_sale" />
           </label>
-          <button type="submit" class="btn btn-outline">Submit Request</button>
-        </form>
-        <section class="space-y-4">
-          <h2 class="text-2xl font-bold" class="text-foreground">About this page</h2>
-          <p class="text-foreground">Use this form to suggest new utilities that would help your marketing workflow. We review submissions regularly.</p>
+          <label class="block" class="text-foreground">Term
+            <input id="utm-term" type="text" class="input mt-1" placeholder="optional keyword" />
+          </label>
+          <label class="block" class="text-foreground">Content
+            <input id="utm-content" type="text" class="input mt-1" placeholder="ad variant" />
+          </label>
+          <label class="block" class="text-foreground">Tracking URL
+            <input id="utm-result" type="text" class="input mt-1" readonly />
+          </label>
+          <button id="copy-btn" class="btn">Copy URL</button>
+        </div>
+        <section class="space-y-4 mt-8">
+          <h2 class="text-2xl font-bold" class="text-foreground">About this tool</h2>
+          <p class="text-foreground">Use this builder to append UTM parameters to your links so you can track campaign performance in analytics platforms.</p>
           <h3 class="text-xl font-semibold" class="text-foreground">FAQs</h3>
           <details class="border p-2 rounded">
-            <summary class="cursor-pointer font-semibold" class="text-foreground">How soon will my idea be built?</summary>
-            <p class="mt-2" class="text-foreground">Ideas with the most interest get prioritised, but we can't guarantee timelines.</p>
+            <summary class="cursor-pointer font-semibold" class="text-foreground">What are UTM parameters?</summary>
+            <p class="mt-2" class="text-foreground">They are tags added to a URL that help identify where visitors come from when they land on your site.</p>
           </details>
           <details class="border p-2 rounded">
-            <summary class="cursor-pointer font-semibold" class="text-foreground">Will you notify me?</summary>
-            <p class="mt-2" class="text-foreground">Leave your email in the request and we'll let you know if we develop your suggestion.</p>
+            <summary class="cursor-pointer font-semibold" class="text-foreground">Do you store my links?</summary>
+            <p class="mt-2" class="text-foreground">No. Everything runs locally in your browser.</p>
           </details>
         </section>
       </div>
     </main>
   </div>
-
   <footer class="bg-background border-t border-border mt-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <div class="text-center">
@@ -115,6 +167,5 @@
       </div>
     </div>
   </footer>
-  <!-- ../../layout.js handles sidebar functionality -->
 </body>
 </html>
