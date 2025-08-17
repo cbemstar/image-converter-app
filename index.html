@@ -1490,10 +1490,12 @@
   </footer>
 
   <script>
-    // Initialize Lucide icons
-    if (typeof lucide !== 'undefined') {
-      lucide.createIcons();
-    }
+    // Wait for DOM to be fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize Lucide icons
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
 
     // Enhanced Sidebar functionality
     const sidebarToggle = document.getElementById('sidebar-toggle');
@@ -1521,15 +1523,39 @@
     const commandClose = document.getElementById('command-close');
     const commandItems = document.querySelectorAll('.command-item');
 
+    // Debug logging for command menu
+    console.log('Command menu elements found:', {
+      commandDialog: !!commandDialog,
+      commandInput: !!commandInput,
+      commandClose: !!commandClose,
+      commandItems: commandItems.length
+    });
+
     const openCommandMenu = () => {
-      commandDialog.classList.add('open');
-      commandInput.focus();
-      commandInput.select();
+      try {
+        if (commandDialog && commandInput) {
+          commandDialog.classList.add('open');
+          commandInput.focus();
+          commandInput.select();
+          console.log('Command menu opened');
+        } else {
+          console.error('Command menu elements not found');
+        }
+      } catch (error) {
+        console.error('Error opening command menu:', error);
+      }
     };
 
     const closeCommandMenu = () => {
-      commandDialog.classList.remove('open');
-      commandInput.value = '';
+      try {
+        if (commandDialog && commandInput) {
+          commandDialog.classList.remove('open');
+          commandInput.value = '';
+          console.log('Command menu closed');
+        }
+      } catch (error) {
+        console.error('Error closing command menu:', error);
+      }
     };
 
     const handleCommandAction = (action) => {
@@ -1589,17 +1615,32 @@
 
     // Search button functionality
     const searchButton = document.getElementById('search-button');
-    searchButton.addEventListener('click', openCommandMenu);
+    if (searchButton) {
+      searchButton.addEventListener('click', openCommandMenu);
+      console.log('Search button event listener attached');
+    } else {
+      console.error('Search button not found');
+    }
 
     // Command menu event listeners
-    commandClose.addEventListener('click', closeCommandMenu);
+    if (commandClose) {
+      commandClose.addEventListener('click', closeCommandMenu);
+      console.log('Command close event listener attached');
+    }
     
-    commandItems.forEach(item => {
-      item.addEventListener('click', () => {
-        const action = item.getAttribute('data-action');
-        handleCommandAction(action);
+    if (commandItems.length > 0) {
+      commandItems.forEach(item => {
+        item.addEventListener('click', () => {
+          try {
+            const action = item.getAttribute('data-action');
+            handleCommandAction(action);
+          } catch (error) {
+            console.error('Error handling command action:', error);
+          }
+        });
       });
-    });
+      console.log('Command items event listeners attached');
+    }
 
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
@@ -1728,40 +1769,57 @@
     const sortSelect = document.getElementById('sort-select');
     const clearFiltersBtn = document.getElementById('clear-filters');
 
+    // Debug logging
+    console.log('Search elements found:', {
+      homeSearchInput: !!homeSearchInput,
+      toolCards: toolCards.length,
+      categoryFilter: !!categoryFilter,
+      sortSelect: !!sortSelect,
+      clearFiltersBtn: !!clearFiltersBtn
+    });
+
     // Function to apply all filters and search
     const applyFilters = () => {
-      const searchTerm = homeSearchInput.value.toLowerCase();
-      const selectedCategory = categoryFilter.value;
-      let visibleCount = 0;
-      
-      toolCards.forEach(card => {
-        const toolName = card.getAttribute('data-name').toLowerCase();
-        const toolCategory = card.getAttribute('data-category');
-        const toolDescription = card.querySelector('p').textContent.toLowerCase();
+      try {
+        const searchTerm = homeSearchInput.value.toLowerCase();
+        const selectedCategory = categoryFilter.value;
+        let visibleCount = 0;
         
-        // Check if card matches search term
-        const matchesSearch = searchTerm === '' || 
-          toolName.includes(searchTerm) || 
-          toolCategory.toLowerCase().includes(searchTerm) ||
-          toolDescription.includes(searchTerm);
+        console.log('Applying filters:', { searchTerm, selectedCategory });
         
-        // Check if card matches category filter
-        const matchesCategory = selectedCategory === 'All' || toolCategory === selectedCategory;
+        toolCards.forEach(card => {
+          const toolName = card.getAttribute('data-name')?.toLowerCase() || '';
+          const toolCategory = card.getAttribute('data-category') || '';
+          const toolDescription = card.querySelector('p')?.textContent?.toLowerCase() || '';
+          
+          // Check if card matches search term
+          const matchesSearch = searchTerm === '' || 
+            toolName.includes(searchTerm) || 
+            toolCategory.toLowerCase().includes(searchTerm) ||
+            toolDescription.includes(searchTerm);
+          
+          // Check if card matches category filter
+          const matchesCategory = selectedCategory === 'All' || toolCategory === selectedCategory;
+          
+          // Show/hide card based on filters
+          if (matchesSearch && matchesCategory) {
+            card.style.display = 'block';
+            visibleCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
         
-        // Show/hide card based on filters
-        if (matchesSearch && matchesCategory) {
-          card.style.display = 'block';
-          visibleCount++;
-        } else {
-          card.style.display = 'none';
-        }
-      });
-      
-      // Update search results counter
-      updateSearchResultsCounter(visibleCount);
-      
-      // Apply sorting
-      applySorting();
+        console.log('Visible cards:', visibleCount);
+        
+        // Update search results counter
+        updateSearchResultsCounter(visibleCount);
+        
+        // Apply sorting
+        applySorting();
+      } catch (error) {
+        console.error('Error in applyFilters:', error);
+      }
     };
 
     // Function to update search results counter
@@ -1825,23 +1883,42 @@
     };
 
     // Event listeners for search and filtering
-    homeSearchInput.addEventListener('input', applyFilters);
-    categoryFilter.addEventListener('change', applyFilters);
-    sortSelect.addEventListener('change', applyFilters);
+    if (homeSearchInput) {
+      homeSearchInput.addEventListener('input', applyFilters);
+      console.log('Search input event listener attached');
+    }
+    
+    if (categoryFilter) {
+      categoryFilter.addEventListener('change', applyFilters);
+      console.log('Category filter event listener attached');
+    }
+    
+    if (sortSelect) {
+      sortSelect.addEventListener('change', applyFilters);
+      console.log('Sort select event listener attached');
+    }
 
     // Clear filters functionality
-    clearFiltersBtn.addEventListener('click', () => {
-      homeSearchInput.value = '';
-      categoryFilter.value = 'All';
-      sortSelect.value = 'az';
-      
-      toolCards.forEach(card => {
-        card.style.display = 'block';
+    if (clearFiltersBtn) {
+      clearFiltersBtn.addEventListener('click', () => {
+        try {
+          if (homeSearchInput) homeSearchInput.value = '';
+          if (categoryFilter) categoryFilter.value = 'All';
+          if (sortSelect) sortSelect.value = 'az';
+          
+          toolCards.forEach(card => {
+            card.style.display = 'block';
+          });
+          
+          // Reset to original order
+          applySorting();
+          console.log('Filters cleared');
+        } catch (error) {
+          console.error('Error clearing filters:', error);
+        }
       });
-      
-      // Reset to original order
-      applySorting();
-    });
+      console.log('Clear filters event listener attached');
+    }
 
     // Add search suggestions and autocomplete
     homeSearchInput.addEventListener('focus', () => {
@@ -1913,6 +1990,8 @@
         // Here you would typically navigate to the actual tool page
       });
     });
+    
+    }); // Close DOMContentLoaded function
   </script>
 </body>
 </html>
