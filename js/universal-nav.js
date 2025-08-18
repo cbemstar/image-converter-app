@@ -63,7 +63,7 @@ class UniversalNavigation {
             <div class="sidebar-group-label">Tools</div>
             <ul class="sidebar-menu">
               <li class="sidebar-menu-item">
-                <a href="/tools/image-converter/index-shadcn.html" class="sidebar-menu-button">
+                <a href="/tools/image-converter/index.html" class="sidebar-menu-button">
                   <i data-lucide="image" class="w-4 h-4"></i>
                   <span>Image Converter</span>
                 </a>
@@ -400,7 +400,7 @@ class UniversalNavigation {
             window.scrollTo({ top: 0, behavior: 'smooth' });
             break;
           case 'image-converter':
-            window.location.href = '/tools/image-converter/index-shadcn.html';
+            window.location.href = '/tools/image-converter/index.html';
             break;
           case 'background-remover':
             window.location.href = '/tools/background-remover/index.html';
