@@ -2167,13 +2167,23 @@
       });
     });
 
-    // Tool card click functionality
+    // Tool card click functionality - allow natural navigation
     toolCards.forEach(card => {
       card.addEventListener('click', (e) => {
-        e.preventDefault();
+        // Allow natural navigation, just track the click
         const toolName = card.getAttribute('data-name');
-        alert(`Opening ${toolName}...`);
-        // Here you would typically navigate to the actual tool page
+        const href = card.getAttribute('href');
+        
+        // Track tool usage if analytics is available
+        if (window.toolIntegration) {
+          window.toolIntegration.trackToolUsage('tool_card_click', {
+            tool_name: toolName,
+            tool_url: href
+          });
+        }
+        
+        // Let the natural link navigation happen
+        console.log(`Navigating to ${toolName} at ${href}`);
       });
     });
     
